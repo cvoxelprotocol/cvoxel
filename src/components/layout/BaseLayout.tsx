@@ -7,6 +7,7 @@ import { useModal } from "@/hooks/useModal";
 import { LoadingModal } from "@/components/presenters/common/LoadingModal"
 import { Toaster } from "react-hot-toast";
 import { Meta } from "./parts/Meta";
+import { useRouter } from "next/dist/client/router";
 config.autoAddCss = false;
 
 type Props = {
@@ -19,18 +20,26 @@ type Props = {
 export const BaseLayout = ({
   children
 }: Props) => {
-
+  const router = useRouter()
   const {isLoading} = useModal()
   
   return (
     <>
     <Meta />
       <div className={"text-sm " + styles.background_base}>
-        <Header />
-        <div className="mx-auto px-4 w-full min-h-screen overflow-y-scroll pt-16 md:pt-24 bg-white dark:bg-darkgray break-words">
-          {children}
-        </div>
-        <Footer />
+        {router.pathname.startsWith("/intro") ? (
+          <div className="bg-white">
+            {children}
+          </div>
+        ) : (
+          <>
+            <Header />
+              <div className="mx-auto px-4 w-full min-h-screen overflow-y-scroll pt-16 md:pt-24 bg-white dark:bg-darkgray break-words">
+                {children}
+              </div>
+            <Footer />
+          </>
+        )}
       </div>
       {isLoading && (
         <LoadingModal />

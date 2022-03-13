@@ -46,9 +46,9 @@ export default function App({ Component, pageProps }: AppProps) {
         <JotaiProvider>
           <ThemeProvider attribute="class">
             <AuthLayout>
-            <BaseLayout>
-              <Component {...props} />
-            </BaseLayout>
+              <BaseLayout>
+                <Component {...props} />
+              </BaseLayout>
             </AuthLayout>
           </ThemeProvider>
         </JotaiProvider>
