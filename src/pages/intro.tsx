@@ -76,10 +76,10 @@ const Intro: NextPage = () => {
           </div>
 
           <div className="hidden md:flex w-full justify-end items-center text-normal text-text-primary ">
-            <a className="mx-4" href="https://github.com/cvoxelprotocol">
+            <a className="mx-4" href="https://github.com/cvoxelprotocol/cvoxel" target="_blank" rel="noreferrer">
               Github
             </a>
-            <a className="mx-4" href="https://discord.gg/JxDKhkMab3">
+            <a className="mx-4" href="https://discord.gg/TBJFmJv6uZ" target="_blank" rel="noreferrer">
               Discord
             </a>
             <button className="hidden mx-4">Docs</button>
@@ -319,7 +319,7 @@ const Intro: NextPage = () => {
           <p className="text-text-white text-base">©️ C-Voxel-2022</p>
         </div>
         <div className="flex justify-end items-center">
-          <a>
+          <a href="https://github.com/cvoxelprotocol/cvoxel" target="_blank" rel="noreferrer">
             <Image
               src="/github_logo.png"
               width="28px"
@@ -329,6 +329,7 @@ const Intro: NextPage = () => {
             />
           </a>
           <div className="mx-4">
+          <a href="https://twitter.com/proof_of_career" target="_blank" rel="noreferrer">
             <Image
               src="/twitter_logo.png"
               width="28px"
@@ -336,8 +337,10 @@ const Intro: NextPage = () => {
               alt="twitter logo"
               layout="fixed"
             />
+            </a>
           </div>
           <div>
+          <a href="https://discord.gg/TBJFmJv6uZ" target="_blank" rel="noreferrer">
             <Image
               src="/discord_logo.png"
               width="28px"
@@ -345,6 +348,7 @@ const Intro: NextPage = () => {
               alt="discord logo"
               layout="fixed"
             />
+            </a>
           </div>
         </div>
       </footer>
