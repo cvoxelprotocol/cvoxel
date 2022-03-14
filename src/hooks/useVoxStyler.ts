@@ -1,13 +1,20 @@
 import { Vector3, Color } from "three";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { CVoxel, CVoxelVisType } from "@/interfaces/cVoxelType";
+import { isDataView } from "util/types";
+import styled from "styled-components";
 
 const sigmoid_a: number = 1;
 
 const useVoxStyler = (cVoxels: CVoxel[]): CVoxelVisType[] => {
-  const [styledVoxel, setStyledVoxel] = useState<CVoxelVisType[]>([]);
+  const styledVoxel = useRef<CVoxelVisType[]>([]);
+
+  //console.log("stackedVoxels =", cVoxels);
 
   useEffect(() => {
+    console.log("cVoxels =", cVoxels);
+    console.log("cVoxels.length =", cVoxels.length);
+    styledVoxel.current = [];
     if (cVoxels.length != 0) {
       cVoxels.forEach((voxel, i) => {
         let voxelTemp: CVoxelVisType = {
@@ -32,18 +39,20 @@ const useVoxStyler = (cVoxels: CVoxel[]): CVoxelVisType[] => {
         /* Set vividness from value based on ETH currently */
         const sigmoidValue =
           1.0 / (1.0 + Math.exp(-sigmoid_a * parseFloat(value)));
-        lightness = sigmoidValue * 80;
-        saturation = sigmoidValue * 50;
+        lightness = sigmoidValue * 50;
+        saturation = sigmoidValue * 80;
 
         /* Set hue from hoge (unassinged yet) */
+        hue = 330;
         voxelTemp["color"] = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
 
-        setStyledVoxel([...styledVoxel, voxelTemp]);
+        styledVoxel.current.push(voxelTemp);
       });
     }
   }, [cVoxels]);
 
-  return styledVoxel;
+  console.log("styledVoxels =", styledVoxel.current);
+  return styledVoxel.current == undefined ? [] : styledVoxel.current;
 };
 
 export default useVoxStyler;
