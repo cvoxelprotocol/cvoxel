@@ -57,7 +57,7 @@ export const TransactionItem:FC<TransactionItemProps> = ({tx, account, onClickTx
                 </div>
             </div>
             <div className="flex items-center">
-                <button onClick={()=>handleClick()} className="text-primary border-none hover:border-none">{shouldShowClaim}</button>
+                <button onClick={()=>handleClick()} className="text-primary border-none hover:border-none p-2">{shouldShowClaim}</button>
              </div>
         </div>
     )

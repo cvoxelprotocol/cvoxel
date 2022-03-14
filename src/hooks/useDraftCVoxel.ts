@@ -81,8 +81,8 @@ export function useDraftCVoxel() {
             ...cVoxels,
             {
               id: docUrl,
-              summary: value.summary,
-              issuedTimestamp: value.issuedTimestamp,
+              summary: meta.summary,
+              issuedTimestamp: meta.issuedTimestamp,
             },
           ],
         });
