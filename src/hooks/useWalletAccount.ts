@@ -56,7 +56,7 @@ export const useWalletAccount = () => {
 
   const openMetamaskViaDeepLink = () => {
     //TODO: set url to env
-    window.open("https://metamask.app.link/dapp/testnet.lanc.app/", "_blank");
+    window.open("https://metamask.app.link/dapp/testnet.cvoxel.xyz/", "_blank");
   };
 
   return {

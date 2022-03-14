@@ -8,17 +8,6 @@ export const removeUndefined = <T>(object: T): T => {
   ) as T;
 };
 
-export const setDisplayName = (
-  address: string,
-  name?: string,
-  count: number = 10
-): string => {
-  if (address === name) return `LanC.User[${shortHash(address, count)}]`;
-  return name
-    ? `${name}[${shortHash(address, count)}]`
-    : `LanC.User[${shortHash(address, count)}]`;
-};
-
 export const formatFromSuperjson = <T>(object: any): T => {
   if (isString(object)) {
     return superjson.parse<{ json: T }>(object).json;
