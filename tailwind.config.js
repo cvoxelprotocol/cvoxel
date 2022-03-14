@@ -1,3 +1,4 @@
+const defaultTheme = require('tailwindcss/defaultTheme')
 const plugin = require('tailwindcss/plugin')
 
 module.exports = {
@@ -5,7 +6,7 @@ module.exports = {
   darkMode: 'class',
   theme: {
     fontFamily: {
-      'sans': ['Objektiv-mk2', 'sans-serif']
+      'sans': ['Work Sans', ...defaultTheme.fontFamily.sans]
     },
     
     extend: {
@@ -19,8 +20,13 @@ module.exports = {
         'basegray': '#C5C5C5'
       }),
       colors: {
+        text: {
+          primary: "#8E477F",
+          white: "#FFFFFF"
+        },
         // Unique Colors
-        'primary': '#8E477F',
+        'primary': "#EFA9E0",
+        'primary-300': "#A66497",
         'primary-light': '#3d6be2',
         'secondary': '#EFA9E0',
         'secondary-light': '#ED74E1',
@@ -44,13 +50,14 @@ module.exports = {
         // Specific Colors
         'done': '#33C102',
         'progress': '#D4BD1B',
-        'suspended': '#AF1E1E',
-
+        'suspended': '#AF1E1E'
       },
       dropShadow: {
         'base': '4px 4px 2px rgba(0, 0, 0, 0.25)',
         'high': '10px 10px 10px rgba(0, 0, 0, 0.5)',
-        'higher': '20px 20px 20px rgba(0, 0, 0, 0.5)'
+        'higher': '20px 20px 20px rgba(0, 0, 0, 0.5)',
+        'xl-white': '0 20px 13px rgba(255, 255, 255, 1.0)',
+        'xl-pink' : '0 2px 7px rgba(239, 169, 224, 1.0)'
       },
       maxHeight: {
         '4/5': '80%',
