@@ -32,7 +32,7 @@ const useVoxStyler = (cVoxels: CVoxel[]): CVoxelVisType[] => {
         }
 
         /* Set lattice from deliverable */
-        if (deliverable != undefined) {
+        if (deliverable !== "") {
           voxelTemp["lattice"] = true;
         }
 

@@ -38,7 +38,7 @@ const VisualizerPresenter: FC<Props> = (Props) => {
   const offset = new THREE.Vector3(0, 0, 0);
 
   useEffect(() => {
-    setCVoxels([]);
+    //setCVoxels([]);
     const voxelsTemp: CVoxel[] = [];
     const func = async () => {
       if (Props.did != undefined) {
