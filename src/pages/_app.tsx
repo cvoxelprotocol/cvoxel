@@ -40,7 +40,7 @@ export default function App({ Component, pageProps }: AppProps) {
       <QueryClientProvider client={queryClient}>
        <Hydrate state={pageProps.dehydratedState}>
       <SelfIDProvider
-        client={{ ceramic: CERAMIC_URL || "http://localhost:7007", connectNetwork: CERAMIC_NETWORK, model }}
+        client={{ ceramic: CERAMIC_URL || "https://ceramic-clay.3boxlabs.com", connectNetwork: CERAMIC_NETWORK, model }}
         state={state}
         ui={{ full: true, style: { display: 'flex' } }}>
         <JotaiProvider>
