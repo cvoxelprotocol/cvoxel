@@ -44,7 +44,7 @@ export default function App({ Component, pageProps }: AppProps) {
         state={state}
         ui={{ full: true, style: { display: 'flex' } }}>
         <JotaiProvider>
-          <ThemeProvider attribute="class">
+          <ThemeProvider attribute="class" defaultTheme={"light"}>
             <AuthLayout>
               <BaseLayout>
                 <Component {...props} />

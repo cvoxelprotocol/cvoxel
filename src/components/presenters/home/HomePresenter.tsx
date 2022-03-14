@@ -87,7 +87,7 @@ export const HomePresenter:FC = () => {
     return (
       <main className="h-auto overflow-y-scroll text-black dark:text-white text-center">
         <div className="flex flex-col items-center w-full h-full pb-12">
-          <div className="flex w-full items-center justify-center pb-8 h-1/4">
+          <div className="flex w-full items-center justify-center h-[300px] relative">
             <Canvas shadows>
               <VisualizerPresenter />
             </Canvas>
@@ -109,7 +109,7 @@ export const HomePresenter:FC = () => {
           <div className="flex-none w-full">
             <div className={tabState === "cvoxels" ? "block" : "hidden"} id="cvoxels">
                 <CVoxelsPresenter>
-                  {(!CVoxelsRecords.content?.cVoxels || CVoxelsRecords.content?.cVoxels.length===0) && (
+                  {(!txLoading && (!CVoxelsRecords.content?.cVoxels || CVoxelsRecords.content?.cVoxels.length===0)) && (
                     <NoItemPresenter text="No C-Voxels yet..." />
                   )}
                   {txLoading && (

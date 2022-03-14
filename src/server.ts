@@ -11,7 +11,7 @@ export function createRequestClient(
   ctx: GetServerSidePropsContext
 ): RequestClient<ModelTypes> {
   return new RequestClient({
-    ceramic: CERAMIC_URL || "http://localhost:7007",
+    ceramic: CERAMIC_URL || "https://ceramic-clay.3boxlabs.com",
     cookie: ctx.req.headers.cookie,
     model,
   });
