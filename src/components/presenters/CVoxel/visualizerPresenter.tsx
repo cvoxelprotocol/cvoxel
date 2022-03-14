@@ -39,14 +39,17 @@ const VisualizerPresenter: FC<Props> = (Props) => {
 
   useEffect(() => {
     setCVoxels([]);
+    const voxelsTemp: CVoxel[] = [];
     const func = async () => {
       if (Props.did != undefined) {
         console.log("did =", Props.did);
+
         for (let i = 0; i < Props.did!.length; i++) {
           const voxel = await core.tileLoader.load<CVoxel>(Props.did[i]);
-          setCVoxels([...cVoxels, voxel.content]);
+          voxelsTemp.push(voxel.content);
         }
       }
+      setCVoxels(voxelsTemp);
       console.log("useEffectnonaka", cVoxels);
     };
     func();
