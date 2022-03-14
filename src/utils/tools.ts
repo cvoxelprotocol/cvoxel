@@ -52,5 +52,5 @@ export const assertDef = <T>(
  */
 export const neverEndingPromise = <T>() => new Promise<T>(() => void 0);
 
-export const shortForAddress = (address: string, count: number) =>
-  address.substr(0, count).concat("...");
+export const shortHash = (hash: string, count: number) =>
+  hash.substr(0, count).concat("...");

@@ -1,4 +1,4 @@
-import { shortForAddress } from "./tools";
+import { shortHash } from "./tools";
 import { is } from "./typeUtils";
 import superjson from "superjson";
 
@@ -13,10 +13,10 @@ export const setDisplayName = (
   name?: string,
   count: number = 10
 ): string => {
-  if (address === name) return `LanC.User[${shortForAddress(address, count)}]`;
+  if (address === name) return `LanC.User[${shortHash(address, count)}]`;
   return name
-    ? `${name}[${shortForAddress(address, count)}]`
-    : `LanC.User[${shortForAddress(address, count)}]`;
+    ? `${name}[${shortHash(address, count)}]`
+    : `LanC.User[${shortHash(address, count)}]`;
 };
 
 export const formatFromSuperjson = <T>(object: any): T => {

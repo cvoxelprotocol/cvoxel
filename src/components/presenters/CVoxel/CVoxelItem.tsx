@@ -65,17 +65,18 @@ export const CVoxelItem: FC<Props> = ({item, did, offchainItems, onClickUpdate})
   return (
     <>
     {!(isSelected && selectedItem) ? (
-        <li className={"relative z-10 flex w-full items-center my-4 transition"} onClick={handleClick}>
-        <div
-          className={"relative flex w-full h-fit transition"}
-        >
+        <li className={"relative z-10 flex w-full items-center my-4 transition font-medium"} onClick={handleClick}>
+          <div
+            className={"relative flex w-full h-fit transition"}
+          >
           <div className="md:flex w-full space-x-2 items-center">
             <div className="flex justify-center items-center h-20 md:h-20 w-full md:w-20 ">
               <div className="relative flex justify-center items-center w-14 h-14 md:w-16 md:h-16">
                 <Image src="/voxel.png" layout="fill" alt="voxel"/>
               </div>
             </div>
-            <div className="w-full py-5 px-2 md:px-9 rounded-lg shadow-lg bg-white text-left">
+            <div className="w-full rounded-lg shadow-lg bg-white text-left px-5 py-3 ">
+              <p className="text-primary">{item.issuedTimestamp}</p>
               <h6 className="mb-3 text-xl font-bold text-black">
                 {item.summary}
               </h6>
@@ -94,20 +95,35 @@ export const CVoxelItem: FC<Props> = ({item, did, offchainItems, onClickUpdate})
             }
           >
             
-            <div className="md:flex w-full space-x-2 items-center">
+            <div className="md:flex w-full space-x-2 items-center font-medium">
               <div className="flex justify-center items-center h-20 md:h-20 w-full md:w-20 ">
                 <div className="relative flex justify-center items-center w-14 h-14 md:w-16 md:h-16">
                   <Image src="/voxel.png" layout="fill" alt="voxel"/>
                 </div>
               </div>
-              <div className="h-40 w-full py-5 px-2 md:px-9 rounded-lg shadow-lg bg-white text-left">
-                <h6 className="mb-3 text-xl font-bold text-black">
+              <div className="h-fit w-full rounded-lg shadow-lg bg-white text-left px-5 py-3 ">
+              <div className="flex w-full items-center justify-start space-x-2">
+                <p className="text-primary text-sm w-fit">{item.issuedTimestamp}</p>
+                <span
+                    className={"block px-2 py-0.5 text-xs rounded-full font-light w-max " + (cVoxelItem.content && cVoxelItem.content.toSig && cVoxelItem.content.fromSig ? "text-[#53B15C] bg-green-200": "text-[#E83838] bg-red-300")}>
+                    {cVoxelItem.content && cVoxelItem.content.toSig && cVoxelItem.content.fromSig ? "Verified": "Not Verified"}
+                </span>
+                <p></p>
+              </div>
+                <h6 className="text-xl text-black">
                   {selectedItem.summary}
                 </h6>
-                <p className="text-base text-gray-500">
+                <p className="text-base text-gray-500  px-1">
                   {selectedItem?.detail}
                 </p>
-                <p>{cVoxelItem.content && cVoxelItem.content.toSig && cVoxelItem.content.fromSig ? "Verified": "Not Verified"}</p>
+                <div className="py-5">
+                  <p className="text-base text-black">
+                    Deliverable
+                  </p>
+                  <p className="text-xs text-secondary">
+                    {selectedItem?.deliverable}
+                  </p>
+                </div>
                 {updatable && onClickUpdate && (
                   <Button
                   size="medium"

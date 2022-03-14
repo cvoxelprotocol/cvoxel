@@ -20,12 +20,8 @@ module.exports = {
         'basegray': '#C5C5C5'
       }),
       colors: {
-        text: {
-          primary: "#8E477F",
-          white: "#FFFFFF"
-        },
         // Unique Colors
-        'primary': "#EFA9E0",
+        'primary': "#8E477F",
         'primary-300': "#A66497",
         'primary-light': '#3d6be2',
         'secondary': '#EFA9E0',
@@ -47,10 +43,18 @@ module.exports = {
         'border_l': '#D88080',
         'border_r': '#DB85C8',
 
+        // Gradient factors
+        'accent_l': '#459BFF',
+        'accent_r': '#68DFD8',
+
         // Specific Colors
         'done': '#33C102',
         'progress': '#D4BD1B',
-        'suspended': '#AF1E1E'
+        'suspended': '#AF1E1E',
+        text: {
+          primary: "#8E477F",
+          white: "#FFFFFF"
+        },
       },
       dropShadow: {
         'base': '4px 4px 2px rgba(0, 0, 0, 0.25)',

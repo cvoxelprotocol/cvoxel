@@ -17,7 +17,7 @@ export const useWalletAccount = () => {
     useWeb3React<Web3Provider>();
   const authService = getAuthService();
   const cVoxelService = getCVoxelService();
-  const { showLoading, closeLoading } = useModal();
+  const { closeLoading } = useModal();
   const { lancError } = useToast();
 
   useEffect(() => {

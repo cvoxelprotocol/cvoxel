@@ -64,7 +64,6 @@ export function useVerifyCVoxel() {
           draft
         );
         if (result === "ok") {
-          console.log("success");
           lancInfo(POTENTIAL_CVOXEL_CREATION_SUCCEED);
           closeLoading();
           return true;
@@ -74,7 +73,6 @@ export function useVerifyCVoxel() {
           return false;
         }
       } catch (error) {
-        console.log("Error: ", error);
         closeLoading();
         lancError(POTENTIAL_CVOXEL_CREATION_FAILED);
         return false;
@@ -102,8 +100,6 @@ export function useVerifyCVoxel() {
         tx.detail,
         tx.deliverable
       );
-
-      console.log("sig", signature);
 
       const result = await updateDraftWighVerify(
         signature,
