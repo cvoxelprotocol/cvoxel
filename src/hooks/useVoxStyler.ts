@@ -39,12 +39,15 @@ const useVoxStyler = (cVoxels: CVoxel[]): CVoxelVisType[] => {
         /* Set vividness from value based on ETH currently */
         const sigmoidValue =
           1.0 / (1.0 + Math.exp(-sigmoid_a * parseFloat(value)));
-        lightness = sigmoidValue * 50;
-        saturation = sigmoidValue * 80;
+        //console.log("sigmoid =", sigmoidValue);
+        lightness = 100 - sigmoidValue * 50;
+        saturation = sigmoidValue * 70;
 
         /* Set hue from hoge (unassinged yet) */
         hue = 330;
-        voxelTemp["color"] = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+        voxelTemp[
+          "color"
+        ] = `hsl(${hue}, ${saturation.toFixed()}%, ${lightness.toFixed()}%)`;
 
         styledVoxel.current.push(voxelTemp);
       });

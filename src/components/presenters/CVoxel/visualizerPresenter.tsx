@@ -13,6 +13,7 @@ import {
   CVoxelThree,
   CVoxel,
   CVoxels,
+  initCVoxel,
 } from "@/interfaces/cVoxelType";
 import CVoxelPresenter from "./CVoxelPresenter";
 import useVoxStyler from "@/hooks/useVoxStyler";
@@ -23,6 +24,7 @@ import { useCore } from "@self.id/framework";
 
 type Props = {
   did?: string[];
+  account?: boolean;
 };
 
 const VisualizerPresenter: FC<Props> = (Props) => {
@@ -38,7 +40,6 @@ const VisualizerPresenter: FC<Props> = (Props) => {
   const offset = new THREE.Vector3(0, 0, 0);
 
   useEffect(() => {
-    //setCVoxels([]);
     const voxelsTemp: CVoxel[] = [];
     const func = async () => {
       if (Props.did != undefined) {
@@ -58,8 +59,14 @@ const VisualizerPresenter: FC<Props> = (Props) => {
   console.log("CVoxels =", cVoxels);
   //console.log("stackedVoxels =", stackedVoxels);
 
+  useEffect(() => {
+    if (!Props.account) {
+      setCVoxels(initCVoxel);
+    }
+  }, []);
+
   useFrame(() => {
-    cCollectionRef.current.rotation.y += 0.01;
+    cCollectionRef.current.rotation.y += 0.005;
   });
 
   return (
