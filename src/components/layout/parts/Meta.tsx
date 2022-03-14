@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import { FC } from 'react'
 
-const OGP_IMAGE="https://gateway.pinata.cloud/ipfs/QmRZ33dwbbYYYUR8oqhw8a8RWXhYPBZp2os4r88Prn8LW1"
+const OGP_IMAGE="https://testnet.cvoxel.xyz/ogp_cvoxel.jpg"
 
 interface MetaData {
     pageTitle?: string
@@ -21,7 +21,7 @@ export const Meta:FC<MetaData> = ({
   pageImgHeight
 }) => {
     const defaultTitle = 'C-Voxel'
-    const defaultDescription = 'C-Voxel - Your Own Career on Web3.0'
+    const defaultDescription = 'C-Voxel - Stack Your Own Career on Web3.0'
   
     const title = pageTitle ? `${pageTitle} | ${defaultTitle}` : defaultTitle
     const description = pageDescription ? pageDescription : defaultDescription
