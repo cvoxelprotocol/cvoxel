@@ -17,11 +17,8 @@ const useVoxStyler = (cVoxels: CVoxel[]): (CVoxelThree | undefined)[] => {
   const styledVoxel = useRef<CVoxelVisType[]>([]);
   const stackedVoxels = useRef<(CVoxelThree | undefined)[]>([]);
 
-  //console.log("stackedVoxels =", cVoxels);
 
   useEffect(() => {
-    console.log("cVoxels =", cVoxels);
-    console.log("cVoxels.length =", cVoxels.length);
     styledVoxel.current = [];
     if (cVoxels.length != 0) {
       cVoxels.forEach((voxel, i) => {
@@ -47,7 +44,6 @@ const useVoxStyler = (cVoxels: CVoxel[]): (CVoxelThree | undefined)[] => {
         /* Set vividness from value based on ETH currently */
         const sigmoidValue =
           1.0 / (1.0 + Math.exp(-sigmoid_a * parseFloat(value)));
-        //console.log("sigmoid =", sigmoidValue);
         lightness = 100 - sigmoidValue * 50;
         saturation = sigmoidValue * 70;
 
@@ -75,7 +71,6 @@ const useVoxStyler = (cVoxels: CVoxel[]): (CVoxelThree | undefined)[] => {
         break;
       }
     }
-    //console.log("rangeNum =", rangeNum);
 
     /* Set origin C-Voxel position */
     room[0].push({
@@ -90,7 +85,6 @@ const useVoxStyler = (cVoxels: CVoxel[]): (CVoxelThree | undefined)[] => {
         let tempVoxel;
 
         /* Set position of C-Voxels */
-        //console.log("room", room);
         for (let i = 0; i <= rangeNum; i++) {
           if (room[i].length != 0) {
             const seat = room[i].shift();
@@ -188,8 +182,6 @@ const useVoxStyler = (cVoxels: CVoxel[]): (CVoxelThree | undefined)[] => {
       stackedVoxels.current = [];
     }
   }, [cVoxels]);
-
-  console.log("styledVoxels =", styledVoxel.current);
   return stackedVoxels.current == undefined ? [] : stackedVoxels.current;
 };
 

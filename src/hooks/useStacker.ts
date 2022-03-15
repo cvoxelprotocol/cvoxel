@@ -30,7 +30,6 @@ const useStacker = (
         break;
       }
     }
-    //console.log("rangeNum =", rangeNum);
 
     /* Set origin C-Voxel position */
     room[0].push({
@@ -45,7 +44,6 @@ const useStacker = (
         let tempVoxel;
 
         /* Set position of C-Voxels */
-        //console.log("room", room);
         for (let i = 0; i <= rangeNum; i++) {
           if (room[i].length != 0) {
             const seat = room[i].shift();
@@ -144,7 +142,6 @@ const useStacker = (
     }
   }, [messedVoxels]);
 
-  console.log("stackedVoxels =", stackedVoxels.current);
   return stackedVoxels.current;
 };
 

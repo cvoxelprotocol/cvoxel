@@ -28,12 +28,9 @@ type Props = {
 };
 
 const VisualizerPresenter: FC<Props> = (Props) => {
-  //const CVoxelsRecords = useCVoxelsRecord(Props.did);
-  //const ids = CVoxelsRecords.content?.cVoxels.map((vox) => vox.id);
   const core = useCore();
   const [cVoxels, setCVoxels] = useState<CVoxel[]>([]);
 
-  //const voxelVis: CVoxelVisType[] = useVoxStyler(cVoxels);
   const stackedVoxels: (CVoxelThree | undefined)[] = useVoxStyler(cVoxels);
 
   const cCollectionRef = useRef<THREE.Group>(new THREE.Group());
@@ -43,7 +40,6 @@ const VisualizerPresenter: FC<Props> = (Props) => {
     const voxelsTemp: CVoxel[] = [];
     const func = async () => {
       if (Props.did != undefined) {
-        console.log("did =", Props.did);
 
         for (let i = 0; i < Props.did!.length; i++) {
           const voxel = await core.tileLoader.load<CVoxel>(Props.did[i]);
@@ -51,7 +47,6 @@ const VisualizerPresenter: FC<Props> = (Props) => {
         }
       }
       setCVoxels(voxelsTemp);
-      console.log("useEffectnonaka", cVoxels);
     };
     func();
 
@@ -60,7 +55,6 @@ const VisualizerPresenter: FC<Props> = (Props) => {
     }
   }, [Props.did, Props.account]);
 
-  console.log("CVoxels =", cVoxels);
 
 
   useFrame(() => {
