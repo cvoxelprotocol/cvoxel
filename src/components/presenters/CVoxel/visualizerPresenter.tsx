@@ -33,8 +33,8 @@ const VisualizerPresenter: FC<Props> = (Props) => {
   const core = useCore();
   const [cVoxels, setCVoxels] = useState<CVoxel[]>([]);
 
-  const voxelVis: CVoxelVisType[] = useVoxStyler(cVoxels);
-  const stackedVoxels: (CVoxelThree | undefined)[] = useStacker(voxelVis);
+  //const voxelVis: CVoxelVisType[] = useVoxStyler(cVoxels);
+  const stackedVoxels: (CVoxelThree | undefined)[] = useVoxStyler(cVoxels);
 
   const cCollectionRef = useRef<THREE.Group>(new THREE.Group());
   const offset = new THREE.Vector3(0, 0, 0);
@@ -54,16 +54,14 @@ const VisualizerPresenter: FC<Props> = (Props) => {
       console.log("useEffectnonaka", cVoxels);
     };
     func();
-  }, [Props.did]);
 
-  console.log("CVoxels =", cVoxels);
-  //console.log("stackedVoxels =", stackedVoxels);
-
-  useEffect(() => {
     if (!Props.account) {
       setCVoxels(initCVoxel);
     }
-  }, []);
+  }, [Props.did, Props.account]);
+
+  console.log("CVoxels =", cVoxels);
+
 
   useFrame(() => {
     cCollectionRef.current.rotation.y += 0.005;
