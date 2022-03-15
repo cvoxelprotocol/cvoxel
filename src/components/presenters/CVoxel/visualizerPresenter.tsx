@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { FC, useRef, useState, useMemo } from "react";
+import { FC, useRef, useState, useMemo, useEffect } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import {
   OrbitControls,
@@ -7,15 +7,66 @@ import {
   Plane,
   softShadows,
 } from "@react-three/drei";
-import { CVoxelVisType, CCubeType } from "@/interfaces/cVoxelType";
+import {
+  CVoxelVisType,
+  CCubeType,
+  CVoxelThree,
+  CVoxel,
+  CVoxels,
+  initCVoxel,
+} from "@/interfaces/cVoxelType";
 import CVoxelPresenter from "./CVoxelPresenter";
+import useVoxStyler from "@/hooks/useVoxStyler";
+import useStacker from "@/hooks/useStacker";
+import { useCVoxelRecord, useCVoxelsRecord } from "@/hooks/useCVoxel";
+import { faRectangleXmark } from "@fortawesome/free-solid-svg-icons";
+import { useCore } from "@self.id/framework";
 
-const VisualizerPresenter: FC = () => {
-  const [cCube, setCCube] = useState<CCubeType>([]);
-  const cCubeRef = useRef<THREE.Group>(new THREE.Group());
-  const offset = new THREE.Vector3(0.25, 0.25, -0.25);
+type Props = {
+  did?: string[];
+  account?: boolean;
+};
+
+const VisualizerPresenter: FC<Props> = (Props) => {
+  //const CVoxelsRecords = useCVoxelsRecord(Props.did);
+  //const ids = CVoxelsRecords.content?.cVoxels.map((vox) => vox.id);
+  const core = useCore();
+  const [cVoxels, setCVoxels] = useState<CVoxel[]>([]);
+
+  const voxelVis: CVoxelVisType[] = useVoxStyler(cVoxels);
+  const stackedVoxels: (CVoxelThree | undefined)[] = useStacker(voxelVis);
+
+  const cCollectionRef = useRef<THREE.Group>(new THREE.Group());
+  const offset = new THREE.Vector3(0, 0, 0);
+
+  useEffect(() => {
+    const voxelsTemp: CVoxel[] = [];
+    const func = async () => {
+      if (Props.did != undefined) {
+        console.log("did =", Props.did);
+
+        for (let i = 0; i < Props.did!.length; i++) {
+          const voxel = await core.tileLoader.load<CVoxel>(Props.did[i]);
+          voxelsTemp.push(voxel.content);
+        }
+      }
+      setCVoxels(voxelsTemp);
+      console.log("useEffectnonaka", cVoxels);
+    };
+    func();
+  }, [Props.did]);
+
+  console.log("CVoxels =", cVoxels);
+  //console.log("stackedVoxels =", stackedVoxels);
+
+  useEffect(() => {
+    if (!Props.account) {
+      setCVoxels(initCVoxel);
+    }
+  }, []);
+
   useFrame(() => {
-    cCubeRef.current.rotation.y += 0.01;
+    cCollectionRef.current.rotation.y += 0.005;
   });
 
   return (
@@ -52,71 +103,12 @@ const VisualizerPresenter: FC = () => {
       >
         <meshBasicMaterial color={"white"} opacity={0.5} />
       </Plane> */}
-      <group ref={cCubeRef} position={[0, 0, 0]}>
-        <CVoxelPresenter
-          position={new THREE.Vector3(0, 0, 0)}
-          offset={offset}
-          color={"hsl(330, 70%, 50%)"}
-          lattice
-          scale={1}
-          opacity={1}
-        />
-        <CVoxelPresenter
-          position={new THREE.Vector3(1, 0, 0)}
-          offset={offset}
-          color={"hsl(330, 70%, 50%)"}
-          lattice={false}
-          scale={1}
-          opacity={1}
-        />
-        <CVoxelPresenter
-          position={new THREE.Vector3(1, 0, -1)}
-          offset={offset}
-          color={"hsl(20, 70%, 50%)"}
-          lattice={false}
-          scale={1}
-          opacity={1}
-        />
-        <CVoxelPresenter
-          position={new THREE.Vector3(0, 0, -1)}
-          offset={offset}
-          color={"hsl(100, 70%, 50%)"}
-          lattice={false}
-          scale={1}
-          opacity={1}
-        />
-        <CVoxelPresenter
-          position={new THREE.Vector3(0, 1, 0)}
-          offset={offset}
-          color={"hsl(200, 70%, 50%)"}
-          lattice={false}
-          scale={1}
-          opacity={1}
-        />
-        <CVoxelPresenter
-          position={new THREE.Vector3(1, 1, 0)}
-          offset={offset}
-          color={"hsl(200, 70%, 50%)"}
-          lattice={false}
-          scale={1}
-          opacity={1}
-        />
-        <CVoxelPresenter
-          position={new THREE.Vector3(1, 1, -1)}
-          offset={offset}
-          color={"hsl(280, 70%, 50%)"}
-          lattice={false}
-          scale={1}
-          opacity={0.3}
-        />
-        <CVoxelPresenter
-          position={new THREE.Vector3(0, 1, -1)}
-          offset={offset}
-          color={"hsl(70, 70%, 50%)"}
-          lattice={false}
-          scale={1}
-          opacity={1}
-        />
+      <group ref={cCollectionRef} position={[0, 0, 0]}>
+        {stackedVoxels.map((voxel, i) =>
+          voxel !== undefined ? (
+            <CVoxelPresenter {...voxel} key={i} />
+          ) : undefined
+        )}
       </group>
       <PerspectiveCamera makeDefault position={[10, 6, 10]} />
     </>

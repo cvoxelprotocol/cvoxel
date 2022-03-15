@@ -1,10 +1,15 @@
+import Image from "next/image";
 import { useCVoxelsRecord } from "@/hooks/useCVoxel";
-import { FC, useCallback, useMemo, useState} from "react";
+import { FC, useCallback, useMemo, useState } from "react";
 import { CVoxelItem } from "../CVoxel/CVoxelItem";
 import CVoxelsPresenter from "../CVoxel/CVoxelsPresenter";
-import { useConnection } from '@self.id/framework'
+import { RequestState, useConnection } from "@self.id/framework";
 import { Canvas } from "@react-three/fiber";
-import { CVoxel, CVoxelItem as ICVoxelItem, CVoxelMetaDraft } from "@/interfaces/cVoxelType";
+import {
+  CVoxel,
+  CVoxelItem as ICVoxelItem,
+  CVoxelMetaDraft,
+} from "@/interfaces/cVoxelType";
 import VisualizerPresenter from "../CVoxel/visualizerPresenter";
 import { useMyCeramicAcount } from "@/hooks/useCeramicAcount";
 import ProfileCardPresenter from "../profile/ProfileCardPresenter";
@@ -17,7 +22,7 @@ import { formatBigNumber } from "@/utils/ethersUtil";
 import { TransactionLog } from "@/interfaces/explore";
 import { useForm } from "react-hook-form";
 import { useDraftCVoxel } from "@/hooks/useDraftCVoxel";
-import Button from '@/components/presenters/common/button/Button'
+import Button from "@/components/presenters/common/button/Button";
 import { useVerifyCVoxel } from "@/hooks/useVerifyCVoxel";
 import { CommonLoading } from "../common/CommonLoading";
 import { ModelTypes } from "@datamodels/identity-profile-basic";
@@ -25,87 +30,91 @@ import { TransactionItem } from "../transactions/TransactionItem";
 import { SigRequestItem } from "../requests/SigRequestItem";
 import { SigButton } from "../common/button/SigButton";
 
-export const HomePresenter:FC = () => {
-  const {connection, did, name, avator, account} = useMyCeramicAcount()
+export const HomePresenter: FC = () => {
+  const { connection, did, name, avator, account } = useMyCeramicAcount();
   const connect = useConnection<ModelTypes>()[1];
-  const {potentialTxes, offchainMetaList, txLoading,offchainLoading } = useCVoxelList()
-  const CVoxelsRecords = useCVoxelsRecord(did)
-  const [selectedTx, selectTx] = useState<TransactionLog | null>(null)
-  const {tabState, setTabState} = useTab()
-  const draft = useDraftCVoxel()
-  const {verifyCVoxel, createDraftWithVerify} = useVerifyCVoxel()
+  const { potentialTxes, offchainMetaList, txLoading, offchainLoading } =
+    useCVoxelList();
+  const CVoxelsRecords = useCVoxelsRecord(did);
+  const [selectedTx, selectTx] = useState<TransactionLog | null>(null);
+  const { tabState, setTabState } = useTab();
+  const draft = useDraftCVoxel();
+  const { verifyCVoxel, createDraftWithVerify } = useVerifyCVoxel();
 
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<CVoxel>({defaultValues: draft.defaultVal});
-      const onSubmit = (data:any) => {
-          publish(data)
-      }
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<CVoxel>({ defaultValues: draft.defaultVal });
+  const onSubmit = (data: any) => {
+    publish(data);
+  };
 
-    const publish = useCallback(async (data:CVoxel) => {
-      if(!(selectedTx && account)) return
-      if(account?.toLowerCase()===selectedTx.from.toLowerCase() ) {
+  const publish = useCallback(
+    async (data: CVoxel) => {
+      if (!(selectedTx && account)) return;
+      if (account?.toLowerCase() === selectedTx.from.toLowerCase()) {
         // only create draft
-        const result = await createDraftWithVerify(data, selectedTx, account)
-        if(result){
-          selectTx(null)
+        const result = await createDraftWithVerify(data, selectedTx, account);
+        if (result) {
+          selectTx(null);
         }
-        return
+        return;
       } else {
-        const result = await draft.publish(data, selectedTx, account)
-        if(result){
-          selectTx(null)
-          reset(draft.defaultVal)
-          setTabState('cvoxels');
+        const result = await draft.publish(data, selectedTx, account);
+        if (result) {
+          selectTx(null);
+          reset(draft.defaultVal);
+          setTabState("cvoxels");
         }
       }
-    }, [draft])
+    },
+    [draft]
+  );
 
-    const verify = async(tx:CVoxelMetaDraft) => {
-      await verifyCVoxel(tx)
-    }
+  const verify = async (tx: CVoxelMetaDraft) => {
+    await verifyCVoxel(tx);
+  };
 
-    const updateCVoxel = (item: ICVoxelItem) => {
-      console.log("Hi")
-    }
+  const updateCVoxel = (item: ICVoxelItem) => {
+    console.log("Hi");
+  };
 
-    const selectedOffchainItem = useMemo(() => {
-      if(!selectedTx) return null
-      return offchainMetaList?.find(meta => meta.txHash===selectedTx.hash)
-    },[selectedTx, offchainMetaList])
+  const selectedOffchainItem = useMemo(() => {
+    if (!selectedTx) return null;
+    return offchainMetaList?.find((meta) => meta.txHash === selectedTx.hash);
+  }, [selectedTx, offchainMetaList]);
 
-    const sortCVoxels = useMemo(() => {
-      if(!CVoxelsRecords.content) return []
-      return CVoxelsRecords.content.cVoxels.sort((a, b) => {
-        return Number(a.issuedTimestamp) >
-        Number(b.issuedTimestamp)
-          ? -1
-          : 1;
-      });
+  const sortCVoxels = useMemo(() => {
+    if (!CVoxelsRecords.content) return [];
+    return CVoxelsRecords.content.cVoxels.sort((a, b) => {
+      return Number(a.issuedTimestamp) > Number(b.issuedTimestamp) ? -1 : 1;
+    });
+  }, [CVoxelsRecords]);
 
-    },[CVoxelsRecords])
-    
-
-    return (
-      <main className="h-auto overflow-y-scroll text-black dark:text-white text-center">
-        <div className="flex flex-col items-center w-full h-full pb-12">
-          <div className="flex w-full items-center justify-center h-[300px] relative">
-            <Canvas shadows>
-              <VisualizerPresenter />
-            </Canvas>
-          </div>
-          <div className="flex-none mb-12 w-full max-w-[720px]">
-            {!account && (
-              <ConnectWalletButton />
-            )}
-            {(account && !did) && (
-              <ProfileCardPresenter name={account}/>
-            )}
-            {(account && did && name) && (
-              <ProfileCardPresenter name={name} avator={avator}/>
-            )}
-          </div>
-          <div className="flex-none w-full max-w-[720px]">
-            <HomeTabsHeader />
-          </div>
+  return (
+    <main className="h-auto overflow-y-scroll text-black dark:text-white text-center">
+      <div className="flex flex-col items-center w-full h-full pb-12">
+        <div className="flex w-full items-center justify-center h-[700px] relative">
+          <Canvas shadows>
+            <VisualizerPresenter
+              did={CVoxelsRecords.content?.cVoxels.map((vox, key) => vox.id)}
+              account={account ? true : false }
+            />
+          </Canvas>
+        </div>
+        <div className="flex-none mb-12 w-full max-w-[720px]">
+          {!account && <ConnectWalletButton />}
+          {account && !did && <ProfileCardPresenter name={account} />}
+          {account && did && name && (
+            <ProfileCardPresenter name={name} avator={avator} />
+          )}
+        </div>
+        <div className="flex-none w-full max-w-[720px]">
+          <HomeTabsHeader />
+        </div>
+        
           <div className="flex-none w-full">
             <div className={tabState === "cvoxels" ? "block" : "hidden"} id="cvoxels">
                 <CVoxelsPresenter>
@@ -286,6 +295,8 @@ export const HomePresenter:FC = () => {
               </div>
           </div>
         </div>
+
+      
       </main>
     )
 
