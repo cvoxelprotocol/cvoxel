@@ -7,7 +7,6 @@ import { useModal } from "./useModal";
 import { useToast } from "./useToast";
 import type { User } from "@/interfaces";
 import { useWalletAccount } from "./useWalletAccount";
-import { useEffect } from "react";
 
 export const useAuth = () => {
   const [userAuth, setUserAuth] = useStateUserAuth();
@@ -29,7 +28,6 @@ export const useAuth = () => {
           resolve(user);
         });
       } catch (error) {
-        console.log("login error ", error);
         lancError();
         reject(error);
       }

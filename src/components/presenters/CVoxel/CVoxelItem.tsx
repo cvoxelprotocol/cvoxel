@@ -14,10 +14,9 @@ type Props = {
   did: string
   item: ICVoxelItem
   offchainItems?: CVoxelMetaDraft[]
-  onClickUpdate?: (item: ICVoxelItem) => void
 };
 
-export const CVoxelItem: FC<Props> = ({item, did, offchainItems, onClickUpdate}) => {
+export const CVoxelItem: FC<Props> = ({item, did, offchainItems}) => {
   const [selectedItem, setSelectedItem] = useStateSelectedItem();
   const [connection, connect] = useConnection();
   const cVoxelItem = useCVoxelRecord(item.id)
@@ -122,7 +121,7 @@ export const CVoxelItem: FC<Props> = ({item, did, offchainItems, onClickUpdate})
                   </div>
                 </div>
                 <div className="w-full text-right">
-                  {updatable && onClickUpdate && (
+                  {updatable && (
                       <Button
                         size="medium"
                         variant="contained"

@@ -1,12 +1,10 @@
 import { ProfileCard } from "@/components/containers/profile/ProfileCard";
-import Image from "next/image";
 import { useCVoxelsRecord } from "@/hooks/useCVoxel";
 import { FC } from "react";
 import { CVoxelItem } from "../CVoxel/CVoxelItem";
 import CVoxelsPresenter from "../CVoxel/CVoxelsPresenter";
 import type { RequestState } from "@self.id/framework";
 import { Canvas } from "@react-three/fiber";
-import { CVoxelItem as ICVoxelItem } from "@/interfaces/cVoxelType";
 import VisualizerPresenter from "../CVoxel/visualizerPresenter";
 type Props = {
   did: string;
@@ -15,10 +13,6 @@ type Props = {
 
 export const ProfilePresenter: FC<Props> = ({ did }) => {
   const CVoxelsRecords = useCVoxelsRecord(did);
-
-  const handleClick = (item: ICVoxelItem) => {
-    console.log(item);
-  };
 
   return (
     <main className="h-screen text-white">

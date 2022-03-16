@@ -13,14 +13,14 @@ export const Footer:FC = () => {
                 <a　className="text-gray-600 hover:text-gray-800 text-sm font-semibold py-1">C-Voxel.</a>
               </div>
             </div>
-            <div className="md:flex">
+            {/* <div className="md:flex">
               <p　className="px-2 py-1">
                 <a className="text-sm text-gray-600" href="" target="_blank">Terms</a>
               </p>
               <p　className="px-2 py-1">
                 <a className="text-sm text-gray-600" href="" target="_blank">Privacy</a>
               </p>
-            </div>
+            </div> */}
           </div>
         </div>
       </footer>

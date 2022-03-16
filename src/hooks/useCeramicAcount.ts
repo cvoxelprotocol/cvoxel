@@ -70,13 +70,11 @@ export const useMyCeramicAcount = () => {
         }
       }
     }
-
     getTempDIDProfile();
   }, [account, did]);
 
   const connectCeramic = async () => {
     const id = await connect();
-    console.log("setSelfID", id);
     setSelfID(id);
     await connectWallet();
   };

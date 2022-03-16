@@ -1,5 +1,4 @@
 import { FC } from "hoist-non-react-statics/node_modules/@types/react";
-import { type } from "os";
 
 type SigButtonProps = {
     text: string

@@ -9,15 +9,11 @@ import {
   createDraftWighVerify,
   updateDraftWighVerify,
 } from "@/lib/firebase/functions/verify";
-import { createCVoxelDraft } from "@/lib/firebase/store/meta";
 import { getCVoxelService } from "@/services/CVoxel/CVoxelService";
 import { useConnection, useViewerRecord } from "@self.id/framework";
 import { Web3Provider } from "@self.id/multiauth";
 import { useWeb3React } from "@web3-react/core";
-import { useAtom } from "jotai";
 import { useCallback } from "react";
-
-import { draftCVoxelAtom } from "../state";
 import type {
   CVoxel,
   CVoxelMetaDraft,
@@ -30,8 +26,6 @@ import { useToast } from "./useToast";
 export function useVerifyCVoxel() {
   const { chainId, account } = useWeb3React<Web3Provider>();
   const { isLoading, showLoading, closeLoading } = useModal();
-  const connect = useConnection<ModelTypes>()[1];
-  const cVoxelsRecord = useViewerRecord<ModelTypes, "cVoxels">("cVoxels");
   const cVoxelService = getCVoxelService();
   const { createDraftObjectWithSig } = useDraftCVoxel();
   const { lancInfo, lancError } = useToast();
@@ -53,11 +47,6 @@ export function useVerifyCVoxel() {
           selectedTx,
           address
         );
-
-        // const signature =
-        //   address.toLowerCase() === draft.to.toLowerCase()
-        //     ? draft.toSig
-        //     : draft.fromSig;
 
         const result = await createDraftWighVerify(
           address.toLowerCase(),

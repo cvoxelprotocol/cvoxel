@@ -71,8 +71,6 @@ export const getCVoxelSignature = async (
     deliverable
   );
 
-  console.log("messageForSign", messageForSign);
-
   // const hash = ethers.utils.keccak256(ethers.utils.toUtf8Bytes(messageForSign));
   // const hashBin = ethers.utils.arrayify(hash);
   // const messageHashBinary = ethers.utils.arrayify(hash);

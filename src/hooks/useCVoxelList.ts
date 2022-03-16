@@ -1,4 +1,4 @@
-import { EtherscanResult, TransactionLog } from "@/interfaces/explore";
+import { TransactionLog } from "@/interfaces/explore";
 import { offchainCVoxelMetaFetcher } from "@/services/fetcher/CVoxelMetaFetcher";
 import { etherscanTxListFetcher } from "@/services/fetcher/EtherscanFetcher";
 import { CVoxelMetaDraft } from "@/interfaces";
@@ -26,7 +26,6 @@ export const useCVoxelList = () => {
   });
 
   useEffect(() => {
-    console.log("cv list account", account);
     if (account && !address) {
       setAddress(account);
     }
@@ -38,10 +37,6 @@ export const useCVoxelList = () => {
       // setPotentialTxes(txes);
     }
   }, [txes]);
-
-  useEffect(() => {
-    console.log("offchainMetaList", offchainMetaList);
-  }, [offchainMetaList]);
 
   const filterTxes = (txes: TransactionLog[]): TransactionLog[] => {
     return txes.filter((tx) => Number(tx.value) > 0);

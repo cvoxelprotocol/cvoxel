@@ -1,6 +1,6 @@
 import { useMyCeramicAcount } from '@/hooks/useCeramicAcount'
-import { AvatarPlaceholder, useConnection, useViewerID, useViewerRecord } from '@self.id/framework'
-import { Avatar, Box, Button, DropButton, Text } from 'grommet'
+import { AvatarPlaceholder, useViewerID, useViewerRecord } from '@self.id/framework'
+import { Avatar, Button, DropButton } from 'grommet'
 import Link from 'next/link'
 import { useState } from 'react'
 
@@ -41,23 +41,16 @@ export default function AccountButton() {
       connection.status === 'connected' ? (
         <>
           <MenuButton label="Disconnect" onClick={() => disconnectCeramic()} />
-          <div>
+          {/* <div>
             <ThemeButton />
-          </div>
+          </div> */}
         </>
       ) : (
         <>
-          <MenuButton
-            label="Connect"
-            onClick={() => {
-              connectCeramic()
-              setMenuOpen(false)
-            }}
-          />
-          <MenuButton label="Clear" onClick={() => disconnectCeramic()} />
-          <div>
+          <MenuButton label="Disconnect Wallet" onClick={() => disconnectCeramic()} />
+          {/* <div>
             <ThemeButton />
-          </div>
+          </div> */}
         </>
       )
 
@@ -78,14 +71,14 @@ export default function AccountButton() {
           </p>
         </div>
         <div className="rounded-lg space-y-2">
-          <div className="">
+          {/* <div className="">
             <Link href={`/${viewerID.id}`} passHref>
               <button
                 onClick={() => {
                   setMenuOpen(false)
                 }}><p className="text-sm">My CVoxels</p></button>
             </Link>
-          </div>
+          </div> */}
           {buttons}
         </div>
       </div>

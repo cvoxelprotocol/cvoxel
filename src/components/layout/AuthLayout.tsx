@@ -8,8 +8,6 @@ import { useWalletAccount } from "@/hooks/useWalletAccount";
 export const AuthLayout:FC = ({children}) => {
     const {setUserAuth, userAuth} = useAuth()
     const {disconnectWallet, active} = useWalletAccount()
-    // const router = useRouter()
-    // const path = router.pathname === "/auth/login" ? "/auth/login" : `/auth/login?rPath=${router.pathname}`
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async(u) => {

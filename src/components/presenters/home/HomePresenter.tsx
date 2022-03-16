@@ -75,10 +75,6 @@ export const HomePresenter: FC = () => {
     await verifyCVoxel(tx);
   };
 
-  const updateCVoxel = (item: ICVoxelItem) => {
-    console.log("Hi");
-  };
-
   const selectedOffchainItem = useMemo(() => {
     if (!selectedTx) return null;
     return offchainMetaList?.find((meta) => meta.txHash === selectedTx.hash);
@@ -129,7 +125,6 @@ export const HomePresenter: FC = () => {
                             item={item}
                             offchainItems={offchainMetaList}
                             key={item.id}
-                            onClickUpdate={updateCVoxel}
                           />
                       )
                   })}

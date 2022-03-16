@@ -1,14 +1,8 @@
 import { TransactionLog } from "@/interfaces/explore";
 import { createDraftWighVerify } from "@/lib/firebase/functions/verify";
-import { createCVoxelDraft } from "@/lib/firebase/store/meta";
 import { getCVoxelService } from "@/services/CVoxel/CVoxelService";
-import {
-  useConnection,
-  useViewerRecord,
-  useViewerID,
-} from "@self.id/framework";
+import { useConnection, useViewerRecord } from "@self.id/framework";
 import { Web3Provider } from "@self.id/multiauth";
-import { useViewerConnection } from "@self.id/react";
 import { useWeb3React } from "@web3-react/core";
 import { useAtom } from "jotai";
 import { useCallback } from "react";
@@ -20,9 +14,7 @@ import type {
   CVoxelMetaDraft,
   ModelTypes,
 } from "@/interfaces/cVoxelType";
-import { useAuth } from "./useAuth";
 import { useModal } from "./useModal";
-import type { SelfID } from "@self.id/web";
 import { useToast } from "./useToast";
 import {
   CVOXEL_CREATION_FAILED,
@@ -86,8 +78,6 @@ export function useDraftCVoxel() {
             },
           ],
         });
-
-        // const cVoxelPage = `/${selfID.id}/voxel/${doc.id.toString()}`;
         closeLoading();
         lancInfo(CVOXEL_CREATION_SUCCEED);
         return true;
@@ -118,7 +108,6 @@ export function useDraftCVoxel() {
       detail,
       deliverable
     );
-    console.log("signature", signature.toString());
 
     // create metadata
     // if from address is contract address and gnosissafe treasury, use following api and get owners as potentialClient

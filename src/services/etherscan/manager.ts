@@ -27,7 +27,6 @@ export const getTransactionsFromExlore = (
 ): Promise<any> =>
   new Promise(async (resolve, reject) => {
     try {
-      console.log("action", action);
       const url = etherscanManager(
         "account",
         action,
