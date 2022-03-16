@@ -12,18 +12,14 @@ import {
   CCubeType,
   CVoxelThree,
   CVoxel,
-  CVoxels,
-  initCVoxel,
 } from "@/interfaces/cVoxelType";
 import CVoxelPresenter from "./CVoxelPresenter";
 import useVoxStyler from "@/hooks/useVoxStyler";
-import useStacker from "@/hooks/useStacker";
-import { useCVoxelRecord, useCVoxelsRecord } from "@/hooks/useCVoxel";
-import { faRectangleXmark } from "@fortawesome/free-solid-svg-icons";
 import { useCore } from "@self.id/framework";
+import { initCVoxel } from "@/constants/cVoxel";
 
 type Props = {
-  did?: string[];
+  ids?: string[];
   account?: boolean;
 };
 
@@ -38,22 +34,20 @@ const VisualizerPresenter: FC<Props> = (Props) => {
 
   useEffect(() => {
     const voxelsTemp: CVoxel[] = [];
-    const func = async () => {
-      if (Props.did != undefined) {
+    const loadVoxels = async () => {
+      if (Props.ids != undefined) {
 
-        for (let i = 0; i < Props.did!.length; i++) {
-          const voxel = await core.tileLoader.load<CVoxel>(Props.did[i]);
+        for (let i = 0; i < Props.ids!.length; i++) {
+          const voxel = await core.tileLoader.load<CVoxel>(Props.ids[i]);
           voxelsTemp.push(voxel.content);
         }
       }
       setCVoxels(voxelsTemp);
     };
-    func();
-
-    if (!Props.account) {
-      setCVoxels(initCVoxel);
-    }
-  }, [Props.did, Props.account]);
+    
+    Props.account ? loadVoxels() : setCVoxels(initCVoxel);
+    
+  }, [Props.ids, Props.account]);
 
 
 

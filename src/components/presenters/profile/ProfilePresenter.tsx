@@ -29,7 +29,7 @@ export const ProfilePresenter: FC<Props> = ({ did }) => {
               </div> */}
           <Canvas shadows>
             <VisualizerPresenter
-              did={CVoxelsRecords.content?.cVoxels.map((vox) => vox.id)}
+              ids={CVoxelsRecords.content?.cVoxels.map((vox) => vox.id)}
             />
           </Canvas>
         </div>

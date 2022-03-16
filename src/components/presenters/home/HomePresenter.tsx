@@ -1,9 +1,8 @@
-import Image from "next/image";
 import { useCVoxelsRecord } from "@/hooks/useCVoxel";
 import { FC, useCallback, useMemo, useState } from "react";
 import { CVoxelItem } from "../CVoxel/CVoxelItem";
 import CVoxelsPresenter from "../CVoxel/CVoxelsPresenter";
-import { RequestState, useConnection } from "@self.id/framework";
+import { useConnection } from "@self.id/framework";
 import { Canvas } from "@react-three/fiber";
 import {
   CVoxel,
@@ -96,11 +95,11 @@ export const HomePresenter: FC = () => {
   return (
     <main className="h-auto overflow-y-scroll text-black dark:text-white text-center">
       <div className="flex flex-col items-center w-full h-full pb-12">
-        <div className="flex w-full items-center justify-center h-[700px] relative">
+        <div className="flex w-full items-center justify-center h-[450px] md:h-[700px] relative">
           <Canvas shadows>
             <VisualizerPresenter
-              did={CVoxelsRecords.content?.cVoxels.map((vox, key) => vox.id)}
-              account={account ? true : false }
+              ids={CVoxelsRecords.content?.cVoxels.map((vox, key) => vox.id)}
+              account={!!account}
             />
           </Canvas>
         </div>
