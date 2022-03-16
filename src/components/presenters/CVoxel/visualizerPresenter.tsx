@@ -45,7 +45,11 @@ const VisualizerPresenter: FC<Props> = (Props) => {
       setCVoxels(voxelsTemp);
     };
     
-    Props.account ? loadVoxels() : setCVoxels(initCVoxel);
+    if (!Props.account || Props.ids?.length==0){
+      setCVoxels(initCVoxel);
+    } else {
+      loadVoxels();
+    }
     
   }, [Props.ids, Props.account]);
 
