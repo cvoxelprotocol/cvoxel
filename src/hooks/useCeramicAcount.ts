@@ -1,8 +1,6 @@
 import { core } from "@/services/ceramic/CeramicService";
-import { isEthAddress } from "@ceramicnetwork/blockchain-utils-linking/lib/ethereum";
 import {
   useConnection,
-  isCAIP10string,
   useViewerID,
   useViewerRecord,
   usePublicRecord,

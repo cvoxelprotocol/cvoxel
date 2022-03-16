@@ -1,8 +1,6 @@
 import * as THREE from "three";
-import { FC, useRef, useState, useMemo, useEffect } from "react";
-import { Canvas, MeshProps, useFrame, Vector3 } from "@react-three/fiber";
-import { Line, OrbitControls, softShadows } from "@react-three/drei";
-import { CVoxelVisType } from "@/interfaces/cVoxelType";
+import { FC, useState, useMemo, useEffect } from "react";
+import { Line } from "@react-three/drei";
 
 type Props = {
   width: number;

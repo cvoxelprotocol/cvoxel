@@ -1,7 +1,6 @@
-import { useEffect, useState, useRef, useMemo } from "react";
+import { useEffect, useRef } from "react";
 import { CVoxelThree, CVoxelVisType } from "@/interfaces/cVoxelType";
 import * as THREE from "three";
-import { stack } from "react-burger-menu";
 
 type RoomType = {
   position: THREE.Vector3;
@@ -11,8 +10,6 @@ type RoomType = {
 const useStacker = (
   messedVoxels: CVoxelVisType[]
 ): (CVoxelThree | undefined)[] => {
-  //const stackedVoxels = useRef<(CVoxelThree | undefined)[]>([]);
-
   const stackedVoxels = useRef<(CVoxelThree | undefined)[]>([]);
 
   useEffect(() => {

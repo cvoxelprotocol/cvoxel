@@ -10,15 +10,10 @@ import {
   updateDraftWighVerify,
 } from "@/lib/firebase/functions/verify";
 import { getCVoxelService } from "@/services/CVoxel/CVoxelService";
-import { useConnection, useViewerRecord } from "@self.id/framework";
 import { Web3Provider } from "@self.id/multiauth";
 import { useWeb3React } from "@web3-react/core";
 import { useCallback } from "react";
-import type {
-  CVoxel,
-  CVoxelMetaDraft,
-  ModelTypes,
-} from "@/interfaces/cVoxelType";
+import type { CVoxel, CVoxelMetaDraft } from "@/interfaces/cVoxelType";
 import { useDraftCVoxel } from "./useDraftCVoxel";
 import { useModal } from "./useModal";
 import { useToast } from "./useToast";

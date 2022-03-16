@@ -18,9 +18,6 @@ export const ProfilePresenter: FC<Props> = ({ did }) => {
     <main className="h-screen text-white">
       <div className="flex flex-col items-center w-full h-full mt-20 md:mt-0 pb-12">
         <div className="flex w-full items-center justify-center pb-8">
-          {/* <div className="relative flex justify-center items-center w-24 h-24 md:w-48 md:h-48">
-                <Image src="/voxels.png"layout="fill" alt="voxel"/>
-              </div> */}
           <Canvas shadows>
             <VisualizerPresenter
               ids={CVoxelsRecords.content?.cVoxels.map((vox) => vox.id)}

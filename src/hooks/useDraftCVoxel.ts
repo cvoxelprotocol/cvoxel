@@ -26,8 +26,6 @@ export function useDraftCVoxel() {
   const connect = useConnection<ModelTypes>()[1];
   const cVoxelsRecord = useViewerRecord<ModelTypes, "cVoxels">("cVoxels");
   const [defaultVal, _] = useAtom(draftCVoxelAtom);
-  // const resetValue = useResetAtom(draftCVoxelAtom);
-  // const [state, setState] = useAtom(editionStateAtom);
   const { isLoading, showLoading, closeLoading } = useModal();
   const cVoxelService = getCVoxelService();
   const { lancInfo, lancError } = useToast();

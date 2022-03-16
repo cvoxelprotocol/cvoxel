@@ -6,7 +6,6 @@ import { useConnection } from "@self.id/framework";
 import { Canvas } from "@react-three/fiber";
 import {
   CVoxel,
-  CVoxelItem as ICVoxelItem,
   CVoxelMetaDraft,
 } from "@/interfaces/cVoxelType";
 import VisualizerPresenter from "../CVoxel/visualizerPresenter";

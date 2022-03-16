@@ -1,10 +1,7 @@
 import * as THREE from "three";
 import { FC, useRef, useState, useMemo } from "react";
-import { Canvas, MeshProps, useFrame, Vector3 } from "@react-three/fiber";
-import { OrbitControls, softShadows } from "@react-three/drei";
 import { CVoxelVisType } from "@/interfaces/cVoxelType";
 import LineBox from "./LineBox";
-import { Position } from "@react-three/drei/helpers/Position";
 
 type Props = {
   position: THREE.Vector3;
