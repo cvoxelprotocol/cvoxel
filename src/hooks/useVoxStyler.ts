@@ -1,10 +1,7 @@
-import { Vector3, Color } from "three";
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { CVoxel, CVoxelThree, CVoxelVisType } from "@/interfaces/cVoxelType";
 import * as THREE from "three";
-import { isDataView } from "util/types";
-import styled from "styled-components";
-
+import { useCallback } from "react";
 
 type RoomType = {
   position: THREE.Vector3;
@@ -13,13 +10,14 @@ type RoomType = {
 
 const sigmoid_a: number = 1;
 
-const useVoxStyler = (cVoxels: CVoxel[]): (CVoxelThree | undefined)[] => {
-  const styledVoxel = useRef<CVoxelVisType[]>([]);
-  const stackedVoxels = useRef<(CVoxelThree | undefined)[]>([]);
+export const useVoxStyler = (cVoxels: CVoxel[]) => {
+  const [cvoxelsForDisplay, setCvoxelsForDisplay] = useState<
+    (CVoxelThree | undefined)[]
+  >([]);
 
-
-  useEffect(() => {
-    styledVoxel.current = [];
+  const convertCVoxelsForDisplay = useCallback(() => {
+    const styledVoxel: CVoxelVisType[] = [];
+    let stackedVoxels: (CVoxelThree | undefined)[] = [];
     if (cVoxels.length != 0) {
       cVoxels.forEach((voxel, i) => {
         let voxelTemp: CVoxelVisType = {
@@ -53,15 +51,14 @@ const useVoxStyler = (cVoxels: CVoxel[]): (CVoxelThree | undefined)[] => {
           "color"
         ] = `hsl(${hue}, ${saturation.toFixed()}%, ${lightness.toFixed()}%)`;
 
-        styledVoxel.current.push(voxelTemp);
+        styledVoxel.push(voxelTemp);
       });
     }
 
     const room: RoomType = [];
     const sitList: THREE.Vector3[] = [];
-    const voxelNum = styledVoxel.current.length;
+    const voxelNum = styledVoxel.length;
     let rangeNum = 0;
-    stackedVoxels.current = [];
     /* Measure the range of C-Voxel Collection */
     for (let i = 0; ; i++) {
       room.push([]);
@@ -79,11 +76,10 @@ const useVoxStyler = (cVoxels: CVoxel[]): (CVoxelThree | undefined)[] => {
     });
 
     /* Stack C-Voxels if one or more C-Voxels exist */
-    if (rangeNum && stackedVoxels.current !== undefined) {
+    if (rangeNum) {
       /* Start Stacking Iteration */
-      stackedVoxels.current = styledVoxel.current.map((mVoxel, i) => {
+      const newStackedVoxels = styledVoxel.map((mVoxel) => {
         let tempVoxel;
-
         /* Set position of C-Voxels */
         for (let i = 0; i <= rangeNum; i++) {
           if (room[i].length != 0) {
@@ -96,8 +92,7 @@ const useVoxStyler = (cVoxels: CVoxel[]): (CVoxelThree | undefined)[] => {
 
             /* Prepare new seat */
             for (let x = 0; x < 2; x++) {
-              let newSeat: THREE.Vector3;
-              newSeat =
+              let newSeat: THREE.Vector3 =
                 x == 0
                   ? new THREE.Vector3(
                       seat!.position.x + 1,
@@ -122,8 +117,7 @@ const useVoxStyler = (cVoxels: CVoxel[]): (CVoxelThree | undefined)[] => {
             }
             /* Prepare new seat */
             for (let y = 0; y < 2; y++) {
-              let newSeat: THREE.Vector3;
-              newSeat =
+              let newSeat: THREE.Vector3 =
                 y == 0
                   ? new THREE.Vector3(
                       seat!.position.x,
@@ -178,11 +172,10 @@ const useVoxStyler = (cVoxels: CVoxel[]): (CVoxelThree | undefined)[] => {
 
         return tempVoxel;
       });
-    } else if (!rangeNum) {
-      stackedVoxels.current = [];
+      stackedVoxels = [...newStackedVoxels];
     }
+    setCvoxelsForDisplay(stackedVoxels);
   }, [cVoxels]);
-  return stackedVoxels.current == undefined ? [] : stackedVoxels.current;
-};
 
-export default useVoxStyler;
+  return { cvoxelsForDisplay, convertCVoxelsForDisplay };
+};

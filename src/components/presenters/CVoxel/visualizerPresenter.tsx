@@ -1,57 +1,52 @@
 import * as THREE from "three";
-import { FC, useRef, useState, useMemo, useEffect } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
+import { FC, useRef, useState, useEffect } from "react";
+import { useFrame } from "@react-three/fiber";
 import {
   OrbitControls,
   PerspectiveCamera,
   Plane,
-  softShadows,
 } from "@react-three/drei";
-import {
-  CVoxelVisType,
-  CCubeType,
-  CVoxelThree,
-  CVoxel,
-} from "@/interfaces/cVoxelType";
+import { CVoxel} from "@/interfaces/cVoxelType";
 import CVoxelPresenter from "./CVoxelPresenter";
-import useVoxStyler from "@/hooks/useVoxStyler";
+import {useVoxStyler} from "@/hooks/useVoxStyler";
 import { useCore } from "@self.id/framework";
 import { initCVoxel } from "@/constants/cVoxel";
 
-type Props = {
+type VisualizerPresenterProps = {
   ids?: string[];
   account?: boolean;
 };
 
-const VisualizerPresenter: FC<Props> = (Props) => {
+const VisualizerPresenter: FC<VisualizerPresenterProps> = ({ids, account}) => {
   const core = useCore();
   const [cVoxels, setCVoxels] = useState<CVoxel[]>([]);
-
-  const stackedVoxels: (CVoxelThree | undefined)[] = useVoxStyler(cVoxels);
+  const {cvoxelsForDisplay, convertCVoxelsForDisplay} = useVoxStyler(cVoxels);
 
   const cCollectionRef = useRef<THREE.Group>(new THREE.Group());
   const offset = new THREE.Vector3(0, 0, 0);
 
   useEffect(() => {
-    const voxelsTemp: CVoxel[] = [];
     const loadVoxels = async () => {
-      if (Props.ids != undefined) {
-
-        for (let i = 0; i < Props.ids!.length; i++) {
-          const voxel = await core.tileLoader.load<CVoxel>(Props.ids[i]);
-          voxelsTemp.push(voxel.content);
-        }
+      if(!ids) return
+      const voxelsTemp: CVoxel[] = [];
+      for (let i = 0; i < ids!.length; i++) {
+        const voxel = await core.tileLoader.load<CVoxel>(ids[i]);
+        voxelsTemp.push(voxel.content);
       }
       setCVoxels(voxelsTemp);
     };
-    
-    if (!Props.account || Props.ids?.length==0){
+
+    if(!(account && ids && ids.length>0)){
       setCVoxels(initCVoxel);
     } else {
-      loadVoxels();
+      loadVoxels()
     }
     
-  }, [Props.ids, Props.account]);
+  }, [ids, account]);
+
+  useEffect(() => {
+    convertCVoxelsForDisplay()
+  },[cVoxels])
 
 
 
@@ -94,17 +89,15 @@ const VisualizerPresenter: FC<Props> = (Props) => {
         <meshBasicMaterial color={"white"} opacity={0.5} />
       </Plane> */}
       <group ref={cCollectionRef} position={[0, 0, 0]}>
-        {stackedVoxels.map((voxel, i) =>
-          voxel !== undefined ? (
+        {cvoxelsForDisplay.map((voxel, i) =>
+          voxel && (
             <CVoxelPresenter {...voxel} key={i} />
-          ) : undefined
+          )
         )}
       </group>
       <PerspectiveCamera makeDefault position={[10, 6, 10]} />
     </>
   );
 };
-
-const initCube = () => {};
 
 export default VisualizerPresenter;

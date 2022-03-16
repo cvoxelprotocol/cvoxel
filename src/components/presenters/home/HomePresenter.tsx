@@ -17,7 +17,6 @@ import { useTab } from "@/hooks/useTab";
 import { ConnectWalletButton } from "../common/button/ConnectWalletButton";
 import { useCVoxelList } from "@/hooks/useCVoxelList";
 import { NoItemPresenter } from "../common/NoItemPresenter";
-import { formatBigNumber } from "@/utils/ethersUtil";
 import { TransactionLog } from "@/interfaces/explore";
 import { useForm } from "react-hook-form";
 import { useDraftCVoxel } from "@/hooks/useDraftCVoxel";
@@ -98,7 +97,7 @@ export const HomePresenter: FC = () => {
         <div className="flex w-full items-center justify-center h-[450px] relative">
           <Canvas shadows>
             <VisualizerPresenter
-              ids={CVoxelsRecords.content?.cVoxels.map((vox, key) => vox.id)}
+              ids={CVoxelsRecords.content?.cVoxels.map((vox) => vox.id)}
               account={!!account}
             />
           </Canvas>
