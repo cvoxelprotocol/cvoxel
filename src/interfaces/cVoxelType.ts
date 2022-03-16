@@ -53,7 +53,7 @@ export type CVoxelItem = {
 };
 
 export type CVoxels = {
-  cVoxels: Array<CVoxelItem>;
+  cVoxels: CVoxelItem[];
 };
 
 export type ModelTypes = ModelTypeAliases<
@@ -93,3 +93,4 @@ export const cVoxelTest: CVoxelVisType[] = [
     scale: 1,
   },
 ];
+

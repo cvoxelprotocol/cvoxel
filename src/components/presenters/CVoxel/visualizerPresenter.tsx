@@ -1,21 +1,57 @@
 import * as THREE from "three";
-import { FC, useRef, useState, useMemo } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
+import { FC, useRef, useState, useEffect } from "react";
+import { useFrame } from "@react-three/fiber";
 import {
   OrbitControls,
   PerspectiveCamera,
   Plane,
-  softShadows,
 } from "@react-three/drei";
-import { CVoxelVisType, CCubeType } from "@/interfaces/cVoxelType";
+import { CVoxel} from "@/interfaces/cVoxelType";
 import CVoxelPresenter from "./CVoxelPresenter";
+import {useVoxStyler} from "@/hooks/useVoxStyler";
+import { useCore } from "@self.id/framework";
+import { initCVoxel } from "@/constants/cVoxel";
 
-const VisualizerPresenter: FC = () => {
-  const [cCube, setCCube] = useState<CCubeType>([]);
-  const cCubeRef = useRef<THREE.Group>(new THREE.Group());
-  const offset = new THREE.Vector3(0.25, 0.25, -0.25);
+type VisualizerPresenterProps = {
+  ids?: string[];
+  account?: boolean;
+};
+
+const VisualizerPresenter: FC<VisualizerPresenterProps> = ({ids, account}) => {
+  const core = useCore();
+  const [cVoxels, setCVoxels] = useState<CVoxel[]>([]);
+  const {cvoxelsForDisplay, convertCVoxelsForDisplay} = useVoxStyler(cVoxels);
+
+  const cCollectionRef = useRef<THREE.Group>(new THREE.Group());
+  const offset = new THREE.Vector3(0, 0, 0);
+
+  useEffect(() => {
+    const loadVoxels = async () => {
+      if(!ids) return
+      const voxelsTemp: CVoxel[] = [];
+      for (let i = 0; i < ids!.length; i++) {
+        const voxel = await core.tileLoader.load<CVoxel>(ids[i]);
+        voxelsTemp.push(voxel.content);
+      }
+      setCVoxels(voxelsTemp);
+    };
+
+    if(!(account && ids && ids.length>0)){
+      setCVoxels(initCVoxel);
+    } else {
+      loadVoxels()
+    }
+    
+  }, [ids, account]);
+
+  useEffect(() => {
+    convertCVoxelsForDisplay()
+  },[cVoxels])
+
+
+
   useFrame(() => {
-    cCubeRef.current.rotation.y += 0.01;
+    cCollectionRef.current.rotation.y += 0.005;
   });
 
   return (
@@ -52,77 +88,16 @@ const VisualizerPresenter: FC = () => {
       >
         <meshBasicMaterial color={"white"} opacity={0.5} />
       </Plane> */}
-      <group ref={cCubeRef} position={[0, 0, 0]}>
-        <CVoxelPresenter
-          position={new THREE.Vector3(0, 0, 0)}
-          offset={offset}
-          color={"hsl(330, 70%, 50%)"}
-          lattice
-          scale={1}
-          opacity={1}
-        />
-        <CVoxelPresenter
-          position={new THREE.Vector3(1, 0, 0)}
-          offset={offset}
-          color={"hsl(330, 70%, 50%)"}
-          lattice={false}
-          scale={1}
-          opacity={1}
-        />
-        <CVoxelPresenter
-          position={new THREE.Vector3(1, 0, -1)}
-          offset={offset}
-          color={"hsl(20, 70%, 50%)"}
-          lattice={false}
-          scale={1}
-          opacity={1}
-        />
-        <CVoxelPresenter
-          position={new THREE.Vector3(0, 0, -1)}
-          offset={offset}
-          color={"hsl(100, 70%, 50%)"}
-          lattice={false}
-          scale={1}
-          opacity={1}
-        />
-        <CVoxelPresenter
-          position={new THREE.Vector3(0, 1, 0)}
-          offset={offset}
-          color={"hsl(200, 70%, 50%)"}
-          lattice={false}
-          scale={1}
-          opacity={1}
-        />
-        <CVoxelPresenter
-          position={new THREE.Vector3(1, 1, 0)}
-          offset={offset}
-          color={"hsl(200, 70%, 50%)"}
-          lattice={false}
-          scale={1}
-          opacity={1}
-        />
-        <CVoxelPresenter
-          position={new THREE.Vector3(1, 1, -1)}
-          offset={offset}
-          color={"hsl(280, 70%, 50%)"}
-          lattice={false}
-          scale={1}
-          opacity={0.3}
-        />
-        <CVoxelPresenter
-          position={new THREE.Vector3(0, 1, -1)}
-          offset={offset}
-          color={"hsl(70, 70%, 50%)"}
-          lattice={false}
-          scale={1}
-          opacity={1}
-        />
+      <group ref={cCollectionRef} position={[0, 0, 0]}>
+        {cvoxelsForDisplay.map((voxel, i) =>
+          voxel && (
+            <CVoxelPresenter {...voxel} key={i} />
+          )
+        )}
       </group>
       <PerspectiveCamera makeDefault position={[10, 6, 10]} />
     </>
   );
 };
-
-const initCube = () => {};
 
 export default VisualizerPresenter;
