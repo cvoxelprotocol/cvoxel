@@ -26,6 +26,7 @@ import { ModelTypes } from "@datamodels/identity-profile-basic";
 import { TransactionItem } from "../transactions/TransactionItem";
 import { SigRequestItem } from "../requests/SigRequestItem";
 import { SigButton } from "../common/button/SigButton";
+import { Box, Spinner } from 'grommet'
 
 export const HomePresenter: FC = () => {
   const { connection, did, name, avator, account } = useMyCeramicAcount();
@@ -262,14 +263,32 @@ export const HomePresenter: FC = () => {
                                     <div className="w-full text-center py-4 shadow-lg bg-white  p-5 mb-4">
                                       <p className="text-xs md:text-lg text-primary font-bold">Please Connect Ceramic Account to Create CVoxel</p>
                                       <div className="w-full flex justify-center items-center py-4 ">
-                                      <Button
-                                          size="medium"
-                                          variant="contained"
-                                          color="primary"
-                                          text="Connect Ceramic"
-                                          buttonType="button"
-                                          onClick={() => connect()}
-                                      />
+                                        {connection.status==="connecting" ? (
+                                          <div className="md:w-60 rounded-full flex items-center space-x-2">
+                                            <Box pad="xxsmall">
+                                              <Spinner />
+                                            </Box>
+                                            <p className="text-primary dark:text-white text-sm hidden md:block">
+                                                {"Connecting..."}
+                                              </p>
+                                            </div>
+                                        ): (
+                                          <Button
+                                              size="medium"
+                                              variant="contained"
+                                              color="primary"
+                                              text="Connect Ceramic"
+                                              buttonType="button"
+                                              onClick={() => connect()}
+                                          />
+                                        )}
+                                        {connection.status==="failed" && (
+                                          <div className="md:w-60 rounded-full flex items-center space-x-2">
+                                          <p className="text-primary dark:text-white text-sm hidden md:block">
+                                              {"Something Went Wrong..."}
+                                            </p>
+                                          </div>
+                                        )}
                                       </div>
                                     </div>
                                   )}
