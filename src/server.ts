@@ -2,7 +2,7 @@ import { RequestClient } from "@self.id/framework";
 import { RequestState } from "@self.id/framework";
 import type { GetServerSidePropsContext } from "next";
 
-import { CERAMIC_NETWORK, CERAMIC_URL } from "@/constants/common";
+import { CERAMIC_URL } from "@/constants/common";
 // import model from "./model-cray.json";
 import model from "./model.json";
 import type { ModelTypes } from "@/interfaces/cVoxelType";
@@ -11,7 +11,7 @@ export function createRequestClient(
   ctx: GetServerSidePropsContext
 ): RequestClient<ModelTypes> {
   return new RequestClient({
-    ceramic: CERAMIC_URL || "https://ceramic-clay.3boxlabs.com",
+    ceramic: CERAMIC_URL,
     cookie: ctx.req.headers.cookie,
     model,
   });
