@@ -76,6 +76,9 @@ const Intro: NextPage = () => {
           </div>
 
           <div className="hidden md:flex w-full justify-end items-center text-normal text-text-primary ">
+            <a className="mx-4" href="https://gitcoin.co/grants/5359/c-voxel-proof-of-career-protocol" target="_blank" rel="noreferrer">
+              Gitcoin Grant
+            </a>
             <a className="mx-4" href="https://github.com/cvoxelprotocol/cvoxel" target="_blank" rel="noreferrer">
               Github
             </a>
