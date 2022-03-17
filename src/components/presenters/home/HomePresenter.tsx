@@ -86,6 +86,11 @@ export const HomePresenter: FC = () => {
     });
   }, [CVoxelsRecords]);
 
+  const onlyPotentialCVoxels = useMemo(() => {
+    if(!account) return potentialTxes
+    return potentialTxes.filter(tx => tx.to.toLowerCase()===account.toLowerCase())
+  },[potentialTxes])
+
   return (
     <main className="h-auto overflow-y-scroll text-black dark:text-white text-center">
       <div className="flex flex-col items-center w-full h-full pb-12">
@@ -112,7 +117,14 @@ export const HomePresenter: FC = () => {
             <div className={tabState === "cvoxels" ? "block" : "hidden"} id="cvoxels">
                 <CVoxelsPresenter>
                   {(!txLoading && (!CVoxelsRecords.content?.cVoxels || CVoxelsRecords.content?.cVoxels.length===0)) && (
-                    <NoItemPresenter text="No C-Voxels yet..." />
+                    <div className="mx-auto">
+                      <NoItemPresenter text="No C-Voxels yet..." />
+                          {account && (
+                            <button onClick={()=> setTabState("transactions")} className="text-white rounded-full bg-gradient-to-r from-border_l to-border_r py-2 px-5">
+                              Create C-Voxel
+                          </button>
+                          )}
+                    </div>
                   )}
                   {txLoading && (
                     <CommonLoading />
@@ -131,13 +143,13 @@ export const HomePresenter: FC = () => {
               </div>
               <div className={tabState === "transactions" ? "block" : "hidden"} id="transactions">
                 <div className="w-full max-w-[720px] text-center mx-auto cursor-pointer h-screen overflow-y-scroll">
-                  {(!potentialTxes || potentialTxes.length===0) && (
+                  {(!potentialTxes || onlyPotentialCVoxels.length===0) && (
                     <NoItemPresenter text="No Potential C-Voxels yet..." />
                   )}
                   {offchainLoading && (
                     <CommonLoading />
                   )}
-                  {!offchainLoading && potentialTxes.map((tx) => (
+                  {!offchainLoading && onlyPotentialCVoxels.map((tx) => (
                     <div key={tx.hash} className="mb-4">
                       <TransactionItem tx={tx} account={account} onClickTx={selectTx} selectedTx={selectedTx} />
                       {(selectedTx && selectedTx?.hash===tx.hash) && (
