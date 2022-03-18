@@ -72,6 +72,7 @@ export function useDraftCVoxel() {
             {
               id: docUrl,
               summary: meta.summary,
+              txHash: meta.txHash,
               issuedTimestamp: meta.issuedTimestamp,
             },
           ],
