@@ -79,6 +79,9 @@ const Intro: NextPage = () => {
             <a className="mx-4" href="https://gitcoin.co/grants/5359/c-voxel-proof-of-career-protocol" target="_blank" rel="noreferrer">
               Gitcoin Grant
             </a>
+            <a className="mx-4" href="https://docs.cvoxel.xyz/" target="_blank" rel="noreferrer">
+              Docs
+            </a>
             <a className="mx-4" href="https://github.com/cvoxelprotocol/cvoxel" target="_blank" rel="noreferrer">
               Github
             </a>
