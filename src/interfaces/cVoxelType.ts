@@ -48,6 +48,7 @@ export type CVoxelDraftAndMeta = {
 
 export type CVoxelItem = {
   id: string;
+  txHash: string; // transfer tx hash
   summary: string;
   issuedTimestamp: string;
 };
@@ -93,4 +94,3 @@ export const cVoxelTest: CVoxelVisType[] = [
     scale: 1,
   },
 ];
-

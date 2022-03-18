@@ -6,7 +6,7 @@ import dotenv from 'dotenv'
 dotenv.config();
 
 
-const CERAMIC_URL = process.env.CERAMIC_URL || 'https://ceramic-clay.3boxlabs.com'
+const CERAMIC_URL = process.env.NEXT_PUBLIC_CERAMIC_URL || 'https://node.cvoxelceramic.com'
 
 // Connect to the Ceramic node
 const ceramic = new CeramicClient(CERAMIC_URL)
