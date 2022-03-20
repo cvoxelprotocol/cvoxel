@@ -335,7 +335,7 @@ const Intro: NextPage = () => {
             />
           </a>
           <div className="mx-4">
-          <a href="https://twitter.com/proof_of_career" target="_blank" rel="noreferrer">
+          <a href="https://twitter.com/C_Voxel" target="_blank" rel="noreferrer">
             <Image
               src="/twitter_logo.png"
               width="28px"
