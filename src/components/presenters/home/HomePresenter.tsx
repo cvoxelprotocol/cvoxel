@@ -95,7 +95,7 @@ export const HomePresenter: FC = () => {
   return (
     <main className="h-auto overflow-y-scroll text-black dark:text-white text-center">
       <div className="flex flex-col items-center w-full h-full pb-12">
-        <div className="flex w-full items-center justify-center h-[450px] relative">
+        <div className="flex w-full items-center justify-center h-[300px] sm-h-[450px] relative">
           <Canvas shadows>
             <VisualizerPresenter
               ids={CVoxelsRecords.content?.cVoxels.map((vox) => vox.id)}
