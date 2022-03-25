@@ -4,7 +4,7 @@ import { config } from "@fortawesome/fontawesome-svg-core";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
 import { useModal } from "@/hooks/useModal";
-import { LoadingModal } from "@/components/presenters/common/LoadingModal"
+import { LoadingModal } from "@/components/common/LoadingModal"
 import { Toaster } from "react-hot-toast";
 import { Meta } from "./parts/Meta";
 import { useRouter } from "next/dist/client/router";

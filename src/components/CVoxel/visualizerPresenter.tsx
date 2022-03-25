@@ -14,10 +14,9 @@ import { initCVoxel } from "@/constants/cVoxel";
 
 type VisualizerPresenterProps = {
   ids?: string[];
-  account?: boolean;
 };
 
-const VisualizerPresenter: FC<VisualizerPresenterProps> = ({ids, account}) => {
+const VisualizerPresenter: FC<VisualizerPresenterProps> = ({ids}) => {
   const core = useCore();
   const [cVoxels, setCVoxels] = useState<CVoxel[]>([]);
   const {cvoxelsForDisplay, convertCVoxelsForDisplay} = useVoxStyler(cVoxels);
@@ -36,18 +35,17 @@ const VisualizerPresenter: FC<VisualizerPresenterProps> = ({ids, account}) => {
       setCVoxels(voxelsTemp);
     };
 
-    if(!(account && ids && ids.length>0)){
+    if(!(ids && ids.length>0)){
       setCVoxels(initCVoxel);
     } else {
       loadVoxels()
     }
     
-  }, [ids, account]);
+  }, [ids]);
 
   useEffect(() => {
     convertCVoxelsForDisplay()
   },[cVoxels])
-
 
 
   useFrame(() => {

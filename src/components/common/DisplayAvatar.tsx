@@ -1,6 +1,7 @@
 import { AvatarPlaceholder } from '@self.id/framework'
-import { Avatar, Box, Spinner } from 'grommet'
 import { FC } from "react";
+import { CommonSpinner } from './CommonSpinner';
+import { IconAvatar } from './IconAvatar';
 
 type Props = {
   did?: string
@@ -11,11 +12,11 @@ type Props = {
 
 export const DisplayAvatar:FC<Props> = ({ did, label, loading, src }) => {
   const avatar = loading ? (
-    <Box pad="xxsmall">
-      <Spinner />
-    </Box>
+    <div className="w-fit h-fit">
+      <CommonSpinner />
+    </div>
   ) : src ? (
-    <Avatar size="32px" src={src} flex={false} />
+    <IconAvatar size={"sm"} src={src} flex={false} />
   ) : (
     <AvatarPlaceholder did={did} size={32} />
   )

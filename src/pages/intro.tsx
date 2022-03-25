@@ -1,4 +1,4 @@
-import Button from "@/components/common/Button";
+import {Button} from "@/components/common/button/Button";
 import BurgerMenu from "@/components/layout/BurgerMenu";
 import { NextPage } from "next";
 import Image from "next/image";

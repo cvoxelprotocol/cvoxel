@@ -5,7 +5,7 @@ import styles from "@/styles/Layout.module.css";
 import dynamic from 'next/dynamic'
 import { useTheme } from 'next-themes';
 
-const AccountButton = dynamic(() => import('@/components/presenters/common/AccountButton'), {
+const AccountButton = dynamic(() => import('@/components/common/button/AccountButton'), {
   ssr: false,
 })
 export const Header = () => {

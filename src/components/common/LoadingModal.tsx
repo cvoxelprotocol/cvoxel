@@ -12,7 +12,7 @@ export const LoadingModal:FC<Props> = ({text}) => {
                     className="animate-spin rounded-full h-32 w-32 border-t-4 border-b-4 border-primary"
                 ></div>
             </div>
-            <p className="text-white text-sm md:text-lg pt-4 px-4">{text ? text : ""}</p>
+            <p className="text-white text-sm md:text-lg pt-4 px-4">{text || ""}</p>
         </div>
     )
 }

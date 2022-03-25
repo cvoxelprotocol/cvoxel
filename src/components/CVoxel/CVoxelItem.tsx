@@ -1,14 +1,14 @@
 import { FC, useMemo } from "react";
 import Image from "next/image";
 import { CVoxel, CVoxelItem as ICVoxelItem, CVoxelMetaDraft } from "@/interfaces";
-import { useCVoxelRecord } from "@/hooks/useCVoxel";
 import { useStateSelectedItem } from "@/recoilstate";
-import Button from '@/components/presenters/common/button/Button'
 import { useConnection } from "@self.id/framework";
 import { formatBigNumber } from "@/utils/ethersUtil";
 import { shortHash } from "@/utils/tools";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faExternalLink } from "@fortawesome/free-solid-svg-icons";
+import { useUpdateCVoxel } from "@/hooks/useUpdateCVoxel";
+import { Button } from "@/components/common/button/Button";
 
 type Props = {
   did: string
@@ -19,7 +19,7 @@ type Props = {
 export const CVoxelItem: FC<Props> = ({item, did, offchainItems}) => {
   const [selectedItem, setSelectedItem] = useStateSelectedItem();
   const [connection, connect] = useConnection();
-  const cVoxelItem = useCVoxelRecord(item.id)
+  const {cVoxelItem, update} = useUpdateCVoxel(item.id)
 
   const detailItem = useMemo(() => {
     return cVoxelItem.content || null
@@ -50,7 +50,7 @@ export const CVoxelItem: FC<Props> = ({item, did, offchainItems}) => {
     if(!(item && detailItem)) return false
     if(updatable && item.fromSig) {
       const newCVoxel:CVoxel = {...detailItem, fromSig: item.fromSig}
-      await cVoxelItem.update(newCVoxel)
+      await update(newCVoxel)
     }    
   }
 
@@ -123,7 +123,6 @@ export const CVoxelItem: FC<Props> = ({item, did, offchainItems}) => {
                 <div className="w-full text-right">
                   {updatable && (
                       <Button
-                        size="medium"
                         variant="contained"
                         color="secondary"
                         text="Update"
