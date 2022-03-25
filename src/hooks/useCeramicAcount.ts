@@ -1,11 +1,12 @@
-import { core } from "@/services/ceramic/CeramicService";
+import { core } from "@/lib/ceramic/server";
 import {
   useConnection,
   useViewerID,
   useViewerRecord,
   usePublicRecord,
+  formatDID,
 } from "@self.id/framework";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { getProfileInfo } from "@/utils/ceramicUtils";
 import { useWalletAccount } from "./useWalletAccount";
 import { Caip10Link } from "@ceramicnetwork/stream-caip10-link";
@@ -29,7 +30,7 @@ export const useMyCeramicAcount = () => {
     async function initialize() {
       if (viewerID) {
         setDid(viewerID.id);
-        connectWallet();
+        await connectWallet();
       }
     }
     initialize();
@@ -65,6 +66,8 @@ export const useMyCeramicAcount = () => {
           setAvator(avatarSrc);
           setDescription(bio);
           setDid(linkedDid);
+        } else {
+          setName(formatDID(account, 12));
         }
       }
     }
@@ -104,21 +107,25 @@ export const useUserCeramicAcount = (did: string) => {
   const profileRecord = usePublicRecord("basicProfile", did);
   const [description, setDescription] = useState("");
   const [name, setName] = useState("");
-  const [avator, setAvator] = useState<string | undefined>("");
+  const [avator, setAvator] = useState<string | undefined>();
 
-  useEffect(() => {
-    if (did) {
-      const { avatarSrc, displayName, bio } = getProfileInfo(
-        did,
-        profileRecord.content
-      );
-      setName(displayName);
-      setAvator(avatarSrc);
-      setDescription(bio);
-    }
-  }, [did]);
+  const setUserProfile = useCallback(
+    (did: string) => {
+      if (did) {
+        const { avatarSrc, displayName, bio } = getProfileInfo(
+          did,
+          profileRecord.content
+        );
+        setName(displayName);
+        setAvator(avatarSrc);
+        setDescription(bio);
+      }
+    },
+    [did, profileRecord.content]
+  );
 
   return {
+    setUserProfile,
     profileRecord,
     name,
     avator,
