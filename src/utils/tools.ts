@@ -52,5 +52,10 @@ export const assertDef = <T>(
  */
 export const neverEndingPromise = <T>() => new Promise<T>(() => void 0);
 
-export const shortHash = (hash: string, count: number) =>
-  hash.substr(0, count).concat("...");
+export const shortHash = (hash: string, maxLength: number = 20) => {
+  const half = Math.floor(maxLength / 2);
+  const remaining = half - maxLength;
+  return hash.length <= maxLength
+    ? hash
+    : `${hash.slice(0, half)}...${hash.slice(remaining)}`;
+};

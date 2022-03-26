@@ -3,9 +3,11 @@ import { TransactionLog } from "@/interfaces";
 import { getExploreLink } from "@/utils/etherscanUtils";
 import { formatBigNumber } from "@/utils/ethersUtil";
 import { shortHash } from "@/utils/tools";
-import { FC, useMemo } from "react";
+import { FC, useMemo, useCallback, useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faExternalLink } from "@fortawesome/free-solid-svg-icons";
+import { getEtherService } from "@/services/Ether/EtherService";
+import { CommonSpinner } from "../common/CommonSpinner";
 
 type TransactionItemProps = {
     tx: TransactionLog
@@ -17,6 +19,18 @@ type TransactionItemProps = {
 export const TransactionItem:FC<TransactionItemProps> = ({tx, account, onClickTx, selectedTx}) => {
 
     const {chainId} = useWalletAccount()
+    const etherService = getEtherService();
+    const [ens, setENS] = useState<string>("")
+    const [isLoading, setLoading] = useState(false)
+
+    useEffect(() => {
+        async function init() {
+            await getENS()
+        }
+        if(tx) {
+            init()
+        }
+    },[tx])
 
     const isPayee = useMemo(() => {
         return account?.toLowerCase()===tx.to.toLowerCase()
@@ -29,6 +43,18 @@ export const TransactionItem:FC<TransactionItemProps> = ({tx, account, onClickTx
     const shouldShowClaim = useMemo(() => {
         return selectedTx && selectedTx.hash===tx.hash ? "Close" : "Claim Career Detail"
     },[selectedTx, tx.hash])
+
+    const getENS = useCallback(async () => {
+        setLoading(true)
+        if(isPayee) {
+            const ens = await etherService.getDisplayENS(tx.from)
+            setENS(ens)
+        } else {
+            const ens = await etherService.getDisplayENS(tx.to)
+            setENS(ens)
+        }
+        setLoading(false)
+    },[tx, isPayee, etherService])
 
     const handleClick = () => {
         if(selectedTx) {
@@ -68,9 +94,13 @@ export const TransactionItem:FC<TransactionItemProps> = ({tx, account, onClickTx
                         </a>
                     </div>
                     <div className="w-[0.5px] bg-black border-black h-[40px]"></div>
-                    <div className="max-w-[90px] sm:max-w-[120px] px-4">
+                    <div className="max-w-[90px] sm:max-w-[120px] px-4 text-center">
                         <p className="text-gray-500">{isPayee ? "from": "to"}</p>
-                        <p className="break-words flex-wrap">{isPayee ? shortHash(tx.from, 13) : shortHash(tx.to, 13)}</p>
+                        {isLoading ? (
+                            <CommonSpinner size="sm"/>
+                        ): (
+                            <p className="break-words flex-wrap">{ens}</p>
+                        )}
                     </div>
                 </div>
             </div>
