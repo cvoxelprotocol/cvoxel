@@ -36,7 +36,7 @@ export const ProfileContainer: FC<CeramicProps> = ({ did }) => {
         <CVoxelsPresenter>
           {CVoxelsRecords.content?.cVoxels &&
             CVoxelsRecords.content.cVoxels.map((item) => {
-              return <CVoxelItem did={did} item={item} key={item.id} />;
+              return <CVoxelItem did={did} holder={name} item={item} key={item.id} />;
             })}
           {!CVoxelsRecords.content && (
             <div className="mx-auto">

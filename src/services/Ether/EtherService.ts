@@ -21,7 +21,6 @@ export class EtherService {
   async getENSFromAddress(address: string): Promise<string | null> {
     if (!this.provider) return null;
     const ens = await this.provider.lookupAddress(address);
-    console.log(address, ens);
     return ens;
   }
 }

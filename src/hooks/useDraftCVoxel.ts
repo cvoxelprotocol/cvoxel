@@ -52,22 +52,28 @@ export function useDraftCVoxel() {
 
       showLoading();
 
-      const { meta, draft } = await createDraftObjectWithSig(
-        address,
-        selectedTx,
-        summary,
-        detail,
-        deliverable,
-        existedItem
-      );
-
-      const result = await createDraftWighVerify(address.toLowerCase(), draft);
-      if (result !== "ok") {
-        closeLoading();
-        lancError(CVOXEL_CREATION_FAILED);
-        return false;
-      }
       try {
+        const isPayer = selectedTx.from.toLowerCase() === address.toLowerCase();
+
+        const { meta, draft } = await createDraftObjectWithSig(
+          address,
+          selectedTx,
+          summary,
+          detail,
+          deliverable,
+          existedItem
+        );
+
+        const result = await createDraftWighVerify(
+          address.toLowerCase(),
+          draft
+        );
+        if (result !== "ok") {
+          closeLoading();
+          lancError(CVOXEL_CREATION_FAILED);
+          return false;
+        }
+
         const doc = await selfID.client.dataModel.createTile("CVoxel", {
           ...meta,
         });
@@ -79,6 +85,73 @@ export function useDraftCVoxel() {
             {
               id: docUrl,
               summary: meta.summary,
+              isPayer: isPayer,
+              txHash: meta.txHash,
+              issuedTimestamp: meta.issuedTimestamp,
+            },
+          ],
+        });
+        closeLoading();
+        lancInfo(CVOXEL_CREATION_SUCCEED);
+        return true;
+      } catch (error) {
+        closeLoading();
+        lancError(CVOXEL_CREATION_FAILED);
+        return false;
+      }
+    },
+    [connect, cVoxelsRecord, isLoading, cVoxelsRecord.isLoadable]
+  );
+
+  const reClaim = useCallback(
+    async (
+      address: string,
+      selectedTx: TransactionLog,
+      summary: string,
+      detail?: string,
+      deliverable?: string,
+      existedItem?: CVoxelMetaDraft
+    ) => {
+      if (isLoading || !summary || !chainId) {
+        return false;
+      }
+
+      const selfID = await connect();
+      if (selfID == null || selfID.did == null) {
+        lancError();
+        return false;
+      }
+      if (!cVoxelsRecord.isLoadable) {
+        lancError();
+        return false;
+      }
+
+      showLoading();
+
+      try {
+        const isPayer = selectedTx.from.toLowerCase() === address.toLowerCase();
+
+        const { meta, draft } = await createDraftObjectWithSig(
+          address,
+          selectedTx,
+          summary,
+          detail,
+          deliverable,
+          existedItem
+        );
+
+        const doc = await selfID.client.dataModel.createTile("CVoxel", {
+          ...meta,
+        });
+        const cVoxels = cVoxelsRecord.content?.cVoxels ?? [];
+        const docUrl = doc.id.toUrl();
+        await cVoxelsRecord.set({
+          cVoxels: [
+            ...cVoxels,
+            {
+              id: docUrl,
+              summary: meta.summary,
+              isPayer: isPayer,
               txHash: meta.txHash,
               issuedTimestamp: meta.issuedTimestamp,
             },
@@ -108,6 +181,8 @@ export function useDraftCVoxel() {
     const from = selectedTx.from.toLowerCase();
     const usr = address.toLowerCase();
 
+    const isPayer = from === usr;
+
     //get hash
     const { signature, hash } = await getMessageHash(
       selectedTx.hash,
@@ -117,28 +192,11 @@ export function useDraftCVoxel() {
       deliverable
     );
 
-    let meta: CVoxel = {
-      summary: summary,
-      detail: detail ?? "",
-      deliverable: deliverable ?? "",
-      jobType: "OneTime",
-      from: from,
-      to: to,
-      value: selectedTx.value,
-      tokenSymbol: selectedTx.tokenSymbol || "ETH",
-      tokenDecimal: Number(selectedTx.tokenDecimal) || 18,
-      networkId: chainId || 1,
-      issuedTimestamp: selectedTx.timeStamp,
-      txHash: selectedTx.hash,
-      relatedTxHashes: [selectedTx.hash],
-      tags: [],
-      toSig: to === usr ? signature.toString() : "",
-      fromSig: from === usr ? signature.toString() : "",
-    };
+    let meta: CVoxel;
 
     if (existedItem) {
       meta = extractCVoxel(existedItem);
-      if (from === usr) {
+      if (isPayer) {
         meta.fromSig = signature.toString();
       } else {
         meta.toSig = signature.toString();
@@ -155,6 +213,7 @@ export function useDraftCVoxel() {
         jobType: "OneTime",
         from: from,
         to: to,
+        isPayer: isPayer,
         value: selectedTx.value,
         tokenSymbol: selectedTx.tokenSymbol || "ETH",
         tokenDecimal: Number(selectedTx.tokenDecimal) || 18,
@@ -163,8 +222,8 @@ export function useDraftCVoxel() {
         txHash: selectedTx.hash,
         relatedTxHashes: [selectedTx.hash],
         tags: [],
-        toSig: to === usr ? signature.toString() : "",
-        fromSig: from === usr ? signature.toString() : "",
+        toSig: !isPayer ? signature.toString() : "",
+        fromSig: isPayer ? signature.toString() : "",
       };
     }
     const draft: CVoxelMetaDraft = {
@@ -193,5 +252,5 @@ export function useDraftCVoxel() {
     return { signature, hash };
   };
 
-  return { publish };
+  return { publish, reClaim };
 }

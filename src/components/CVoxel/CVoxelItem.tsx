@@ -1,4 +1,4 @@
-import { FC, useMemo } from "react";
+import { FC, useMemo,useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { CVoxel, CVoxelItem as ICVoxelItem, CVoxelMetaDraft } from "@/interfaces";
 import { useStateSelectedItem } from "@/recoilstate";
@@ -9,17 +9,30 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faExternalLink } from "@fortawesome/free-solid-svg-icons";
 import { useUpdateCVoxel } from "@/hooks/useUpdateCVoxel";
 import { Button } from "@/components/common/button/Button";
+import { getEtherService } from "@/services/Ether/EtherService";
+import { CommonSpinner } from "../common/CommonSpinner";
+import { useWalletAccount } from "@/hooks/useWalletAccount";
+import { getExploreLink } from "@/utils/etherscanUtils";
 
 type Props = {
   did: string
+  holder: string
   item: ICVoxelItem
   offchainItems?: CVoxelMetaDraft[]
 };
 
-export const CVoxelItem: FC<Props> = ({item, did, offchainItems}) => {
+export const CVoxelItem: FC<Props> = ({item, did, holder, offchainItems}) => {
   const [selectedItem, setSelectedItem] = useStateSelectedItem();
   const [connection, connect] = useConnection();
   const {cVoxelItem, update} = useUpdateCVoxel(item.id)
+  const etherService = getEtherService();
+  const [verifier, setVerifier] = useState<string>("")
+  const [isLoading, setLoading] = useState(false)
+  const {chainId} = useWalletAccount()
+
+  useEffect(() => {
+    console.log("item", item)
+  },[])
 
   const detailItem = useMemo(() => {
     return cVoxelItem.content || null
@@ -30,10 +43,6 @@ export const CVoxelItem: FC<Props> = ({item, did, offchainItems}) => {
     return item.id == selectedItem?.id
   }, [item.id, selectedItem]);
 
-  const handleClick = () => {
-    if(detailItem) setSelectedItem({...detailItem, id: item.id})
-  };
-
   const updatable = useMemo(() => {
     if(cVoxelItem.content && cVoxelItem.content?.toSig && cVoxelItem.content?.fromSig) return false
     const item = offchainItems?.find(item => item.txHash.toLowerCase() === cVoxelItem.content?.txHash.toLowerCase())
@@ -41,6 +50,37 @@ export const CVoxelItem: FC<Props> = ({item, did, offchainItems}) => {
     return item.fromSig && !cVoxelItem.content?.fromSig
   },[offchainItems, cVoxelItem])
 
+  const exploreLink = useMemo(() => {
+    if(!detailItem) return
+    return getExploreLink(detailItem.txHash, chainId)
+  },[detailItem,chainId])
+
+  useEffect(() => {
+    async function init() {
+        await getENS()
+    }
+    if(detailItem && !verifier) {
+        init()
+    }
+  },[detailItem])
+
+  const getENS = useCallback(async () => {
+      if(!detailItem) return
+      setLoading(true)
+      if(item.isPayer) {
+        const ens = await etherService.getDisplayENS(detailItem.to)
+          setVerifier(ens)
+      } else {
+        const ens = await etherService.getDisplayENS(detailItem.from)
+          setVerifier(ens)
+      }
+      setLoading(false)
+  },[detailItem, etherService])
+
+  const handleClick = () => {
+    if(detailItem) setSelectedItem({...detailItem, id: item.id})
+  };
+  
   const handleUpdate = async() => {
     if(connection.status !== "connected") {
       await connect()
@@ -69,12 +109,11 @@ export const CVoxelItem: FC<Props> = ({item, did, offchainItems}) => {
                 <div className="flex items-center justify-around">
                   <div className="w-fit flex-auto pr-2">
                     <div className="flex w-full items-center justify-start space-x-2">
-                      <p className="text-primary text-sm w-fit">{item.issuedTimestamp}</p>
                       <span
                           className={"block px-2 py-0.5 text-xs rounded-full font-light w-max " + (detailItem && detailItem.toSig && detailItem.fromSig ? "text-[#53B15C] bg-green-200": "text-[#E83838] bg-red-300")}>
                           {detailItem && detailItem.toSig && detailItem.fromSig ? "Verified": "Not Verified"}
                       </span>
-                      <p></p>
+                      <p className="text-primary text-sm w-fit">{item.issuedTimestamp}</p>
                     </div>
                     <h6 className="text-xl text-black">
                       {detailItem ? detailItem.summary : item.summary}
@@ -111,11 +150,22 @@ export const CVoxelItem: FC<Props> = ({item, did, offchainItems}) => {
                     </div>
                   </div>
                   <div className="w-1/4 flex-none">
-                    <div className="">
+                    <div className="text-center">
                       {detailItem && (
-                        <p className="font-medium text-lg">
-                          {formatBigNumber(detailItem.value, 6)} {detailItem.tokenSymbol ? detailItem.tokenSymbol: "ETH"}
-                      </p>
+                        <>
+                          <p className="font-medium text-lg">
+                            {formatBigNumber(detailItem.value, 6)} {detailItem.tokenSymbol ? detailItem.tokenSymbol: "ETH"}
+                          </p>
+                          {isLoading ? (
+                              <CommonSpinner size="sm"/>
+                          ): (
+                              <p className="text-primary text-xs">{item.isPayer ? `TO: ` : `FROM: ` }{verifier}</p>
+                          )}
+                          <a className="flex items-center justify-center" href={exploreLink} target="_blank" rel="noreferrer">
+                            <p className="text-xs text-gray-500">explorer</p>
+                            <FontAwesomeIcon className="w-2 h-2 ml-1" icon={faExternalLink} color={'gray'}/>
+                          </a>
+                        </>
                       )}
                     </div>
                   </div>

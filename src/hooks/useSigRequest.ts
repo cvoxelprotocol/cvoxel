@@ -25,6 +25,7 @@ export function useSigRequest() {
   const { lancInfo, lancError } = useToast();
 
   const verifyWithCeramic = async (tx: CVoxelMetaDraft) => {
+    if (!account) return;
     const selfID = await connect();
     if (selfID == null || selfID.did == null) {
       lancError();
@@ -37,6 +38,7 @@ export function useSigRequest() {
 
     showLoading();
     try {
+      const isPayer = tx.from.toLowerCase() === account.toLowerCase();
       const meta = await verifyCVoxel(tx);
       if (meta) {
         const doc = await selfID.client.dataModel.createTile("CVoxel", {
@@ -50,6 +52,7 @@ export function useSigRequest() {
             {
               id: docUrl,
               summary: meta.summary,
+              isPayer: isPayer,
               txHash: meta.txHash,
               issuedTimestamp: meta.issuedTimestamp,
             },

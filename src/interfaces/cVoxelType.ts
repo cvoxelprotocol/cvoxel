@@ -14,6 +14,7 @@ export type EditionState =
 export type CVoxel = {
   to: string; // payee address
   from: string; // payer address
+  isPayer: boolean;
   summary: string; // work summary
   detail?: string; // work detail
   deliverable?: string; // deliberable link
@@ -49,6 +50,7 @@ export type CVoxelDraftAndMeta = {
 export type CVoxelItem = {
   id: string;
   txHash: string; // transfer tx hash
+  isPayer: boolean;
   summary: string;
   issuedTimestamp: string;
 };

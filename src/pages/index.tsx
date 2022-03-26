@@ -71,7 +71,7 @@ const connect = async () => {
               </>
           ): (
             <div className="w-full flex justify-center pt-4">
-                <Button text="Go To Mypage" href={`/${did ? did : account}`}  color="grad-blue" />
+                <Button text="Go To Mypage" href={`/${did || account}`}  color="grad-blue" />
             </div>
           )}
         </div>

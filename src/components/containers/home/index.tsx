@@ -79,6 +79,21 @@ export const HomeContainer: FC = () => {
     }
   }
 
+  const reClaimCVoxel = async (tx:TransactionLog, offchainItem: CVoxelMetaDraft) => {
+    if (!(tx && account && offchainItem)) return;
+    if(connection.status==="connected") {
+      const { summary, detail, deliverable } = offchainItem;
+      const result = await draft.reClaim(account, tx, summary, detail, deliverable, offchainItem);
+        if (result) {
+          selectTx(null);
+          reset();
+          setTabState("cvoxels");
+        }
+    } else {
+      await connectCeramic()
+    }
+  }
+
   const verify = async (tx: CVoxelMetaDraft) => {
     if(did) {
       await verifyWithCeramic(tx)
@@ -144,6 +159,7 @@ export const HomeContainer: FC = () => {
                       return (
                         <CVoxelItem
                             did={did}
+                            holder={name}
                             item={item}
                             offchainItems={offchainMetaList}
                             key={item.id}
@@ -166,7 +182,7 @@ export const HomeContainer: FC = () => {
                       {(selectedTx && selectedTx?.hash===tx.hash) && (
                           <>
                           {selectedOffchainItem ? (
-                            <TransactionDetail account={account?.toLowerCase()} tx={tx} offchainItem={selectedOffchainItem} connectionStatus={connection.status} onClaim={publishFromExistedCVoxel} />
+                            <TransactionDetail key={`${tx.hash}_detail`} account={account?.toLowerCase()} tx={tx} offchainItem={selectedOffchainItem} connectionStatus={connection.status} onClaim={publishFromExistedCVoxel} reClaim={reClaimCVoxel} cvoxels={sortCVoxels} />
                           ): (
                             <div key={`${tx.hash}_form_container`} className="mb-4">
                               <div key={`${tx.hash}_form`} className="w-full h-fit bg-white shadow-lg p-5 mb-4">
