@@ -27,7 +27,7 @@ import { CommonSpinner } from "@/components/common/CommonSpinner";
 
 export const HomeContainer: FC = () => {
   const { connection, did, name, avator, account, connectCeramic } = useMyCeramicAcount();
-  const { potentialTxes, offchainMetaList, txLoading, offchainLoading } =
+  const { onlyPotentialCVoxels, offchainMetaList, txLoading, offchainLoading } =
     useCVoxelList();
   const CVoxelsRecords = useCVoxelsRecord(did);
   const [selectedTx, selectTx] = useState<TransactionLog | null>(null);
@@ -99,12 +99,6 @@ export const HomeContainer: FC = () => {
     });
   }, [CVoxelsRecords]);
 
-  const onlyPotentialCVoxels = useMemo(() => {
-    if(!account) return potentialTxes
-    // return potentialTxes.filter(tx => tx.to.toLowerCase()===account.toLowerCase())
-    return potentialTxes
-  },[potentialTxes])
-
   const sigRequestCVoxels = useMemo(() => {
     if(!(account && offchainMetaList)) return offchainMetaList
     return offchainMetaList.filter((tx) => (tx.from.toLowerCase() === account?.toLowerCase() && !tx.fromSig))
@@ -160,7 +154,7 @@ export const HomeContainer: FC = () => {
               </div>
               <div className={tabState === "transactions" ? "block" : "hidden"} id="transactions">
                 <div className="w-full max-w-[720px] text-center mx-auto cursor-pointer h-screen overflow-y-scroll">
-                  {(!offchainLoading && (!potentialTxes || onlyPotentialCVoxels.length===0)) && (
+                  {(!offchainLoading && (!onlyPotentialCVoxels || onlyPotentialCVoxels.length===0)) && (
                     <NoItemPresenter text="No Potential C-Voxels Found..." />
                   )}
                   {offchainLoading && (

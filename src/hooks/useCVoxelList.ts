@@ -2,7 +2,7 @@ import { TransactionLog } from "@/interfaces/explore";
 import { offchainCVoxelMetaFetcher } from "@/services/fetcher/CVoxelMetaFetcher";
 import { etherscanTxListFetcher } from "@/services/fetcher/EtherscanFetcher";
 import { CVoxelMetaDraft } from "@/interfaces";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useQuery } from "react-query";
 import { useWalletAccount } from "./useWalletAccount";
 
@@ -38,16 +38,19 @@ export const useCVoxelList = () => {
     }
   }, [txes]);
 
+  const onlyPotentialCVoxels = useMemo(() => {
+    if (!account) return potentialTxes;
+    return potentialTxes;
+  }, [potentialTxes]);
+
   const filterTxes = (txes: TransactionLog[]): TransactionLog[] => {
     return txes.filter((tx) => Number(tx.value) > 0);
   };
 
   return {
-    setAddress,
-    address,
     txLoading,
     offchainLoading,
-    potentialTxes,
+    onlyPotentialCVoxels,
     offchainMetaList,
   };
 };
