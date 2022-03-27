@@ -24,17 +24,25 @@ export const useMyCeramicAcount = () => {
   const [did, setDid] = useState("");
 
   useEffect(() => {
+    let isMounted = true;
+
     async function initialize() {
-      if (viewerID) {
+      if (viewerID && isMounted) {
         setDid(viewerID.id);
         await connectWallet();
       }
     }
     initialize();
+
+    return () => {
+      isMounted = false;
+    };
   }, [viewerID]);
 
   useEffect(() => {
-    if (viewerID) {
+    let isMounted = true;
+
+    if (viewerID && isMounted) {
       const { avatarSrc, displayName, bio } = getProfileInfo(
         viewerID.id,
         profileRecord.content
@@ -44,31 +52,47 @@ export const useMyCeramicAcount = () => {
       setDescription(bio);
       setDid(viewerID.id);
     }
+
+    return () => {
+      isMounted = false;
+    };
   }, [profileRecord.content]);
 
   useEffect(() => {
+    let isMounted = true;
+
     async function getTempDIDProfile() {
       if (account && !did) {
-        const accountLink = await Caip10Link.fromAccount(
-          core.ceramic,
-          `${account}@eip155:${chainId}`
-        );
-        const linkedDid = accountLink.did;
-        if (linkedDid) {
-          const { avatarSrc, displayName, bio } = getProfileInfo(
-            linkedDid,
-            profileRecord.content
+        try {
+          const accountLink = await Caip10Link.fromAccount(
+            core.ceramic,
+            `${account}@eip155:${chainId}`
           );
-          setName(displayName);
-          setAvator(avatarSrc);
-          setDescription(bio);
-          setDid(linkedDid);
-        } else {
-          setName(formatDID(account, 12));
+          const linkedDid = accountLink.did;
+          if (linkedDid) {
+            const { avatarSrc, displayName, bio } = getProfileInfo(
+              linkedDid,
+              profileRecord.content
+            );
+            setName(displayName);
+            setAvator(avatarSrc);
+            setDescription(bio);
+            setDid(linkedDid);
+          } else {
+            setName(formatDID(account, 12));
+          }
+        } catch (error) {
+          console.log("getTempDIDProfile ERROR: ", error);
         }
       }
     }
-    getTempDIDProfile();
+    if (isMounted) {
+      getTempDIDProfile();
+    }
+
+    return () => {
+      isMounted = false;
+    };
   }, [account, did]);
 
   const connectCeramic = async () => {

@@ -26,9 +26,13 @@ export const useCVoxelList = () => {
   });
 
   useEffect(() => {
-    if (account && !address) {
+    let isMounted = true;
+    if (account && !address && isMounted) {
       setAddress(account);
     }
+    return () => {
+      isMounted = false;
+    };
   }, [account]);
 
   useEffect(() => {

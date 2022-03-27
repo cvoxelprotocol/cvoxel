@@ -1,5 +1,5 @@
 import { useMyCeramicAcount } from '@/hooks/useCeramicAcount'
-import { AvatarPlaceholder, usePublicRecord } from '@self.id/framework'
+import { AvatarPlaceholder } from '@self.id/framework'
 import {DropButton } from 'grommet'
 import { useState } from 'react'
 import {DisplayAvatar} from '../DisplayAvatar'
@@ -24,8 +24,7 @@ function MenuButton({ label, ...props }: MenuButtonProps) {
 }
 
 export default function AccountButton() {
-  const {connection, disconnectCeramic, account, connectWalletOnly, did, name, avator} = useMyCeramicAcount()
-  const profileRecord = usePublicRecord('basicProfile', did)
+  const {connection, disconnectCeramic, account, connectWalletOnly, did, name, avator, profileRecord} = useMyCeramicAcount()
   const [isMenuOpen, setMenuOpen] = useState(false)
 
   const goToMypage = () => {

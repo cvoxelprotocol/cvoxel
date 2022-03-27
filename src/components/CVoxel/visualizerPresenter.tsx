@@ -37,10 +37,12 @@ const VisualizerPresenter: FC<VisualizerPresenterProps> = ({ids}) => {
       setCVoxels(voxelsTemp);
     };
 
-    if(!(ids && ids.length>0)){
-      setCVoxels(initCVoxel);
-    } else if(isMounted){
-      loadVoxels()
+    if(isMounted) {
+      if(!(ids && ids.length>0)){
+        setCVoxels(initCVoxel);
+      } else {
+        loadVoxels()
+      }
     }
 
     return () => {
@@ -50,7 +52,11 @@ const VisualizerPresenter: FC<VisualizerPresenterProps> = ({ids}) => {
   }, [ids]);
 
   useEffect(() => {
+    let isMounted = true
     convertCVoxelsForDisplay()
+    return () => {
+      isMounted = false
+    }
   },[cVoxels])
 
 
