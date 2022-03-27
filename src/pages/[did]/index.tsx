@@ -9,6 +9,7 @@ import { useMyCeramicAcount } from '@/hooks/useCeramicAcount'
 import { HomeContainer } from '@/components/containers/home'
 import { ProfileContainer } from '@/components/containers/profile/ProfileContainer'
 import { NoProfileContainer } from '@/components/containers/profile/NoProfileContainer'
+import { core } from '@/lib/ceramic/server'
 
 export const getServerSideProps: GetServerSideProps<CeramicProps, { did: string }> = async (ctx) => {
   const did = ctx.params?.did
@@ -32,7 +33,6 @@ export const getServerSideProps: GetServerSideProps<CeramicProps, { did: string 
     }
   } else if (isCAIP10string(did)) {
     try {
-      const { core } = await import('@/lib/ceramic/server')
       const linkedDid = await core.getAccountDID(did)
       if (linkedDid != null) {
         return {

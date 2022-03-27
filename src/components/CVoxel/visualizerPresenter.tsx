@@ -25,6 +25,8 @@ const VisualizerPresenter: FC<VisualizerPresenterProps> = ({ids}) => {
   const offset = new THREE.Vector3(0, 0, 0);
 
   useEffect(() => {
+    let isMounted = true
+
     const loadVoxels = async () => {
       if(!ids) return
       const voxelsTemp: CVoxel[] = [];
@@ -37,8 +39,12 @@ const VisualizerPresenter: FC<VisualizerPresenterProps> = ({ids}) => {
 
     if(!(ids && ids.length>0)){
       setCVoxels(initCVoxel);
-    } else {
+    } else if(isMounted){
       loadVoxels()
+    }
+
+    return () => {
+      isMounted = false
     }
     
   }, [ids]);

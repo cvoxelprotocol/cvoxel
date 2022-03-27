@@ -30,10 +30,6 @@ export const CVoxelItem: FC<Props> = ({item, did, holder, offchainItems}) => {
   const [isLoading, setLoading] = useState(false)
   const {chainId} = useWalletAccount()
 
-  useEffect(() => {
-    console.log("item", item)
-  },[])
-
   const detailItem = useMemo(() => {
     return cVoxelItem.content || null
   },[cVoxelItem.content])
@@ -56,11 +52,15 @@ export const CVoxelItem: FC<Props> = ({item, did, holder, offchainItems}) => {
   },[detailItem,chainId])
 
   useEffect(() => {
+    let isMounted = true
     async function init() {
         await getENS()
     }
-    if(detailItem && !verifier) {
+    if(detailItem && !verifier && isMounted) {
         init()
+    }
+    return () => {
+      isMounted = false
     }
   },[detailItem])
 

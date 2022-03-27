@@ -15,10 +15,14 @@ export const ProfileContainer: FC<CeramicProps> = ({ did }) => {
   const CVoxelsRecords = useCVoxelsRecord(did);
 
   useEffect(() => {
-    if(did) {
+    let isMounted = true
+    if(did && isMounted) {
       setUserProfile(did)
     }
-  },[did])
+    return () => {
+      isMounted = false
+    }
+  },[did, setUserProfile])
 
   return (
     <main className="h-auto overflow-y-scroll text-black dark:text-white text-center">
@@ -26,7 +30,7 @@ export const ProfileContainer: FC<CeramicProps> = ({ did }) => {
       <div className="flex w-full items-center justify-center h-[450px] relative">
           <Canvas shadows>
             <VisualizerPresenter
-              ids={CVoxelsRecords.content?.cVoxels.map((vox) => vox.id)}
+              ids={CVoxelsRecords.content ? CVoxelsRecords.content.cVoxels.map((vox) => vox.id): []}
             />
           </Canvas>
         </div>

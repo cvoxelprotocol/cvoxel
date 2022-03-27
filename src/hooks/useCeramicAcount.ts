@@ -11,7 +11,6 @@ import { getProfileInfo } from "@/utils/ceramicUtils";
 import { useWalletAccount } from "./useWalletAccount";
 import { Caip10Link } from "@ceramicnetwork/stream-caip10-link";
 import { ModelTypes } from "@/interfaces";
-import { useStateSelfID } from "@/recoilstate/ceramic";
 
 export const useMyCeramicAcount = () => {
   const [connection, connect, disconnect] = useConnection<ModelTypes>();
@@ -19,12 +18,10 @@ export const useMyCeramicAcount = () => {
     useWalletAccount();
   const viewerID = useViewerID<ModelTypes>();
   const profileRecord = useViewerRecord("basicProfile");
-  const accountRecord = useViewerRecord("cryptoAccounts");
   const [name, setName] = useState("");
   const [avator, setAvator] = useState<string | undefined>("");
   const [description, setDescription] = useState("");
   const [did, setDid] = useState("");
-  const [selfID, setSelfID] = useStateSelfID();
 
   useEffect(() => {
     async function initialize() {
@@ -76,7 +73,6 @@ export const useMyCeramicAcount = () => {
 
   const connectCeramic = async () => {
     const id = await connect();
-    setSelfID(id);
     await connectWallet();
   };
   const connectWalletOnly = async () => {
@@ -92,7 +88,6 @@ export const useMyCeramicAcount = () => {
     disconnectCeramic,
     connection,
     viewerID,
-    selfID,
     did,
     account,
     profileRecord,

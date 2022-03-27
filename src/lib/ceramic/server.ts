@@ -35,17 +35,8 @@ export const getRequestState = async (
     if (isSupportedDID(did)) {
       prefetch.push(requestClient.prefetch("cVoxels", did));
       prefetch.push(requestClient.prefetch("basicProfile", did));
-      prefetch.push(requestClient.prefetch("cryptoAccounts", did));
+      await Promise.all(prefetch);
     }
   }
-
-  if (requestClient.viewerID != null) {
-    prefetch.push(
-      requestClient.prefetch("basicProfile", requestClient.viewerID)
-    );
-    prefetch.push(requestClient.prefetch("cVoxels", requestClient.viewerID));
-  }
-  await Promise.all(prefetch);
-
   return requestClient.getState();
 };
