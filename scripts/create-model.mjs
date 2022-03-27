@@ -56,6 +56,10 @@ const cVoxelSchemaID = await manager.createSchema('CVoxel', {
       type: 'string',
       title: 'from',
     },
+    isPayer: {
+      type: 'boolean',
+      title: 'isPayer',
+    },
     summary: {
       type: 'string',
       title: 'summary',
@@ -149,6 +153,10 @@ const cVoxelsSchemaID = await manager.createSchema('CVoxels', {
           txHash: {
             type: 'string',
             title: 'txHash',
+          },
+          isPayer: {
+            type: 'boolean',
+            title: 'isPayer',
           },
           summary: {
             type: 'string',

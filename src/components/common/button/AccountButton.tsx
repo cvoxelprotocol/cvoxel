@@ -1,14 +1,10 @@
 import { useMyCeramicAcount } from '@/hooks/useCeramicAcount'
-import { AvatarPlaceholder, useViewerID, useViewerRecord } from '@self.id/framework'
-import { Avatar, Button, DropButton } from 'grommet'
-import Link from 'next/link'
+import { AvatarPlaceholder } from '@self.id/framework'
+import {DropButton } from 'grommet'
 import { useState } from 'react'
-
-
-
-import {DisplayAvatar} from './DisplayAvatar'
-import { ThemeButton } from './button/ThemeButton'
-import { getProfileInfo } from '@/utils/ceramicUtils'
+import {DisplayAvatar} from '../DisplayAvatar'
+import Router from 'next/router'
+import { IconAvatar } from '../IconAvatar'
 
 type MenuButtonProps = {
   label: string
@@ -28,29 +24,25 @@ function MenuButton({ label, ...props }: MenuButtonProps) {
 }
 
 export default function AccountButton() {
-  // const [connection, connect, disconnect] = useConnection()
-  const {connectCeramic, connection, disconnectCeramic, account, connectWalletOnly} = useMyCeramicAcount()
-  const viewerID = useViewerID()
-  const profileRecord = useViewerRecord('basicProfile')
+  const {connection, disconnectCeramic, account, connectWalletOnly, did, name, avator, profileRecord} = useMyCeramicAcount()
   const [isMenuOpen, setMenuOpen] = useState(false)
 
-  if (viewerID != null) {
-    const { avatarSrc, displayName } = getProfileInfo(viewerID.id, profileRecord.content)
+  const goToMypage = () => {
+    if(!did && !account) return
+    Router.push(`/${did ? did : account}`)
+  }
 
+  if (account) {
     const buttons =
       connection.status === 'connected' ? (
         <>
+          <MenuButton label="My Page" onClick={() => goToMypage()} />
           <MenuButton label="Disconnect" onClick={() => disconnectCeramic()} />
-          {/* <div>
-            <ThemeButton />
-          </div> */}
         </>
       ) : (
         <>
+          <MenuButton label="My Page" onClick={() => goToMypage()} />
           <MenuButton label="Disconnect Wallet" onClick={() => disconnectCeramic()} />
-          {/* <div>
-            <ThemeButton />
-          </div> */}
         </>
       )
 
@@ -60,31 +52,24 @@ export default function AccountButton() {
         <div
           className="space-y-4 text-center p-2">
             <div className="flex items-center justify-center">
-              {avatarSrc ? (
-                <Avatar size="60px" src={avatarSrc} />
+              {avator ? (
+                <IconAvatar src={avator} size={"lg"} />
               ) : (
-                <AvatarPlaceholder did={viewerID.id} size={60} />
+                <AvatarPlaceholder did={did} size={60} />
               )}
             </div>
           <p className="font-bold text-sm">
-            {displayName}
+            {name ? name : account}
           </p>
         </div>
         <div className="rounded-lg space-y-2">
-          {/* <div className="">
-            <Link href={`/${viewerID.id}`} passHref>
-              <button
-                onClick={() => {
-                  setMenuOpen(false)
-                }}><p className="text-sm">My CVoxels</p></button>
-            </Link>
-          </div> */}
           {buttons}
         </div>
       </div>
     )
 
     return (
+
       <DropButton
           dropAlign={{ top: 'bottom', right: 'right' }}
           dropContent={content}
@@ -97,24 +82,12 @@ export default function AccountButton() {
           }}
           open={isMenuOpen}>
           <DisplayAvatar
-            did={viewerID.id}
-            label={displayName}
+            did={did}
+            label={name ? name : account}
             loading={profileRecord.isLoading}
-            src={avatarSrc}
+            src={avator}
           />
         </DropButton>
-    )
-  }
-
-  if(account && connection.status === 'disconnected'){
-    return (
-      <Button
-        primary
-        color="white"
-        label="Connect Ceramic"
-        onClick={() => connectCeramic()}
-        style={{ border: 1, color: 'gray' }}
-      />
     )
   }
 
@@ -123,12 +96,6 @@ export default function AccountButton() {
   return connection.status === 'connecting' ? (
     <DisplayAvatar label="Connecting..." loading />
   ) : (
-    <Button
-      primary
-      color="white"
-      label="Connect"
-      onClick={() => connectWalletOnly()}
-      style={{ border: 1, color: 'gray' }}
-    />
+    <button className="text-base text-gray-400" onClick={()=> connectWalletOnly()}> Connect Wallet</button>
   )
 }

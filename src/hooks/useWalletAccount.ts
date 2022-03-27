@@ -1,7 +1,6 @@
 import { injected } from "@/lib/wallet/connector";
 import { Web3Provider } from "@ethersproject/providers";
 import { UnsupportedChainIdError, useWeb3React } from "@web3-react/core";
-import { useModal } from "./useModal";
 import { useToast } from "./useToast";
 import { isMobile } from "react-device-detect";
 import {
@@ -11,25 +10,26 @@ import {
 import { useEffect } from "react";
 import { getAuthService } from "@/services/Auth/AuthService";
 import { getCVoxelService } from "@/services/CVoxel/CVoxelService";
+import { getEtherService } from "@/services/Ether/EtherService";
 
 export const useWalletAccount = () => {
   const { library, account, active, activate, deactivate, chainId } =
     useWeb3React<Web3Provider>();
   const authService = getAuthService();
+  const etherService = getEtherService();
   const cVoxelService = getCVoxelService();
-  const { closeLoading } = useModal();
   const { lancError } = useToast();
 
   useEffect(() => {
     if (library) {
       authService.setProvider(library);
       cVoxelService.setProvider(library);
+      etherService.setProvider(library);
     }
   }, [library]);
 
   const connectWallet = async () => {
     await activate(injected, async (error) => {
-      closeLoading();
       if (error instanceof NoEthereumProviderError) {
         if (isMobile) {
           openMetamaskViaDeepLink();

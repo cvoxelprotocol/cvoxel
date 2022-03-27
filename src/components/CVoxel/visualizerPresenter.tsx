@@ -14,10 +14,9 @@ import { initCVoxel } from "@/constants/cVoxel";
 
 type VisualizerPresenterProps = {
   ids?: string[];
-  account?: boolean;
 };
 
-const VisualizerPresenter: FC<VisualizerPresenterProps> = ({ids, account}) => {
+const VisualizerPresenter: FC<VisualizerPresenterProps> = ({ids}) => {
   const core = useCore();
   const [cVoxels, setCVoxels] = useState<CVoxel[]>([]);
   const {cvoxelsForDisplay, convertCVoxelsForDisplay} = useVoxStyler(cVoxels);
@@ -26,6 +25,8 @@ const VisualizerPresenter: FC<VisualizerPresenterProps> = ({ids, account}) => {
   const offset = new THREE.Vector3(0, 0, 0);
 
   useEffect(() => {
+    let isMounted = true
+
     const loadVoxels = async () => {
       if(!ids) return
       const voxelsTemp: CVoxel[] = [];
@@ -36,18 +37,27 @@ const VisualizerPresenter: FC<VisualizerPresenterProps> = ({ids, account}) => {
       setCVoxels(voxelsTemp);
     };
 
-    if(!(account && ids && ids.length>0)){
-      setCVoxels(initCVoxel);
-    } else {
-      loadVoxels()
+    if(isMounted) {
+      if(!(ids && ids.length>0)){
+        setCVoxels(initCVoxel);
+      } else {
+        loadVoxels()
+      }
+    }
+
+    return () => {
+      isMounted = false
     }
     
-  }, [ids, account]);
+  }, [ids]);
 
   useEffect(() => {
+    let isMounted = true
     convertCVoxelsForDisplay()
+    return () => {
+      isMounted = false
+    }
   },[cVoxels])
-
 
 
   useFrame(() => {

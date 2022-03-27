@@ -4,14 +4,6 @@ module.exports = {
   images: {
     domains: ['joeschmoe.io', 'ipfs.io', 'ipfs.infura.io' ],
   },
-  // async rewrites() {
-  //   return [
-  //     {
-  //       source: '/',
-  //       destination: '/board',
-  //     }
-  //   ];
-  // },
   webpack: (config) => {
     return config;
   }

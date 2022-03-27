@@ -1,16 +1,16 @@
-import { core } from "@/services/ceramic/CeramicService";
+import { core } from "@/lib/ceramic/server";
 import {
   useConnection,
   useViewerID,
   useViewerRecord,
   usePublicRecord,
+  formatDID,
 } from "@self.id/framework";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { getProfileInfo } from "@/utils/ceramicUtils";
 import { useWalletAccount } from "./useWalletAccount";
 import { Caip10Link } from "@ceramicnetwork/stream-caip10-link";
 import { ModelTypes } from "@/interfaces";
-import { useStateSelfID } from "@/recoilstate/ceramic";
 
 export const useMyCeramicAcount = () => {
   const [connection, connect, disconnect] = useConnection<ModelTypes>();
@@ -18,25 +18,31 @@ export const useMyCeramicAcount = () => {
     useWalletAccount();
   const viewerID = useViewerID<ModelTypes>();
   const profileRecord = useViewerRecord("basicProfile");
-  const accountRecord = useViewerRecord("cryptoAccounts");
   const [name, setName] = useState("");
   const [avator, setAvator] = useState<string | undefined>("");
   const [description, setDescription] = useState("");
   const [did, setDid] = useState("");
-  const [selfID, setSelfID] = useStateSelfID();
 
   useEffect(() => {
+    let isMounted = true;
+
     async function initialize() {
-      if (viewerID) {
+      if (viewerID && isMounted) {
         setDid(viewerID.id);
-        connectWallet();
+        await connectWallet();
       }
     }
     initialize();
+
+    return () => {
+      isMounted = false;
+    };
   }, [viewerID]);
 
   useEffect(() => {
-    if (viewerID) {
+    let isMounted = true;
+
+    if (viewerID && isMounted) {
       const { avatarSrc, displayName, bio } = getProfileInfo(
         viewerID.id,
         profileRecord.content
@@ -46,34 +52,51 @@ export const useMyCeramicAcount = () => {
       setDescription(bio);
       setDid(viewerID.id);
     }
+
+    return () => {
+      isMounted = false;
+    };
   }, [profileRecord.content]);
 
   useEffect(() => {
+    let isMounted = true;
+
     async function getTempDIDProfile() {
       if (account && !did) {
-        const accountLink = await Caip10Link.fromAccount(
-          core.ceramic,
-          `${account}@eip155:${chainId}`
-        );
-        const linkedDid = accountLink.did;
-        if (linkedDid) {
-          const { avatarSrc, displayName, bio } = getProfileInfo(
-            linkedDid,
-            profileRecord.content
+        try {
+          const accountLink = await Caip10Link.fromAccount(
+            core.ceramic,
+            `${account}@eip155:${chainId}`
           );
-          setName(displayName);
-          setAvator(avatarSrc);
-          setDescription(bio);
-          setDid(linkedDid);
+          const linkedDid = accountLink.did;
+          if (linkedDid) {
+            const { avatarSrc, displayName, bio } = getProfileInfo(
+              linkedDid,
+              profileRecord.content
+            );
+            setName(displayName);
+            setAvator(avatarSrc);
+            setDescription(bio);
+            setDid(linkedDid);
+          } else {
+            setName(formatDID(account, 12));
+          }
+        } catch (error) {
+          console.log("getTempDIDProfile ERROR: ", error);
         }
       }
     }
-    getTempDIDProfile();
+    if (isMounted) {
+      getTempDIDProfile();
+    }
+
+    return () => {
+      isMounted = false;
+    };
   }, [account, did]);
 
   const connectCeramic = async () => {
     const id = await connect();
-    setSelfID(id);
     await connectWallet();
   };
   const connectWalletOnly = async () => {
@@ -89,7 +112,6 @@ export const useMyCeramicAcount = () => {
     disconnectCeramic,
     connection,
     viewerID,
-    selfID,
     did,
     account,
     profileRecord,
@@ -104,21 +126,25 @@ export const useUserCeramicAcount = (did: string) => {
   const profileRecord = usePublicRecord("basicProfile", did);
   const [description, setDescription] = useState("");
   const [name, setName] = useState("");
-  const [avator, setAvator] = useState<string | undefined>("");
+  const [avator, setAvator] = useState<string | undefined>();
 
-  useEffect(() => {
-    if (did) {
-      const { avatarSrc, displayName, bio } = getProfileInfo(
-        did,
-        profileRecord.content
-      );
-      setName(displayName);
-      setAvator(avatarSrc);
-      setDescription(bio);
-    }
-  }, [did]);
+  const setUserProfile = useCallback(
+    (did: string) => {
+      if (did) {
+        const { avatarSrc, displayName, bio } = getProfileInfo(
+          did,
+          profileRecord.content
+        );
+        setName(displayName);
+        setAvator(avatarSrc);
+        setDescription(bio);
+      }
+    },
+    [did, profileRecord.content]
+  );
 
   return {
+    setUserProfile,
     profileRecord,
     name,
     avator,

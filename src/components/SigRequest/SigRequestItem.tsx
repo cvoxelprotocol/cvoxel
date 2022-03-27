@@ -3,10 +3,12 @@ import { CVoxelMetaDraft } from "@/interfaces";
 import { getExploreLink } from "@/utils/etherscanUtils";
 import { formatBigNumber } from "@/utils/ethersUtil";
 import { shortHash } from "@/utils/tools";
-import { FC, useMemo } from "react";
-import { SigButton } from "../common/button/SigButton";
+import { FC, useMemo, useEffect, useState, useCallback } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faExternalLink } from "@fortawesome/free-solid-svg-icons";
+import { Button } from "../common/button/Button";
+import { getEtherService } from "@/services/Ether/EtherService";
+import { CommonSpinner } from "../common/CommonSpinner";
 
 type SigRequestItemProps = {
     tx: CVoxelMetaDraft
@@ -16,6 +18,18 @@ type SigRequestItemProps = {
 
 export const SigRequestItem:FC<SigRequestItemProps> = ({tx, account, handleClick}) => {
     const {chainId} = useWalletAccount()
+    const etherService = getEtherService();
+    const [ens, setENS] = useState<string>("")
+    const [isLoading, setLoading] = useState(false)
+
+    useEffect(() => {
+        async function init() {
+            await getENS()
+        }
+        if(tx) {
+            init()
+        }
+    },[tx])
 
     const isPayee = useMemo(() => {
         return account?.toLowerCase()===tx.to.toLowerCase()
@@ -25,6 +39,18 @@ export const SigRequestItem:FC<SigRequestItemProps> = ({tx, account, handleClick
         return getExploreLink(tx.txHash, chainId)
     },[tx,chainId])
 
+    const getENS = useCallback(async () => {
+        setLoading(true)
+        if(isPayee) {
+            const ens = await etherService.getDisplayENS(tx.from)
+            setENS(ens)
+        } else {
+            const ens = await etherService.getDisplayENS(tx.to)
+            setENS(ens)
+        }
+        setLoading(false)
+    },[tx, isPayee, etherService])
+
 
     return (
         <div className="rounded-lg shadow-lg bg-white dark:bg-card text-xs sm:text-sm text-black dark:text-white break-words flex-wrap font-medium">
@@ -32,7 +58,11 @@ export const SigRequestItem:FC<SigRequestItemProps> = ({tx, account, handleClick
                 <div className="flex justify-evenly items-center pb-2 sm:pb-0">
                     <div className="max-w-[120px] px-4">
                         <p className="text-gray-500">{isPayee ? "from": "to"}</p>
-                        <p className="break-words flex-wrap">{isPayee ? shortHash(tx.from, 13) : shortHash(tx.to, 13)}</p>
+                        {isLoading ? (
+                            <CommonSpinner size="sm"/>
+                        ): (
+                            <p className="break-words flex-wrap">{ens}</p>
+                        )}
                     </div>
                     <div className="w-[0.5px] bg-black border-black h-[40px]"></div>
                     <div className="max-w-[120px] px-2 text-center space-y-1">
@@ -71,7 +101,7 @@ export const SigRequestItem:FC<SigRequestItemProps> = ({tx, account, handleClick
                     {(tx.fromSig) ? (
                                 <p className="text-lg text-primary">Already Verified</p>
                           ): (
-                            <SigButton text={"Verify"} handleClick={() => handleClick(tx)}/>
+                            <Button text={"Verify"} color="grad-blue" onClick={() => handleClick(tx)}/>
                         )}
                     
                 </div>
