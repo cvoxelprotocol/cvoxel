@@ -9,6 +9,7 @@ import { faExternalLink } from "@fortawesome/free-solid-svg-icons";
 import { Button } from "../common/button/Button";
 import { getEtherService } from "@/services/Ether/EtherService";
 import { CommonSpinner } from "../common/CommonSpinner";
+import { convertTimestampToDateStr } from "@/utils/dateUtil";
 
 type SigRequestItemProps = {
     tx: CVoxelMetaDraft
@@ -70,7 +71,7 @@ export const SigRequestItem:FC<SigRequestItemProps> = ({tx, account, handleClick
                             className="block self-center mx-auto px-1 py-0.5 content-center text-xs rounded-full text-[#53B15C] bg-green-200 font-semibold w-max transition duration-300 ease">
                             Success
                         </span>
-                        <p>{tx.issuedTimestamp}</p>
+                        <p>{convertTimestampToDateStr(tx.issuedTimestamp)}</p>
                     </div>
                     <div className="w-[0.5px] bg-black border-black h-[40px]"></div>
                     <div className="max-w-[120px] px-4">

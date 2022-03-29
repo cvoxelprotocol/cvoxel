@@ -53,7 +53,7 @@ export const TransactionDetail:FC<TransactionDetailProps> = ({account, tx, offch
                     {connectionStatus ==="connecting" && (
                         <CommonSpinner />
                     )}
-                    <Button text={connectionStatus==="connected"? "Claim" : connectionStatus ==="connecting" ? "Connecitng..." : "Connect DID"} buttonType={"button"} onClick={() => onClaim(tx, offchainItem)} color="grad-blue"/>
+                    <Button text={connectionStatus==="connected"? "Claim" : connectionStatus ==="connecting" ? "Connecitng..." : "Connect DID"} buttonType={"button"} onClick={() => onClaim(tx, offchainItem)} color={connectionStatus==="connected" ? "grad-blue": "grad-red"}/>
                 </div>
             )}
             {(!claimable && reclaimable) && (
@@ -61,7 +61,7 @@ export const TransactionDetail:FC<TransactionDetailProps> = ({account, tx, offch
                     {connectionStatus ==="connecting" && (
                         <CommonSpinner />
                     )}
-                    <Button text={connectionStatus==="connected"? "ReClaim" : connectionStatus ==="connecting" ? "Connecitng..." : "Connect DID"} buttonType={"button"} onClick={() => reClaim(tx, offchainItem)} color="primary"/>
+                    <Button text={connectionStatus==="connected"? "ReClaim" : connectionStatus ==="connecting" ? "Connecitng..." : "Connect DID"} buttonType={"button"} onClick={() => reClaim(tx, offchainItem)} color={connectionStatus==="connected" ? "grad-blue": "grad-red"}/>
                 </div>
             )}
         </div>

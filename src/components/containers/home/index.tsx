@@ -221,7 +221,7 @@ export const HomeContainer: FC = () => {
                                             {connection.status ==="connecting" && (
                                               <CommonSpinner />
                                             )}
-                                            <Button text={connection.status==="connected"? "Claim" : connection.status ==="connecting" ? "Connecitng..." : "Connect DID"} buttonType={"submit"} color="grad-blue"/>
+                                            <Button text={connection.status==="connected"? "Claim" : connection.status ==="connecting" ? "Connecitng..." : "Connect DID"} buttonType={"submit"} color={connection.status==="connected" ? "grad-blue": "grad-red"}/>
                                           </div>
                                       </form>
                                 </div>

@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faExternalLink } from "@fortawesome/free-solid-svg-icons";
 import { getEtherService } from "@/services/Ether/EtherService";
 import { CommonSpinner } from "../common/CommonSpinner";
+import { convertTimestampToDateStr } from "@/utils/dateUtil";
 
 type TransactionItemProps = {
     tx: TransactionLog
@@ -57,7 +58,7 @@ export const TransactionItem:FC<TransactionItemProps> = ({tx, account, onClickTx
     },[tx, isPayee, etherService])
 
     const handleClick = () => {
-        if(selectedTx) {
+        if(selectedTx && selectedTx.hash===tx.hash) {
             onClickTx(null)
         } else {
             onClickTx(tx)
@@ -71,7 +72,7 @@ export const TransactionItem:FC<TransactionItemProps> = ({tx, account, onClickTx
                 <div className="flex justify-evenly items-center pb-2 sm:pb-0">
                     <div className="max-w-[90px] sm:max-w-[120px] px-2">
                         <p className="text-md font-bold">
-                        {formatBigNumber(tx.value, 6)} {tx.tokenSymbol ? tx.tokenSymbol: "ETH"}
+                        {formatBigNumber(tx.value, 6, tx.tokenDecimal)} {tx.tokenSymbol || "ETH"}
                         </p>
                     </div>
                     <div className="w-[0.5px] bg-black border-black h-[40px]"></div>
@@ -80,7 +81,7 @@ export const TransactionItem:FC<TransactionItemProps> = ({tx, account, onClickTx
                             className="block self-center mx-auto px-1 py-0.5 content-center text-xs rounded-full text-[#53B15C] bg-green-200 font-semibold w-max transition duration-300 ease">
                             Success
                         </span>
-                        <p>{tx.timeStamp}</p>
+                        <p>{convertTimestampToDateStr(tx.timeStamp)}</p>
                     </div>
                     <div className="hidden sm:block w-[0.5px] bg-black border-black h-[40px]"></div>
                 </div>
