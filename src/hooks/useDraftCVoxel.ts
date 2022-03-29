@@ -64,18 +64,25 @@ export function useDraftCVoxel() {
           existedItem
         );
 
-        const result = await createDraftWighVerify(
+        const { status, fiat } = await createDraftWighVerify(
           address.toLowerCase(),
           draft
         );
-        if (result !== "ok") {
+        if (status !== "ok") {
           closeLoading();
           lancError(CVOXEL_CREATION_FAILED);
           return false;
         }
 
-        const doc = await selfID.client.dataModel.createTile("CVoxel", {
+        // add fiat val
+        const metaWithFiat: CVoxel = {
           ...meta,
+          fiatValue: fiat || "",
+          fiatSymbol: "USD",
+        };
+
+        const doc = await selfID.client.dataModel.createTile("CVoxel", {
+          ...metaWithFiat,
         });
         const cVoxels = cVoxelsRecord.content?.cVoxels ?? [];
         const docUrl = doc.id.toUrl();
@@ -218,6 +225,7 @@ export function useDraftCVoxel() {
         tokenSymbol: selectedTx.tokenSymbol || "ETH",
         tokenDecimal: Number(selectedTx.tokenDecimal) || 18,
         networkId: chainId || 1,
+        fiatSymbol: "USD",
         issuedTimestamp: selectedTx.timeStamp,
         txHash: selectedTx.hash,
         relatedTxHashes: [selectedTx.hash],

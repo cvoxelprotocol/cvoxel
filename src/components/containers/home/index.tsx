@@ -163,6 +163,7 @@ export const HomeContainer: FC = () => {
                             item={item}
                             offchainItems={offchainMetaList}
                             key={item.id}
+                            isOwner={true}
                           />
                       )
                   })}

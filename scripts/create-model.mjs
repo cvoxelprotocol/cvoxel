@@ -16,7 +16,7 @@ if (!process.env.SEED) {
   throw new Error('Missing SEED environment variable')
 }
 
-const CERAMIC_URL = process.env.NEXT_PUBLIC_CERAMIC_URL || 'https://node.cvoxelceramic.com'
+const CERAMIC_URL = process.env.NEXT_PUBLIC_CERAMIC_URL || 'http://localhost:7007'
 
 // The seed must be provided as an environment variable
 const seed = fromString(process.env.SEED, 'base16')

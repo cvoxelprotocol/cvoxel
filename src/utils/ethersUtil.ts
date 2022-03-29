@@ -8,5 +8,10 @@ export const getAddressFromStr = (addressStr: string): string => {
 export const formatBigNumber = (
   value: BigNumberish,
   precision = 2,
-  decimals: number = 18
+  decimals: string = "18"
 ): string => Number(formatUnits(value, decimals)).toFixed(precision);
+
+export const formatBigNumberWithoutPrecision = (
+  value: BigNumberish,
+  decimals: string = "18"
+): string => formatUnits(value, decimals);

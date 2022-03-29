@@ -11,6 +11,8 @@ export const initCVoxel: CVoxel[] = [
     tokenSymbol: "eth", // eth, usdc, etc
     tokenDecimal: 18,
     networkId: 0, // eth mainnet = 1
+    fiatValue: "5840",
+    fiatSymbol: "usd",
     issuedTimestamp: "", //block timestamp
     txHash: "",
     tags: [], //tags
@@ -29,6 +31,8 @@ export const initCVoxel: CVoxel[] = [
     tokenSymbol: "eth", // eth, usdc, etc
     tokenDecimal: 18,
     networkId: 0, // eth mainnet = 1
+    fiatValue: "5840",
+    fiatSymbol: "usd",
     issuedTimestamp: "", //block timestamp
     txHash: "",
     tags: [], //tags
@@ -46,6 +50,8 @@ export const initCVoxel: CVoxel[] = [
     value: "1", // reward value
     tokenSymbol: "eth", // eth, usdc, etc
     tokenDecimal: 18,
+    fiatValue: "2920",
+    fiatSymbol: "usd",
     networkId: 0, // eth mainnet = 1
     issuedTimestamp: "", //block timestamp
     txHash: "",
@@ -64,6 +70,8 @@ export const initCVoxel: CVoxel[] = [
     value: "2", // reward value
     tokenSymbol: "eth", // eth, usdc, etc
     tokenDecimal: 18,
+    fiatValue: "5840",
+    fiatSymbol: "usd",
     networkId: 0, // eth mainnet = 1
     issuedTimestamp: "", //block timestamp
     txHash: "",
@@ -82,6 +90,8 @@ export const initCVoxel: CVoxel[] = [
     value: "3", // reward value
     tokenSymbol: "eth", // eth, usdc, etc
     tokenDecimal: 18,
+    fiatValue: "8760",
+    fiatSymbol: "usd",
     networkId: 0, // eth mainnet = 1
     issuedTimestamp: "", //block timestamp
     txHash: "",
@@ -100,6 +110,8 @@ export const initCVoxel: CVoxel[] = [
     value: "2", // reward value
     tokenSymbol: "eth", // eth, usdc, etc
     tokenDecimal: 18,
+    fiatValue: "5840",
+    fiatSymbol: "usd",
     networkId: 0, // eth mainnet = 1
     issuedTimestamp: "", //block timestamp
     txHash: "",
@@ -118,6 +130,8 @@ export const initCVoxel: CVoxel[] = [
     value: "1", // reward value
     tokenSymbol: "eth", // eth, usdc, etc
     tokenDecimal: 18,
+    fiatValue: "2920",
+    fiatSymbol: "usd",
     networkId: 0, // eth mainnet = 1
     issuedTimestamp: "", //block timestamp
     txHash: "",
@@ -136,6 +150,8 @@ export const initCVoxel: CVoxel[] = [
     value: "1.5", // reward value
     tokenSymbol: "eth", // eth, usdc, etc
     tokenDecimal: 18,
+    fiatValue: "4380",
+    fiatSymbol: "usd",
     networkId: 0, // eth mainnet = 1
     issuedTimestamp: "", //block timestamp
     txHash: "",
@@ -154,6 +170,8 @@ export const initCVoxel: CVoxel[] = [
     value: "2", // reward value
     tokenSymbol: "eth", // eth, usdc, etc
     tokenDecimal: 18,
+    fiatValue: "5840",
+    fiatSymbol: "usd",
     networkId: 0, // eth mainnet = 1
     issuedTimestamp: "", //block timestamp
     txHash: "",
@@ -172,6 +190,8 @@ export const initCVoxel: CVoxel[] = [
     value: "1.5", // reward value
     tokenSymbol: "eth", // eth, usdc, etc
     tokenDecimal: 18,
+    fiatValue: "4380",
+    fiatSymbol: "usd",
     networkId: 0, // eth mainnet = 1
     issuedTimestamp: "", //block timestamp
     txHash: "",
@@ -190,6 +210,8 @@ export const initCVoxel: CVoxel[] = [
     value: "2", // reward value
     tokenSymbol: "eth", // eth, usdc, etc
     tokenDecimal: 18,
+    fiatValue: "5840",
+    fiatSymbol: "usd",
     networkId: 0, // eth mainnet = 1
     issuedTimestamp: "", //block timestamp
     txHash: "",
@@ -208,6 +230,8 @@ export const initCVoxel: CVoxel[] = [
     value: "3", // reward value
     tokenSymbol: "eth", // eth, usdc, etc
     tokenDecimal: 18,
+    fiatValue: "8760",
+    fiatSymbol: "usd",
     networkId: 0, // eth mainnet = 1
     issuedTimestamp: "", //block timestamp
     txHash: "",
@@ -226,6 +250,8 @@ export const initCVoxel: CVoxel[] = [
     value: "3", // reward value
     tokenSymbol: "eth", // eth, usdc, etc
     tokenDecimal: 18,
+    fiatValue: "8760",
+    fiatSymbol: "usd",
     networkId: 0, // eth mainnet = 1
     issuedTimestamp: "", //block timestamp
     txHash: "",
@@ -244,6 +270,8 @@ export const initCVoxel: CVoxel[] = [
     value: "1.6", // reward value
     tokenSymbol: "eth", // eth, usdc, etc
     tokenDecimal: 18,
+    fiatValue: "4672",
+    fiatSymbol: "usd",
     networkId: 0, // eth mainnet = 1
     issuedTimestamp: "", //block timestamp
     txHash: "",
@@ -262,6 +290,8 @@ export const initCVoxel: CVoxel[] = [
     value: "2", // reward value
     tokenSymbol: "eth", // eth, usdc, etc
     tokenDecimal: 18,
+    fiatValue: "5840",
+    fiatSymbol: "usd",
     networkId: 0, // eth mainnet = 1
     issuedTimestamp: "", //block timestamp
     txHash: "",
@@ -280,6 +310,8 @@ export const initCVoxel: CVoxel[] = [
     value: "1.5", // reward value
     tokenSymbol: "eth", // eth, usdc, etc
     tokenDecimal: 18,
+    fiatValue: "4380",
+    fiatSymbol: "usd",
     networkId: 0, // eth mainnet = 1
     issuedTimestamp: "", //block timestamp
     txHash: "",
@@ -298,6 +330,8 @@ export const initCVoxel: CVoxel[] = [
     value: "2", // reward value
     tokenSymbol: "eth", // eth, usdc, etc
     tokenDecimal: 18,
+    fiatValue: "5840",
+    fiatSymbol: "usd",
     networkId: 0, // eth mainnet = 1
     issuedTimestamp: "", //block timestamp
     txHash: "",
@@ -316,6 +350,8 @@ export const initCVoxel: CVoxel[] = [
     value: "1.9", // reward value
     tokenSymbol: "eth", // eth, usdc, etc
     tokenDecimal: 18,
+    fiatValue: "5548",
+    fiatSymbol: "usd",
     networkId: 0, // eth mainnet = 1
     issuedTimestamp: "", //block timestamp
     txHash: "",
@@ -334,6 +370,8 @@ export const initCVoxel: CVoxel[] = [
     value: "0.9", // reward value
     tokenSymbol: "eth", // eth, usdc, etc
     tokenDecimal: 18,
+    fiatValue: "2628",
+    fiatSymbol: "usd",
     networkId: 0, // eth mainnet = 1
     issuedTimestamp: "", //block timestamp
     txHash: "",
@@ -352,6 +390,8 @@ export const initCVoxel: CVoxel[] = [
     value: "1.5", // reward value
     tokenSymbol: "eth", // eth, usdc, etc
     tokenDecimal: 18,
+    fiatValue: "4380",
+    fiatSymbol: "usd",
     networkId: 0, // eth mainnet = 1
     issuedTimestamp: "", //block timestamp
     txHash: "",
@@ -370,6 +410,8 @@ export const initCVoxel: CVoxel[] = [
     value: "2", // reward value
     tokenSymbol: "eth", // eth, usdc, etc
     tokenDecimal: 18,
+    fiatValue: "5840",
+    fiatSymbol: "usd",
     networkId: 0, // eth mainnet = 1
     issuedTimestamp: "", //block timestamp
     txHash: "",
@@ -388,6 +430,8 @@ export const initCVoxel: CVoxel[] = [
     value: "1.8", // reward value
     tokenSymbol: "eth", // eth, usdc, etc
     tokenDecimal: 18,
+    fiatValue: "5256",
+    fiatSymbol: "usd",
     networkId: 0, // eth mainnet = 1
     issuedTimestamp: "", //block timestamp
     txHash: "",
@@ -406,6 +450,8 @@ export const initCVoxel: CVoxel[] = [
     value: "3", // reward value
     tokenSymbol: "eth", // eth, usdc, etc
     tokenDecimal: 18,
+    fiatValue: "8760",
+    fiatSymbol: "usd",
     networkId: 0, // eth mainnet = 1
     issuedTimestamp: "", //block timestamp
     txHash: "",
@@ -424,6 +470,8 @@ export const initCVoxel: CVoxel[] = [
     value: "1.5", // reward value
     tokenSymbol: "eth", // eth, usdc, etc
     tokenDecimal: 18,
+    fiatValue: "4380",
+    fiatSymbol: "usd",
     networkId: 0, // eth mainnet = 1
     issuedTimestamp: "", //block timestamp
     txHash: "",
@@ -442,6 +490,8 @@ export const initCVoxel: CVoxel[] = [
     value: "5", // reward value
     tokenSymbol: "eth", // eth, usdc, etc
     tokenDecimal: 18,
+    fiatValue: "14600",
+    fiatSymbol: "usd",
     networkId: 0, // eth mainnet = 1
     issuedTimestamp: "", //block timestamp
     txHash: "",
@@ -460,6 +510,8 @@ export const initCVoxel: CVoxel[] = [
     value: "15", // reward value
     tokenSymbol: "eth", // eth, usdc, etc
     tokenDecimal: 18,
+    fiatValue: "43800",
+    fiatSymbol: "usd",
     networkId: 0, // eth mainnet = 1
     issuedTimestamp: "", //block timestamp
     txHash: "",
@@ -478,6 +530,8 @@ export const initCVoxel: CVoxel[] = [
     value: "30", // reward value
     tokenSymbol: "eth", // eth, usdc, etc
     tokenDecimal: 18,
+    fiatValue: "87600",
+    fiatSymbol: "usd",
     networkId: 0, // eth mainnet = 1
     issuedTimestamp: "", //block timestamp
     txHash: "",

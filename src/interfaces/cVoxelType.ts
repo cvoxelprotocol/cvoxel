@@ -21,6 +21,8 @@ export type CVoxel = {
   value: string; // reward value
   tokenSymbol: string; // eth, usdc, etc
   tokenDecimal: number;
+  fiatValue?: string;
+  fiatSymbol?: string;
   networkId: number; // eth mainnet = 1
   issuedTimestamp: string; //block timestamp
   txHash: string; // transfer tx hash
