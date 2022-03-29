@@ -1,28 +1,30 @@
 import { writeFile } from 'node:fs/promises'
 import { CeramicClient } from '@ceramicnetwork/http-client'
-import { model as profileModel } from '@datamodels/identity-profile-basic'
-import { model as AccountModel } from '@datamodels/identity-accounts-crypto'
-import { model as alsoKnownAsModel } from '@datamodels/identity-accounts-web'
-import { ModelManager } from '@glazed/devtools'
 import { DID } from 'dids'
 import { Ed25519Provider } from 'key-did-provider-ed25519'
 import { getResolver } from 'key-did-resolver'
 import { fromString } from 'uint8arrays'
 import dotenv from 'dotenv'
+import { TileDocument } from "@ceramicnetwork/stream-tile";
 
 dotenv.config();
 
-if (!process.env.SEED) {
-  throw new Error('Missing SEED environment variable')
-}
+// const CERAMIC_URL = process.env.NEXT_PUBLIC_CERAMIC_URL || 'https://node.cvoxelceramic.com'
+const CERAMIC_URL = 'http://localhost:7007'
 
-const CERAMIC_URL = process.env.NEXT_PUBLIC_CERAMIC_URL || 'https://node.cvoxelceramic.com'
+console.log("CERAMIC_URL", CERAMIC_URL)
+
+const SCHEMAS = {
+    BasicProfile: 'ceramic://k3y52l7qbv1frxt706gqfzmq6cbqdkptzk8uudaryhlkf6ly9vx21hqu4r6k1jqio',
+    CryptoAccounts: 'ceramic://k3y52l7qbv1frypussjburqg4fykyyycfu0p9znc75lv2t5cg4xaslhagkd7h7mkg',
+    AlsoKnownAs: 'ceramic://k3y52l7qbv1fryojt8n8cw2k04p9wp67ly59iwqs65dejso566fij5wsdrb871yio',
+    CVoxel: 'ceramic://k3y52l7qbv1frxhj9pfaopsost1szb6w20xua25gzmmhbmbxwlwds9h3ak67a85q8',
+    CVoxels: 'ceramic://k3y52l7qbv1frxqcggjbg2qhnfwkyea8n40132vpwm91fs0alx4i1tu4b154agfeo'
+  }
 
 // The seed must be provided as an environment variable
 const seed = fromString(process.env.SEED, 'base16')
-// const seed = randomBytes(32)
 
-console.log("Seed: ", seed)
 // Create and authenticate the DID
 const did = new DID({
   provider: new Ed25519Provider(seed),
@@ -34,16 +36,7 @@ await did.authenticate()
 const ceramic = new CeramicClient(CERAMIC_URL)
 ceramic.did = did
 
-// Create a manager for the model
-const manager = new ModelManager(ceramic)
-
-// Add basicProfile to the model
-manager.addJSONModel(profileModel)
-manager.addJSONModel(AccountModel)
-manager.addJSONModel(alsoKnownAsModel)
-
-// Create the schemas
-const cVoxelSchemaID = await manager.createSchema('CVoxel', {
+const newCVoxelModel = {
   $schema: 'http://json-schema.org/draft-07/schema#',
   title: 'CVoxel',
   type: 'object',
@@ -83,14 +76,6 @@ const cVoxelSchemaID = await manager.createSchema('CVoxel', {
     tokenDecimal: {
       type: 'number',
       title: 'tokenDecimal',
-    },
-    fiatValue: {
-      type: 'string',
-      title: 'value',
-    },
-    fiatSymbol: {
-      type: 'string',
-      title: 'fiatSymbol',
     },
     networkId: {
       type: 'number',
@@ -139,8 +124,11 @@ const cVoxelSchemaID = await manager.createSchema('CVoxel', {
   },
   required: ["to", "from", "summary", "value", "tokenSymbol", "networkId", "issuedTimestamp", "txHash"],
   additionalProperties:false,
-})
-const cVoxelsSchemaID = await manager.createSchema('CVoxels', {
+}
+
+
+
+const newCVoxelsModel = {
   $schema: 'http://json-schema.org/draft-07/schema#',
   title: 'CVoxels',
   type: 'object',
@@ -153,7 +141,7 @@ const cVoxelsSchemaID = await manager.createSchema('CVoxels', {
         title: 'CVoxelsItem',
         properties: {
           id: {
-            $comment: `cip88:ref:${manager.getSchemaURL(cVoxelSchemaID)}`,
+            $comment: `cip88:ref:${SCHEMAS["CVoxel"]}`,
             type: 'string',
             pattern: '^ceramic://.+(\\?version=.+)?',
             maxLength: 200,
@@ -179,24 +167,25 @@ const cVoxelsSchemaID = await manager.createSchema('CVoxels', {
     },
   },
   additionalProperties:false,
-})
+}
 
-// Create the definition using the created schema ID
-await manager.createDefinition('cVoxels', {
-  name: 'cVoxels',
-  description: 'cVoxels',
-  schema: manager.getSchemaURL(cVoxelsSchemaID),
-})
+const loadedCVoxelStream = await TileDocument.load(ceramic, SCHEMAS["CVoxel"]);
+const loadedCVoxelsStream = await TileDocument.load(ceramic, SCHEMAS["CVoxels"]);
 
-// Create a cVoxel with text that will be used as placeholder
-await manager.createTile(
-  "PlaceHodlerCVoxels",
-  { to: "toaddress", from: "from address",
-  summary: 'This is a summary for the CVoxel contents',
-value: "100000000", tokenSymbol: "ETH", networkId:1, issuedTimestamp: "12345678", txHash: "0xhgeohgoehgehgoehgoehoehge" },
-  { schema: manager.getSchemaURL(cVoxelSchemaID) }
-)
+const tile = new TileDocument(ceramic)
 
-// Write model to JSON file
-await writeFile(new URL('model.json', import.meta.url), JSON.stringify(manager.toJSON()))
-console.log('Encoded model written to scripts/model.json file')
+console.log("loadedCVoxelStream", loadedCVoxelStream.content.properties)
+console.log("loadedCVoxelsStream", loadedCVoxelsStream.content.properties.cVoxels.items)
+
+try {
+  await loadedCVoxelStream.update(newCVoxelModel)
+  await loadedCVoxelsStream.update(newCVoxelsModel)
+} catch (error) {
+  console.log("error", error)
+}
+
+const newloadedCVoxelStream = await TileDocument.load(ceramic, SCHEMAS["CVoxel"]);
+const newloadedCVoxelsStream = await TileDocument.load(ceramic, SCHEMAS["CVoxels"]);
+
+console.log("new loadedCVoxelStream", newloadedCVoxelStream.content.properties)
+console.log("new loadedCVoxelsStream", newloadedCVoxelsStream.content.properties.cVoxels.items)
