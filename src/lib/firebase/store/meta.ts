@@ -1,29 +1,7 @@
 import { firestore } from "../app";
-import {
-  collection,
-  addDoc,
-  setDoc,
-  getDoc,
-  doc,
-  getDocs,
-  query,
-  where,
-  updateDoc,
-  arrayUnion,
-} from "firebase/firestore/lite";
+import { collection, getDocs, query, where } from "firebase/firestore/lite";
 import { DocumentData, QueryDocumentSnapshot } from "firebase/firestore/lite";
 import { CVoxelMetaDraft } from "@/interfaces/cVoxelType";
-
-export const createCVoxelDraft = (cb: CVoxelMetaDraft): Promise<void> =>
-  new Promise((resolve, reject) => {
-    setDoc(doc(firestore, "cvoxels", `${cb.networkId}_${cb.txHash}`), cb)
-      .then(() => {
-        resolve();
-      })
-      .catch((error) => {
-        reject(error);
-      });
-  });
 
 export const getCVoxelList = (address?: string): Promise<CVoxelMetaDraft[]> =>
   new Promise((resolve, reject) => {

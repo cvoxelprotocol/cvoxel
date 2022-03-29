@@ -8,21 +8,18 @@ import {
   UserRejectedRequestError as UserRejectedRequestErrorInjected,
 } from "@web3-react/injected-connector";
 import { useEffect } from "react";
-import { getAuthService } from "@/services/Auth/AuthService";
 import { getCVoxelService } from "@/services/CVoxel/CVoxelService";
 import { getEtherService } from "@/services/Ether/EtherService";
 
 export const useWalletAccount = () => {
   const { library, account, active, activate, deactivate, chainId } =
     useWeb3React<Web3Provider>();
-  const authService = getAuthService();
   const etherService = getEtherService();
   const cVoxelService = getCVoxelService();
   const { lancError } = useToast();
 
   useEffect(() => {
     if (library) {
-      authService.setProvider(library);
       cVoxelService.setProvider(library);
       etherService.setProvider(library);
     }
