@@ -16,6 +16,7 @@ export const useCVoxelList = () => {
     {
       enabled: !!address,
       staleTime: Infinity,
+      cacheTime: 3000000,
     }
   );
   const { data: offchainMetaList, isLoading: offchainLoading } = useQuery<
@@ -23,6 +24,7 @@ export const useCVoxelList = () => {
   >(["offchainCVoxelMeta", address], () => offchainCVoxelMetaFetcher(address), {
     enabled: !!address,
     staleTime: Infinity,
+    cacheTime: 3000000,
   });
 
   useEffect(() => {
