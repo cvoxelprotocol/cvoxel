@@ -27,7 +27,7 @@ import { CommonSpinner } from "@/components/common/CommonSpinner";
 import { getNetworkName } from "@/utils/networkUtil";
 
 export const HomeContainer: FC = () => {
-  const { connection, did, name, avator, account, connectCeramic, chainId } = useMyCeramicAcount();
+  const { connection, did, name, avator, account, connectCeramic } = useMyCeramicAcount();
   const { onlyPotentialCVoxels, offchainMetaList, txLoading, offchainLoading } =
     useCVoxelList();
   const CVoxelsRecords = useCVoxelsRecord(did);
