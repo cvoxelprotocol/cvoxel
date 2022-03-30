@@ -1,4 +1,4 @@
-import { TransactionLog } from "@/interfaces/explore";
+import { TransactionLogWithChainId } from "@/interfaces/explore";
 import { offchainCVoxelMetaFetcher } from "@/services/fetcher/CVoxelMetaFetcher";
 import { etherscanTxListFetcher } from "@/services/fetcher/EtherscanFetcher";
 import { CVoxelMetaDraft } from "@/interfaces";
@@ -9,16 +9,16 @@ import { useWalletAccount } from "./useWalletAccount";
 export const useCVoxelList = () => {
   const [address, setAddress] = useState<string>();
   const { account, chainId } = useWalletAccount();
-  const [potentialTxes, setPotentialTxes] = useState<TransactionLog[]>([]);
-  const { data: txes, isLoading: txLoading } = useQuery<TransactionLog[]>(
-    ["etherscan", address],
-    () => etherscanTxListFetcher(chainId, address),
-    {
-      enabled: !!address,
-      staleTime: Infinity,
-      cacheTime: 3000000,
-    }
-  );
+  const [potentialTxes, setPotentialTxes] = useState<
+    TransactionLogWithChainId[]
+  >([]);
+  const { data: txes, isLoading: txLoading } = useQuery<
+    TransactionLogWithChainId[]
+  >(["etherscan", address], () => etherscanTxListFetcher(chainId, address), {
+    enabled: !!address,
+    staleTime: Infinity,
+    cacheTime: 3000000,
+  });
   const { data: offchainMetaList, isLoading: offchainLoading } = useQuery<
     CVoxelMetaDraft[]
   >(["offchainCVoxelMeta", address], () => offchainCVoxelMetaFetcher(address), {
@@ -40,16 +40,23 @@ export const useCVoxelList = () => {
   useEffect(() => {
     if (txes) {
       setPotentialTxes(filterTxes(txes));
-      // setPotentialTxes(txes);
     }
   }, [txes]);
 
   const onlyPotentialCVoxels = useMemo(() => {
-    if (!account) return potentialTxes;
-    return potentialTxes;
+    if (!account)
+      return potentialTxes.sort((a, b) => {
+        return Number(a.timeStamp) > Number(b.timeStamp) ? -1 : 1;
+      });
+    return potentialTxes.sort((a, b) => {
+      return Number(a.timeStamp) > Number(b.timeStamp) ? -1 : 1;
+    });
   }, [potentialTxes]);
 
-  const filterTxes = (txes: TransactionLog[]): TransactionLog[] => {
+  const filterTxes = (
+    txes: TransactionLogWithChainId[]
+  ): TransactionLogWithChainId[] => {
+    if (!txes || txes.length === 0) return [];
     return txes.filter((tx) => Number(tx.value) > 0);
   };
 

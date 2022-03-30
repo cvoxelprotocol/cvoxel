@@ -1,5 +1,5 @@
 import { useWalletAccount } from "@/hooks/useWalletAccount";
-import { TransactionLog } from "@/interfaces";
+import { TransactionLogWithChainId } from "@/interfaces";
 import { getExploreLink } from "@/utils/etherscanUtils";
 import { formatBigNumber } from "@/utils/ethersUtil";
 import { shortHash } from "@/utils/tools";
@@ -9,12 +9,14 @@ import { faExternalLink } from "@fortawesome/free-solid-svg-icons";
 import { getEtherService } from "@/services/Ether/EtherService";
 import { CommonSpinner } from "../common/CommonSpinner";
 import { convertTimestampToDateStr } from "@/utils/dateUtil";
+import { NetworkChip } from "./NetworkChip";
+import { getNetworkSymbol } from "@/utils/networkUtil";
 
 type TransactionItemProps = {
-    tx: TransactionLog
+    tx: TransactionLogWithChainId
     account?: string | null
-    selectedTx: TransactionLog | null
-    onClickTx: (tx:TransactionLog | null) => void
+    selectedTx: TransactionLogWithChainId | null
+    onClickTx: (tx:TransactionLogWithChainId | null) => void
 }
 
 export const TransactionItem:FC<TransactionItemProps> = ({tx, account, onClickTx, selectedTx}) => {
@@ -38,7 +40,7 @@ export const TransactionItem:FC<TransactionItemProps> = ({tx, account, onClickTx
     },[account, tx])
 
     const exploreLink = useMemo(() => {
-        return getExploreLink(tx.hash, chainId)
+        return getExploreLink(tx.hash, tx.chainId)
     },[tx,chainId])
 
     const shouldShowClaim = useMemo(() => {
@@ -67,20 +69,17 @@ export const TransactionItem:FC<TransactionItemProps> = ({tx, account, onClickTx
 
 
     return (
-        <div key={tx.hash} className="w-full h-fit sm:max-h-[90px] rounded-lg shadow-lg bg-white dark:bg-card sm:flex justify-between items-center text-xs sm:text-sm text-black dark:text-white break-words flex-wrap py-2 px-4 border-b border-b-gray-200" >
+        <div className="w-full h-fit sm:max-h-[90px] rounded-lg shadow-lg bg-white dark:bg-card sm:flex justify-between items-center text-xs sm:text-sm text-black dark:text-white break-words flex-wrap py-2 px-4 border-b border-b-gray-200" >
             <div className="text-center sm:flex sm:justify-evenly sm:items-center">
                 <div className="flex justify-evenly items-center pb-2 sm:pb-0">
                     <div className="max-w-[90px] sm:max-w-[120px] px-2">
                         <p className="text-md font-bold">
-                        {formatBigNumber(tx.value, 6, tx.tokenDecimal)} {tx.tokenSymbol || "ETH"}
+                        {formatBigNumber(tx.value, 6, tx.tokenDecimal)} {tx.tokenSymbol || (getNetworkSymbol(tx.chainId))}
                         </p>
                     </div>
                     <div className="w-[0.5px] bg-black border-black h-[40px]"></div>
                     <div className="max-w-[90px] sm:max-w-[120px] px-2 text-center space-y-1">
-                        <span
-                            className="block self-center mx-auto px-1 py-0.5 content-center text-xs rounded-full text-[#53B15C] bg-green-200 font-semibold w-max transition duration-300 ease">
-                            Success
-                        </span>
+                        <NetworkChip chainId={tx.chainId} />
                         <p>{convertTimestampToDateStr(tx.timeStamp)}</p>
                     </div>
                     <div className="hidden sm:block w-[0.5px] bg-black border-black h-[40px]"></div>

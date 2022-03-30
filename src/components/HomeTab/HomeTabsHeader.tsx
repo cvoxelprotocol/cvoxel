@@ -12,7 +12,7 @@ export const HomeTabsHeader:FC = () => {
                     className={"flex mb-0 list-none flex-wrap pt-3 pb-4 flex-row w-full items-center justify-center md:px-10"}
                     role="tablist"
                 >
-                    <li className="-mb-px last:mr-0 flex-auto text-center">
+                    <li className="-mb-px last:mr-0 flex-1 text-center">
                         <a
                             className={
                             "text-xs md:text-sm font-bold px-2 py-1 md:px-5 md:py-3 leading-normal " + 
@@ -29,7 +29,7 @@ export const HomeTabsHeader:FC = () => {
                             CVoxels
                         </a>
                     </li>
-                    <li className="-mb-px flex-auto text-center">
+                    <li className="-mb-px flex-1 text-center">
                         <a
                             className={
                             "text-xs md:text-sm font-bold px-2 py-1 md:px-5 md:py-3 leading-normal " + 
@@ -42,10 +42,10 @@ export const HomeTabsHeader:FC = () => {
                             href="#transactions"
                             role="tablist"
                         >
-                            Potential CVoxels
+                            Tx History
                         </a>
                     </li>
-                    <li className="-mb-px flex-auto text-center">
+                    <li className="-mb-px flex-1 text-center">
                         <a
                             className={
                             "text-xs md:text-sm font-bold px-2 py-1 md:px-5 md:py-3 leading-normal " + 

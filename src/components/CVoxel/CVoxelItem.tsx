@@ -14,7 +14,6 @@ import { CommonSpinner } from "../common/CommonSpinner";
 import { useWalletAccount } from "@/hooks/useWalletAccount";
 import { getExploreLink } from "@/utils/etherscanUtils";
 import { convertTimestampToDateStr } from "@/utils/dateUtil";
-import { setFiat } from "@/lib/firebase/functions/fiat";
 
 type Props = {
   did: string
@@ -51,7 +50,7 @@ export const CVoxelItem: FC<Props> = ({item, did, holder, offchainItems, isOwner
 
   const exploreLink = useMemo(() => {
     if(!detailItem) return
-    return getExploreLink(detailItem.txHash, chainId)
+    return getExploreLink(detailItem.txHash, detailItem.networkId)
   },[detailItem,chainId])
 
   useEffect(() => {
@@ -96,13 +95,6 @@ export const CVoxelItem: FC<Props> = ({item, did, holder, offchainItems, isOwner
     } 
     return null
   },[detailItem, offchainItem])
-
-  const getFiatVal = async () => {
-    if(!(offchainItem && detailItem)) return
-    const fiat = await setFiat(offchainItem.networkId.toString(), offchainItem.txHash)
-    const newCVoxel:CVoxel = {...detailItem, fiatValue: fiat, fiatSymbol: "USD"}
-    await update(newCVoxel)
-  }
   
   const handleUpdate = async() => {
     if(connection.status !== "connected") {
@@ -176,18 +168,12 @@ export const CVoxelItem: FC<Props> = ({item, did, holder, offchainItems, isOwner
                       {detailItem && (
                         <>
                           <p className="font-medium text-lg">
-                            {formatBigNumber(detailItem.value, 6)} {detailItem.tokenSymbol ? detailItem.tokenSymbol: "ETH"}
+                            {formatBigNumber(detailItem.value, 6)} {detailItem.tokenSymbol || detailItem.networkId}
                           </p>
                           {fiatVal && (
                             <p className="text-gray-400 text-xs">
                               {`(${Number(fiatVal).toFixed(2)} ${detailItem.fiatSymbol || "USD"})`}
                             </p>
-                          )}
-                          {(!fiatVal && isOwner) && (
-                            <button 
-                              className="px-2 py-1 text-xs bg-gray-300 text-white rounded-lg"
-                              onClick={getFiatVal} >Fetch USD Value
-                            </button>
                           )}
                           {isLoading ? (
                               <CommonSpinner size="sm"/>

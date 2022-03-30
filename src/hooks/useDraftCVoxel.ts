@@ -1,9 +1,7 @@
-import { TransactionLog } from "@/interfaces/explore";
+import { TransactionLogWithChainId } from "@/interfaces/explore";
 import { createDraftWighVerify } from "@/lib/firebase/functions/verify";
 import { getCVoxelService } from "@/services/CVoxel/CVoxelService";
 import { useConnection, useViewerRecord } from "@self.id/framework";
-import { Web3Provider } from "@self.id/multiauth";
-import { useWeb3React } from "@web3-react/core";
 import { useCallback } from "react";
 import type {
   CVoxel,
@@ -18,9 +16,9 @@ import {
   CVOXEL_CREATION_SUCCEED,
 } from "@/constants/toastMessage";
 import { extractCVoxel } from "@/utils/cVoxelUtil";
+import { getNetworkSymbol } from "@/utils/networkUtil";
 
 export function useDraftCVoxel() {
-  const { chainId } = useWeb3React<Web3Provider>();
   const connect = useConnection<ModelTypes>()[1];
   const cVoxelsRecord = useViewerRecord<ModelTypes, "cVoxels">("cVoxels");
   const { isLoading, showLoading, closeLoading } = useModal();
@@ -30,13 +28,13 @@ export function useDraftCVoxel() {
   const publish = useCallback(
     async (
       address: string,
-      selectedTx: TransactionLog,
+      selectedTx: TransactionLogWithChainId,
       summary: string,
       detail?: string,
       deliverable?: string,
       existedItem?: CVoxelMetaDraft
     ) => {
-      if (isLoading || !summary || !chainId) {
+      if (isLoading || !summary) {
         return false;
       }
 
@@ -113,13 +111,13 @@ export function useDraftCVoxel() {
   const reClaim = useCallback(
     async (
       address: string,
-      selectedTx: TransactionLog,
+      selectedTx: TransactionLogWithChainId,
       summary: string,
       detail?: string,
       deliverable?: string,
       existedItem?: CVoxelMetaDraft
     ) => {
-      if (isLoading || !summary || !chainId) {
+      if (isLoading || !summary) {
         return false;
       }
 
@@ -178,7 +176,7 @@ export function useDraftCVoxel() {
 
   const createDraftObjectWithSig = async (
     address: string,
-    selectedTx: TransactionLog,
+    selectedTx: TransactionLogWithChainId,
     summary: string,
     detail?: string,
     deliverable?: string,
@@ -222,9 +220,10 @@ export function useDraftCVoxel() {
         to: to,
         isPayer: isPayer,
         value: selectedTx.value,
-        tokenSymbol: selectedTx.tokenSymbol || "ETH",
+        tokenSymbol:
+          selectedTx.tokenSymbol || getNetworkSymbol(selectedTx.chainId),
         tokenDecimal: Number(selectedTx.tokenDecimal) || 18,
-        networkId: chainId || 1,
+        networkId: selectedTx.chainId || 1,
         fiatSymbol: "USD",
         issuedTimestamp: selectedTx.timeStamp,
         txHash: selectedTx.hash,

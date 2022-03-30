@@ -22,6 +22,10 @@ export type TransactionLog = {
   tokenDecimal: string;
 };
 
+export type TransactionLogWithChainId = TransactionLog & {
+  chainId: number;
+};
+
 export type EtherscanResult = {
   status: string;
   message: string;

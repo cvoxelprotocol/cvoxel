@@ -1,14 +1,14 @@
 import { FC ,useMemo } from "react";
-import { CVoxel, CVoxelItem, CVoxelMetaDraft, TransactionLog } from "@/interfaces";
+import { CVoxelItem, CVoxelMetaDraft, TransactionLogWithChainId } from "@/interfaces";
 import { Button } from "../common/button/Button";
 import { CommonSpinner } from "../common/CommonSpinner";
 
 type TransactionDetailProps = {
-    tx: TransactionLog
+    tx: TransactionLogWithChainId
     offchainItem: CVoxelMetaDraft
     connectionStatus: "disconnected" | "connecting" | "failed" | "connected"
-    onClaim: (tx:TransactionLog, offchainItem: CVoxelMetaDraft) => void
-    reClaim: (tx:TransactionLog, offchainItem: CVoxelMetaDraft) => void
+    onClaim: (tx:TransactionLogWithChainId, offchainItem: CVoxelMetaDraft) => void
+    reClaim: (tx:TransactionLogWithChainId, offchainItem: CVoxelMetaDraft) => void
     account?: string
     cvoxels?: CVoxelItem[]
 }

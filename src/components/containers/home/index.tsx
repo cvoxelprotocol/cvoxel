@@ -8,7 +8,7 @@ import {
 import { useMyCeramicAcount } from "@/hooks/useCeramicAcount";
 import { useTab } from "@/hooks/useTab";
 import { useCVoxelList } from "@/hooks/useCVoxelList";
-import { TransactionLog } from "@/interfaces/explore";
+import { TransactionLogWithChainId } from "@/interfaces/explore";
 import { useForm } from "react-hook-form";
 import { useDraftCVoxel } from "@/hooks/useDraftCVoxel";
 import { useSigRequest } from "@/hooks/useSigRequest";
@@ -24,13 +24,14 @@ import { SigRequestItem } from "@/components/SigRequest/SigRequestItem";
 import { Button } from "@/components/common/button/Button";
 import { TransactionDetail } from "@/components/Transaction/TransactionDetail";
 import { CommonSpinner } from "@/components/common/CommonSpinner";
+import { getNetworkName } from "@/utils/networkUtil";
 
 export const HomeContainer: FC = () => {
-  const { connection, did, name, avator, account, connectCeramic } = useMyCeramicAcount();
+  const { connection, did, name, avator, account, connectCeramic, chainId } = useMyCeramicAcount();
   const { onlyPotentialCVoxels, offchainMetaList, txLoading, offchainLoading } =
     useCVoxelList();
   const CVoxelsRecords = useCVoxelsRecord(did);
-  const [selectedTx, selectTx] = useState<TransactionLog | null>(null);
+  const [selectedTx, selectTx] = useState<TransactionLogWithChainId | null>(null);
   const { tabState, setTabState } = useTab();
   const draft = useDraftCVoxel();
   const {verifyWithCeramic, verifyWithoutCeramic} = useSigRequest()
@@ -64,7 +65,7 @@ export const HomeContainer: FC = () => {
     [draft]
   );
 
-  const publishFromExistedCVoxel = async (tx:TransactionLog, offchainItem: CVoxelMetaDraft) => {
+  const publishFromExistedCVoxel = async (tx:TransactionLogWithChainId, offchainItem: CVoxelMetaDraft) => {
     if (!(tx && account && offchainItem)) return;
     if(connection.status==="connected") {
       const { summary, detail, deliverable } = offchainItem;
@@ -79,7 +80,7 @@ export const HomeContainer: FC = () => {
     }
   }
 
-  const reClaimCVoxel = async (tx:TransactionLog, offchainItem: CVoxelMetaDraft) => {
+  const reClaimCVoxel = async (tx:TransactionLogWithChainId, offchainItem: CVoxelMetaDraft) => {
     if (!(tx && account && offchainItem)) return;
     if(connection.status==="connected") {
       const { summary, detail, deliverable } = offchainItem;
@@ -171,14 +172,15 @@ export const HomeContainer: FC = () => {
               </div>
               <div className={tabState === "transactions" ? "block" : "hidden"} id="transactions">
                 <div className="w-full max-w-[720px] text-center mx-auto cursor-pointer h-screen overflow-y-scroll">
+                  <p className="text-primary font-medium text-xs pt-2 pb-4 text-right">{`Supported Networks: Ethereum & Polygon`}</p>
                   {(!offchainLoading && (!onlyPotentialCVoxels || onlyPotentialCVoxels.length===0)) && (
-                    <NoItemPresenter text="No Potential C-Voxels Found..." />
+                    <NoItemPresenter text="No Tx Found..." />
                   )}
                   {offchainLoading && (
                     <CommonLoading />
                   )}
-                  {!offchainLoading && onlyPotentialCVoxels.map((tx) => (
-                    <div key={tx.hash} className="mb-4">
+                  {!offchainLoading && onlyPotentialCVoxels.map((tx,index) => (
+                    <div key={`${tx.hash}_${index}`} className="mb-4">
                       <TransactionItem tx={tx} account={account} onClickTx={selectTx} selectedTx={selectedTx} />
                       {(selectedTx && selectedTx?.hash===tx.hash) && (
                           <>
