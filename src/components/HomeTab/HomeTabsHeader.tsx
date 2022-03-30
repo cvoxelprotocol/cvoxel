@@ -42,7 +42,7 @@ export const HomeTabsHeader:FC = () => {
                             href="#transactions"
                             role="tablist"
                         >
-                            Tx History
+                            Tx Histories
                         </a>
                     </li>
                     <li className="-mb-px flex-1 text-center">

@@ -24,7 +24,6 @@ import { SigRequestItem } from "@/components/SigRequest/SigRequestItem";
 import { Button } from "@/components/common/button/Button";
 import { TransactionDetail } from "@/components/Transaction/TransactionDetail";
 import { CommonSpinner } from "@/components/common/CommonSpinner";
-import { getNetworkName } from "@/utils/networkUtil";
 
 export const HomeContainer: FC = () => {
   const { connection, did, name, avator, account, connectCeramic } = useMyCeramicAcount();
@@ -179,7 +178,7 @@ export const HomeContainer: FC = () => {
                   {offchainLoading && (
                     <CommonLoading />
                   )}
-                  {!offchainLoading && onlyPotentialCVoxels.map((tx,index) => (
+                  {(!offchainLoading && onlyPotentialCVoxels.length>0) &&  onlyPotentialCVoxels.map((tx,index) => (
                     <div key={`${tx.hash}_${index}`} className="mb-4">
                       <TransactionItem tx={tx} account={account} onClickTx={selectTx} selectedTx={selectedTx} />
                       {(selectedTx && selectedTx?.hash===tx.hash) && (
