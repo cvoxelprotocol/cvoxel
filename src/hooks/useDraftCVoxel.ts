@@ -89,10 +89,13 @@ export function useDraftCVoxel() {
             ...cVoxels,
             {
               id: docUrl,
-              summary: meta.summary,
+              summary: metaWithFiat.summary,
               isPayer: isPayer,
-              txHash: meta.txHash,
-              issuedTimestamp: meta.issuedTimestamp,
+              txHash: metaWithFiat.txHash,
+              deliverable: metaWithFiat.deliverable,
+              fiatValue: metaWithFiat.fiatValue,
+              genre: metaWithFiat.genre,
+              issuedTimestamp: metaWithFiat.issuedTimestamp,
             },
           ],
         });
@@ -100,6 +103,7 @@ export function useDraftCVoxel() {
         lancInfo(CVOXEL_CREATION_SUCCEED);
         return true;
       } catch (error) {
+        console.log("error", error);
         closeLoading();
         lancError(CVOXEL_CREATION_FAILED);
         return false;
@@ -158,6 +162,9 @@ export function useDraftCVoxel() {
               summary: meta.summary,
               isPayer: isPayer,
               txHash: meta.txHash,
+              deliverable: meta.deliverable,
+              fiatValue: meta.fiatValue,
+              genre: meta.genre,
               issuedTimestamp: meta.issuedTimestamp,
             },
           ],
@@ -166,6 +173,7 @@ export function useDraftCVoxel() {
         lancInfo(CVOXEL_CREATION_SUCCEED);
         return true;
       } catch (error) {
+        console.log("error", error);
         closeLoading();
         lancError(CVOXEL_CREATION_FAILED);
         return false;
@@ -231,11 +239,13 @@ export function useDraftCVoxel() {
         tags: [],
         toSig: !isPayer ? signature.toString() : "",
         fromSig: isPayer ? signature.toString() : "",
+        toSigner: !isPayer ? to : "",
+        fromSigner: isPayer ? from : "",
+        relatedAddresses: [from.toLowerCase(), to.toLowerCase()],
       };
     }
     const draft: CVoxelMetaDraft = {
       ...meta,
-      relatedAddresses: [from.toLowerCase(), to.toLowerCase()],
       potencialPayer: [from.toLowerCase()],
       completed: true,
     };

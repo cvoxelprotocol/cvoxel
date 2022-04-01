@@ -20,6 +20,9 @@ export const initCVoxel: CVoxel[] = [
     jobType: "FullTime", // default=OneTime
     toSig: "",
     fromSig: "bbbbb",
+    toSigner: "",
+    fromSigner: "",
+    relatedAddresses: [],
   },
   {
     to: "", // payee address
@@ -40,6 +43,9 @@ export const initCVoxel: CVoxel[] = [
     jobType: "FullTime", // default=OneTime
     toSig: "",
     fromSig: "bbbbb",
+    toSigner: "",
+    fromSigner: "",
+    relatedAddresses: [],
   },
   {
     to: "", // payee address
@@ -60,6 +66,9 @@ export const initCVoxel: CVoxel[] = [
     jobType: "FullTime", // default=OneTime
     toSig: "",
     fromSig: "bbbbb",
+    toSigner: "",
+    fromSigner: "",
+    relatedAddresses: [],
   },
   {
     to: "", // payee address
@@ -80,6 +89,9 @@ export const initCVoxel: CVoxel[] = [
     jobType: "FullTime", // default=OneTime
     toSig: "",
     fromSig: "bbbbb",
+    toSigner: "",
+    fromSigner: "",
+    relatedAddresses: [],
   },
   {
     to: "", // payee address
@@ -100,6 +112,9 @@ export const initCVoxel: CVoxel[] = [
     jobType: "FullTime", // default=OneTime
     toSig: "",
     fromSig: "bbbbb",
+    toSigner: "",
+    fromSigner: "",
+    relatedAddresses: [],
   },
   {
     to: "", // payee address
@@ -120,6 +135,9 @@ export const initCVoxel: CVoxel[] = [
     jobType: "FullTime", // default=OneTime
     toSig: "",
     fromSig: "bbbbb",
+    toSigner: "",
+    fromSigner: "",
+    relatedAddresses: [],
   },
   {
     to: "", // payee address
@@ -140,6 +158,9 @@ export const initCVoxel: CVoxel[] = [
     jobType: "FullTime", // default=OneTime
     toSig: "aaaa",
     fromSig: "bbbbb",
+    toSigner: "",
+    fromSigner: "",
+    relatedAddresses: [],
   },
   {
     to: "", // payee address
@@ -160,6 +181,9 @@ export const initCVoxel: CVoxel[] = [
     jobType: "FullTime", // default=OneTime
     toSig: "",
     fromSig: "bbbbb",
+    toSigner: "",
+    fromSigner: "",
+    relatedAddresses: [],
   },
   {
     to: "", // payee address
@@ -180,6 +204,9 @@ export const initCVoxel: CVoxel[] = [
     jobType: "FullTime", // default=OneTime
     toSig: "aaaa",
     fromSig: "bbbbb",
+    toSigner: "",
+    fromSigner: "",
+    relatedAddresses: [],
   },
   {
     to: "", // payee address
@@ -200,6 +227,9 @@ export const initCVoxel: CVoxel[] = [
     jobType: "FullTime", // default=OneTime
     toSig: "aaaa",
     fromSig: "bbbbb",
+    toSigner: "",
+    fromSigner: "",
+    relatedAddresses: [],
   },
   {
     to: "", // payee address
@@ -220,6 +250,9 @@ export const initCVoxel: CVoxel[] = [
     jobType: "FullTime", // default=OneTime
     toSig: "",
     fromSig: "bbbbb",
+    toSigner: "",
+    fromSigner: "",
+    relatedAddresses: [],
   },
   {
     to: "", // payee address
@@ -240,6 +273,9 @@ export const initCVoxel: CVoxel[] = [
     jobType: "FullTime", // default=OneTime
     toSig: "aaaa",
     fromSig: "bbbbb",
+    toSigner: "",
+    fromSigner: "",
+    relatedAddresses: [],
   },
   {
     to: "", // payee address
@@ -260,6 +296,9 @@ export const initCVoxel: CVoxel[] = [
     jobType: "FullTime", // default=OneTime
     toSig: "aaaa",
     fromSig: "bbbbb",
+    toSigner: "",
+    fromSigner: "",
+    relatedAddresses: [],
   },
   {
     to: "", // payee address
@@ -280,6 +319,9 @@ export const initCVoxel: CVoxel[] = [
     jobType: "FullTime", // default=OneTime
     toSig: "",
     fromSig: "bbbbb",
+    toSigner: "",
+    fromSigner: "",
+    relatedAddresses: [],
   },
   {
     to: "", // payee address
@@ -300,6 +342,9 @@ export const initCVoxel: CVoxel[] = [
     jobType: "FullTime", // default=OneTime
     toSig: "aaaa",
     fromSig: "bbbbb",
+    toSigner: "",
+    fromSigner: "",
+    relatedAddresses: [],
   },
   {
     to: "", // payee address
@@ -320,6 +365,9 @@ export const initCVoxel: CVoxel[] = [
     jobType: "FullTime", // default=OneTime
     toSig: "",
     fromSig: "bbbbb",
+    toSigner: "",
+    fromSigner: "",
+    relatedAddresses: [],
   },
   {
     to: "", // payee address
@@ -340,6 +388,9 @@ export const initCVoxel: CVoxel[] = [
     jobType: "FullTime", // default=OneTime
     toSig: "",
     fromSig: "bbbbb",
+    toSigner: "",
+    fromSigner: "",
+    relatedAddresses: [],
   },
   {
     to: "", // payee address
@@ -360,7 +411,11 @@ export const initCVoxel: CVoxel[] = [
     jobType: "FullTime", // default=OneTime
     toSig: "",
     fromSig: "bbbbb",
+    toSigner: "",
+    fromSigner: "",
+    relatedAddresses: [],
   },
+
   {
     to: "", // payee address
     from: "", // payer address
@@ -380,6 +435,9 @@ export const initCVoxel: CVoxel[] = [
     jobType: "FullTime", // default=OneTime
     toSig: "",
     fromSig: "bbbbb",
+    toSigner: "",
+    fromSigner: "",
+    relatedAddresses: [],
   },
   {
     to: "", // payee address
@@ -400,6 +458,9 @@ export const initCVoxel: CVoxel[] = [
     jobType: "FullTime", // default=OneTime
     toSig: "aaaa",
     fromSig: "bbbbb",
+    toSigner: "",
+    fromSigner: "",
+    relatedAddresses: [],
   },
   {
     to: "", // payee address
@@ -420,6 +481,9 @@ export const initCVoxel: CVoxel[] = [
     jobType: "FullTime", // default=OneTime
     toSig: "",
     fromSig: "bbbbb",
+    toSigner: "",
+    fromSigner: "",
+    relatedAddresses: [],
   },
   {
     to: "", // payee address
@@ -440,6 +504,9 @@ export const initCVoxel: CVoxel[] = [
     jobType: "FullTime", // default=OneTime
     toSig: "aaaa",
     fromSig: "bbbbb",
+    toSigner: "",
+    fromSigner: "",
+    relatedAddresses: [],
   },
   {
     to: "", // payee address
@@ -460,6 +527,9 @@ export const initCVoxel: CVoxel[] = [
     jobType: "FullTime", // default=OneTime
     toSig: "aaaa",
     fromSig: "bbbbb",
+    toSigner: "",
+    fromSigner: "",
+    relatedAddresses: [],
   },
   {
     to: "", // payee address
@@ -480,6 +550,9 @@ export const initCVoxel: CVoxel[] = [
     jobType: "FullTime", // default=OneTime
     toSig: "aaaa",
     fromSig: "bbbbb",
+    toSigner: "",
+    fromSigner: "",
+    relatedAddresses: [],
   },
   {
     to: "", // payee address
@@ -500,6 +573,9 @@ export const initCVoxel: CVoxel[] = [
     jobType: "FullTime", // default=OneTime
     toSig: "",
     fromSig: "bbbbb",
+    toSigner: "",
+    fromSigner: "",
+    relatedAddresses: [],
   },
   {
     to: "", // payee address
@@ -520,6 +596,9 @@ export const initCVoxel: CVoxel[] = [
     jobType: "FullTime", // default=OneTime
     toSig: "aaaa",
     fromSig: "bbbbb",
+    toSigner: "",
+    fromSigner: "",
+    relatedAddresses: [],
   },
   {
     to: "", // payee address
@@ -540,5 +619,8 @@ export const initCVoxel: CVoxel[] = [
     jobType: "FullTime", // default=OneTime
     toSig: "",
     fromSig: "bbbbb",
+    toSigner: "",
+    fromSigner: "",
+    relatedAddresses: [],
   },
 ];

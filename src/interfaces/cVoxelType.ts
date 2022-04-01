@@ -32,6 +32,9 @@ export type CVoxel = {
   jobType: "FullTime" | "PartTime" | "OneTime"; // default=OneTime
   toSig: string;
   fromSig: string;
+  toSigner: string;
+  fromSigner: string;
+  relatedAddresses: string[];
 };
 
 export type CVoxelWithId = CVoxel & {
@@ -40,7 +43,6 @@ export type CVoxelWithId = CVoxel & {
 
 export type CVoxelMetaDraft = CVoxel & {
   potencialPayer?: string[]; // in case of multisig wallet
-  relatedAddresses: string[];
   completed?: boolean; // whether or not work is completed (only in case of LanC., it might be false)
 };
 
@@ -54,6 +56,9 @@ export type CVoxelItem = {
   txHash: string; // transfer tx hash
   isPayer: boolean;
   summary: string;
+  deliverable?: string; // deliberable link
+  fiatValue?: string;
+  genre?: string; // main genre
   issuedTimestamp: string;
 };
 

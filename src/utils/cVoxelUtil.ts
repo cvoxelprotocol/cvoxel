@@ -21,6 +21,9 @@ export const extractCVoxel = (tx: CVoxelMetaDraft): CVoxel => {
     tags,
     toSig,
     fromSig,
+    toSigner,
+    fromSigner,
+    relatedAddresses,
   } = tx;
   return {
     summary,
@@ -42,5 +45,8 @@ export const extractCVoxel = (tx: CVoxelMetaDraft): CVoxel => {
     tags,
     toSig,
     fromSig,
+    toSigner,
+    fromSigner,
+    relatedAddresses,
   };
 };

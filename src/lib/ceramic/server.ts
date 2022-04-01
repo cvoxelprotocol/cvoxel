@@ -4,7 +4,7 @@ import type { GetServerSidePropsContext } from "next";
 
 import { CERAMIC_URL } from "@/constants/common";
 // import model from "./model-cray.json";
-import model from "../../model.json";
+import model from "../../model_latest.json";
 import type { ModelTypes } from "@/interfaces/cVoxelType";
 import { isSupportedDID } from "../../utils/ceramicUtils";
 import { Core } from "@self.id/framework";

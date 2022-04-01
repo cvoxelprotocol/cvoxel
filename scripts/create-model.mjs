@@ -120,6 +120,22 @@ const cVoxelSchemaID = await manager.createSchema('CVoxel', {
       type: 'string',
       title: 'fromSig',
     },
+    toSigner: {
+      type: 'string',
+      title: 'toSigner',
+    },
+    fromSigner: {
+      type: 'string',
+      title: 'fromSigner',
+    },
+    relatedAddresses: {
+      type: "array",
+      title: 'relatedAddress',
+      items: {
+        type: "string"
+      },
+      uniqueItems: true
+    },
     relatedTxHashes: {
       type: "array",
       title: 'relatedTxHashes',
@@ -169,6 +185,18 @@ const cVoxelsSchemaID = await manager.createSchema('CVoxels', {
           summary: {
             type: 'string',
             title: 'summary',
+          },
+          deliverable: {
+            type: 'string',
+            title: 'deliverable',
+          },
+          fiatValue: {
+            type: 'string',
+            title: 'value',
+          },
+          genre: {
+            type: 'string',
+            title: 'genre',
           },
           issuedTimestamp: {
             type: 'string',
