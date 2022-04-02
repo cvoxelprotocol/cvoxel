@@ -9,15 +9,13 @@ import {
 import { CVoxel} from "@/interfaces/cVoxelType";
 import CVoxelPresenter from "./CVoxelPresenter";
 import {useVoxStyler} from "@/hooks/useVoxStyler";
-import { useCore } from "@self.id/framework";
 import { initCVoxel } from "@/constants/cVoxel";
-
+import { core } from "@/lib/ceramic/server";
 type VisualizerPresenterProps = {
   ids?: string[];
 };
 
 const VisualizerPresenter: FC<VisualizerPresenterProps> = ({ids}) => {
-  const core = useCore();
   const [cVoxels, setCVoxels] = useState<CVoxel[]>([]);
   const {cvoxelsForDisplay, convertCVoxelsForDisplay} = useVoxStyler(cVoxels);
 
