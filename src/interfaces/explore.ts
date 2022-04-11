@@ -24,6 +24,7 @@ export type TransactionLog = {
 
 export type TransactionLogWithChainId = TransactionLog & {
   chainId: number;
+  addressOfDuplicatedTx?: string[];
 };
 
 export type EtherscanResult = {

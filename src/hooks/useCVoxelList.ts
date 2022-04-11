@@ -5,13 +5,12 @@ import { CVoxelMetaDraft } from "@/interfaces";
 import { useEffect, useState, useMemo } from "react";
 import { useQuery } from "react-query";
 import { useWalletAccount } from "./useWalletAccount";
+import { uniqueList } from "@/utils/etherscanUtils";
 
 export const useCVoxelList = () => {
   const [address, setAddress] = useState<string>();
   const { account, chainId } = useWalletAccount();
-  const [potentialTxes, setPotentialTxes] = useState<
-    TransactionLogWithChainId[]
-  >([]);
+
   const { data: txes, isLoading: txLoading } = useQuery<
     TransactionLogWithChainId[]
   >(["etherscan", address], () => etherscanTxListFetcher(chainId, address), {
@@ -37,28 +36,10 @@ export const useCVoxelList = () => {
     };
   }, [account]);
 
-  useEffect(() => {
-    if (txes) {
-      setPotentialTxes(filterTxes(txes));
-    }
-  }, [txes]);
-
   const onlyPotentialCVoxels = useMemo(() => {
-    if (!account)
-      return potentialTxes.sort((a, b) => {
-        return Number(a.timeStamp) > Number(b.timeStamp) ? -1 : 1;
-      });
-    return potentialTxes.sort((a, b) => {
-      return Number(a.timeStamp) > Number(b.timeStamp) ? -1 : 1;
-    });
-  }, [potentialTxes]);
-
-  const filterTxes = (
-    txes: TransactionLogWithChainId[]
-  ): TransactionLogWithChainId[] => {
     if (!txes || txes.length === 0) return [];
-    return txes.filter((tx) => Number(tx.value) > 0);
-  };
+    return uniqueList(txes, account?.toLowerCase());
+  }, [txes, account]);
 
   return {
     txLoading,
