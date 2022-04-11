@@ -9,7 +9,7 @@ import { useMyCeramicAcount } from "@/hooks/useCeramicAcount";
 import { useTab } from "@/hooks/useTab";
 import { useCVoxelList } from "@/hooks/useCVoxelList";
 import { TransactionLogWithChainId } from "@/interfaces/explore";
-import { useForm } from "react-hook-form";
+import { useForm, FormProvider } from "react-hook-form";
 import { useDraftCVoxel } from "@/hooks/useDraftCVoxel";
 import { useSigRequest } from "@/hooks/useSigRequest";
 import CVoxelsPresenter from "@/components/CVoxel/CVoxelsPresenter";
@@ -21,39 +21,44 @@ import { NoItemPresenter } from "@/components/common/NoItemPresenter";
 import { CommonLoading } from "@/components/common/CommonLoading";
 import { TransactionItem } from "@/components/Transaction/TransactionItem";
 import { SigRequestItem } from "@/components/SigRequest/SigRequestItem";
-import { Button } from "@/components/common/button/Button";
 import { TransactionDetail } from "@/components/Transaction/TransactionDetail";
-import { CommonSpinner } from "@/components/common/CommonSpinner";
+import { TransactionForm } from "@/components/Transaction/TransactionForm";
 
+export type selectTxType = {
+  tx: TransactionLogWithChainId
+  index: number
+}
 export const HomeContainer: FC = () => {
   const { connection, did, name, avator, account, connectCeramic } = useMyCeramicAcount();
   const { onlyPotentialCVoxels, offchainMetaList, txLoading, offchainLoading } =
     useCVoxelList();
   const CVoxelsRecords = useCVoxelsRecord(did);
-  const [selectedTx, selectTx] = useState<TransactionLogWithChainId | null>(null);
+  const [selectedTx, selectTx] = useState<selectTxType | null>(null);
   const { tabState, setTabState } = useTab();
   const draft = useDraftCVoxel();
   const {verifyWithCeramic, verifyWithoutCeramic} = useSigRequest()
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<CVoxel>();
+  const methods = useForm<CVoxel>();
   const onSubmit = (data: any) => {
     publish(data);
   };
+
+  const handleClickTx = (tx: selectTxType | null) => {
+    selectTx(tx)
+    if(tx && selectedTx && selectedTx?.tx.hash.toLowerCase() !== tx?.tx.hash.toLowerCase()) {
+      methods.reset()
+    }
+  }
 
   const publish = useCallback(
     async (data: CVoxel) => {
       if (!(selectedTx && account)) return;
       if(connection.status==="connected") {
-        const { summary, detail, deliverable } = data;
-        const result = await draft.publish(account, selectedTx, summary, detail, deliverable);
+        const { summary, detail, deliverable, relatedAddresses } = data;
+        const result = await draft.publish(account, selectedTx.tx, summary, detail, deliverable, relatedAddresses);
           if (result) {
             selectTx(null);
-            reset();
+            methods.reset();
             setTabState("cvoxels");
           }
       } else {
@@ -67,11 +72,11 @@ export const HomeContainer: FC = () => {
   const publishFromExistedCVoxel = async (tx:TransactionLogWithChainId, offchainItem: CVoxelMetaDraft) => {
     if (!(tx && account && offchainItem)) return;
     if(connection.status==="connected") {
-      const { summary, detail, deliverable } = offchainItem;
-      const result = await draft.publish(account, tx, summary, detail, deliverable, offchainItem);
+      const { summary, detail, deliverable, relatedAddresses } = offchainItem;
+      const result = await draft.publish(account, tx, summary, detail, deliverable, relatedAddresses,offchainItem);
         if (result) {
           selectTx(null);
-          reset();
+          methods.reset();
           setTabState("cvoxels");
         }
     } else {
@@ -82,11 +87,11 @@ export const HomeContainer: FC = () => {
   const reClaimCVoxel = async (tx:TransactionLogWithChainId, offchainItem: CVoxelMetaDraft) => {
     if (!(tx && account && offchainItem)) return;
     if(connection.status==="connected") {
-      const { summary, detail, deliverable } = offchainItem;
-      const result = await draft.reClaim(account, tx, summary, detail, deliverable, offchainItem);
+      const { summary, detail, deliverable, relatedAddresses } = offchainItem;
+      const result = await draft.reClaim(account, tx, summary, detail, deliverable,relatedAddresses, offchainItem);
         if (result) {
           selectTx(null);
-          reset();
+          methods.reset();
           setTabState("cvoxels");
         }
     } else {
@@ -104,7 +109,7 @@ export const HomeContainer: FC = () => {
 
   const selectedOffchainItem = useMemo(() => {
     if (!selectedTx) return null;
-    return offchainMetaList?.find((meta) => meta.txHash === selectedTx.hash);
+    return offchainMetaList?.find((meta) => meta.txHash === selectedTx.tx.hash);
   }, [selectedTx, offchainMetaList]);
 
   const sortCVoxels = useMemo(() => {
@@ -116,8 +121,8 @@ export const HomeContainer: FC = () => {
 
   const sigRequestCVoxels = useMemo(() => {
     if(!(account && offchainMetaList)) return offchainMetaList
-    return offchainMetaList.filter((tx) => (tx.from.toLowerCase() === account?.toLowerCase() && !tx.fromSig))
-  },[offchainMetaList])
+    return offchainMetaList.filter((tx) => (tx.relatedAddresses.includes(account?.toLowerCase()) && (!(tx.fromSig && tx.fromSigner && tx.fromSigner.toLowerCase() === account?.toLowerCase()) && !(tx.toSig && tx.toSigner && tx.toSigner.toLowerCase() === account?.toLowerCase()))))
+  },[offchainMetaList,account])
 
   return (
     <main className="h-auto overflow-y-scroll text-black dark:text-white text-center">
@@ -180,52 +185,19 @@ export const HomeContainer: FC = () => {
                   )}
                   {(!offchainLoading && onlyPotentialCVoxels.length>0) &&  onlyPotentialCVoxels.map((tx,index) => (
                     <div key={`${tx.hash}_${index}`} className="mb-4">
-                      <TransactionItem tx={tx} account={account} onClickTx={selectTx} selectedTx={selectedTx} />
-                      {(selectedTx && selectedTx?.hash===tx.hash) && (
+                      <TransactionItem tx={tx} index={index} account={account} onClickTx={handleClickTx} selectedTx={selectedTx} />
+                      {(selectedTx && selectedTx?.tx.hash===tx.hash) && (
                           <>
                           {selectedOffchainItem ? (
                             <TransactionDetail key={`${tx.hash}_detail`} account={account?.toLowerCase()} tx={tx} offchainItem={selectedOffchainItem} connectionStatus={connection.status} onClaim={publishFromExistedCVoxel} reClaim={reClaimCVoxel} cvoxels={sortCVoxels} />
                           ): (
                             <div key={`${tx.hash}_form_container`} className="mb-4">
                               <div key={`${tx.hash}_form`} className="w-full h-fit bg-white shadow-lg p-5 mb-4">
-                                  <form className="w-full" onSubmit={handleSubmit(onSubmit)}>
-                                        {/* title */}
-                                        <div className="flex flex-wrap items-center">
-                                            <p className="font-semibold">Title</p>
-                                        </div>
-                                        <div className="mb-3">
-                                            <input className="w-full my-1 py-1 px-6 border rounded-full text-xs md:text-sm" placeholder={'Enter title..'} {...register("summary", {required:'Please enter a summary'})} />
-                                            <div className="w-full grid grid-cols-2 mb-2">
-                                                <span className="cols-span-1 px-3 text-xs text-red-600">{errors.summary?.message}</span>
-                                            </div>
-                                        </div>
-    
-                                        {/* detail */}
-                                        <div className="flex flex-wrap items-center">
-                                        <p className="font-semibold">Description(optional)</p>
-                                        </div>
-                                        <div className="mb-3">
-                                            <textarea className="w-full my-1 py-2 px-6 border rounded-xl text-xs md:text-sm" rows={3} placeholder={'Enter detail..'} {...register("detail")} />
-                                            <div className="w-full grid grid-cols-2 mb-2">
-                                                <span className="cols-span-1 px-3 text-xs text-red-600">{errors.detail?.message}</span>
-                                            </div>
-                                        </div>
-                                          <div className="flex flex-wrap items-center">
-                                          <p className="font-semibold">Deliverable link(optional)</p>
-                                        </div>
-                                        <div className="mb-3">
-                                            <input className="w-full my-1 py-1 px-6 border rounded-full text-xs md:text-sm" placeholder={'Enter deliverable..'} {...register("deliverable")} />
-                                            <div className="w-full grid grid-cols-2 mb-2">
-                                                <span className="cols-span-1 px-3 text-xs text-red-600">{errors.deliverable?.message}</span>
-                                            </div>
-                                        </div>
-                                          <div className="text-right py-4 space-x-4 flex justify-end items-center">
-                                            {connection.status ==="connecting" && (
-                                              <CommonSpinner />
-                                            )}
-                                            <Button text={connection.status==="connected"? "Claim" : connection.status ==="connecting" ? "Connecitng..." : "Connect DID"} buttonType={"submit"} color={connection.status==="connected" ? "grad-blue": "grad-red"}/>
-                                          </div>
-                                      </form>
+                                <FormProvider {...methods}>
+                                    <form className="w-full" onSubmit={methods.handleSubmit(onSubmit)}>
+                                      <TransactionForm tx={tx} connectionStatus={connection.status} />
+                                    </form>
+                                  </FormProvider>
                                 </div>
                             </div>
                           )}

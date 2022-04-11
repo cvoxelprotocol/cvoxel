@@ -9,14 +9,6 @@ export const isAddress = (address: string): boolean => {
   return true;
 };
 
-export const isContract = async (
-  provider: any,
-  address: string
-): Promise<boolean> => {
-  const code = await provider.getCode(address);
-  return code && code !== "0x";
-};
-
 export const wait = <T>(something: T): Promise<T> =>
   new Promise((resolve) => {
     const wait = setTimeout(() => {

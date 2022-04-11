@@ -2,6 +2,8 @@ import { FC ,useMemo } from "react";
 import { CVoxelItem, CVoxelMetaDraft, TransactionLogWithChainId } from "@/interfaces";
 import { Button } from "../common/button/Button";
 import { CommonSpinner } from "../common/CommonSpinner";
+import { InternalTransactionContainer } from "./InternalTransactionContainer";
+import { useInternalTransactions } from "@/hooks/useInternalTransactions";
 
 type TransactionDetailProps = {
     tx: TransactionLogWithChainId
@@ -13,6 +15,8 @@ type TransactionDetailProps = {
     cvoxels?: CVoxelItem[]
 }
 export const TransactionDetail:FC<TransactionDetailProps> = ({account, tx, offchainItem, connectionStatus, cvoxels, onClaim, reClaim}) => {
+
+    const {internalTxs, internalTxLoading} = useInternalTransactions(tx)
 
     const claimable = useMemo(() => {
         if(!account) return false
@@ -64,6 +68,7 @@ export const TransactionDetail:FC<TransactionDetailProps> = ({account, tx, offch
                     <Button text={connectionStatus==="connected"? "ReClaim" : connectionStatus ==="connecting" ? "Connecitng..." : "Connect DID"} buttonType={"button"} onClick={() => reClaim(tx, offchainItem)} color={connectionStatus==="connected" ? "grad-blue": "grad-red"}/>
                 </div>
             )}
+            <InternalTransactionContainer tx={tx} internalTxLoading={internalTxLoading} internalTxs={internalTxs}/>
         </div>
     )
 

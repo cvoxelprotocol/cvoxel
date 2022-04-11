@@ -32,6 +32,7 @@ export function useDraftCVoxel() {
       summary: string,
       detail?: string,
       deliverable?: string,
+      relatedAddresses?: string[],
       existedItem?: CVoxelMetaDraft
     ) => {
       if (isLoading || !summary) {
@@ -59,6 +60,7 @@ export function useDraftCVoxel() {
           summary,
           detail,
           deliverable,
+          relatedAddresses,
           existedItem
         );
 
@@ -119,6 +121,7 @@ export function useDraftCVoxel() {
       summary: string,
       detail?: string,
       deliverable?: string,
+      relatedAddresses?: string[],
       existedItem?: CVoxelMetaDraft
     ) => {
       if (isLoading || !summary) {
@@ -146,6 +149,7 @@ export function useDraftCVoxel() {
           summary,
           detail,
           deliverable,
+          relatedAddresses,
           existedItem
         );
 
@@ -188,6 +192,7 @@ export function useDraftCVoxel() {
     summary: string,
     detail?: string,
     deliverable?: string,
+    relatedAddresses?: string[],
     existedItem?: CVoxelMetaDraft
   ): Promise<CVoxelDraftAndMeta> => {
     const to = selectedTx.to.toLowerCase();
@@ -219,6 +224,12 @@ export function useDraftCVoxel() {
       // if from address is contract address and gnosissafe treasury, use following api and get owners as potentialClient
       // https://safe-transaction.rinkeby.gnosis.io/api/v1/safes/0x9576Ab75741201f430223EDF2d24A750ef787591/
 
+      const releted =
+        !relatedAddresses || relatedAddresses.length === 0
+          ? [from.toLowerCase(), to.toLowerCase()]
+          : relatedAddresses.concat([from.toLowerCase(), to.toLowerCase()]);
+      const uniqRelated = Array.from(new Set(releted));
+
       meta = {
         summary: summary,
         detail: detail ?? "",
@@ -239,9 +250,9 @@ export function useDraftCVoxel() {
         tags: [],
         toSig: !isPayer ? signature.toString() : "",
         fromSig: isPayer ? signature.toString() : "",
-        toSigner: !isPayer ? to : "",
-        fromSigner: isPayer ? from : "",
-        relatedAddresses: [from.toLowerCase(), to.toLowerCase()],
+        toSigner: !isPayer ? usr : "",
+        fromSigner: isPayer ? usr : "",
+        relatedAddresses: uniqRelated,
       };
     }
     const draft: CVoxelMetaDraft = {
