@@ -31,8 +31,6 @@ export const TransactionForm:FC<TransactionFormProps> = ({tx,connectionStatus })
 
     useEffect(() => {
         if(relatedAddress && relatedAddress.length>0) {
-            console.log("tx.hash", tx.hash)
-            console.log("relatedAddress", relatedAddress)
             setValue("relatedAddresses", relatedAddress)
         }
     },[relatedAddress,tx])
