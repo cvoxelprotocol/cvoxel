@@ -44,6 +44,7 @@ export const Meta:FC<MetaData> = ({
       <meta property="og:image:width" content={String(imgWidth)} key="ogimagewidth"/>
       <meta property="og:image:height" content={String(imgHeight)} key="ogimageheight"/>
       <link rel="canonical" href={url} key="canonical"/>
+      <link href="https://fonts.googleapis.com/css2?family=Commissioner:wght@100;200;300;400;500;600;700;800;900&family=Work+Sans:ital,wght@0,300;1,200&display=swap" rel="stylesheet"></link>
       <meta name="twitter:card" content="summary_large_image" key="twittercard"/>
     </Head>
   )

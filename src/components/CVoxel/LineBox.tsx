@@ -6,10 +6,11 @@ type Props = {
   width: number;
   height: number;
   depth: number;
+  lineWidth?: number;
   color: string;
 };
 
-const LineBox: FC<Props> = ({ width, height, depth, color }) => {
+const LineBox: FC<Props> = ({ width, height, depth, color, lineWidth = 1 }) => {
   const [position, setPosition] = useState<[number, number, number][]>([
     [0, 0, 0],
   ]);
@@ -41,7 +42,7 @@ const LineBox: FC<Props> = ({ width, height, depth, color }) => {
     ]);
   }, [width, height, depth]);
 
-  return <Line points={position} color={lineColor} lineWidth={1} />;
+  return <Line points={position} color={lineColor} lineWidth={lineWidth} />;
 };
 
 export default LineBox;

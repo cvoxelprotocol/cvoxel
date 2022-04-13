@@ -4,9 +4,26 @@ const plugin = require('tailwindcss/plugin')
 module.exports = {
   content: ['./src/pages/**/*.{js,ts,jsx,tsx}', './src/components/**/*.{js,ts,jsx,tsx}'],
   darkMode: 'class',
+  daisyui: {
+    themes: [
+      {
+        mytheme: {
+          "primary": "#8E477F",
+          "secondary": "#EFA9E0",      
+          "accent": "#459BFF",     
+          "neutral": "#000000",      
+          "base-100": "#FFFFFF",       
+          "info": "#459BFF",
+          "success": "#36D399",     
+          "warning": "#FBBD23",    
+          "error": "#F87272",
+        },
+      },
+    ],
+  },
   theme: {
     fontFamily: {
-      'sans': ['Work Sans', ...defaultTheme.fontFamily.sans]
+      'sans': ['Commissioner', 'Work Sans', ...defaultTheme.fontFamily.sans]
     },
     
     extend: {
@@ -106,5 +123,5 @@ module.exports = {
         }
       }
     }, ['responsive'])
-  })],
+  }), require("daisyui")],
 };
