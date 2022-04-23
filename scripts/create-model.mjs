@@ -210,6 +210,12 @@ const cVoxelsSchemaID = await manager.createSchema('CVoxels', {
 })
 
 // Create the definition using the created schema ID
+await manager.createDefinition('cVoxel', {
+  name: 'cVoxel',
+  description: 'cVoxel',
+  schema: manager.getSchemaURL(cVoxelSchemaID),
+})
+
 await manager.createDefinition('cVoxels', {
   name: 'cVoxels',
   description: 'cVoxels',
