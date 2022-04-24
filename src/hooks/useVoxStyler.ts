@@ -2,6 +2,8 @@ import { useState } from "react";
 import { CVoxel, CVoxelThree, CVoxelVisType } from "@/interfaces/cVoxelType";
 import * as THREE from "three";
 import { useCallback } from "react";
+import { getGenreColor } from "@/utils/genreUtil";
+import chroma from "chroma-js";
 
 type RoomType = {
   position: THREE.Vector3;
@@ -26,7 +28,7 @@ export const useVoxStyler = (cVoxels: CVoxel[]) => {
           lattice: false,
           scale: 1.0,
         };
-        const { value, deliverable, toSig, fromSig } = voxel;
+        const { value, deliverable, toSig, fromSig, genre, fiatValue } = voxel;
         let hue, lightness, saturation: number;
 
         /* Set opacity from sigs */
@@ -41,12 +43,16 @@ export const useVoxStyler = (cVoxels: CVoxel[]) => {
 
         /* Set vividness from value based on ETH currently */
         const sigmoidValue =
-          1.0 / (1.0 + Math.exp(-sigmoid_a * parseFloat(value)));
+          1.0 /
+          (1.0 +
+            Math.exp(-sigmoid_a * Math.log10(parseFloat(fiatValue || value))));
         lightness = 100 - sigmoidValue * 50;
         saturation = sigmoidValue * 70;
 
         /* Set hue from hoge (unassinged yet) */
-        hue = 330;
+        const hexColor = getGenreColor(genre);
+        const genreHue = hexColor ? chroma(hexColor).hsl()[0] : 330;
+        hue = genreHue || 330;
         voxelTemp[
           "color"
         ] = `hsl(${hue}, ${saturation.toFixed()}%, ${lightness.toFixed()}%)`;

@@ -10,6 +10,12 @@ type Props = {
 
 const CVoxelPresenter: FC<Props> = (props) => {
   const voxelColor = useMemo(() => new THREE.Color(props.color), [props.color]);
+  const lineColor = useMemo(() => {
+    let lineColorHSL:THREE.HSL = { h: 0, s: 0, l: 0 }
+    voxelColor.getHSL(lineColorHSL)
+    return new THREE.Color().setHSL(lineColorHSL.h,1,lineColorHSL.l)
+  },[voxelColor])
+
   const voxelPosition = useMemo(
     () =>
       props.position.sub(
@@ -42,7 +48,7 @@ const CVoxelPresenter: FC<Props> = (props) => {
         />
       </mesh>
       {props.lattice ? (
-        <LineBox width={1} height={1} depth={1} color={"hsl(330, 70%, 40%)"} />
+        <LineBox width={1} height={1} depth={1} lineColor={lineColor} />
       ) : null}
     </group>
   );
