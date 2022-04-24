@@ -1,4 +1,3 @@
-import { ETH_CHAIN_ID } from "@/constants/common";
 import { networks } from "@/constants/network";
 
 export const getNetworkName = (chainId?: number): string => {
