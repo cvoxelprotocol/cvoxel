@@ -39,12 +39,14 @@ export const TransactionItem:FC<TransactionItemProps> = ({tx,index, account, onC
         return account?.toLowerCase()===tx.to.toLowerCase()
     },[account, tx])
 
+
+
     const exploreLink = useMemo(() => {
         return getExploreLink(tx.hash, tx.chainId)
     },[tx,chainId])
 
-    const shouldShowClaim = useMemo(() => {
-        return selectedTx && selectedTx.tx.hash===tx.hash ? "Close" : "Claim Career Detail"
+    const isSelecting = useMemo(() => {
+        return !!selectedTx && selectedTx.tx.hash===tx.hash
     },[selectedTx, tx.hash])
 
 
@@ -53,7 +55,7 @@ export const TransactionItem:FC<TransactionItemProps> = ({tx,index, account, onC
     },[tx, isPayee, setAddress])
 
     const handleClick = () => {
-        if(selectedTx && selectedTx.tx.hash===tx.hash) {
+        if(isSelecting) {
             onClickTx(null)
         } else {
             onClickTx({tx, index})
@@ -98,7 +100,15 @@ export const TransactionItem:FC<TransactionItemProps> = ({tx,index, account, onC
                 </div>
             </div>
             <div className="flex items-center justify-end">
-                <button onClick={()=>handleClick()} className="text-primary border-none hover:border-none p-2">{shouldShowClaim}</button>
+                {isSelecting ? (
+                    <button onClick={()=> handleClick()} className="text-primary-300 rounded-full bg-white border border-primary-300 py-1.5 px-4">
+                        {"Close"}
+                    </button>
+                ): (
+                    <button onClick={()=> handleClick()} className="text-white rounded-full bg-primary-300 py-1.5 px-4">
+                        {"Create"}
+                    </button>
+                )}
              </div>
         </div>
     )

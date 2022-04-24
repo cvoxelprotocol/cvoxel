@@ -54,8 +54,8 @@ export const HomeContainer: FC = () => {
     async (data: CVoxel) => {
       if (!(selectedTx && account)) return;
       if(connection.status==="connected") {
-        const { summary, detail, deliverable, relatedAddresses } = data;
-        const result = await draft.publish(account, selectedTx.tx, summary, detail, deliverable, relatedAddresses);
+        const { summary, detail, deliverable, relatedAddresses, genre, tags } = data;
+        const result = await draft.publish(account, selectedTx.tx, summary, detail, deliverable, relatedAddresses, genre, tags);
           if (result) {
             selectTx(null);
             methods.reset();
@@ -72,8 +72,8 @@ export const HomeContainer: FC = () => {
   const publishFromExistedCVoxel = async (tx:TransactionLogWithChainId, offchainItem: CVoxelMetaDraft) => {
     if (!(tx && account && offchainItem)) return;
     if(connection.status==="connected") {
-      const { summary, detail, deliverable, relatedAddresses } = offchainItem;
-      const result = await draft.publish(account, tx, summary, detail, deliverable, relatedAddresses,offchainItem);
+      const { summary, detail, deliverable, relatedAddresses, genre, tags } = offchainItem;
+      const result = await draft.publish(account, tx, summary, detail, deliverable, relatedAddresses, genre, tags, offchainItem);
         if (result) {
           selectTx(null);
           methods.reset();
@@ -87,8 +87,8 @@ export const HomeContainer: FC = () => {
   const reClaimCVoxel = async (tx:TransactionLogWithChainId, offchainItem: CVoxelMetaDraft) => {
     if (!(tx && account && offchainItem)) return;
     if(connection.status==="connected") {
-      const { summary, detail, deliverable, relatedAddresses } = offchainItem;
-      const result = await draft.reClaim(account, tx, summary, detail, deliverable,relatedAddresses, offchainItem);
+      const { summary, detail, deliverable, relatedAddresses, genre, tags } = offchainItem;
+      const result = await draft.reClaim(account, tx, summary, detail, deliverable,relatedAddresses, genre, tags, offchainItem);
         if (result) {
           selectTx(null);
           methods.reset();
