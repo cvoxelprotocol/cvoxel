@@ -6,14 +6,13 @@ type Props = {
   width: number;
   height: number;
   depth: number;
-  color: string;
+  lineColor: THREE.Color;
 };
 
-const LineBox: FC<Props> = ({ width, height, depth, color }) => {
+const LineBox: FC<Props> = ({ width, height, depth, lineColor }) => {
   const [position, setPosition] = useState<[number, number, number][]>([
     [0, 0, 0],
   ]);
-  const lineColor = useMemo(() => new THREE.Color(color), [color]);
 
   useEffect(() => {
     const widthHalf = width / 2;
@@ -41,7 +40,7 @@ const LineBox: FC<Props> = ({ width, height, depth, color }) => {
     ]);
   }, [width, height, depth]);
 
-  return <Line points={position} color={lineColor} lineWidth={1} />;
+  return <Line points={position} color={lineColor} lineWidth={1.5} />;
 };
 
 export default LineBox;

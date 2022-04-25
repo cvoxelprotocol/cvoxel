@@ -27,7 +27,7 @@ export type CVoxel = {
   issuedTimestamp: string; //block timestamp
   txHash: string; // transfer tx hash
   relatedTxHashes?: string[]; //tx releated work
-  tags: string[]; //tags
+  tags?: string[]; //tags
   genre?: string; // main genre
   jobType: "FullTime" | "PartTime" | "OneTime"; // default=OneTime
   toSig: string; // sig of payee

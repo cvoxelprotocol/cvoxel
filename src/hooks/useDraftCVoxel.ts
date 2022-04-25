@@ -33,6 +33,8 @@ export function useDraftCVoxel() {
       detail?: string,
       deliverable?: string,
       relatedAddresses?: string[],
+      genre?: string,
+      tags?: string[],
       existedItem?: CVoxelMetaDraft
     ) => {
       if (isLoading || !summary) {
@@ -49,6 +51,11 @@ export function useDraftCVoxel() {
         return false;
       }
 
+      if (!genre) {
+        lancError();
+        return false;
+      }
+
       showLoading();
 
       try {
@@ -61,6 +68,8 @@ export function useDraftCVoxel() {
           detail,
           deliverable,
           relatedAddresses,
+          genre,
+          tags,
           existedItem
         );
 
@@ -122,6 +131,8 @@ export function useDraftCVoxel() {
       detail?: string,
       deliverable?: string,
       relatedAddresses?: string[],
+      genre?: string,
+      tags?: string[],
       existedItem?: CVoxelMetaDraft
     ) => {
       if (isLoading || !summary) {
@@ -150,8 +161,12 @@ export function useDraftCVoxel() {
           detail,
           deliverable,
           relatedAddresses,
+          genre,
+          tags,
           existedItem
         );
+
+        await createDraftWighVerify(address.toLowerCase(), draft);
 
         const doc = await selfID.client.dataModel.createTile("CVoxel", {
           ...meta,
@@ -193,6 +208,8 @@ export function useDraftCVoxel() {
     detail?: string,
     deliverable?: string,
     relatedAddresses?: string[],
+    genre?: string,
+    tags?: string[],
     existedItem?: CVoxelMetaDraft
   ): Promise<CVoxelDraftAndMeta> => {
     const to = selectedTx.to.toLowerCase();
@@ -247,7 +264,8 @@ export function useDraftCVoxel() {
         issuedTimestamp: selectedTx.timeStamp,
         txHash: selectedTx.hash,
         relatedTxHashes: [selectedTx.hash],
-        tags: [],
+        genre: genre,
+        tags: tags,
         toSig: !isPayer ? signature.toString() : "",
         fromSig: isPayer ? signature.toString() : "",
         toSigner: !isPayer ? usr : "",

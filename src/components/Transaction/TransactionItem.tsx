@@ -1,5 +1,5 @@
 import { useWalletAccount } from "@/hooks/useWalletAccount";
-import { TransactionLogWithChainId } from "@/interfaces";
+import { CVoxelItem, TransactionLogWithChainId } from "@/interfaces";
 import { getExploreLink } from "@/utils/etherscanUtils";
 import { formatBigNumber } from "@/utils/ethersUtil";
 import { shortHash } from "@/utils/tools";
@@ -16,12 +16,13 @@ import { useENS } from "@/hooks/useENS";
 type TransactionItemProps = {
     index: number
     tx: TransactionLogWithChainId
-    account?: string | null
     selectedTx: selectTxType | null
+    account?: string | null
+    cVoxels?: CVoxelItem[]
     onClickTx: (tx:selectTxType | null) => void
 }
 
-export const TransactionItem:FC<TransactionItemProps> = ({tx,index, account, onClickTx, selectedTx}) => {
+export const TransactionItem:FC<TransactionItemProps> = ({tx,index, account, cVoxels, onClickTx, selectedTx}) => {
 
     const {chainId} = useWalletAccount()
     const {ens, ensLoading, setAddress} = useENS()
@@ -39,12 +40,18 @@ export const TransactionItem:FC<TransactionItemProps> = ({tx,index, account, onC
         return account?.toLowerCase()===tx.to.toLowerCase()
     },[account, tx])
 
+    const isAlreadyCreated = useMemo(() => {
+        return !cVoxels ? false: cVoxels?.some(cv => cv.txHash.toLowerCase() === tx.hash.toLowerCase())
+    },[cVoxels, tx.hash])
+
+
+
     const exploreLink = useMemo(() => {
         return getExploreLink(tx.hash, tx.chainId)
     },[tx,chainId])
 
-    const shouldShowClaim = useMemo(() => {
-        return selectedTx && selectedTx.tx.hash===tx.hash ? "Close" : "Claim Career Detail"
+    const isSelecting = useMemo(() => {
+        return !!selectedTx && selectedTx.tx.hash===tx.hash
     },[selectedTx, tx.hash])
 
 
@@ -53,7 +60,7 @@ export const TransactionItem:FC<TransactionItemProps> = ({tx,index, account, onC
     },[tx, isPayee, setAddress])
 
     const handleClick = () => {
-        if(selectedTx && selectedTx.tx.hash===tx.hash) {
+        if(isSelecting) {
             onClickTx(null)
         } else {
             onClickTx({tx, index})
@@ -98,7 +105,15 @@ export const TransactionItem:FC<TransactionItemProps> = ({tx,index, account, onC
                 </div>
             </div>
             <div className="flex items-center justify-end">
-                <button onClick={()=>handleClick()} className="text-primary border-none hover:border-none p-2">{shouldShowClaim}</button>
+                {isSelecting ? (
+                    <button onClick={()=> handleClick()} className="text-primary-300 rounded-full bg-white border border-primary-300 py-1.5 px-4">
+                        {"Close"}
+                    </button>
+                ): (
+                    <button onClick={()=> handleClick()} className={"rounded-full py-1.5 px-4 " + (!isAlreadyCreated ? " text-white bg-primary-300 ": "text-primary-300 bg-white border border-primary-300")}>
+                        {isAlreadyCreated ? "Show Detail": "Create"}
+                    </button>
+                )}
              </div>
         </div>
     )
