@@ -195,7 +195,7 @@ export const HomeContainer: FC = () => {
                               <div key={`${tx.hash}_form`} className="w-full h-fit bg-white shadow-lg p-5 mb-4">
                                 <FormProvider {...methods}>
                                     <form className="w-full" onSubmit={methods.handleSubmit(onSubmit)}>
-                                      <TransactionForm tx={tx} connectionStatus={connection.status} />
+                                      <TransactionForm tx={tx} connectionStatus={connection.status} isFirstTime={sortCVoxels.length===0}/>
                                     </form>
                                   </FormProvider>
                                 </div>

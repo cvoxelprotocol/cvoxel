@@ -64,7 +64,7 @@ const connect = async () => {
                       <FontAwesomeIcon className="w-5 h-5 mr-2" icon={faCircleExclamation} color={'#EFA9E0'}/>
                       <div>
                       <p className="w-full max-w-[450px] break-words">
-                          Current Version is Alpha and Supports Only<br /><span className="font-bold px-1">Ethereum Mainnet for Wallet(Metamask)</span>and<span className="font-bold px-1">Ceramic Testnet for DID</span>
+                          Current Version is Alpha and Supports Only<br /><span className="font-bold px-1">Ethereum Mainnet for Wallet(Metamask)</span>and<span className="font-bold px-1">Testnet of Ceramic Network</span>
                       </p>
                       </div>
                   </div>

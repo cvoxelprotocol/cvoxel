@@ -12,8 +12,7 @@ export const TagForm: FC<TagFormProps> = ({handleTags, tags}) => {
 
     const handleChange = (newValue: OnChangeValue<TagOption, true>,
         actionMeta: ActionMeta<TagOption>) => {
-            const tags = newValue.map(item => item.value)
-            handleTags(tags)
+            handleTags(newValue.map(item => item.value))
     }
 
     const defaultVal = useMemo(() => {
@@ -27,7 +26,7 @@ export const TagForm: FC<TagFormProps> = ({handleTags, tags}) => {
             onChange={handleChange}
             options={TagOptions}
             styles={colourStyles}
-            placeholder={"Etner Tags..."}
+            placeholder={"Enter tags as you like.."}
             className={"border-none border-b-gray-400"}
         />
     )

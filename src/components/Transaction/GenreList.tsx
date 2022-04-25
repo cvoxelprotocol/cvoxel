@@ -1,6 +1,6 @@
 import { FC, useMemo} from "react";
 import {Genre, genreColorStyle, genreList} from "@/constants/genre"
-import Select,{ ActionMeta, MultiValue, OnChangeValue, SingleValue } from "react-select";
+import Select,{ ActionMeta, OnChangeValue } from "react-select";
 import { getGenre } from "@/utils/genreUtil";
 
 type GenreListProps = {
@@ -12,7 +12,6 @@ export const GenreList:FC<GenreListProps> = ({handleGenre, genre}) => {
 
     const handleChange = (newValue: OnChangeValue<Genre, false>,
         actionMeta: ActionMeta<Genre>) => {
-            console.log("val", newValue)
             if(!newValue) return
             handleGenre(newValue)
     }

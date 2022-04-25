@@ -5,20 +5,20 @@ export const initCVoxel: CVoxel[] = [
     to: "", // payee address
     from: "", // payer address
     summary: "", // work summary
-    deliverable: "aaaa",
+    deliverable: "",
     isPayer: false,
     value: "2", // reward value
     tokenSymbol: "eth", // eth, usdc, etc
     tokenDecimal: 18,
     networkId: 0, // eth mainnet = 1
-    fiatValue: "5840",
+    fiatValue: "58400",
     fiatSymbol: "usd",
     issuedTimestamp: "", //block timestamp
     txHash: "",
     tags: [], //tags
-    genre: "",
+    genre: "Art",
     jobType: "FullTime", // default=OneTime
-    toSig: "",
+    toSig: "aaaa",
     fromSig: "bbbbb",
     toSigner: "",
     fromSigner: "",
@@ -34,12 +34,12 @@ export const initCVoxel: CVoxel[] = [
     tokenSymbol: "eth", // eth, usdc, etc
     tokenDecimal: 18,
     networkId: 0, // eth mainnet = 1
-    fiatValue: "5840",
+    fiatValue: "5800",
     fiatSymbol: "usd",
     issuedTimestamp: "", //block timestamp
     txHash: "",
     tags: [], //tags
-    genre: "",
+    genre: "Donation&Investment",
     jobType: "FullTime", // default=OneTime
     toSig: "",
     fromSig: "bbbbb",
@@ -62,7 +62,7 @@ export const initCVoxel: CVoxel[] = [
     issuedTimestamp: "", //block timestamp
     txHash: "",
     tags: [], //tags
-    genre: "",
+    genre: "Dev",
     jobType: "FullTime", // default=OneTime
     toSig: "",
     fromSig: "bbbbb",
@@ -79,15 +79,15 @@ export const initCVoxel: CVoxel[] = [
     value: "2", // reward value
     tokenSymbol: "eth", // eth, usdc, etc
     tokenDecimal: 18,
-    fiatValue: "5840",
+    fiatValue: "58400",
     fiatSymbol: "usd",
     networkId: 0, // eth mainnet = 1
     issuedTimestamp: "", //block timestamp
     txHash: "",
     tags: [], //tags
-    genre: "",
+    genre: "Marketing",
     jobType: "FullTime", // default=OneTime
-    toSig: "",
+    toSig: "aaaa",
     fromSig: "bbbbb",
     toSigner: "",
     fromSigner: "",
@@ -108,9 +108,9 @@ export const initCVoxel: CVoxel[] = [
     issuedTimestamp: "", //block timestamp
     txHash: "",
     tags: [], //tags
-    genre: "",
+    genre: "Art",
     jobType: "FullTime", // default=OneTime
-    toSig: "",
+    toSig: "aaaa",
     fromSig: "bbbbb",
     toSigner: "",
     fromSigner: "",
@@ -125,15 +125,15 @@ export const initCVoxel: CVoxel[] = [
     value: "2", // reward value
     tokenSymbol: "eth", // eth, usdc, etc
     tokenDecimal: 18,
-    fiatValue: "5840",
+    fiatValue: "58400",
     fiatSymbol: "usd",
     networkId: 0, // eth mainnet = 1
     issuedTimestamp: "", //block timestamp
     txHash: "",
     tags: [], //tags
-    genre: "",
+    genre: "Community",
     jobType: "FullTime", // default=OneTime
-    toSig: "",
+    toSig: "aaaa",
     fromSig: "bbbbb",
     toSigner: "",
     fromSigner: "",
@@ -154,7 +154,7 @@ export const initCVoxel: CVoxel[] = [
     issuedTimestamp: "", //block timestamp
     txHash: "",
     tags: [], //tags
-    genre: "",
+    genre: "Accounting&Consulting",
     jobType: "FullTime", // default=OneTime
     toSig: "aaaa",
     fromSig: "bbbbb",
@@ -177,7 +177,7 @@ export const initCVoxel: CVoxel[] = [
     issuedTimestamp: "", //block timestamp
     txHash: "",
     tags: [], //tags
-    genre: "",
+    genre: "Audio&Video",
     jobType: "FullTime", // default=OneTime
     toSig: "",
     fromSig: "bbbbb",
@@ -200,7 +200,7 @@ export const initCVoxel: CVoxel[] = [
     issuedTimestamp: "", //block timestamp
     txHash: "",
     tags: [], //tags
-    genre: "",
+    genre: "Accounting&Consulting",
     jobType: "FullTime", // default=OneTime
     toSig: "aaaa",
     fromSig: "bbbbb",
@@ -223,7 +223,7 @@ export const initCVoxel: CVoxel[] = [
     issuedTimestamp: "", //block timestamp
     txHash: "",
     tags: [], //tags
-    genre: "",
+    genre: "Donation&Investment",
     jobType: "FullTime", // default=OneTime
     toSig: "aaaa",
     fromSig: "bbbbb",
@@ -235,7 +235,7 @@ export const initCVoxel: CVoxel[] = [
     to: "", // payee address
     from: "", // payer address
     summary: "", // work summary
-    deliverable: "aaaa",
+    deliverable: "",
     isPayer: false,
     value: "2", // reward value
     tokenSymbol: "eth", // eth, usdc, etc
@@ -246,7 +246,7 @@ export const initCVoxel: CVoxel[] = [
     issuedTimestamp: "", //block timestamp
     txHash: "",
     tags: [], //tags
-    genre: "",
+    genre: "Legal",
     jobType: "FullTime", // default=OneTime
     toSig: "",
     fromSig: "bbbbb",
@@ -292,7 +292,7 @@ export const initCVoxel: CVoxel[] = [
     issuedTimestamp: "", //block timestamp
     txHash: "",
     tags: [], //tags
-    genre: "",
+    genre: "Art",
     jobType: "FullTime", // default=OneTime
     toSig: "aaaa",
     fromSig: "bbbbb",
@@ -304,7 +304,7 @@ export const initCVoxel: CVoxel[] = [
     to: "", // payee address
     from: "", // payer address
     summary: "", // work summary
-    deliverable: "aaaa",
+    deliverable: "",
     isPayer: false,
     value: "1.6", // reward value
     tokenSymbol: "eth", // eth, usdc, etc
@@ -315,32 +315,9 @@ export const initCVoxel: CVoxel[] = [
     issuedTimestamp: "", //block timestamp
     txHash: "",
     tags: [], //tags
-    genre: "",
+    genre: "Art",
     jobType: "FullTime", // default=OneTime
     toSig: "",
-    fromSig: "bbbbb",
-    toSigner: "",
-    fromSigner: "",
-    relatedAddresses: [],
-  },
-  {
-    to: "", // payee address
-    from: "", // payer address
-    summary: "", // work summary
-    deliverable: "",
-    isPayer: false,
-    value: "2", // reward value
-    tokenSymbol: "eth", // eth, usdc, etc
-    tokenDecimal: 18,
-    fiatValue: "5840",
-    fiatSymbol: "usd",
-    networkId: 0, // eth mainnet = 1
-    issuedTimestamp: "", //block timestamp
-    txHash: "",
-    tags: [], //tags
-    genre: "",
-    jobType: "FullTime", // default=OneTime
-    toSig: "aaaa",
     fromSig: "bbbbb",
     toSigner: "",
     fromSigner: "",
@@ -352,6 +329,29 @@ export const initCVoxel: CVoxel[] = [
     summary: "", // work summary
     deliverable: "aaaa",
     isPayer: false,
+    value: "2", // reward value
+    tokenSymbol: "eth", // eth, usdc, etc
+    tokenDecimal: 18,
+    fiatValue: "5840",
+    fiatSymbol: "usd",
+    networkId: 0, // eth mainnet = 1
+    issuedTimestamp: "", //block timestamp
+    txHash: "",
+    tags: [], //tags
+    genre: "Dev",
+    jobType: "FullTime", // default=OneTime
+    toSig: "aaaa",
+    fromSig: "bbbbb",
+    toSigner: "",
+    fromSigner: "",
+    relatedAddresses: [],
+  },
+  {
+    to: "", // payee address
+    from: "", // payer address
+    summary: "", // work summary
+    deliverable: "",
+    isPayer: false,
     value: "1.5", // reward value
     tokenSymbol: "eth", // eth, usdc, etc
     tokenDecimal: 18,
@@ -361,9 +361,9 @@ export const initCVoxel: CVoxel[] = [
     issuedTimestamp: "", //block timestamp
     txHash: "",
     tags: [], //tags
-    genre: "",
+    genre: "Community",
     jobType: "FullTime", // default=OneTime
-    toSig: "",
+    toSig: "aaaa",
     fromSig: "bbbbb",
     toSigner: "",
     fromSigner: "",
@@ -384,7 +384,7 @@ export const initCVoxel: CVoxel[] = [
     issuedTimestamp: "", //block timestamp
     txHash: "",
     tags: [], //tags
-    genre: "",
+    genre: "Donation&Investment",
     jobType: "FullTime", // default=OneTime
     toSig: "",
     fromSig: "bbbbb",
@@ -407,7 +407,7 @@ export const initCVoxel: CVoxel[] = [
     issuedTimestamp: "", //block timestamp
     txHash: "",
     tags: [], //tags
-    genre: "",
+    genre: "Donation&Investment",
     jobType: "FullTime", // default=OneTime
     toSig: "",
     fromSig: "bbbbb",
@@ -425,13 +425,13 @@ export const initCVoxel: CVoxel[] = [
     value: "0.9", // reward value
     tokenSymbol: "eth", // eth, usdc, etc
     tokenDecimal: 18,
-    fiatValue: "2628",
+    fiatValue: "4628",
     fiatSymbol: "usd",
     networkId: 0, // eth mainnet = 1
     issuedTimestamp: "", //block timestamp
     txHash: "",
     tags: [], //tags
-    genre: "",
+    genre: "Donation&Investment",
     jobType: "FullTime", // default=OneTime
     toSig: "",
     fromSig: "bbbbb",
@@ -454,7 +454,7 @@ export const initCVoxel: CVoxel[] = [
     issuedTimestamp: "", //block timestamp
     txHash: "",
     tags: [], //tags
-    genre: "",
+    genre: "Legal",
     jobType: "FullTime", // default=OneTime
     toSig: "aaaa",
     fromSig: "bbbbb",
@@ -477,7 +477,7 @@ export const initCVoxel: CVoxel[] = [
     issuedTimestamp: "", //block timestamp
     txHash: "",
     tags: [], //tags
-    genre: "",
+    genre: "Dev",
     jobType: "FullTime", // default=OneTime
     toSig: "",
     fromSig: "bbbbb",
@@ -494,13 +494,13 @@ export const initCVoxel: CVoxel[] = [
     value: "1.8", // reward value
     tokenSymbol: "eth", // eth, usdc, etc
     tokenDecimal: 18,
-    fiatValue: "5256",
+    fiatValue: "52560",
     fiatSymbol: "usd",
     networkId: 0, // eth mainnet = 1
     issuedTimestamp: "", //block timestamp
     txHash: "",
     tags: [], //tags
-    genre: "",
+    genre: "Design",
     jobType: "FullTime", // default=OneTime
     toSig: "aaaa",
     fromSig: "bbbbb",
@@ -512,7 +512,7 @@ export const initCVoxel: CVoxel[] = [
     to: "", // payee address
     from: "", // payer address
     summary: "", // work summary
-    deliverable: "",
+    deliverable: "aaaa",
     isPayer: false,
     value: "3", // reward value
     tokenSymbol: "eth", // eth, usdc, etc
@@ -523,7 +523,7 @@ export const initCVoxel: CVoxel[] = [
     issuedTimestamp: "", //block timestamp
     txHash: "",
     tags: [], //tags
-    genre: "",
+    genre: "Dev",
     jobType: "FullTime", // default=OneTime
     toSig: "aaaa",
     fromSig: "bbbbb",
@@ -569,7 +569,7 @@ export const initCVoxel: CVoxel[] = [
     issuedTimestamp: "", //block timestamp
     txHash: "",
     tags: [], //tags
-    genre: "",
+    genre: "Art",
     jobType: "FullTime", // default=OneTime
     toSig: "",
     fromSig: "bbbbb",
@@ -586,13 +586,13 @@ export const initCVoxel: CVoxel[] = [
     value: "15", // reward value
     tokenSymbol: "eth", // eth, usdc, etc
     tokenDecimal: 18,
-    fiatValue: "43800",
+    fiatValue: "438",
     fiatSymbol: "usd",
     networkId: 0, // eth mainnet = 1
     issuedTimestamp: "", //block timestamp
     txHash: "",
     tags: [], //tags
-    genre: "",
+    genre: "Writing&Translation",
     jobType: "FullTime", // default=OneTime
     toSig: "aaaa",
     fromSig: "bbbbb",
@@ -604,7 +604,7 @@ export const initCVoxel: CVoxel[] = [
     to: "", // payee address
     from: "", // payer address
     summary: "", // work summary
-    deliverable: "aaaa",
+    deliverable: "",
     isPayer: false,
     value: "30", // reward value
     tokenSymbol: "eth", // eth, usdc, etc
@@ -615,7 +615,7 @@ export const initCVoxel: CVoxel[] = [
     issuedTimestamp: "", //block timestamp
     txHash: "",
     tags: [], //tags
-    genre: "",
+    genre: "Donation&Investment",
     jobType: "FullTime", // default=OneTime
     toSig: "",
     fromSig: "bbbbb",
