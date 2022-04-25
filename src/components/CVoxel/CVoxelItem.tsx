@@ -179,18 +179,18 @@ export const CVoxelItem: FC<Props> = ({item, did, holder, offchainItems, isOwner
                     {detailItem?.detail && (
                       <>
                         {isSelected ? (
-                          <p className="text-base text-gray-500  px-1">
+                          <p className="text-base text-gray-500 px-1 pt-3 whitespace-pre-wrap">
                             {detailItem?.detail}
                           </p>
                         ): (
-                            <p className="text-base text-gray-500  px-1">
+                            <p className="text-base text-gray-500 px-1 pt-3">
                             {shortHash(detailItem?.detail, 30) }
                           </p>
                         )}
                       </>
                     )}
                     
-                    <div className="py-5">
+                    <div className="py-5 ml-1">
                       <p className="text-base text-black">
                         Deliverable
                       </p>
