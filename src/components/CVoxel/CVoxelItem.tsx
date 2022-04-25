@@ -168,13 +168,11 @@ export const CVoxelItem: FC<Props> = ({item, did, holder, offchainItems, isOwner
                           </div> */}
                         </>
                       )}
-                      <div className="ml-[3px]">
-                        {detailItem?.tags && detailItem.tags.map(tag => {
-                          return (
-                            <TagBadge key={tag} text={tag} />
-                          )
-                        })}
-                      </div>
+                      {detailItem?.tags && detailItem.tags.map(tag => {
+                        return (
+                          <TagBadge key={tag} text={tag} />
+                        )
+                      })}
                     </div>
                     {detailItem?.detail && (
                       <>
