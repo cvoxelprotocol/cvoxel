@@ -185,7 +185,7 @@ export const HomeContainer: FC = () => {
                   )}
                   {(!offchainLoading && onlyPotentialCVoxels.length>0) &&  onlyPotentialCVoxels.map((tx,index) => (
                     <div key={`${tx.hash}_${index}`} className="mb-4">
-                      <TransactionItem tx={tx} index={index} account={account} onClickTx={handleClickTx} selectedTx={selectedTx} />
+                      <TransactionItem tx={tx} index={index} account={account} onClickTx={handleClickTx} selectedTx={selectedTx} cVoxels={sortCVoxels}/>
                       {(selectedTx && selectedTx?.tx.hash===tx.hash) && (
                           <>
                           {selectedOffchainItem ? (

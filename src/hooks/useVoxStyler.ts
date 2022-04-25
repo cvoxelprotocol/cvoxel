@@ -24,7 +24,7 @@ export const useVoxStyler = (cVoxels: CVoxel[]) => {
       cVoxels.forEach((voxel, i) => {
         let voxelTemp: CVoxelVisType = {
           color: "",
-          opacity: 0.5,
+          opacity: 0.8,
           lattice: false,
           scale: 1.0,
         };
@@ -84,100 +84,105 @@ export const useVoxStyler = (cVoxels: CVoxel[]) => {
     /* Stack C-Voxels if one or more C-Voxels exist */
     if (rangeNum) {
       /* Start Stacking Iteration */
-      const newStackedVoxels = styledVoxel.map((mVoxel) => {
-        let tempVoxel;
-        /* Set position of C-Voxels */
-        for (let i = 0; i <= rangeNum; i++) {
-          if (room[i].length != 0) {
-            const seat = room[i].shift();
-            sitList.push(seat!.position);
-            tempVoxel = Object.assign(mVoxel, {
-              position: seat!.position,
-              offset: new THREE.Vector3(0, 0, 0),
-            });
+      const newStackedVoxels = styledVoxel
+        .sort((a, b) => {
+          if (!a || !b) return 1;
+          return a?.color < b?.color ? -1 : 1;
+        })
+        .map((mVoxel) => {
+          let tempVoxel;
+          /* Set position of C-Voxels */
+          for (let i = 0; i <= rangeNum; i++) {
+            if (room[i].length != 0) {
+              const seat = room[i].shift();
+              sitList.push(seat!.position);
+              tempVoxel = Object.assign(mVoxel, {
+                position: seat!.position,
+                offset: new THREE.Vector3(0, 0, 0),
+              });
 
-            /* Prepare new seat */
-            for (let x = 0; x < 2; x++) {
-              let newSeat: THREE.Vector3 =
-                x == 0
-                  ? new THREE.Vector3(
-                      seat!.position.x + 1,
-                      seat!.position.y,
-                      seat!.position.z
-                    )
-                  : new THREE.Vector3(
-                      seat!.position.x - 1,
-                      seat!.position.y,
-                      seat!.position.z
-                    );
-              /* Add new seat if it isn't full and isn't overwrapped */
-              if (
-                Math.abs(newSeat.x) >= i &&
-                !sitList.find((sit) => sit == newSeat) &&
-                !room[i].find((seat) => seat.position.equals(newSeat))
-              ) {
-                room[Math.abs(newSeat.x)].push({
-                  position: newSeat,
-                });
+              /* Prepare new seat */
+              for (let x = 0; x < 2; x++) {
+                let newSeat: THREE.Vector3 =
+                  x == 0
+                    ? new THREE.Vector3(
+                        seat!.position.x + 1,
+                        seat!.position.y,
+                        seat!.position.z
+                      )
+                    : new THREE.Vector3(
+                        seat!.position.x - 1,
+                        seat!.position.y,
+                        seat!.position.z
+                      );
+                /* Add new seat if it isn't full and isn't overwrapped */
+                if (
+                  Math.abs(newSeat.x) >= i &&
+                  !sitList.find((sit) => sit == newSeat) &&
+                  !room[i].find((seat) => seat.position.equals(newSeat))
+                ) {
+                  room[Math.abs(newSeat.x)].push({
+                    position: newSeat,
+                  });
+                }
               }
-            }
-            /* Prepare new seat */
-            for (let y = 0; y < 2; y++) {
-              let newSeat: THREE.Vector3 =
-                y == 0
-                  ? new THREE.Vector3(
-                      seat!.position.x,
-                      seat!.position.y + 1,
-                      seat!.position.z
-                    )
-                  : new THREE.Vector3(
-                      seat!.position.x,
-                      seat!.position.y - 1,
-                      seat!.position.z
-                    );
-              /* Add new seat if it isn't full and isn't overwrapped */
-              if (
-                Math.abs(newSeat.y) >= i &&
-                !sitList.find((sit) => sit == newSeat) &&
-                !room[i].find((seat) => seat.position.equals(newSeat))
-              ) {
-                room[Math.abs(newSeat.y)].push({
-                  position: newSeat,
-                });
+              /* Prepare new seat */
+              for (let y = 0; y < 2; y++) {
+                let newSeat: THREE.Vector3 =
+                  y == 0
+                    ? new THREE.Vector3(
+                        seat!.position.x,
+                        seat!.position.y + 1,
+                        seat!.position.z
+                      )
+                    : new THREE.Vector3(
+                        seat!.position.x,
+                        seat!.position.y - 1,
+                        seat!.position.z
+                      );
+                /* Add new seat if it isn't full and isn't overwrapped */
+                if (
+                  Math.abs(newSeat.y) >= i &&
+                  !sitList.find((sit) => sit == newSeat) &&
+                  !room[i].find((seat) => seat.position.equals(newSeat))
+                ) {
+                  room[Math.abs(newSeat.y)].push({
+                    position: newSeat,
+                  });
+                }
               }
-            }
-            /* Prepare new seat */
-            for (let z = 0; z < 2; z++) {
-              let newSeat: THREE.Vector3;
-              newSeat =
-                z == 0
-                  ? new THREE.Vector3(
-                      seat!.position.x,
-                      seat!.position.y,
-                      seat!.position.z + 1
-                    )
-                  : new THREE.Vector3(
-                      seat!.position.x,
-                      seat!.position.y,
-                      seat!.position.z - 1
-                    );
-              /* Add new seat if it isn't full and isn't overwrapped */
-              if (
-                Math.abs(newSeat.z) >= i &&
-                !sitList.find((sit) => sit == newSeat) &&
-                !room[i].find((seat) => seat.position.equals(newSeat))
-              ) {
-                room[Math.abs(newSeat.z)].push({
-                  position: newSeat,
-                });
+              /* Prepare new seat */
+              for (let z = 0; z < 2; z++) {
+                let newSeat: THREE.Vector3;
+                newSeat =
+                  z == 0
+                    ? new THREE.Vector3(
+                        seat!.position.x,
+                        seat!.position.y,
+                        seat!.position.z + 1
+                      )
+                    : new THREE.Vector3(
+                        seat!.position.x,
+                        seat!.position.y,
+                        seat!.position.z - 1
+                      );
+                /* Add new seat if it isn't full and isn't overwrapped */
+                if (
+                  Math.abs(newSeat.z) >= i &&
+                  !sitList.find((sit) => sit == newSeat) &&
+                  !room[i].find((seat) => seat.position.equals(newSeat))
+                ) {
+                  room[Math.abs(newSeat.z)].push({
+                    position: newSeat,
+                  });
+                }
               }
+              break;
             }
-            break;
           }
-        }
 
-        return tempVoxel;
-      });
+          return tempVoxel;
+        });
       stackedVoxels = [...newStackedVoxels];
     }
     setCvoxelsForDisplay(stackedVoxels);

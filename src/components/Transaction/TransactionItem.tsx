@@ -1,5 +1,5 @@
 import { useWalletAccount } from "@/hooks/useWalletAccount";
-import { TransactionLogWithChainId } from "@/interfaces";
+import { CVoxelItem, TransactionLogWithChainId } from "@/interfaces";
 import { getExploreLink } from "@/utils/etherscanUtils";
 import { formatBigNumber } from "@/utils/ethersUtil";
 import { shortHash } from "@/utils/tools";
@@ -16,12 +16,13 @@ import { useENS } from "@/hooks/useENS";
 type TransactionItemProps = {
     index: number
     tx: TransactionLogWithChainId
-    account?: string | null
     selectedTx: selectTxType | null
+    account?: string | null
+    cVoxels?: CVoxelItem[]
     onClickTx: (tx:selectTxType | null) => void
 }
 
-export const TransactionItem:FC<TransactionItemProps> = ({tx,index, account, onClickTx, selectedTx}) => {
+export const TransactionItem:FC<TransactionItemProps> = ({tx,index, account, cVoxels, onClickTx, selectedTx}) => {
 
     const {chainId} = useWalletAccount()
     const {ens, ensLoading, setAddress} = useENS()
@@ -38,6 +39,10 @@ export const TransactionItem:FC<TransactionItemProps> = ({tx,index, account, onC
     const isPayee = useMemo(() => {
         return account?.toLowerCase()===tx.to.toLowerCase()
     },[account, tx])
+
+    const isAlreadyCreated = useMemo(() => {
+        return !cVoxels ? false: cVoxels?.some(cv => cv.txHash.toLowerCase() === tx.hash.toLowerCase())
+    },[cVoxels, tx.hash])
 
 
 
@@ -105,8 +110,8 @@ export const TransactionItem:FC<TransactionItemProps> = ({tx,index, account, onC
                         {"Close"}
                     </button>
                 ): (
-                    <button onClick={()=> handleClick()} className="text-white rounded-full bg-primary-300 py-1.5 px-4">
-                        {"Create"}
+                    <button onClick={()=> handleClick()} className={"rounded-full py-1.5 px-4 " + (!isAlreadyCreated ? " text-white bg-primary-300 ": "text-primary-300 bg-white border border-primary-300")}>
+                        {isAlreadyCreated ? "Show Detail": "Create"}
                     </button>
                 )}
              </div>
