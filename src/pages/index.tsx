@@ -59,7 +59,7 @@ const connect = async () => {
         <div className="flex-none w-full max-w-[720px]">
           {!account ? (
               <>
-                  <Button text="Connect Wallet" onClick={()=> connect()}/>
+                  <button className="rounded-full py-1.5 px-4 font-normal text-base  text-white bg-gradient-to-r from-border_l to-border_r" onClick={()=> connect()}> Connect Wallet</button>
                   <div className="pt-2 font-medium text-xs text-gray-500 flex items-center justify-center">
                       <FontAwesomeIcon className="w-5 h-5 mr-2" icon={faCircleExclamation} color={'#EFA9E0'}/>
                       <div>

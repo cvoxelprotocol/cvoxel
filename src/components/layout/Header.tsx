@@ -27,9 +27,24 @@ export const Header = () => {
               </div>
             </Link>
           </div>
-          <div className="col-span-1 relative">
-            <div className="md:ml-5 md:flex items-center justify-end w-full text-right">
-              <AccountButton />
+          <div className="col-span-1 flex items-center justify-end w-full">
+            <div className="hidden sm:flex items-center cursor-pointer mr-4">
+              <Link href="/intro" passHref>
+                <a className="mr-1 p-2 text-base  text-primary" target="_blank" rel="noreferrer">
+                  About
+                </a>
+              </Link>
+              <a className="mx-1 p-2 text-base  text-primary" href="https://docs.cvoxel.xyz/" target="_blank" rel="noreferrer">
+                Doc
+              </a>
+              <a className="mx-1 p-2 text-base text-primary" href="https://discord.gg/TBJFmJv6uZ" target="_blank" rel="noreferrer">
+                Discord
+              </a>
+            </div>
+            <div className="relative">
+              <div className="md:flex items-center justify-end w-full text-right">
+                <AccountButton />
+              </div>
             </div>
           </div>
         </div>

@@ -8,9 +8,10 @@ type Props = {
   label: string
   loading?: boolean
   src?: string | null
+  hiddenLabelOnSp?: boolean
 }
 
-export const DisplayAvatar:FC<Props> = ({ did, label, loading, src }) => {
+export const DisplayAvatar:FC<Props> = ({ did, label, loading, src, hiddenLabelOnSp }) => {
   const avatar = loading ? (
     <div className="w-fit h-fit">
       <CommonSpinner />
@@ -24,7 +25,7 @@ export const DisplayAvatar:FC<Props> = ({ did, label, loading, src }) => {
   return (
     <div className="md:w-60 rounded-full flex items-center space-x-2">
       {avatar}
-      <p className="text-primary dark:text-white text-sm hidden md:block">
+      <p className={"text-primary dark:text-white text-sm font-semibold " + (hiddenLabelOnSp ? "hidden md:block": "block")}>
         {label}
       </p>
     </div>

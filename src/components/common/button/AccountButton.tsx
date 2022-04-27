@@ -86,6 +86,7 @@ export default function AccountButton() {
             label={name ? name : account}
             loading={profileRecord.isLoading}
             src={avator}
+            hiddenLabelOnSp={true}
           />
         </DropButton>
     )
@@ -94,8 +95,8 @@ export default function AccountButton() {
 
 
   return connection.status === 'connecting' ? (
-    <DisplayAvatar label="Connecting..." loading />
+    <DisplayAvatar label="Connecting..." loading hiddenLabelOnSp={true}/>
   ) : (
-    <button className="text-base text-gray-400" onClick={()=> connectWalletOnly()}> Connect Wallet</button>
+    <button className="rounded-full px-2 py-1.5 text-xs sm:px-4 sm:text-base  text-white bg-gradient-to-r from-border_l to-border_r" onClick={()=> connectWalletOnly()}> Connect Wallet</button>
   )
 }
