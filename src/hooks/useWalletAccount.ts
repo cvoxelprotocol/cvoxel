@@ -10,6 +10,7 @@ import {
 import { useEffect } from "react";
 import { getCVoxelService } from "@/services/CVoxel/CVoxelService";
 import { getEtherService } from "@/services/Ether/EtherService";
+import web3 from "web3";
 
 export const useWalletAccount = () => {
   const { library, account, active, activate, deactivate, chainId } =
@@ -36,7 +37,24 @@ export const useWalletAccount = () => {
           );
         }
       } else if (error instanceof UnsupportedChainIdError) {
-        lancError("Error: You're connected to an unsupported network.");
+        if (
+          (window as any).ethereum &&
+          (window as any).ethereum.networkVersion !== chainId
+        ) {
+          try {
+            await (window as any).ethereum.request({
+              method: "wallet_switchEthereumChain",
+              params: [{ chainId: web3.utils.toHex(1) }],
+            });
+            await activate(injected, async (error) => {
+              lancError("Error: Something wrong for connecting wallet...");
+            });
+          } catch (error) {
+            lancError("Error: You're connected to an unsupported network.");
+          }
+        } else {
+          lancError("Error: You're connected to an unsupported network.");
+        }
       } else if (error instanceof UserRejectedRequestErrorInjected) {
         lancError(
           "Error: Please authorize this website to access your Ethereum account."

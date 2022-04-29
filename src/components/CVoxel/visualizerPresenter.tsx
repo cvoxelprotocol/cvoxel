@@ -103,7 +103,7 @@ const VisualizerPresenter: FC<VisualizerPresenterProps> = ({ids}) => {
           )
         )}
       </group>
-      <PerspectiveCamera makeDefault position={[10, 6, 10]} />
+      <PerspectiveCamera makeDefault position={[10, 6, 10]} zoom={2} />
     </>
   );
 };

@@ -10,6 +10,10 @@ import { Button } from "../common/button/Button";
 import { getEtherService } from "@/services/Ether/EtherService";
 import { CommonSpinner } from "../common/CommonSpinner";
 import { convertTimestampToDateStr } from "@/utils/dateUtil";
+import { shortenStr } from "@/utils/objectUtil";
+import { TagBadge } from "../common/badge/TagBadge";
+import { GenreBadge } from "../common/badge/GenreBadge";
+import { getGenre } from "@/utils/genreUtil";
 
 type SigRequestItemProps = {
     tx: CVoxelMetaDraft
@@ -92,19 +96,26 @@ export const SigRequestItem:FC<SigRequestItemProps> = ({tx, account, handleClick
             </div>
             <div className="w-full h-fit bg-white p-5 text-left">
                 <p className="font-bold text-xl">{tx.summary}</p>
-                <p className="py-2 text-md">{tx.detail}</p>
+                {tx?.genre && (
+                    <GenreBadge text={tx.genre} baseColor={getGenre(tx.genre)?.bgColor || "bg-[#b7b7b7]"} isSelected={true}/>
+                )}
+                {tx.tags && tx.tags.length>0 && (
+                    <>  
+                        {tx.tags.map(tag => {
+                            return (
+                                <TagBadge key={tag} text={tag} />
+                            )
+                        })}
+                    </>
+                )}
+                <p className="py-2 text-md whitespace-pre-wrap">{tx.detail}</p>
                 <div className="py-5">
                     <p className="py-2 text-md">Deliverable</p>
-                    <p className="text-secondary">{tx.deliverable}</p>
+                    <p className="text-secondary">{tx.deliverable ? shortenStr(tx.deliverable): "No Deliverable"}</p>
                 </div>
                 <div className=" bg-gray-200 h-[1px] mx-auto w-11/12"></div>
                 <div className="w-full flex items-center justify-end pt-4 pb-5 px-5">
-                    {(tx.fromSig) ? (
-                                <p className="text-lg text-primary">Already Verified</p>
-                          ): (
-                            <Button text={"Verify"} color="grad-blue" onClick={() => handleClick(tx)}/>
-                        )}
-                    
+                    <Button text={"Verify"} color="grad-blue" onClick={() => handleClick(tx)}/>
                 </div>
             </div>
         </div>

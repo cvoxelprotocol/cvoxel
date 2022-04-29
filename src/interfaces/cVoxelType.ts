@@ -27,13 +27,15 @@ export type CVoxel = {
   issuedTimestamp: string; //block timestamp
   txHash: string; // transfer tx hash
   relatedTxHashes?: string[]; //tx releated work
-  tags: string[]; //tags
+  tags?: string[]; //tags
   genre?: string; // main genre
   jobType: "FullTime" | "PartTime" | "OneTime"; // default=OneTime
   toSig: string; // sig of payee
   fromSig: string; // sig of payer
   toSigner: string; // who signed this cvoxel as payee actually. Only EOA supported
   fromSigner: string; // who signed this cvoxel as payer actually. Only EOA supported
+  startTimestamp?: string; //timestamp to start work
+  endTimestamp?: string; //block timestamp to end work
   relatedAddresses: string[]; // all addresses related to this cvoxel. may contain both EOA and contract address
 };
 

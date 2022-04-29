@@ -54,8 +54,8 @@ export const HomeContainer: FC = () => {
     async (data: CVoxel) => {
       if (!(selectedTx && account)) return;
       if(connection.status==="connected") {
-        const { summary, detail, deliverable, relatedAddresses } = data;
-        const result = await draft.publish(account, selectedTx.tx, summary, detail, deliverable, relatedAddresses);
+        const { summary, detail, deliverable, relatedAddresses, genre, tags } = data;
+        const result = await draft.publish(account, selectedTx.tx, summary, detail, deliverable, relatedAddresses, genre, tags);
           if (result) {
             selectTx(null);
             methods.reset();
@@ -72,8 +72,8 @@ export const HomeContainer: FC = () => {
   const publishFromExistedCVoxel = async (tx:TransactionLogWithChainId, offchainItem: CVoxelMetaDraft) => {
     if (!(tx && account && offchainItem)) return;
     if(connection.status==="connected") {
-      const { summary, detail, deliverable, relatedAddresses } = offchainItem;
-      const result = await draft.publish(account, tx, summary, detail, deliverable, relatedAddresses,offchainItem);
+      const { summary, detail, deliverable, relatedAddresses, genre, tags } = offchainItem;
+      const result = await draft.publish(account, tx, summary, detail, deliverable, relatedAddresses, genre, tags, offchainItem);
         if (result) {
           selectTx(null);
           methods.reset();
@@ -87,8 +87,8 @@ export const HomeContainer: FC = () => {
   const reClaimCVoxel = async (tx:TransactionLogWithChainId, offchainItem: CVoxelMetaDraft) => {
     if (!(tx && account && offchainItem)) return;
     if(connection.status==="connected") {
-      const { summary, detail, deliverable, relatedAddresses } = offchainItem;
-      const result = await draft.reClaim(account, tx, summary, detail, deliverable,relatedAddresses, offchainItem);
+      const { summary, detail, deliverable, relatedAddresses, genre, tags } = offchainItem;
+      const result = await draft.reClaim(account, tx, summary, detail, deliverable,relatedAddresses, genre, tags, offchainItem);
         if (result) {
           selectTx(null);
           methods.reset();
@@ -127,7 +127,7 @@ export const HomeContainer: FC = () => {
   return (
     <main className="h-auto overflow-y-scroll text-black dark:text-white text-center">
       <div className="flex flex-col items-center w-full h-full pb-12">
-        <div className="flex w-full items-center justify-center h-[300px] sm-h-[450px] relative">
+        <div className="flex w-full items-center justify-center h-[300px] sm-h-[450px] relative max-w-[720px]">
           <Canvas shadows>
             <VisualizerPresenter
               ids={CVoxelsRecords.content?.cVoxels.map((vox) => vox.id)}
@@ -176,7 +176,7 @@ export const HomeContainer: FC = () => {
               </div>
               <div className={tabState === "transactions" ? "block" : "hidden"} id="transactions">
                 <div className="w-full max-w-[720px] text-center mx-auto cursor-pointer h-screen overflow-y-scroll">
-                  <p className="text-primary font-medium text-xs pt-2 pb-4 text-right">{`Supported Networks: Ethereum & Polygon`}</p>
+                  <p className="text-primary font-medium text-xs pt-2 pb-4 sm:text-right">{`Supported Networks: Ethereum & Polygon`}</p>
                   {(!offchainLoading && (!onlyPotentialCVoxels || onlyPotentialCVoxels.length===0)) && (
                     <NoItemPresenter text="No Tx Found..." />
                   )}
@@ -185,7 +185,7 @@ export const HomeContainer: FC = () => {
                   )}
                   {(!offchainLoading && onlyPotentialCVoxels.length>0) &&  onlyPotentialCVoxels.map((tx,index) => (
                     <div key={`${tx.hash}_${index}`} className="mb-4">
-                      <TransactionItem tx={tx} index={index} account={account} onClickTx={handleClickTx} selectedTx={selectedTx} />
+                      <TransactionItem tx={tx} index={index} account={account} onClickTx={handleClickTx} selectedTx={selectedTx} cVoxels={sortCVoxels}/>
                       {(selectedTx && selectedTx?.tx.hash===tx.hash) && (
                           <>
                           {selectedOffchainItem ? (
@@ -195,7 +195,7 @@ export const HomeContainer: FC = () => {
                               <div key={`${tx.hash}_form`} className="w-full h-fit bg-white shadow-lg p-5 mb-4">
                                 <FormProvider {...methods}>
                                     <form className="w-full" onSubmit={methods.handleSubmit(onSubmit)}>
-                                      <TransactionForm tx={tx} connectionStatus={connection.status} />
+                                      <TransactionForm tx={tx} connectionStatus={connection.status} isFirstTime={sortCVoxels.length===0}/>
                                     </form>
                                   </FormProvider>
                                 </div>
