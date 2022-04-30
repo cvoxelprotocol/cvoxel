@@ -1,5 +1,9 @@
-export const CERAMIC_NETWORK =
-  process.env.NEXT_PUBLIC_CERAMIC_ENV || "testnet-clay";
+import { ConnectNetwork } from "@self.id/web";
+
+export const CERAMIC_NETWORK: ConnectNetwork =
+  process.env.NEXT_PUBLIC_CERAMIC_ENV === "mainnet"
+    ? "mainnet"
+    : "testnet-clay";
 export const CERAMIC_URL =
   process.env.NEXT_PUBLIC_CERAMIC_URL || "http://localhost:7007/";
 
