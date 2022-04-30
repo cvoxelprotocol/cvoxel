@@ -3,6 +3,7 @@ import type { BasicProfile } from "@self.id/framework";
 
 import { IPFS_URL } from "@/constants/common";
 import { CryptoAccountLinks } from "@datamodels/identity-accounts-crypto";
+import { DisplayProfile } from "@/interfaces";
 
 const ethAddressRegex = /^0x[0-9a-f]{40}$/i;
 export function isEthereumAddress(address: string): boolean {
@@ -13,7 +14,10 @@ export function isSupportedDID(did: string): boolean {
   return did.startsWith("did:3") || did.startsWith("did:key");
 }
 
-export function getProfileInfo(did: string, profile?: BasicProfile | null) {
+export function getProfileInfo(
+  did: string,
+  profile?: BasicProfile | null
+): DisplayProfile {
   return {
     avatarSrc:
       profile?.image &&
@@ -21,14 +25,4 @@ export function getProfileInfo(did: string, profile?: BasicProfile | null) {
     displayName: profile?.name ?? formatDID(did, 20),
     bio: profile?.description ?? "",
   };
-}
-
-export function getAddressInfo(
-  did: string,
-  accounts?: CryptoAccountLinks | null
-) {
-  if (!accounts) return [];
-  const addresses = Object.keys(accounts).map((k) => {
-    const a = k.match(/@eip155/);
-  });
 }

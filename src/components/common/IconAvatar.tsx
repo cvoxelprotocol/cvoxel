@@ -1,4 +1,5 @@
 import { FC,useMemo } from "react";
+import Image from "next/image"
 
 type IconAvatarProps = {
     src: string
@@ -13,12 +14,20 @@ export const IconAvatar:FC<IconAvatarProps> = ({src, size = "md", flex = false})
         return "w-[60px] h-[60px]"
     },[size])
 
+    const imageSize = useMemo(() => {
+        if(size==="sm") return "32px"
+        if(size==="md") return "40px"
+        return "60px"
+    },[size])
+
     return (
         <div className={`${iconSize} ${flex ? " flex " : " "}`}>
-            <img src={src}
+            <Image 
+                src={src}
                 alt="Avatar"
-                width={`${size}px`}
-                height={`${size}px`}
+                width={`${imageSize}`}
+                height={`${imageSize}`}
+                className={"rounded-full"}
             />
         </div>
     )

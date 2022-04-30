@@ -1,5 +1,5 @@
 import { useMyCeramicAcount } from '@/hooks/useCeramicAcount'
-import { AvatarPlaceholder } from '@self.id/framework'
+import { AvatarPlaceholder, formatDID } from '@self.id/framework'
 import {DropButton } from 'grommet'
 import { useState } from 'react'
 import {DisplayAvatar} from '../DisplayAvatar'
@@ -59,7 +59,7 @@ export default function AccountButton() {
               )}
             </div>
           <p className="font-bold text-sm">
-            {name ? name : account}
+            {name ? name : formatDID(account, 12)}
           </p>
         </div>
         <div className="rounded-lg space-y-2">
@@ -83,8 +83,8 @@ export default function AccountButton() {
           open={isMenuOpen}>
           <DisplayAvatar
             did={did}
-            label={name ? name : account}
-            loading={profileRecord.isLoading}
+            label={name ? name : formatDID(account, 12)}
+            loading={connection.status === 'connecting'}
             src={avator}
             hiddenLabelOnSp={true}
           />

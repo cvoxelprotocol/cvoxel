@@ -23,7 +23,7 @@ export const DisplayAvatar:FC<Props> = ({ did, label, loading, src, hiddenLabelO
   )
 
   return (
-    <div className="md:w-60 rounded-full flex items-center space-x-2">
+    <div className="w-fit rounded-full flex items-center space-x-2">
       {avatar}
       <p className={"text-primary dark:text-white text-sm font-semibold " + (hiddenLabelOnSp ? "hidden md:block": "block")}>
         {label}

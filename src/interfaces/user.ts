@@ -9,3 +9,9 @@ export type User = {
   createdAt: Date;
   updatedAt: Date;
 };
+
+export type DisplayProfile = {
+  displayName: string;
+  bio: string;
+  avatarSrc?: string;
+};
