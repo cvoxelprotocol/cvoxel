@@ -41,7 +41,6 @@ export const CVoxelItem: FC<Props> = ({item, did, offchainItems, isOwner}) => {
   // const {updateCvoxels} = useUpdateCVoxels()
 
   const detailItem = useMemo(() => {
-    // console.log("cVoxelItem.content", cVoxelItem.content)
     return cVoxelItem.content || null
   },[cVoxelItem.content])
 

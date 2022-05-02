@@ -22,7 +22,7 @@ export function getProfileInfo(
     avatarSrc:
       profile?.image &&
       getImageURL(IPFS_URL, profile?.image, { height: 60, width: 60 }),
-    displayName: profile?.name ?? formatDID(did, 20),
+    displayName: profile?.name || formatDID(did, 12),
     bio: profile?.description ?? "",
   };
 }

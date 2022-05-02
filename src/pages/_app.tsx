@@ -3,8 +3,7 @@ import { Provider as SelfIDProvider } from '@self.id/framework'
 import { Provider as JotaiProvider } from 'jotai'
 import type { AppProps } from 'next/app'
 import { CERAMIC_NETWORK, CERAMIC_URL } from '@/constants/common'
-import publishedModel from '../model_latest.json'
-// import publishedModel from '../model_v2.json'
+import { cVoxelModel } from "@/lib/ceramic/dataModel";
 import type { ModelTypes } from '../interfaces/cVoxelType'
 import 'tailwindcss/tailwind.css'
 import { RecoilRoot } from 'recoil'
@@ -18,7 +17,7 @@ import { useEffect} from "react"
 import Router from "next/router"
 import { LoadingModal } from '@/components/common/LoadingModal'
 
-const model: ModelTypesToAliases<ModelTypes> = publishedModel
+const model: ModelTypesToAliases<ModelTypes> = cVoxelModel
 
 function getLibrary(provider: any): Web3Provider {
   const library = new Web3Provider(provider);

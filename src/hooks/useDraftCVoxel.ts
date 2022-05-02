@@ -236,6 +236,9 @@ export function useDraftCVoxel() {
         ...extractCVoxel(existedItem),
         updatedAt: nowTimestamp,
       };
+      if (!meta.createdAt) {
+        meta.createdAt = nowTimestamp;
+      }
       if (isPayer) {
         meta.fromSig = signature.toString();
       } else {

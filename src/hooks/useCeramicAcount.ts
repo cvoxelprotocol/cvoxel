@@ -4,6 +4,7 @@ import {
   useViewerID,
   usePublicRecord,
   BasicProfile,
+  PublicRecord,
 } from "@self.id/framework";
 import { useEffect, useState, useCallback } from "react";
 import { getProfileInfo } from "@/utils/ceramicUtils";
@@ -12,8 +13,10 @@ import { Caip10Link } from "@ceramicnetwork/stream-caip10-link";
 import { ModelTypes } from "@/interfaces";
 import { useDID, useDisplayProfile } from "@/recoilstate";
 
-export function useProfile(id: string): BasicProfile | null | undefined {
-  return usePublicRecord("basicProfile", id).content;
+export function useProfile(
+  id: string
+): PublicRecord<BasicProfile | null | undefined> {
+  return usePublicRecord("basicProfile", id);
 }
 
 export const useMyCeramicAcount = () => {
@@ -43,12 +46,12 @@ export const useMyCeramicAcount = () => {
   useEffect(() => {
     let isMounted = true;
     if (!displayProfile && profileRecord && did && isMounted) {
-      setDisplayProfile(getProfileInfo(did, profileRecord));
+      setDisplayProfile(getProfileInfo(did, profileRecord.content));
     }
     return () => {
       isMounted = false;
     };
-  }, [profileRecord, did]);
+  }, [profileRecord.content, did]);
 
   useEffect(() => {
     let isMounted = true;
@@ -115,7 +118,7 @@ export const useUserCeramicAcount = (did: string) => {
       if (did) {
         const { avatarSrc, displayName, bio } = getProfileInfo(
           did,
-          profileRecord
+          profileRecord.content
         );
         setName(displayName);
         setAvator(avatarSrc);
