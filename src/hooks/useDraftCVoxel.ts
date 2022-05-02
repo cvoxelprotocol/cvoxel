@@ -17,6 +17,7 @@ import {
 } from "@/constants/toastMessage";
 import { extractCVoxel } from "@/utils/cVoxelUtil";
 import { getNetworkSymbol } from "@/utils/networkUtil";
+import { convertDateToTimestampStr } from "@/utils/dateUtil";
 
 export function useDraftCVoxel() {
   const connect = useConnection<ModelTypes>()[1];
@@ -228,9 +229,13 @@ export function useDraftCVoxel() {
     );
 
     let meta: CVoxel;
+    const nowTimestamp = convertDateToTimestampStr(new Date());
 
     if (existedItem) {
-      meta = extractCVoxel(existedItem);
+      meta = {
+        ...extractCVoxel(existedItem),
+        updatedAt: nowTimestamp,
+      };
       if (isPayer) {
         meta.fromSig = signature.toString();
       } else {
@@ -271,6 +276,8 @@ export function useDraftCVoxel() {
         toSigner: !isPayer ? usr : "",
         fromSigner: isPayer ? usr : "",
         relatedAddresses: uniqRelated,
+        createdAt: nowTimestamp,
+        updatedAt: nowTimestamp,
       };
     }
     const draft: CVoxelMetaDraft = {

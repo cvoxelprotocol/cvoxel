@@ -24,13 +24,12 @@ import { TagBadge } from "../common/badge/TagBadge";
 
 type Props = {
   did: string
-  holder: string
   item: ICVoxelItem
   offchainItems?: CVoxelMetaDraft[]
   isOwner: boolean
 };
 
-export const CVoxelItem: FC<Props> = ({item, did, holder, offchainItems, isOwner}) => {
+export const CVoxelItem: FC<Props> = ({item, did, offchainItems, isOwner}) => {
   const [selectedItem, setSelectedItem] = useStateSelectedItem();
   const {cVoxelItem, update} = useUpdateCVoxel(item.id)
   const etherService = getEtherService();

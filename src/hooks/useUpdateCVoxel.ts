@@ -1,4 +1,5 @@
 import { CVoxel, CVoxelItem, ModelTypes } from "@/interfaces";
+import { convertDateToTimestampStr } from "@/utils/dateUtil";
 import { useConnection } from "@self.id/framework";
 import { useViewerRecord } from "@self.id/react";
 import { useCVoxelRecord } from "./useCVoxel";
@@ -14,7 +15,11 @@ export const useUpdateCVoxel = (id: string) => {
       if (selfID == null) {
         return false;
       }
-      await selfID.client.tileLoader.update(id, newItem);
+      const nowTimestamp = convertDateToTimestampStr(new Date());
+      await selfID.client.tileLoader.update(id, {
+        ...newItem,
+        updatedAt: nowTimestamp,
+      });
     } catch (error) {
       console.log("error", error);
     }

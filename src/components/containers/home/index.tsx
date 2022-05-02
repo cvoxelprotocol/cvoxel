@@ -164,7 +164,6 @@ export const HomeContainer: FC = () => {
                       return (
                         <CVoxelItem
                             did={did}
-                            holder={name}
                             item={item}
                             offchainItems={offchainMetaList}
                             key={item.id}
