@@ -24,7 +24,7 @@ function MenuButton({ label, ...props }: MenuButtonProps) {
 }
 
 export default function AccountButton() {
-  const {connection, disconnectCeramic, account, connectWalletOnly, did, name, avator, profileRecord} = useMyCeramicAcount()
+  const {connection, disconnectCeramic, account, connectWalletOnly, did, name, avator} = useMyCeramicAcount()
   const [isMenuOpen, setMenuOpen] = useState(false)
 
   const goToMypage = () => {
@@ -59,7 +59,7 @@ export default function AccountButton() {
               )}
             </div>
           <p className="font-bold text-sm">
-            {name || did ? formatDID(did, 12) : formatDID(account, 12)}
+            {name ? name : did ? formatDID(did, 12) : formatDID(account, 12)}
           </p>
         </div>
         <div className="rounded-lg space-y-2">
@@ -83,7 +83,7 @@ export default function AccountButton() {
           open={isMenuOpen}>
           <DisplayAvatar
             did={did}
-            label={name || did ? formatDID(did, 12) : formatDID(account, 12)}
+            label={name ? name : did ? formatDID(did, 12) : formatDID(account, 12)}
             loading={connection.status === 'connecting'}
             src={avator}
             hiddenLabelOnSp={true}

@@ -183,7 +183,7 @@ export const HomeContainer: FC = () => {
         </div>
       ))}
     </div>
-  ,[offchainLoading, onlyPotentialCVoxels, account, selectedOffchainItem, connection.status, methods])
+  ,[offchainLoading, onlyPotentialCVoxels, account, selectedOffchainItem, connection.status, methods, selectedTx, sortCVoxels])
 
   const sigRequestMemo = useMemo(() => 
     <div className="w-full max-w-[820px] text-center mx-auto cursor-pointer h-screen overflow-y-scroll space-y-2">

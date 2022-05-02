@@ -1,4 +1,4 @@
-import { FC, useEffect, useMemo } from "react";
+import { FC, useMemo } from "react";
 import { Canvas } from "@react-three/fiber";
 import { CeramicProps } from "@/interfaces/ceramic";
 import { useCVoxelsRecord } from "@/hooks/useCVoxel";
@@ -12,18 +12,8 @@ import { CommonLoading } from "@/components/common/CommonLoading";
 
 export const ProfileContainer: FC<CeramicProps> = ({ did }) => {
 
-  const {name, avator, setUserProfile,profileRecord } = useUserCeramicAcount(did)
+  const {name, avator, profileRecord } = useUserCeramicAcount(did)
   const CVoxelsRecords = useCVoxelsRecord(did);
-
-  useEffect(() => {
-    let isMounted = true
-    if(did && isMounted) {
-      setUserProfile(did)
-    }
-    return () => {
-      isMounted = false
-    }
-  },[did, setUserProfile])
 
   const CVoxelsPresenterMemo = useMemo(() => <CVoxelsPresenter>
     {CVoxelsRecords.isLoading && (

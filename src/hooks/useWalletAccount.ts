@@ -20,10 +20,18 @@ export const useWalletAccount = () => {
   const { lancError } = useToast();
 
   useEffect(() => {
-    if (library) {
+    let isMounted = true;
+    if (
+      library &&
+      isMounted &&
+      (!cVoxelService.provider || !etherService.provider)
+    ) {
       cVoxelService.setProvider(library);
       etherService.setProvider(library);
     }
+    return () => {
+      isMounted = false;
+    };
   }, [library]);
 
   const connectWallet = async () => {

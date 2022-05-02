@@ -6,12 +6,12 @@ import {
   BasicProfile,
   PublicRecord,
 } from "@self.id/framework";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useCallback, useMemo } from "react";
 import { getProfileInfo } from "@/utils/ceramicUtils";
 import { useWalletAccount } from "./useWalletAccount";
 import { Caip10Link } from "@ceramicnetwork/stream-caip10-link";
 import { ModelTypes } from "@/interfaces";
-import { useDID, useDisplayProfile } from "@/recoilstate";
+import { useDID } from "@/recoilstate";
 
 export function useProfile(
   id: string
@@ -24,7 +24,6 @@ export const useMyCeramicAcount = () => {
   const { connectWallet, disconnectWallet, account, chainId, active } =
     useWalletAccount();
   const [did, setDid] = useDID();
-  const [displayProfile, setDisplayProfile] = useDisplayProfile();
   const viewerID = useViewerID<ModelTypes>();
   const profileRecord = useProfile(did);
 
@@ -43,14 +42,8 @@ export const useMyCeramicAcount = () => {
     };
   }, [viewerID, connectWallet]);
 
-  useEffect(() => {
-    let isMounted = true;
-    if (!displayProfile && profileRecord && did && isMounted) {
-      setDisplayProfile(getProfileInfo(did, profileRecord.content));
-    }
-    return () => {
-      isMounted = false;
-    };
+  const displayProfile = useMemo(() => {
+    return getProfileInfo(did, profileRecord.content);
   }, [profileRecord.content, did]);
 
   useEffect(() => {
@@ -99,40 +92,24 @@ export const useMyCeramicAcount = () => {
     viewerID,
     did,
     account,
-    profileRecord,
-    name: displayProfile?.displayName,
-    avator: displayProfile?.avatarSrc,
-    description: displayProfile?.bio,
+    name: displayProfile.displayName,
+    avator: displayProfile.avatarSrc,
+    description: displayProfile.bio,
     connectWalletOnly,
   };
 };
 
 export const useUserCeramicAcount = (did: string) => {
   const profileRecord = useProfile(did);
-  const [description, setDescription] = useState("");
-  const [name, setName] = useState("");
-  const [avator, setAvator] = useState<string | undefined>();
 
-  const setUserProfile = useCallback(
-    (did: string) => {
-      if (did) {
-        const { avatarSrc, displayName, bio } = getProfileInfo(
-          did,
-          profileRecord.content
-        );
-        setName(displayName);
-        setAvator(avatarSrc);
-        setDescription(bio);
-      }
-    },
-    [did, profileRecord]
-  );
+  const displayProfile = useMemo(() => {
+    return getProfileInfo(did, profileRecord.content);
+  }, [profileRecord.content, did]);
 
   return {
-    setUserProfile,
     profileRecord,
-    name,
-    avator,
-    description,
+    name: displayProfile.displayName,
+    avator: displayProfile.avatarSrc,
+    description: displayProfile.bio,
   };
 };
