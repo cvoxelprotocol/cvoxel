@@ -1,5 +1,5 @@
 import { useCVoxelsRecord } from "@/hooks/useCVoxel";
-import { FC, useCallback, useMemo, useState } from "react";
+import { FC, useCallback, useMemo, useState,memo } from "react";
 import { Canvas } from "@react-three/fiber";
 import {
   CVoxel,
@@ -23,10 +23,14 @@ import { TransactionItem } from "@/components/Transaction/TransactionItem";
 import { SigRequestItem } from "@/components/SigRequest/SigRequestItem";
 import { TransactionDetail } from "@/components/Transaction/TransactionDetail";
 import { TransactionForm } from "@/components/Transaction/TransactionForm";
-
+import type {CVoxelItem as ICVoxelItem} from "@/interfaces"
 export type selectTxType = {
   tx: TransactionLogWithChainId
   index: number
+}
+
+type CVoxelItemProp = {
+  item: ICVoxelItem
 }
 export const HomeContainer: FC = () => {
   const { connection, did, name, avator, account, connectCeramic } = useMyCeramicAcount();
@@ -124,87 +128,20 @@ export const HomeContainer: FC = () => {
     return offchainMetaList.filter((tx) => (tx.relatedAddresses.includes(account?.toLowerCase()) && (!(tx.fromSig && tx.fromSigner && tx.fromSigner.toLowerCase() === account?.toLowerCase()) && !(tx.toSig && tx.toSigner && tx.toSigner.toLowerCase() === account?.toLowerCase()))))
   },[offchainMetaList,account])
 
-  const CVoxelsPresenterMemo = useMemo(() => <CVoxelsPresenter>
-    {(!txLoading && (!sortCVoxels || sortCVoxels.length===0)) && (
-      <div className="mx-auto">
-        <NoItemPresenter text="No C-Voxels yet..." />
-            {account && (
-              <button onClick={()=> setTabState("transactions")} className="text-white rounded-full bg-gradient-to-r from-border_l to-border_r py-2 px-5">
-                Create C-Voxel
-            </button>
-            )}
-      </div>
-    )}
-    {txLoading && (
-      <CommonLoading />
-    )}
-    {(!txLoading && sortCVoxels) && sortCVoxels.map(item => {
-        return (
-          <CVoxelItem
-              did={did}
-              item={item}
-              offchainItems={offchainMetaList}
-              key={item.id}
-              isOwner={true}
-            />
-        )
-    })}
-  </CVoxelsPresenter>, [txLoading, sortCVoxels, offchainMetaList, did])
-
-  const TransactionMemo = useMemo(() => 
-    <div className="w-full max-w-[720px] text-center mx-auto cursor-pointer h-screen overflow-y-scroll">
-      <p className="text-primary font-medium text-xs pt-2 pb-4 sm:text-right">{`Supported Networks: Ethereum & Polygon`}</p>
-      {(!offchainLoading && (!onlyPotentialCVoxels || onlyPotentialCVoxels.length===0)) && (
-        <NoItemPresenter text="No Tx Found..." />
-      )}
-      {offchainLoading && (
-        <CommonLoading />
-      )}
-      {(!offchainLoading && onlyPotentialCVoxels.length>0) &&  onlyPotentialCVoxels.map((tx,index) => (
-        <div key={`${tx.hash}_${index}`} className="mb-4">
-          <TransactionItem tx={tx} index={index} account={account} onClickTx={handleClickTx} selectedTx={selectedTx} cVoxels={sortCVoxels}/>
-          {(selectedTx && selectedTx?.tx.hash===tx.hash) && (
-              <>
-              {selectedOffchainItem ? (
-                <TransactionDetail key={`${tx.hash}_detail`} account={account?.toLowerCase()} tx={tx} offchainItem={selectedOffchainItem} connectionStatus={connection.status} onClaim={publishFromExistedCVoxel} reClaim={reClaimCVoxel} cvoxels={sortCVoxels} />
-              ): (
-                <div key={`${tx.hash}_form_container`} className="mb-4">
-                  <div key={`${tx.hash}_form`} className="w-full h-fit bg-white shadow-lg p-5 mb-4">
-                    <FormProvider {...methods}>
-                        <form className="w-full" onSubmit={methods.handleSubmit(onSubmit)}>
-                          <TransactionForm tx={tx} connectionStatus={connection.status} isFirstTime={sortCVoxels.length===0}/>
-                        </form>
-                      </FormProvider>
-                    </div>
-                </div>
-              )}
-              </>
-          )}
-        </div>
-      ))}
-    </div>
-  ,[offchainLoading, onlyPotentialCVoxels, account, selectedOffchainItem, connection.status, methods, selectedTx, sortCVoxels])
-
-  const sigRequestMemo = useMemo(() => 
-    <div className="w-full max-w-[820px] text-center mx-auto cursor-pointer h-screen overflow-y-scroll space-y-2">
-      {(!sigRequestCVoxels || sigRequestCVoxels.length===0) && (
-        <NoItemPresenter text="No Sig Requests yet..." />
-      )}
-      {(sigRequestCVoxels && sigRequestCVoxels.length>0) && sigRequestCVoxels.map((tx) => {
-        return(
-          <div key={tx.txHash}>
-            <SigRequestItem tx={tx} account={account} handleClick={() => verify(tx)}/>
-          </div>
-        )
-      }) }
-    </div>
-  ,[sigRequestCVoxels, account])
-
   const VisualizerPresenterMemo = useMemo(() => <Canvas shadows>
     <VisualizerPresenter
       ids={CVoxelsRecords.content?.cVoxels.map((vox) => vox.id)}
     />
   </Canvas>,[CVoxelsRecords.content])
+
+  // eslint-disable-next-line react/display-name
+  const CVoxelsPresenterMemo = memo<CVoxelItemProp>(({item}) => <CVoxelItem
+    did={did}
+    item={item}
+    offchainItems={offchainMetaList}
+    key={item.id}
+    isOwner={true}
+  />)
 
   return (
     <main className="h-auto overflow-y-scroll text-black dark:text-white text-center">
@@ -224,13 +161,73 @@ export const HomeContainer: FC = () => {
         
           <div className="flex-none w-full">
             <div className={tabState === "cvoxels" ? "block" : "hidden"} id="cvoxels">
-              {CVoxelsPresenterMemo}
+              <CVoxelsPresenter>
+                {(!txLoading && (!sortCVoxels || sortCVoxels.length===0)) && (
+                  <div className="mx-auto">
+                    <NoItemPresenter text="No C-Voxels yet..." />
+                        {account && (
+                          <button onClick={()=> setTabState("transactions")} className="text-white rounded-full bg-gradient-to-r from-border_l to-border_r py-2 px-5">
+                            Create C-Voxel
+                        </button>
+                        )}
+                  </div>
+                )}
+                {txLoading && (
+                  <CommonLoading />
+                )}
+                {(!txLoading && sortCVoxels) && sortCVoxels.map(item => {
+                    return (
+                      <CVoxelsPresenterMemo key={item.id} item={item} />
+                    )
+                })}
+              </CVoxelsPresenter>
             </div>
               <div className={tabState === "transactions" ? "block" : "hidden"} id="transactions">
-                {TransactionMemo}
+                <div className="w-full max-w-[720px] text-center mx-auto cursor-pointer h-screen overflow-y-scroll">
+                  <p className="text-primary font-medium text-xs pt-2 pb-4 sm:text-right">{`Supported Networks: Ethereum & Polygon`}</p>
+                  {(!offchainLoading && (!onlyPotentialCVoxels || onlyPotentialCVoxels.length===0)) && (
+                    <NoItemPresenter text="No Tx Found..." />
+                  )}
+                  {offchainLoading && (
+                    <CommonLoading />
+                  )}
+                  {(!offchainLoading && onlyPotentialCVoxels.length>0) &&  onlyPotentialCVoxels.map((tx,index) => (
+                    <div key={`${tx.hash}_${index}`} className="mb-4">
+                      <TransactionItem tx={tx} index={index} account={account} onClickTx={handleClickTx} selectedTx={selectedTx} cVoxels={sortCVoxels}/>
+                      {(selectedTx && selectedTx?.tx.hash===tx.hash) && (
+                          <>
+                          {selectedOffchainItem ? (
+                            <TransactionDetail key={`${tx.hash}_detail`} account={account?.toLowerCase()} tx={tx} offchainItem={selectedOffchainItem} connectionStatus={connection.status} onClaim={publishFromExistedCVoxel} reClaim={reClaimCVoxel} cvoxels={sortCVoxels} />
+                          ): (
+                            <div key={`${tx.hash}_form_container`} className="mb-4">
+                              <div key={`${tx.hash}_form`} className="w-full h-fit bg-white shadow-lg p-5 mb-4">
+                                <FormProvider {...methods}>
+                                    <form className="w-full" onSubmit={methods.handleSubmit(onSubmit)}>
+                                      <TransactionForm tx={tx} connectionStatus={connection.status} isFirstTime={sortCVoxels.length===0}/>
+                                    </form>
+                                  </FormProvider>
+                                </div>
+                            </div>
+                          )}
+                          </>
+                      )}
+                    </div>
+                  ))}
+                </div>
               </div>
               <div className={tabState === "signatures" ? "block" : "hidden"} id="signatures">
-                {sigRequestMemo}
+                <div className="w-full max-w-[820px] text-center mx-auto cursor-pointer h-screen overflow-y-scroll space-y-2">
+                  {(!sigRequestCVoxels || sigRequestCVoxels.length===0) && (
+                    <NoItemPresenter text="No Sig Requests yet..." />
+                  )}
+                  {(sigRequestCVoxels && sigRequestCVoxels.length>0) && sigRequestCVoxels.map((tx) => {
+                    return(
+                      <div key={tx.txHash}>
+                        <SigRequestItem tx={tx} account={account} handleClick={() => verify(tx)}/>
+                      </div>
+                    )
+                  }) }
+                </div>
               </div>
           </div>
         </div>

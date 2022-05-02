@@ -15,7 +15,7 @@ export const LoadingModal:FC<Props> = ({text}) => {
                     animationData={loadingJson}
                     play
                     style={{ width: 200, height: 200 }}
-                />;
+                />
             </div>
             <p className="text-black font-bold text-xl md:text-2xl">{text || ""}</p>
         </div>
