@@ -35,7 +35,9 @@ export type CVoxel = {
   toSigner: string; // who signed this cvoxel as payee actually. Only EOA supported
   fromSigner: string; // who signed this cvoxel as payer actually. Only EOA supported
   startTimestamp?: string; //timestamp to start work
-  endTimestamp?: string; //block timestamp to end work
+  endTimestamp?: string; //timestamp to end work
+  createdAt?: string; //timestamp to be created
+  updatedAt?: string; //timestamp to be updated
   relatedAddresses: string[]; // all addresses related to this cvoxel. may contain both EOA and contract address
 };
 

@@ -1,5 +1,5 @@
 import { useMyCeramicAcount } from '@/hooks/useCeramicAcount'
-import { AvatarPlaceholder } from '@self.id/framework'
+import { AvatarPlaceholder, formatDID } from '@self.id/framework'
 import {DropButton } from 'grommet'
 import { useState } from 'react'
 import {DisplayAvatar} from '../DisplayAvatar'
@@ -24,7 +24,7 @@ function MenuButton({ label, ...props }: MenuButtonProps) {
 }
 
 export default function AccountButton() {
-  const {connection, disconnectCeramic, account, connectWalletOnly, did, name, avator, profileRecord} = useMyCeramicAcount()
+  const {connection, disconnectCeramic, account, connectWalletOnly, did, name, avator} = useMyCeramicAcount()
   const [isMenuOpen, setMenuOpen] = useState(false)
 
   const goToMypage = () => {
@@ -59,7 +59,7 @@ export default function AccountButton() {
               )}
             </div>
           <p className="font-bold text-sm">
-            {name ? name : account}
+            {name ? name : did ? formatDID(did, 12) : formatDID(account, 12)}
           </p>
         </div>
         <div className="rounded-lg space-y-2">
@@ -83,8 +83,8 @@ export default function AccountButton() {
           open={isMenuOpen}>
           <DisplayAvatar
             did={did}
-            label={name ? name : account}
-            loading={profileRecord.isLoading}
+            label={name ? name : did ? formatDID(did, 12) : formatDID(account, 12)}
+            loading={connection.status === 'connecting'}
             src={avator}
             hiddenLabelOnSp={true}
           />

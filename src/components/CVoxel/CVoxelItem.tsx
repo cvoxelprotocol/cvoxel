@@ -24,13 +24,12 @@ import { TagBadge } from "../common/badge/TagBadge";
 
 type Props = {
   did: string
-  holder: string
   item: ICVoxelItem
   offchainItems?: CVoxelMetaDraft[]
   isOwner: boolean
 };
 
-export const CVoxelItem: FC<Props> = ({item, did, holder, offchainItems, isOwner}) => {
+export const CVoxelItem: FC<Props> = ({item, did, offchainItems, isOwner}) => {
   const [selectedItem, setSelectedItem] = useStateSelectedItem();
   const {cVoxelItem, update} = useUpdateCVoxel(item.id)
   const etherService = getEtherService();
@@ -42,7 +41,6 @@ export const CVoxelItem: FC<Props> = ({item, did, holder, offchainItems, isOwner
   // const {updateCvoxels} = useUpdateCVoxels()
 
   const detailItem = useMemo(() => {
-    // console.log("cVoxelItem.content", cVoxelItem.content)
     return cVoxelItem.content || null
   },[cVoxelItem.content])
 
@@ -135,8 +133,10 @@ export const CVoxelItem: FC<Props> = ({item, did, holder, offchainItems, isOwner
           <div className={"relative flex w-full h-fit transition scale-y-100"}>
             <div className="md:flex w-full space-x-2 items-center font-medium">
               <div className="text-center h-20 w-full md:w-24">
-                <div className="relative flex justify-center items-center w-14 h-14 md:w-16 md:h-16 mx-auto">
-                  <Image src="/voxel.png" layout="fill" alt="voxel"/>
+                <div className="flex justify-center items-center w-14 h-14 md:w-16 md:h-16 mx-auto">
+                  <div className="relative w-14 h-14 md:w-16 md:h-16">
+                    <Image src="/voxel.png" layout="fill" alt="voxel"/>
+                  </div>
                 </div>
               </div>
               <div className="h-fit w-full rounded-lg shadow-lg bg-white text-left px-5 py-3">

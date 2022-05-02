@@ -6,18 +6,17 @@ import dotenv from 'dotenv'
 dotenv.config();
 
 
-// const CERAMIC_URL = process.env.NEXT_PUBLIC_CERAMIC_URL || 'http://localhost:7007'
-const CERAMIC_URL = 'http://localhost:7007'
+const CERAMIC_URL = process.env.NEXT_PUBLIC_CERAMIC_URL || 'http://localhost:7007'
+const modelJsonName = "model_dev.json"
 
 // Connect to the Ceramic node
 const ceramic = new CeramicClient(CERAMIC_URL)
 
 // Load and create a manager for the model
-const bytes = await readFile(new URL('model_v2.json', import.meta.url))
+const bytes = await readFile(new URL(`${modelJsonName}`, import.meta.url))
 const manager = ModelManager.fromJSON(ceramic, JSON.parse(bytes.toString()))
 
 // Write model to JSON file
-const modelJsonName = "model_v2.json"
 const model = await manager.toPublished()
 await writeFile(new URL(`../src/${modelJsonName}`, import.meta.url), JSON.stringify(model))
 

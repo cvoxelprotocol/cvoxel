@@ -16,8 +16,8 @@ if (!process.env.SEED) {
   throw new Error('Missing SEED environment variable')
 }
 
-// const CERAMIC_URL = process.env.NEXT_PUBLIC_CERAMIC_URL || 'http://localhost:7007'
-const CERAMIC_URL = 'http://localhost:7007'
+const CERAMIC_URL = process.env.NEXT_PUBLIC_CERAMIC_URL || 'http://localhost:7007'
+const modelJsonName = "model_dev.json"
 
 // The seed must be provided as an environment variable
 const seed = fromString(process.env.SEED, 'base16')
@@ -137,6 +137,14 @@ const cVoxelSchemaID = await manager.createSchema('CVoxel', {
       type: 'string',
       title: 'endTimestamp',
     },
+    createdAt: {
+      type: 'string',
+      title: 'createdAt',
+    },
+    updatedAt: {
+      type: 'string',
+      title: 'updatedAt',
+    },
     relatedAddresses: {
       type: "array",
       title: 'relatedAddress',
@@ -241,5 +249,5 @@ value: "100000000", tokenSymbol: "ETH", networkId:1, issuedTimestamp: "12345678"
 )
 
 // Write model to JSON file
-await writeFile(new URL('model_v2.json', import.meta.url), JSON.stringify(manager.toJSON()))
+await writeFile(new URL(`${modelJsonName}`, import.meta.url), JSON.stringify(manager.toJSON()))
 console.log('Encoded model written to scripts/model.json file')
