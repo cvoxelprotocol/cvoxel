@@ -1,9 +1,7 @@
-import { useState } from "react";
 import { useQuery } from "react-query";
 import { getEtherService } from "@/services/Ether/EtherService";
 
-export const useENS = () => {
-  const [address, setAddress] = useState<string>();
+export const useENS = (address?: string) => {
   const etherService = getEtherService();
 
   const { data: ens, isLoading: ensLoading } = useQuery<string>(
@@ -19,6 +17,5 @@ export const useENS = () => {
   return {
     ens,
     ensLoading,
-    setAddress,
   };
 };

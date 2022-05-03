@@ -1,19 +1,17 @@
-import { useWalletAccount } from "@/hooks/useWalletAccount";
 import { CVoxelMetaDraft } from "@/interfaces";
 import { getExploreLink } from "@/utils/etherscanUtils";
 import { formatBigNumber } from "@/utils/ethersUtil";
 import { shortHash } from "@/utils/tools";
-import { FC, useMemo, useEffect, useState, useCallback } from "react";
+import { FC, useMemo } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faExternalLink } from "@fortawesome/free-solid-svg-icons";
 import { Button } from "../common/button/Button";
-import { getEtherService } from "@/services/Ether/EtherService";
-import { CommonSpinner } from "../common/CommonSpinner";
 import { convertTimestampToDateStr } from "@/utils/dateUtil";
 import { shortenStr } from "@/utils/objectUtil";
 import { TagBadge } from "../common/badge/TagBadge";
 import { GenreBadge } from "../common/badge/GenreBadge";
 import { getGenre } from "@/utils/genreUtil";
+import { VerifierContainer } from "../CVoxel/VerifierContainer";
 
 type SigRequestItemProps = {
     tx: CVoxelMetaDraft
@@ -22,39 +20,15 @@ type SigRequestItemProps = {
 }
 
 export const SigRequestItem:FC<SigRequestItemProps> = ({tx, account, handleClick}) => {
-    const {chainId} = useWalletAccount()
-    const etherService = getEtherService();
-    const [ens, setENS] = useState<string>("")
-    const [isLoading, setLoading] = useState(false)
-
-    useEffect(() => {
-        async function init() {
-            await getENS()
-        }
-        if(tx) {
-            init()
-        }
-    },[tx])
 
     const isPayee = useMemo(() => {
         return account?.toLowerCase()===tx.to.toLowerCase()
     },[account, tx])
 
     const exploreLink = useMemo(() => {
-        return getExploreLink(tx.txHash, chainId)
-    },[tx,chainId])
+        return getExploreLink(tx.txHash, tx.networkId)
+    },[tx.txHash, tx.networkId])
 
-    const getENS = useCallback(async () => {
-        setLoading(true)
-        if(isPayee) {
-            const ens = await etherService.getDisplayENS(tx.from)
-            setENS(ens)
-        } else {
-            const ens = await etherService.getDisplayENS(tx.to)
-            setENS(ens)
-        }
-        setLoading(false)
-    },[tx, isPayee, etherService])
 
 
     return (
@@ -62,12 +36,7 @@ export const SigRequestItem:FC<SigRequestItemProps> = ({tx, account, handleClick
             <div className="h-fit sm:max-h-[90px] sm:flex justify-between items-center py-2 px-2 sm:px-4 border-b border-b-gray-200" >
                 <div className="flex justify-evenly items-center pb-2 sm:pb-0">
                     <div className="max-w-[120px] px-4">
-                        <p className="text-gray-500">{isPayee ? "from": "to"}</p>
-                        {isLoading ? (
-                            <CommonSpinner size="sm"/>
-                        ): (
-                            <p className="break-words flex-wrap">{ens}</p>
-                        )}
+                        <VerifierContainer isPayer={!isPayee} address={!isPayee ? tx.to : tx.from}/>
                     </div>
                     <div className="w-[0.5px] bg-black border-black h-[40px]"></div>
                     <div className="max-w-[120px] px-2 text-center space-y-1">

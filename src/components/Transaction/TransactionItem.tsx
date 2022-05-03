@@ -1,9 +1,8 @@
-import { useWalletAccount } from "@/hooks/useWalletAccount";
 import { CVoxelItem, TransactionLogWithChainId } from "@/interfaces";
 import { getExploreLink } from "@/utils/etherscanUtils";
 import { formatBigNumber } from "@/utils/ethersUtil";
 import { shortHash } from "@/utils/tools";
-import { FC, useMemo, useCallback, useEffect } from "react";
+import { FC, useMemo } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faExternalLink } from "@fortawesome/free-solid-svg-icons";
 import { CommonSpinner } from "../common/CommonSpinner";
@@ -24,18 +23,6 @@ type TransactionItemProps = {
 
 export const TransactionItem:FC<TransactionItemProps> = ({tx,index, account, cVoxels, onClickTx, selectedTx}) => {
 
-    const {chainId} = useWalletAccount()
-    const {ens, ensLoading, setAddress} = useENS()
-
-    useEffect(() => {
-        async function init() {
-            await getENS()
-        }
-        if(tx) {
-            init()
-        }
-    },[tx])
-
     const isPayee = useMemo(() => {
         return account?.toLowerCase()===tx.to.toLowerCase()
     },[account, tx])
@@ -44,20 +31,15 @@ export const TransactionItem:FC<TransactionItemProps> = ({tx,index, account, cVo
         return !cVoxels ? false: cVoxels?.some(cv => cv.txHash.toLowerCase() === tx.hash.toLowerCase())
     },[cVoxels, tx.hash])
 
-
-
     const exploreLink = useMemo(() => {
         return getExploreLink(tx.hash, tx.chainId)
-    },[tx,chainId])
+    },[tx.hash, tx.chainId])
 
     const isSelecting = useMemo(() => {
         return !!selectedTx && selectedTx.tx.hash===tx.hash
     },[selectedTx, tx.hash])
 
-
-    const getENS = useCallback(async () => {
-        setAddress(isPayee ? tx.from: tx.to)
-    },[tx, isPayee, setAddress])
+    const {ens, ensLoading} = useENS(isPayee ? tx.from: tx.to)
 
     const handleClick = () => {
         if(isSelecting) {

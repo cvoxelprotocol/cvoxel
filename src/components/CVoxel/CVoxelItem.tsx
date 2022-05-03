@@ -1,4 +1,4 @@
-import { FC, useMemo,useState, useEffect, useCallback } from "react";
+import { FC, useMemo } from "react";
 import Image from "next/image";
 import { CVoxel, CVoxelItem as ICVoxelItem, CVoxelMetaDraft } from "@/interfaces";
 import { useStateSelectedItem } from "@/recoilstate";
@@ -9,15 +9,13 @@ import { faExternalLink } from "@fortawesome/free-solid-svg-icons";
 import { useUpdateCVoxel } from "@/hooks/useUpdateCVoxel";
 // import { useUpdateCVoxel, useUpdateCVoxels } from "@/hooks/useUpdateCVoxel";
 import { Button } from "@/components/common/button/Button";
-import { getEtherService } from "@/services/Ether/EtherService";
-import { CommonSpinner } from "../common/CommonSpinner";
-import { useWalletAccount } from "@/hooks/useWalletAccount";
 import { getExploreLink } from "@/utils/etherscanUtils";
 import { convertTimestampToDateStr } from "@/utils/dateUtil";
 import { shortenStr } from "@/utils/objectUtil";
 import { GenreBadge } from "../common/badge/GenreBadge";
 import { getGenre } from "@/utils/genreUtil";
 import { TagBadge } from "../common/badge/TagBadge";
+import { VerifierContainer } from "./VerifierContainer";
 // import { useStateSelectedGenre } from "@/recoilstate/genre";
 // import { GenreList } from "../Transaction/GenreList";
 // import { TagForm } from "../Transaction/TagForm";
@@ -32,10 +30,6 @@ type Props = {
 export const CVoxelItem: FC<Props> = ({item, did, offchainItems, isOwner}) => {
   const [selectedItem, setSelectedItem] = useStateSelectedItem();
   const {cVoxelItem, update} = useUpdateCVoxel(item.id)
-  const etherService = getEtherService();
-  const [verifier, setVerifier] = useState<string>("")
-  const [isLoading, setLoading] = useState(false)
-  const {chainId} = useWalletAccount()
   // const [selectedGenre, selectGenre] = useStateSelectedGenre()
   // const [newTags, setNewTags] = useState<string[]>([])
   // const {updateCvoxels} = useUpdateCVoxels()
@@ -63,33 +57,7 @@ export const CVoxelItem: FC<Props> = ({item, did, offchainItems, isOwner}) => {
   const exploreLink = useMemo(() => {
     if(!detailItem) return
     return getExploreLink(detailItem.txHash, detailItem.networkId)
-  },[detailItem,chainId])
-
-  useEffect(() => {
-    let isMounted = true
-    async function init() {
-        await getENS()
-    }
-    if(detailItem && !verifier && isMounted) {
-        init()
-    }
-    return () => {
-      isMounted = false
-    }
-  },[detailItem])
-
-  const getENS = useCallback(async () => {
-      if(!detailItem) return
-      setLoading(true)
-      if(item.isPayer) {
-        const ens = await etherService.getDisplayENS(detailItem.to)
-          setVerifier(ens)
-      } else {
-        const ens = await etherService.getDisplayENS(detailItem.from)
-          setVerifier(ens)
-      }
-      setLoading(false)
-  },[detailItem, etherService])
+  },[detailItem?.txHash, detailItem?.networkId])
 
   const handleClick = () => {
     if(detailItem) setSelectedItem({...detailItem, id: item.id})
@@ -217,11 +185,7 @@ export const CVoxelItem: FC<Props> = ({item, did, offchainItems, isOwner}) => {
                               {`(${Number(fiatVal).toFixed(2)} ${detailItem.fiatSymbol || "USD"})`}
                             </p>
                           )}
-                          {isLoading ? (
-                              <CommonSpinner size="sm"/>
-                          ): (
-                              <p className="text-primary text-xs">{item.isPayer ? `TO: ` : `FROM: ` }{verifier}</p>
-                          )}
+                          <VerifierContainer isPayer={item.isPayer} address={item.isPayer ? detailItem.to : detailItem.from}/>
                           <a className="flex items-center justify-center" href={exploreLink} target="_blank" rel="noreferrer">
                             <p className="text-xs text-gray-500">explorer</p>
                             <FontAwesomeIcon className="w-2 h-2 ml-1" icon={faExternalLink} color={'gray'}/>

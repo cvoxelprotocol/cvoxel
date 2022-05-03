@@ -25,6 +25,10 @@ export const extractCVoxel = (tx: CVoxelMetaDraft): CVoxel => {
     toSigner,
     fromSigner,
     relatedAddresses,
+    startTimestamp,
+    endTimestamp,
+    createdAt,
+    updatedAt,
   } = tx;
   return {
     summary,
@@ -50,5 +54,9 @@ export const extractCVoxel = (tx: CVoxelMetaDraft): CVoxel => {
     toSigner,
     fromSigner,
     relatedAddresses,
+    startTimestamp,
+    endTimestamp,
+    createdAt,
+    updatedAt,
   };
 };
