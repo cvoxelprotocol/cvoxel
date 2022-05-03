@@ -8,3 +8,6 @@ export const POTENTIAL_CVOXEL_CREATION_FAILED =
 
 export const CVOXEL_VERIFY_SUCCEED = "Verified Successfully!";
 export const CVOXEL_VERIFY_FAILED = "Failed to Verify CVoxel...";
+
+export const CVOXEL_UPDATE_SUCCEED = "Updated Successfully!";
+export const CVOXEL_UPDATE_FAILED = "Failed to Update CVoxel...";

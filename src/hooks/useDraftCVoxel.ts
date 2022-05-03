@@ -257,8 +257,8 @@ export function useDraftCVoxel() {
 
       meta = {
         summary: summary,
-        detail: detail ?? "",
-        deliverable: deliverable ?? "",
+        detail: detail || "",
+        deliverable: deliverable || "",
         jobType: "OneTime",
         from: from,
         to: to,

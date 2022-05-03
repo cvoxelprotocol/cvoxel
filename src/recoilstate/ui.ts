@@ -15,3 +15,11 @@ export const rManageTab = atom<"cvoxels" | "transactions" | "signatures">({
 });
 
 export const useStateManageTab = () => useRecoilState(rManageTab);
+
+// force update
+const rForceUpdate = atom<boolean>({
+  key: "rForceUpdate",
+  default: false,
+});
+
+export const useStateForceUpdate = () => useRecoilState(rForceUpdate);

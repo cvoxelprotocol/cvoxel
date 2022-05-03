@@ -15,6 +15,7 @@ import { useModal } from "./useModal";
 import { useToast } from "./useToast";
 import { useConnection, useViewerRecord } from "@self.id/framework";
 import { extractCVoxel } from "@/utils/cVoxelUtil";
+import { convertDateToTimestampStr } from "@/utils/dateUtil";
 
 export function useSigRequest() {
   const { chainId, account } = useWeb3React<Web3Provider>();
@@ -39,7 +40,7 @@ export function useSigRequest() {
     showLoading();
     try {
       const isPayer = tx.from.toLowerCase() === account.toLowerCase();
-      const meta = await verifyCVoxel(tx);
+      const meta = await verifyCVoxel(tx, account);
       if (meta) {
         const doc = await selfID.client.dataModel.createTile("CVoxel", {
           ...meta,
@@ -76,10 +77,11 @@ export function useSigRequest() {
   };
 
   const verifyWithoutCeramic = async (tx: CVoxelMetaDraft) => {
+    if (!account) return;
     showLoading();
     try {
-      const result = await verifyCVoxel(tx);
-      if (result) {
+      const meta = await verifyCVoxel(tx, account);
+      if (meta) {
         lancInfo(CVOXEL_VERIFY_SUCCEED);
         closeLoading();
         return true;
@@ -94,28 +96,33 @@ export function useSigRequest() {
     }
   };
 
-  const verifyCVoxel = async (tx: CVoxelMetaDraft): Promise<CVoxel | null> => {
+  const verifyCVoxel = async (
+    tx: CVoxelMetaDraft,
+    address: string
+  ): Promise<CVoxel | null> => {
+    const to = tx.to.toLowerCase();
     const from = tx.from.toLowerCase();
+    const usr = address.toLowerCase();
 
-    if (!(account && chainId && account.toLowerCase() === from)) {
-      console.log("not payer");
-      return null;
-    }
+    const isPayer = from === usr;
 
-    if (chainId !== tx.networkId) {
-      return null;
-    }
+    const metaDraft: CVoxelMetaDraft | null = await extractMeta(
+      tx,
+      usr,
+      isPayer
+    );
+    if (!metaDraft) return null;
 
-    const meta: CVoxel = await extractMeta(tx, account);
+    const meta = extractCVoxel(metaDraft);
 
     try {
-      const result = await updateDraftWighVerify(
-        meta.fromSig,
+      const status = await updateDraftWighVerify(
+        isPayer ? meta.fromSig : meta.toSig,
         meta.txHash,
-        account,
-        chainId.toString()
+        usr,
+        tx.networkId.toString()
       );
-      return meta;
+      return status === "ok" ? meta : null;
     } catch (error) {
       console.log("Error: ", error);
       return null;
@@ -124,23 +131,49 @@ export function useSigRequest() {
 
   const extractMeta = async (
     tx: CVoxelMetaDraft,
-    account: string
-  ): Promise<CVoxel> => {
-    let newCVoxel: CVoxel = extractCVoxel(tx);
+    account: string,
+    isPayer: boolean
+  ): Promise<CVoxelMetaDraft | null> => {
+    try {
+      const nowTimestamp = convertDateToTimestampStr(new Date());
+      //get hash
+      const { signature, _ } = await cVoxelService.getMessageHash(
+        tx.txHash,
+        account,
+        tx.summary,
+        tx.detail,
+        tx.deliverable
+      );
 
-    //get hash
-    const { signature, _ } = await cVoxelService.getMessageHash(
-      tx.txHash,
-      account,
-      tx.summary,
-      tx.detail,
-      tx.deliverable
-    );
-
-    // create metadata
-    // if from address is contract address and gnosissafe treasury, use following api and get owners as potentialClient
-    // https://safe-transaction.rinkeby.gnosis.io/api/v1/safes/0x9576Ab75741201f430223EDF2d24A750ef787591/
-    return { ...newCVoxel, fromSig: signature };
+      if (
+        isPayer &&
+        tx.relatedAddresses.map((a) => a.toLowerCase()).includes(account) &&
+        (!tx.fromSig || tx.fromSig === "")
+      ) {
+        return {
+          ...tx,
+          fromSig: signature,
+          fromSigner: account,
+          updatedAt: nowTimestamp,
+        };
+      } else if (
+        !isPayer &&
+        tx.relatedAddresses.map((a) => a.toLowerCase()).includes(account) &&
+        (!tx.toSig || tx.toSig === "")
+      ) {
+        return {
+          ...tx,
+          toSig: signature,
+          toSigner: account,
+          updatedAt: nowTimestamp,
+        };
+      } else {
+        return null;
+      }
+    } catch (error) {
+      console.log("error", error);
+      return null;
+    }
   };
 
   return { verifyWithCeramic, verifyWithoutCeramic };

@@ -24,6 +24,7 @@ import { SigRequestItem } from "@/components/SigRequest/SigRequestItem";
 import { TransactionDetail } from "@/components/Transaction/TransactionDetail";
 import { TransactionForm } from "@/components/Transaction/TransactionForm";
 import type {CVoxelItem as ICVoxelItem} from "@/interfaces"
+import { useStateForceUpdate } from "@/recoilstate";
 
 export type selectTxType = {
   tx: TransactionLogWithChainId
@@ -44,6 +45,9 @@ export const HomeContainer: FC = () => {
   const { tabState, setTabState } = useTab();
   const draft = useDraftCVoxel();
   const {verifyWithCeramic, verifyWithoutCeramic} = useSigRequest()
+
+  // TODO: This is temporary solution because of useTileDoc bug
+  const [forceUpdateCVoxelList, setForceUpdateCVoxelList] = useStateForceUpdate()
 
   const methods = useForm<CVoxel>();
   const onSubmit = (data: any) => {
@@ -106,13 +110,21 @@ export const HomeContainer: FC = () => {
     }
   }
 
-  const verify = async (tx: CVoxelMetaDraft) => {
+  const verify = useCallback(async (tx: CVoxelMetaDraft) => {
     if(did) {
-      await verifyWithCeramic(tx)
+      const result = await verifyWithCeramic(tx)
+      if(result) {
+        setTabState("cvoxels");
+      }
+
     } else {
       await verifyWithoutCeramic(tx)
     }
-  };
+  },[did, verifyWithCeramic, verifyWithoutCeramic])
+
+  const forceReload = () => {
+    setForceUpdateCVoxelList(true)
+  }
 
   const selectedOffchainItem = useMemo(() => {
     if (!selectedTx) return null;
@@ -137,6 +149,7 @@ export const HomeContainer: FC = () => {
   item={item}
   offchainItems={offchainItems}
   isOwner={true}
+  notifyUpdated={forceReload}
 />)
 
 const CVoxelPresenterMemo = useMemo(() => 
@@ -156,11 +169,11 @@ const CVoxelPresenterMemo = useMemo(() =>
       )}
       {(!txLoading && sortCVoxels) && sortCVoxels.map(item => {
           return (
-            <CVoxelItemMemo key={item.id} item={item} did={did} offchainItems={offchainMetaList} />
+            <CVoxelItemMemo key={item.id} item={item} did={did} offchainItems={offchainMetaList}/>
           )
       })}
       </CVoxelsPresenter>
-  ,[txLoading, sortCVoxels, account, offchainMetaList, did])
+  ,[txLoading, sortCVoxels, account, offchainMetaList, did, forceUpdateCVoxelList])
 
   const TransactionMemo = useMemo(() => 
     <div className="w-full max-w-[720px] text-center mx-auto cursor-pointer h-screen overflow-y-scroll">
@@ -209,13 +222,20 @@ const CVoxelPresenterMemo = useMemo(() =>
         )
       }) }
     </div>
-  ,[sigRequestCVoxels, account])
+  ,[sigRequestCVoxels, account, verify])
 
   const VisualizerPresenterMemo = useMemo(() => <Canvas shadows>
     <VisualizerPresenter
       ids={CVoxelsRecords.content?.cVoxels.map((vox) => vox.id)}
     />
   </Canvas>,[CVoxelsRecords.content])
+
+  const ProfileCardMemo = useMemo(() => <>
+    {account && !did && <ProfileCard name={account} />}
+      {account && did && name && (
+        <ProfileCard name={name} avator={avator} did={did}  />
+      )}
+  </>,[account, did, name, avator])
 
   return (
     <main className="h-auto overflow-y-scroll text-black dark:text-white text-center">
@@ -224,10 +244,7 @@ const CVoxelPresenterMemo = useMemo(() =>
           {VisualizerPresenterMemo}
         </div>
         <div className="flex-none mb-12 w-full max-w-[720px]">
-          {account && !did && <ProfileCard name={account} />}
-          {account && did && name && (
-            <ProfileCard name={name} avator={avator} did={did}  />
-          )}
+          {ProfileCardMemo}
         </div>
         <div className="flex-none w-full max-w-[720px]">
           <HomeTabsHeader />

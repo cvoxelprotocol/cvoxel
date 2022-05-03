@@ -23,11 +23,12 @@ import { VerifierContainer } from "./VerifierContainer";
 type Props = {
   did: string
   item: ICVoxelItem
-  offchainItems?: CVoxelMetaDraft[]
   isOwner: boolean
+  offchainItems?: CVoxelMetaDraft[]
+  notifyUpdated?: () => void
 };
 
-export const CVoxelItem: FC<Props> = ({item, did, offchainItems, isOwner}) => {
+export const CVoxelItem: FC<Props> = ({item, did, offchainItems, isOwner, notifyUpdated}) => {
   const [selectedItem, setSelectedItem] = useStateSelectedItem();
   const {cVoxelItem, update} = useUpdateCVoxel(item.id)
   // const [selectedGenre, selectGenre] = useStateSelectedGenre()
@@ -36,7 +37,7 @@ export const CVoxelItem: FC<Props> = ({item, did, offchainItems, isOwner}) => {
 
   const detailItem = useMemo(() => {
     return cVoxelItem.content || null
-  },[cVoxelItem.content])
+  },[cVoxelItem.content, cVoxelItem])
 
   // Whether this item is selected or not
   const isSelected: boolean = useMemo(() => {
@@ -44,11 +45,12 @@ export const CVoxelItem: FC<Props> = ({item, did, offchainItems, isOwner}) => {
   }, [item.id, selectedItem]);
 
   const updatable = useMemo(() => {
-    if(cVoxelItem.content && cVoxelItem.content?.toSig && cVoxelItem.content?.fromSig) return false
-    const item = offchainItems?.find(item => item.txHash.toLowerCase() === cVoxelItem.content?.txHash.toLowerCase())
+    if(!detailItem) return false
+    if(detailItem && detailItem.toSig && detailItem.fromSig) return false
+    const item = offchainItems?.find(item => item.txHash.toLowerCase() === detailItem.txHash.toLowerCase())
     if(!item) return false
-    return item.fromSig && !cVoxelItem.content?.fromSig
-  },[offchainItems, cVoxelItem])
+    return (detailItem.isPayer && !detailItem.toSig && item.toSig) || (!detailItem.isPayer && !detailItem.fromSig && item.fromSig)
+  },[offchainItems, detailItem])
 
   // const updatableGenre = useMemo(() => {
   //   return !!detailItem && !detailItem.genre
@@ -78,9 +80,12 @@ export const CVoxelItem: FC<Props> = ({item, did, offchainItems, isOwner}) => {
   
   const handleUpdate = async() => {
     if(!(offchainItem && detailItem)) return false
-    if(updatable && offchainItem.fromSig) {
-      const newCVoxel:CVoxel = {...detailItem, fromSig: offchainItem.fromSig}
+    if(updatable) {
+      const newCVoxel:CVoxel = detailItem.isPayer ? {...detailItem, toSig: offchainItem.toSig, toSigner: offchainItem.toSigner} : {...detailItem, fromSig: offchainItem.fromSig, fromSigner: offchainItem.fromSigner}
       await update(newCVoxel)
+      if(notifyUpdated){
+        notifyUpdated()
+      }
     }    
   }
 
