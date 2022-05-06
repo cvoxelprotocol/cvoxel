@@ -1,6 +1,9 @@
 import firebase, { initializeApp, getApps } from "firebase/app";
-import { getFirestore } from "firebase/firestore/lite";
-import { getFunctions } from "firebase/functions";
+import {
+  getFirestore,
+  connectFirestoreEmulator,
+} from "firebase/firestore/lite";
+import { getFunctions, connectFunctionsEmulator } from "firebase/functions";
 import { getAuth } from "firebase/auth";
 
 let app: firebase.FirebaseApp;
@@ -26,9 +29,9 @@ const functions = getFunctions();
 const auth = getAuth(app);
 functions.region = "us-central1";
 
-// if (process.env.NODE_ENV !== 'production') {
-//     firestore.useEmulator("localhost", 8081);
-//     functions.useEmulator('localhost', 5001)
-// }
+if (process.env.NODE_ENV !== "production") {
+  connectFunctionsEmulator(functions, "localhost", 5111);
+  connectFirestoreEmulator(firestore, "localhost", 8081);
+}
 
 export { firestore, functions, auth, config, app };
