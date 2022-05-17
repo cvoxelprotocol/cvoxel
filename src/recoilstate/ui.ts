@@ -8,6 +8,14 @@ export const rGlobalLoading = atom({
 
 export const useStateGlobalLoading = () => useRecoilState(rGlobalLoading);
 
+//toast
+export const rGlobalToast = atom({
+  key: "rGlobalToast",
+  default: false,
+});
+
+export const useStateGlobalToast = () => useRecoilState(rGlobalToast);
+
 //tab
 export const rManageTab = atom<"cvoxels" | "transactions" | "signatures">({
   key: "rManageTab",
