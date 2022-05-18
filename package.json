@@ -9,7 +9,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "format": "",
+    "format": "npx eslint --fix './{src,scripts}/**/*.{ts,js,tsx,jsx}' && prettier --write './{src,scripts}/**/*.{ts,js,tsx,jsx}'",
     "ceramic": "ceramic daemon"
   },
   "dependencies": {
