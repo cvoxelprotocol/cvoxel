@@ -2,7 +2,7 @@
 
 This is CVoxel repo.
 
-Currently, C-Voxel is a alpha version(only ethereum and polygon mainnet are supported). Release on the main net is scheduled for 2Q 2022.
+Currently, C-Voxel is a alpha version(only ethereum and polygon mainnet are supported). Beta Release is scheduled for 2Q 2022.
 
 https://testnet.cvoxel.xyz/intro
 

@@ -273,7 +273,7 @@ export function useDraftCVoxel() {
         txHash: selectedTx.hash,
         relatedTxHashes: [selectedTx.hash],
         genre: genre,
-        tags: tags,
+        tags: tags || [],
         toSig: !isPayer ? signature.toString() : "",
         fromSig: isPayer ? signature.toString() : "",
         toSigner: !isPayer ? usr : "",

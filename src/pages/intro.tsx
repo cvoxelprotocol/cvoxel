@@ -1,4 +1,4 @@
-import {Button} from "@/components/common/button/Button";
+import { Button } from "@/components/common/button/Button";
 import BurgerMenu from "@/components/layout/BurgerMenu";
 import { NextPage } from "next";
 import Image from "next/image";
@@ -76,16 +76,36 @@ const Intro: NextPage = () => {
           </div>
 
           <div className="hidden md:flex w-full justify-end items-center text-normal text-text-primary ">
-            <a className="mx-4" href="https://gitcoin.co/grants/5359/c-voxel-proof-of-career-protocol" target="_blank" rel="noreferrer">
+            <a
+              className="mx-4"
+              href="https://gitcoin.co/grants/5359/c-voxel-proof-of-career-protocol"
+              target="_blank"
+              rel="noreferrer"
+            >
               Gitcoin Grant
             </a>
-            <a className="mx-4" href="https://docs.cvoxel.xyz/" target="_blank" rel="noreferrer">
+            <a
+              className="mx-4"
+              href="https://docs.cvoxel.xyz/"
+              target="_blank"
+              rel="noreferrer"
+            >
               Docs
             </a>
-            <a className="mx-4" href="https://github.com/cvoxelprotocol/cvoxel" target="_blank" rel="noreferrer">
+            <a
+              className="mx-4"
+              href="https://github.com/cvoxelprotocol/cvoxel"
+              target="_blank"
+              rel="noreferrer"
+            >
               Github
             </a>
-            <a className="mx-4" href="https://discord.gg/TBJFmJv6uZ" target="_blank" rel="noreferrer">
+            <a
+              className="mx-4"
+              href="https://discord.gg/TBJFmJv6uZ"
+              target="_blank"
+              rel="noreferrer"
+            >
               Discord
             </a>
             <button className="hidden mx-4">Docs</button>
@@ -325,7 +345,11 @@ const Intro: NextPage = () => {
           <p className="text-text-white text-base">©️ C-Voxel-2022</p>
         </div>
         <div className="flex justify-end items-center">
-          <a href="https://github.com/cvoxelprotocol/cvoxel" target="_blank" rel="noreferrer">
+          <a
+            href="https://github.com/cvoxelprotocol/cvoxel"
+            target="_blank"
+            rel="noreferrer"
+          >
             <Image
               src="/github_logo.png"
               width="28px"
@@ -335,25 +359,33 @@ const Intro: NextPage = () => {
             />
           </a>
           <div className="mx-4">
-          <a href="https://twitter.com/C_Voxel" target="_blank" rel="noreferrer">
-            <Image
-              src="/twitter_logo.png"
-              width="28px"
-              height="24px"
-              alt="twitter logo"
-              layout="fixed"
-            />
+            <a
+              href="https://twitter.com/C_Voxel"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <Image
+                src="/twitter_logo.png"
+                width="28px"
+                height="24px"
+                alt="twitter logo"
+                layout="fixed"
+              />
             </a>
           </div>
           <div>
-          <a href="https://discord.gg/TBJFmJv6uZ" target="_blank" rel="noreferrer">
-            <Image
-              src="/discord_logo.png"
-              width="28px"
-              height="21px"
-              alt="discord logo"
-              layout="fixed"
-            />
+            <a
+              href="https://discord.gg/TBJFmJv6uZ"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <Image
+                src="/discord_logo.png"
+                width="28px"
+                height="21px"
+                alt="discord logo"
+                layout="fixed"
+              />
             </a>
           </div>
         </div>

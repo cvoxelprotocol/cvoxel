@@ -48,7 +48,7 @@ export const extractCVoxel = (tx: CVoxelMetaDraft): CVoxel => {
     txHash,
     relatedTxHashes,
     genre,
-    tags,
+    tags: tags || [],
     toSig: toSig || "",
     fromSig: fromSig || "",
     toSigner: toSigner || "",

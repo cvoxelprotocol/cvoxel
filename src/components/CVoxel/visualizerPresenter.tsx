@@ -1,32 +1,28 @@
 import * as THREE from "three";
 import { FC, useRef, useState, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
-import {
-  OrbitControls,
-  PerspectiveCamera,
-  Plane,
-} from "@react-three/drei";
-import { CVoxel} from "@/interfaces/cVoxelType";
+import { OrbitControls, PerspectiveCamera, Plane } from "@react-three/drei";
+import { CVoxel } from "@/interfaces/cVoxelType";
 import CVoxelPresenter from "./CVoxelPresenter";
-import {useVoxStyler} from "@/hooks/useVoxStyler";
+import { useVoxStyler } from "@/hooks/useVoxStyler";
 import { initCVoxel } from "@/constants/cVoxel";
 import { core } from "@/lib/ceramic/server";
 type VisualizerPresenterProps = {
   ids?: string[];
 };
 
-const VisualizerPresenter: FC<VisualizerPresenterProps> = ({ids}) => {
+const VisualizerPresenter: FC<VisualizerPresenterProps> = ({ ids }) => {
   const [cVoxels, setCVoxels] = useState<CVoxel[]>([]);
-  const {cvoxelsForDisplay, convertCVoxelsForDisplay} = useVoxStyler(cVoxels);
+  const { cvoxelsForDisplay, convertCVoxelsForDisplay } = useVoxStyler(cVoxels);
 
   const cCollectionRef = useRef<THREE.Group>(new THREE.Group());
   const offset = new THREE.Vector3(0, 0, 0);
 
   useEffect(() => {
-    let isMounted = true
+    let isMounted = true;
 
     const loadVoxels = async () => {
-      if(!ids) return
+      if (!ids) return;
       const voxelsTemp: CVoxel[] = [];
       for (let i = 0; i < ids!.length; i++) {
         const voxel = await core.tileLoader.load<CVoxel>(ids[i]);
@@ -35,28 +31,26 @@ const VisualizerPresenter: FC<VisualizerPresenterProps> = ({ids}) => {
       setCVoxels(voxelsTemp);
     };
 
-    if(isMounted) {
-      if(!(ids && ids.length>0)){
+    if (isMounted) {
+      if (!(ids && ids.length > 0)) {
         setCVoxels(initCVoxel);
       } else {
-        loadVoxels()
+        loadVoxels();
       }
     }
 
     return () => {
-      isMounted = false
-    }
-    
+      isMounted = false;
+    };
   }, [ids]);
 
   useEffect(() => {
-    let isMounted = true
-    convertCVoxelsForDisplay()
+    let isMounted = true;
+    convertCVoxelsForDisplay();
     return () => {
-      isMounted = false
-    }
-  },[cVoxels])
-
+      isMounted = false;
+    };
+  }, [cVoxels]);
 
   useFrame(() => {
     cCollectionRef.current.rotation.y += 0.005;
@@ -97,10 +91,8 @@ const VisualizerPresenter: FC<VisualizerPresenterProps> = ({ids}) => {
         <meshBasicMaterial color={"white"} opacity={0.5} />
       </Plane> */}
       <group ref={cCollectionRef} position={[0, 0, 0]}>
-        {cvoxelsForDisplay.map((voxel, i) =>
-          voxel && (
-            <CVoxelPresenter {...voxel} key={i} />
-          )
+        {cvoxelsForDisplay.map(
+          (voxel, i) => voxel && <CVoxelPresenter {...voxel} key={i} />
         )}
       </group>
       <PerspectiveCamera makeDefault position={[10, 6, 10]} zoom={2} />
