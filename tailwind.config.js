@@ -127,7 +127,7 @@ module.exports = {
             },
           },
         },
-        ["responsive"],
+        ["responsive"]
       );
     }),
   ],
