@@ -11,30 +11,44 @@ import { ProfileCard } from "@/components/Profile/ProfileCard";
 import { CommonLoading } from "@/components/common/CommonLoading";
 
 export const ProfileContainer: FC<CeramicProps> = ({ did }) => {
-
-  const {name, avator, profileRecord } = useUserCeramicAcount(did)
+  const { name, avator, profileRecord } = useUserCeramicAcount(did);
   const CVoxelsRecords = useCVoxelsRecord(did);
 
-  const CVoxelsPresenterMemo = useMemo(() => <CVoxelsPresenter>
-    {CVoxelsRecords.isLoading && (
-      <CommonLoading />
-    )}
-    {!CVoxelsRecords.isLoading && CVoxelsRecords.content?.cVoxels &&
-      CVoxelsRecords.content.cVoxels.map((item) => {
-        return <CVoxelItem did={did} item={item} key={item.id} isOwner={false} />;
-      })}
-    {!CVoxelsRecords.isLoading && !CVoxelsRecords.content && (
-      <div className="mx-auto">
-        <NoItemPresenter text="No C-Voxels yet..." />
-    </div>
-    )}
-  </CVoxelsPresenter>, [CVoxelsRecords.isLoading, CVoxelsRecords.content,did])
+  const CVoxelsPresenterMemo = useMemo(
+    () => (
+      <CVoxelsPresenter>
+        {CVoxelsRecords.isLoading && <CommonLoading />}
+        {!CVoxelsRecords.isLoading &&
+          CVoxelsRecords.content?.cVoxels &&
+          CVoxelsRecords.content.cVoxels.map((item) => {
+            return (
+              <CVoxelItem did={did} item={item} key={item.id} isOwner={false} />
+            );
+          })}
+        {!CVoxelsRecords.isLoading && !CVoxelsRecords.content && (
+          <div className="mx-auto">
+            <NoItemPresenter text="No C-Voxels yet..." />
+          </div>
+        )}
+      </CVoxelsPresenter>
+    ),
+    [CVoxelsRecords.isLoading, CVoxelsRecords.content, did]
+  );
 
-  const VisualizerPresenterMemo = useMemo(() => <Canvas shadows>
-    <VisualizerPresenter
-      ids={CVoxelsRecords.content ? CVoxelsRecords.content.cVoxels.map((vox) => vox.id): []}
-    />
-  </Canvas>,[CVoxelsRecords.content])
+  const VisualizerPresenterMemo = useMemo(
+    () => (
+      <Canvas shadows>
+        <VisualizerPresenter
+          ids={
+            CVoxelsRecords.content
+              ? CVoxelsRecords.content.cVoxels.map((vox) => vox.id)
+              : []
+          }
+        />
+      </Canvas>
+    ),
+    [CVoxelsRecords.content]
+  );
 
   return (
     <main className="h-auto overflow-y-scroll text-black dark:text-white text-center">
@@ -43,7 +57,12 @@ export const ProfileContainer: FC<CeramicProps> = ({ did }) => {
           {VisualizerPresenterMemo}
         </div>
         <div className="flex-none mb-12 w-full max-w-[720px]">
-          <ProfileCard did={did} name={name} avator={avator} isLoading={profileRecord.isLoading} />
+          <ProfileCard
+            did={did}
+            name={name}
+            avator={avator}
+            isLoading={profileRecord.isLoading}
+          />
         </div>
         {CVoxelsPresenterMemo}
       </div>

@@ -4,7 +4,7 @@ import { config } from "@fortawesome/fontawesome-svg-core";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
 import { useModal } from "@/hooks/useModal";
-import { LoadingModal } from "@/components/common/LoadingModal"
+import { LoadingModal } from "@/components/common/LoadingModal";
 import { Toaster } from "react-hot-toast";
 import { Meta } from "./parts/Meta";
 import { useRouter } from "next/dist/client/router";
@@ -17,34 +17,28 @@ type Props = {
   keywords?: string;
 };
 
-export const BaseLayout = ({
-  children
-}: Props) => {
-  const router = useRouter()
-  const {isLoading} = useModal()
-  
+export const BaseLayout = ({ children }: Props) => {
+  const router = useRouter();
+  const { isLoading } = useModal();
+
   return (
     <>
-    <Meta />
+      <Meta />
       <div className={"text-sm " + styles.background_base}>
         {router.pathname.startsWith("/intro") ? (
-          <div className="bg-white">
-            {children}
-          </div>
+          <div className="bg-white">{children}</div>
         ) : (
           <>
             <Header />
-              <div className="mx-auto px-4 w-full min-h-screen overflow-y-scroll pt-16 md:pt-24 bg-white dark:bg-darkgray break-words">
-                {children}
-              </div>
+            <div className="mx-auto px-4 w-full min-h-screen overflow-y-scroll pt-16 md:pt-24 bg-white dark:bg-darkgray break-words">
+              {children}
+            </div>
             <Footer />
           </>
         )}
       </div>
-      {isLoading && (
-        <LoadingModal />
-      )}
+      {isLoading && <LoadingModal />}
       <Toaster />
     </>
   );
-}
+};
