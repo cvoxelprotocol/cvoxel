@@ -8,11 +8,6 @@ import * as THREE from "three";
 import { useCVoxelToast } from "@/hooks/useCVoxelToast";
 import clsx from "clsx";
 
-type Props = {
-  message: string;
-  voxel: CVoxelThree;
-};
-
 const Presenter = ({ voxel }: { voxel: CVoxelThree }) => {
   const cCollectionRef = useRef<THREE.Group>(new THREE.Group());
 
@@ -55,16 +50,16 @@ const Presenter = ({ voxel }: { voxel: CVoxelThree }) => {
   );
 };
 
-export const Toast: FC<Props> = ({ message, voxel }) => {
-  const { isToastShow } = useCVoxelToast();
+export const Toast: FC<{}> = () => {
+  const { toast } = useCVoxelToast();
   const [isMount, setIsMount] = useState<boolean>(false);
 
   useEffect(() => {
     // NOTE: Prevent fade out in the initial display and display nothing
-    if (isToastShow) {
+    if (toast.isShow) {
       setIsMount(true);
     }
-  }, [isToastShow]);
+  }, [toast.isShow]);
 
   return (
     <div className="fixed flex flex-col items-center w-full z-50 pointer-events-none">
@@ -72,16 +67,18 @@ export const Toast: FC<Props> = ({ message, voxel }) => {
         className={clsx(
           "relative overflow-hidden",
           !isMount && "hidden",
-          isToastShow ? "animate-slide-in" : "animate-fade-out",
+          toast.isShow ? "animate-slide-in" : "animate-fade-out"
         )}
       >
         <ToastBase className="w-32" />
         <div className="absolute left-0 right-0 bottom-0 text-center mb-8 max-w-toast mx-auto">
-          <Canvas>
-            <Presenter voxel={voxel} />
-          </Canvas>
+          {toast.voxel && (
+            <Canvas>
+              <Presenter voxel={toast.voxel} />
+            </Canvas>
+          )}
           <p className="text-sm text-primary font-medium inline-block text-ellipsis overflow-hidden">
-            {message}
+            {toast.message}
           </p>
         </div>
       </div>
