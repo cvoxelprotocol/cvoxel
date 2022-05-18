@@ -76,11 +76,11 @@ export const Toast: FC<Props> = ({ message, voxel }) => {
         )}
       >
         <ToastBase className="w-32" />
-        <div className="absolute left-0 right-0 bottom-0 text-center mb-8">
+        <div className="absolute left-0 right-0 bottom-0 text-center mb-8 max-w-toast mx-auto">
           <Canvas>
             <Presenter voxel={voxel} />
           </Canvas>
-          <p className="text-sm text-primary font-medium inline-block text-ellipsis overflow-hidden max-w-toast">
+          <p className="text-sm text-primary font-medium inline-block text-ellipsis overflow-hidden">
             {message}
           </p>
         </div>
