@@ -11,10 +11,10 @@ type Props = {
 const CVoxelPresenter: FC<Props> = (props) => {
   const voxelColor = useMemo(() => new THREE.Color(props.color), [props.color]);
   const lineColor = useMemo(() => {
-    let lineColorHSL:THREE.HSL = { h: 0, s: 0, l: 0 }
-    voxelColor.getHSL(lineColorHSL)
-    return new THREE.Color().setHSL(lineColorHSL.h,1,lineColorHSL.l)
-  },[voxelColor])
+    let lineColorHSL: THREE.HSL = { h: 0, s: 0, l: 0 };
+    voxelColor.getHSL(lineColorHSL);
+    return new THREE.Color().setHSL(lineColorHSL.h, 1, lineColorHSL.l);
+  }, [voxelColor]);
 
   const voxelPosition = useMemo(
     () =>

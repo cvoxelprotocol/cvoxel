@@ -3,34 +3,36 @@ import Link from "next/link";
 
 type Props = {
   text: string;
-  color?: "grad-red" | "grad-blue" | "primary" | "secondary"
+  color?: "grad-red" | "grad-blue" | "primary" | "secondary";
   variant?: string;
   onClick?: () => void;
   href?: string;
   className?: string;
-  buttonType?: "button" | "submit" | "reset"
+  buttonType?: "button" | "submit" | "reset";
 };
 
-export const Button: FC<Props> = ({text, color="grad-red", variant = "contained", onClick, href, className, buttonType = "button"}) => {
+export const Button: FC<Props> = ({
+  text,
+  color = "grad-red",
+  variant = "contained",
+  onClick,
+  href,
+  className,
+  buttonType = "button",
+}) => {
   let buttonColor = "text-white ";
   let buttonVariant = "";
 
   /* Set button color styles */
   if (color == "grad-red") {
-    buttonColor +=
-      " bg-gradient-to-tr from-[#A66497] to-[#D88F80] ";
+    buttonColor += " bg-gradient-to-tr from-[#A66497] to-[#D88F80] ";
   } else if (color == "grad-blue") {
-    buttonColor +=
-      "bg-gradient-to-tr from-accent_l to-accent_r ";
+    buttonColor += "bg-gradient-to-tr from-accent_l to-accent_r ";
   } else if (color == "primary") {
-    buttonColor +=
-      "bg-primary ";
+    buttonColor += "bg-primary ";
   } else if (color == "secondary") {
-    buttonColor +=
-      "bg-secondary ";
+    buttonColor += "bg-secondary ";
   }
-
-
 
   /* Set button variant styles */
   if (variant == "contained") {
@@ -47,11 +49,7 @@ export const Button: FC<Props> = ({text, color="grad-red", variant = "contained"
       onClick={onClick}
       type={buttonType}
     >
-      {!href ? (
-        text
-      ) : (
-        <Link href={href}>{text}</Link>
-      )}
+      {!href ? text : <Link href={href}>{text}</Link>}
     </button>
   );
 };
