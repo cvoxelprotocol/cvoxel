@@ -76,6 +76,21 @@ module.exports = {
       },
       maxWidth: {
         modal: "708px",
+        toast: "4rem",
+      },
+      animation: {
+        "slide-in": "slide-in 0.5s ease forwards",
+        "fade-out": "fade-out 0.5s ease forwards",
+      },
+      keyframes: {
+        "slide-in": {
+          "0%": { transform: "translateY(-50%)", opacity: 0 },
+          "100%": { transform: "translateY(0)", opacity: 1 },
+        },
+        "fade-out": {
+          "0%": { transform: "scale(1)", opacity: 1 },
+          "100%": { transform: "scale(0.2)", opacity: 0 },
+        },
       },
     },
   },

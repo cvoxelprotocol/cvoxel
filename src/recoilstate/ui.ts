@@ -1,4 +1,5 @@
 import { atom, useRecoilState } from "recoil";
+import { CVoxelThree } from "@/interfaces";
 
 //loading
 export const rGlobalLoading = atom({
@@ -7,6 +8,22 @@ export const rGlobalLoading = atom({
 });
 
 export const useStateGlobalLoading = () => useRecoilState(rGlobalLoading);
+
+//toast
+export const rGlobalToast = atom<{
+  isShow: boolean;
+  message: string;
+  voxel?: CVoxelThree;
+}>({
+  key: "rGlobalToast",
+  default: {
+    isShow: false,
+    message: "",
+    voxel: undefined,
+  },
+});
+
+export const useStateGlobalToast = () => useRecoilState(rGlobalToast);
 
 //tab
 export const rManageTab = atom<"cvoxels" | "transactions" | "signatures">({
