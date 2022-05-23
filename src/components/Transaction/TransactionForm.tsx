@@ -38,14 +38,14 @@ export const TransactionForm: FC<TransactionFormProps> = ({
 
   const summaryPlaceHolder = useMemo(() => {
     return isFirstTime
-      ? "Enter a summary... (e.g.Bitcoin Development)"
-      : "Enter a summary...";
+      ? "Enter your career title... (e.g.Bitcoin Development)"
+      : "Enter your career title...";
   }, [isFirstTime]);
 
   const descPlaceHolder = useMemo(() => {
     return isFirstTime
-      ? "Write your description here... (e.g.My name is Satoshi Nakamoto and I authored the papaer and developed Bitcoin.)"
-      : "Write your description here...";
+      ? "Write detail of your Tx... (e.g.My name is Satoshi Nakamoto and I authored the papaer and developed Bitcoin.)"
+      : "Write detail of your Tx...";
   }, [isFirstTime]);
 
   useEffect(() => {
@@ -60,7 +60,7 @@ export const TransactionForm: FC<TransactionFormProps> = ({
       {/* title */}
       <div className="flex flex-wrap items-center">
         <p className="font-semibold">
-          Activity Summary
+          Title
           {errors && errors.summary && (
             <span className="cols-span-1 px-3 text-xs text-red-600">
               {errors.summary.message}
