@@ -23,6 +23,9 @@ module.exports = {
         logo: "#F1F1F3",
         basegray: "#C5C5C5",
       }),
+      fontSize: {
+        "2xs": ["0.5rem", "0.75rem"],
+      },
       colors: {
         // Unique Colors
         primary: "#8E477F",
