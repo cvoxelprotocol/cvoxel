@@ -4,12 +4,12 @@ import SearchIcon from "@/components/common/search/search.svg";
 
 const defaultPlaceholder = "Search C-Voxel by Wallet address or DID";
 
-type SearchData = {
+export type SearchData = {
   address: string;
 };
 
 type SearchProps = {
-  onSubmit: SubmitHandler<Record<"address", string>>;
+  onSubmit: SubmitHandler<SearchData>;
   placeholder?: string;
 };
 

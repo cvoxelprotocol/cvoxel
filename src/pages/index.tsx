@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleExclamation } from "@fortawesome/free-solid-svg-icons";
 import Router from "next/router";
 import { Button } from "@/components/common/button/Button";
-import { Search } from "@/components/common/search/Search";
+import { Search, SearchData } from "@/components/common/search/Search";
 
 const HomePage: NextPage = () => {
   const { connection, did, account, connectWalletOnly } = useMyCeramicAcount();
@@ -26,7 +26,7 @@ const HomePage: NextPage = () => {
     }
   }, [connection, did]);
 
-  const onSubmit = (data: Record<"address", string>) => {
+  const onSubmit = (data: SearchData) => {
     if (!data.address) return;
     const link = data.address;
     Router.push(`/${link}`);
