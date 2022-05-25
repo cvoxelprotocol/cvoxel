@@ -2,13 +2,12 @@ import { NextPage } from "next";
 import { useEffect, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { useMyCeramicAcount } from "@/hooks/useCeramicAcount";
-import { useForm } from "react-hook-form";
 import VisualizerPresenter from "@/components/CVoxel/visualizerPresenter";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleExclamation } from "@fortawesome/free-solid-svg-icons";
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import Router from "next/router";
 import { Button } from "@/components/common/button/Button";
+import { Search } from "@/components/common/search/Search";
 
 const HomePage: NextPage = () => {
   const { connection, did, account, connectWalletOnly } = useMyCeramicAcount();
@@ -27,9 +26,7 @@ const HomePage: NextPage = () => {
     }
   }, [connection, did]);
 
-  const { register, handleSubmit } = useForm();
-
-  const onSubmit = (data: any) => {
+  const onSubmit = (data: Record<"address", string>) => {
     if (!data.address) return;
     const link = data.address;
     Router.push(`/${link}`);
@@ -47,25 +44,7 @@ const HomePage: NextPage = () => {
     <main className="h-auto overflow-y-scroll text-black dark:text-white text-center">
       <div className="flex flex-col items-center w-full h-full pb-12">
         <div className="w-[320px] sm:w-[500px] mt-24">
-          <form
-            className="w-full flex justify-center items-center"
-            onSubmit={handleSubmit(onSubmit)}
-          >
-            <input
-              className="w-full my-1 py-2 px-6 border rounded-full shadow-xl text-xs md:text-sm hover:outline-secondary focus:outline-secondary"
-              placeholder={"Search DID or ethereum address.."}
-              {...register("address", {
-                required: "Please enter DID or ethereum address",
-              })}
-            />
-            <button className="flex items-center justify-center" type="submit">
-              <FontAwesomeIcon
-                className="w-4 h-4 ml-2"
-                icon={faSearch}
-                color={"#EFA9E0"}
-              />
-            </button>
-          </form>
+          <Search onSubmit={onSubmit} />
         </div>
         <div className="flex w-full items-center justify-center h-[300px] sm-h-[450px] relative">
           <Canvas shadows>
