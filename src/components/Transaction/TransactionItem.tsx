@@ -65,7 +65,7 @@ export const TransactionItem: FC<TransactionItemProps> = ({
     <div className="w-full h-fit sm:max-h-[90px] rounded-lg shadow-lg bg-white dark:bg-card justify-between items-start text-xs sm:text-sm text-black dark:text-white break-words flex-wrap py-2 px-4 border-b border-b-gray-200 sm:grid grid-cols-12 gap-2">
       <div className="h-full">
         <div className="text-xs text-primary">From</div>
-        <div></div>
+        <div className="rounded-full bg-gray-400 h-10 w-10 mx-auto"/>
       </div>
 
       <div className="flex flex-col items-start col-span-3 h-full">
@@ -77,7 +77,7 @@ export const TransactionItem: FC<TransactionItemProps> = ({
           )}
         </div>
         <div className="text-lg font-medium flex-auto flex flex-col justify-center">
-          <p className="text-md font-semibold">
+          <p className="text-md font-semibold overflow-hidden whitespace-nowrap">
             {formatBigNumber(tx.value, 1, tx.tokenDecimal)}{" "}
             {tx.tokenSymbol || getNetworkSymbol(tx.chainId)}
           </p>
