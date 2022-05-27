@@ -16,7 +16,8 @@ if (!process.env.SEED) {
   throw new Error('Missing SEED environment variable')
 }
 
-const CERAMIC_URL = process.env.CERAMIC_URL || 'https://ceramic-clay.3boxlabs.com'
+const CERAMIC_URL = process.env.NEXT_PUBLIC_CERAMIC_URL || 'http://localhost:7007'
+const modelJsonName = "model_dev.json"
 
 // The seed must be provided as an environment variable
 const seed = fromString(process.env.SEED, 'base16')
@@ -56,6 +57,10 @@ const cVoxelSchemaID = await manager.createSchema('CVoxel', {
       type: 'string',
       title: 'from',
     },
+    isPayer: {
+      type: 'boolean',
+      title: 'isPayer',
+    },
     summary: {
       type: 'string',
       title: 'summary',
@@ -79,6 +84,14 @@ const cVoxelSchemaID = await manager.createSchema('CVoxel', {
     tokenDecimal: {
       type: 'number',
       title: 'tokenDecimal',
+    },
+    fiatValue: {
+      type: 'string',
+      title: 'value',
+    },
+    fiatSymbol: {
+      type: 'string',
+      title: 'fiatSymbol',
     },
     networkId: {
       type: 'number',
@@ -107,6 +120,38 @@ const cVoxelSchemaID = await manager.createSchema('CVoxel', {
     fromSig: {
       type: 'string',
       title: 'fromSig',
+    },
+    toSigner: {
+      type: 'string',
+      title: 'toSigner',
+    },
+    fromSigner: {
+      type: 'string',
+      title: 'fromSigner',
+    },
+    startTimestamp: {
+      type: 'string',
+      title: 'startTimestamp',
+    },
+    endTimestamp: {
+      type: 'string',
+      title: 'endTimestamp',
+    },
+    createdAt: {
+      type: 'string',
+      title: 'createdAt',
+    },
+    updatedAt: {
+      type: 'string',
+      title: 'updatedAt',
+    },
+    relatedAddresses: {
+      type: "array",
+      title: 'relatedAddress',
+      items: {
+        type: "string"
+      },
+      uniqueItems: true
     },
     relatedTxHashes: {
       type: "array",
@@ -146,9 +191,29 @@ const cVoxelsSchemaID = await manager.createSchema('CVoxels', {
             pattern: '^ceramic://.+(\\?version=.+)?',
             maxLength: 200,
           },
+          txHash: {
+            type: 'string',
+            title: 'txHash',
+          },
+          isPayer: {
+            type: 'boolean',
+            title: 'isPayer',
+          },
           summary: {
             type: 'string',
             title: 'summary',
+          },
+          deliverable: {
+            type: 'string',
+            title: 'deliverable',
+          },
+          fiatValue: {
+            type: 'string',
+            title: 'value',
+          },
+          genre: {
+            type: 'string',
+            title: 'genre',
           },
           issuedTimestamp: {
             type: 'string',
@@ -162,6 +227,12 @@ const cVoxelsSchemaID = await manager.createSchema('CVoxels', {
 })
 
 // Create the definition using the created schema ID
+await manager.createDefinition('cVoxel', {
+  name: 'cVoxel',
+  description: 'cVoxel',
+  schema: manager.getSchemaURL(cVoxelSchemaID),
+})
+
 await manager.createDefinition('cVoxels', {
   name: 'cVoxels',
   description: 'cVoxels',
@@ -178,5 +249,5 @@ value: "100000000", tokenSymbol: "ETH", networkId:1, issuedTimestamp: "12345678"
 )
 
 // Write model to JSON file
-await writeFile(new URL('model.json', import.meta.url), JSON.stringify(manager.toJSON()))
+await writeFile(new URL(`${modelJsonName}`, import.meta.url), JSON.stringify(manager.toJSON()))
 console.log('Encoded model written to scripts/model.json file')

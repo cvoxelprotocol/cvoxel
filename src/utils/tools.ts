@@ -9,14 +9,6 @@ export const isAddress = (address: string): boolean => {
   return true;
 };
 
-export const isContract = async (
-  provider: any,
-  address: string
-): Promise<boolean> => {
-  const code = await provider.getCode(address);
-  return code && code !== "0x";
-};
-
 export const wait = <T>(something: T): Promise<T> =>
   new Promise((resolve) => {
     const wait = setTimeout(() => {
@@ -52,5 +44,10 @@ export const assertDef = <T>(
  */
 export const neverEndingPromise = <T>() => new Promise<T>(() => void 0);
 
-export const shortForAddress = (address: string, count: number) =>
-  address.substr(0, count).concat("...");
+export const shortHash = (hash: string, maxLength: number = 20) => {
+  const half = Math.floor(maxLength / 2);
+  const remaining = half - maxLength;
+  return hash.length <= maxLength
+    ? hash
+    : `${hash.slice(0, half)}...${hash.slice(remaining)}`;
+};

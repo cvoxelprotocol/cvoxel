@@ -5,7 +5,7 @@ import { CVoxelMetaDraft } from "@/interfaces";
 export const createDraftWighVerify = (
   address: string,
   draft: CVoxelMetaDraft
-): Promise<string> =>
+): Promise<{ [x: string]: string }> =>
   new Promise((resolve, reject) => {
     const createDraftWighVerifyFunc = httpsCallable<
       { [x: string]: string | CVoxelMetaDraft },
@@ -16,7 +16,8 @@ export const createDraftWighVerify = (
       draft: draft,
     })
       .then((result) => {
-        resolve(result.data.status);
+        const { status, fiat } = result.data;
+        resolve({ status: status, fiat: fiat });
       })
       .catch((error) => {
         // const code = error.code;

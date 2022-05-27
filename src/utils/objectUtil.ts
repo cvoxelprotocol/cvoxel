@@ -1,4 +1,3 @@
-import { shortForAddress } from "./tools";
 import { is } from "./typeUtils";
 import superjson from "superjson";
 
@@ -8,15 +7,8 @@ export const removeUndefined = <T>(object: T): T => {
   ) as T;
 };
 
-export const setDisplayName = (
-  address: string,
-  name?: string,
-  count: number = 10
-): string => {
-  if (address === name) return `LanC.User[${shortForAddress(address, count)}]`;
-  return name
-    ? `${name}[${shortForAddress(address, count)}]`
-    : `LanC.User[${shortForAddress(address, count)}]`;
+export const removeUndefinedFromArray = <T>(array: T[]): T[] => {
+  return array.filter((a) => a !== undefined);
 };
 
 export const formatFromSuperjson = <T>(object: any): T => {
@@ -24,6 +16,18 @@ export const formatFromSuperjson = <T>(object: any): T => {
     return superjson.parse<{ json: T }>(object).json;
   }
   return object;
+};
+
+export const shortenStr = (str?: string, length = 20): string => {
+  if (!str) return "";
+  if (length < 20) {
+    length = 20;
+  }
+  const half = Math.floor(length / 2);
+  const remaining = half - 3 - length;
+  return str.length <= length
+    ? str
+    : `${str.slice(0, half)}...${str.slice(remaining)}`;
 };
 
 const isString = (obj: any): obj is string => {

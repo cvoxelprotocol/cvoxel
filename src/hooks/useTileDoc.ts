@@ -2,7 +2,8 @@ import type { StreamMetadata } from "@ceramicnetwork/common";
 import type { TileDocument } from "@ceramicnetwork/stream-tile";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 
-import { PublicID, useCore, useViewerID } from "@self.id/framework";
+import { PublicID, useViewerID } from "@self.id/framework";
+import { core } from "@/lib/ceramic/server";
 
 export type TileDoc<ContentType> = {
   isLoading: boolean;
@@ -18,7 +19,6 @@ export type TileDoc<ContentType> = {
 
 export const useTileDoc = <ContentType>(id: string): TileDoc<ContentType> => {
   const queryClient = useQueryClient();
-  const core = useCore();
   const viewerID = useViewerID();
 
   const {

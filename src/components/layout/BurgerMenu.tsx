@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { FC } from "react";
 import { slide as Menu } from "react-burger-menu";
 
 const BurgerMenu = (props: any) => {

@@ -12,23 +12,33 @@ export type EditionState =
   | { status: "done"; cVoxelPage: string };
 
 export type CVoxel = {
-  to: string; // payee address
-  from: string; // payer address
+  to: string; // payee address. maybe contract address
+  from: string; // payer address. maybe contract address
+  isPayer: boolean; // whether owner is payer or not
   summary: string; // work summary
   detail?: string; // work detail
   deliverable?: string; // deliberable link
   value: string; // reward value
   tokenSymbol: string; // eth, usdc, etc
   tokenDecimal: number;
-  networkId: number; // eth mainnet = 1
+  fiatValue?: string; //reward value as USD
+  fiatSymbol?: string; // currently only USD supported
+  networkId: number; // eth mainnet = 1 | polygon mainnet = 137
   issuedTimestamp: string; //block timestamp
   txHash: string; // transfer tx hash
   relatedTxHashes?: string[]; //tx releated work
-  tags: string[]; //tags
+  tags?: string[]; //tags
   genre?: string; // main genre
   jobType: "FullTime" | "PartTime" | "OneTime"; // default=OneTime
-  toSig: string;
-  fromSig: string;
+  toSig: string; // sig of payee
+  fromSig: string; // sig of payer
+  toSigner: string; // who signed this cvoxel as payee actually. Only EOA supported
+  fromSigner: string; // who signed this cvoxel as payer actually. Only EOA supported
+  startTimestamp?: string; //timestamp to start work
+  endTimestamp?: string; //timestamp to end work
+  createdAt?: string; //timestamp to be created
+  updatedAt?: string; //timestamp to be updated
+  relatedAddresses: string[]; // all addresses related to this cvoxel. may contain both EOA and contract address
 };
 
 export type CVoxelWithId = CVoxel & {
@@ -37,7 +47,7 @@ export type CVoxelWithId = CVoxel & {
 
 export type CVoxelMetaDraft = CVoxel & {
   potencialPayer?: string[]; // in case of multisig wallet
-  relatedAddresses: string[];
+  potencialPayee?: string[]; // in case of multisig wallet
   completed?: boolean; // whether or not work is completed (only in case of LanC., it might be false)
 };
 
@@ -48,12 +58,17 @@ export type CVoxelDraftAndMeta = {
 
 export type CVoxelItem = {
   id: string;
+  txHash: string; // transfer tx hash
+  isPayer: boolean;
   summary: string;
+  deliverable?: string; // deliberable link
+  fiatValue?: string;
+  genre?: string; // main genre
   issuedTimestamp: string;
 };
 
 export type CVoxels = {
-  cVoxels: Array<CVoxelItem>;
+  cVoxels: CVoxelItem[];
 };
 
 export type ModelTypes = ModelTypeAliases<

@@ -1,58 +1,50 @@
-import { EtherscanResult, TransactionLog } from "@/interfaces/explore";
+import { TransactionLogWithChainId } from "@/interfaces/explore";
 import { offchainCVoxelMetaFetcher } from "@/services/fetcher/CVoxelMetaFetcher";
 import { etherscanTxListFetcher } from "@/services/fetcher/EtherscanFetcher";
 import { CVoxelMetaDraft } from "@/interfaces";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useQuery } from "react-query";
 import { useWalletAccount } from "./useWalletAccount";
+import { uniqueList } from "@/utils/etherscanUtils";
 
 export const useCVoxelList = () => {
   const [address, setAddress] = useState<string>();
   const { account, chainId } = useWalletAccount();
-  const [potentialTxes, setPotentialTxes] = useState<TransactionLog[]>([]);
-  const { data: txes, isLoading: txLoading } = useQuery<TransactionLog[]>(
-    ["etherscan", address],
-    () => etherscanTxListFetcher(chainId, address),
-    {
-      enabled: !!address,
-      staleTime: Infinity,
-    }
-  );
+
+  const { data: txes, isLoading: txLoading } = useQuery<
+    TransactionLogWithChainId[]
+  >(["etherscan", address], () => etherscanTxListFetcher(chainId, address), {
+    enabled: !!address,
+    staleTime: Infinity,
+    cacheTime: 3000000,
+  });
   const { data: offchainMetaList, isLoading: offchainLoading } = useQuery<
     CVoxelMetaDraft[]
   >(["offchainCVoxelMeta", address], () => offchainCVoxelMetaFetcher(address), {
     enabled: !!address,
     staleTime: Infinity,
+    cacheTime: 3000000,
   });
 
   useEffect(() => {
-    console.log("cv list account", account);
-    if (account && !address) {
+    let isMounted = true;
+    if (account && !address && isMounted) {
       setAddress(account);
     }
+    return () => {
+      isMounted = false;
+    };
   }, [account]);
 
-  useEffect(() => {
-    if (txes) {
-      setPotentialTxes(filterTxes(txes));
-      // setPotentialTxes(txes);
-    }
-  }, [txes]);
-
-  useEffect(() => {
-    console.log("offchainMetaList", offchainMetaList);
-  }, [offchainMetaList]);
-
-  const filterTxes = (txes: TransactionLog[]): TransactionLog[] => {
-    return txes.filter((tx) => Number(tx.value) > 0);
-  };
+  const onlyPotentialCVoxels = useMemo(() => {
+    if (!txes || txes.length === 0) return [];
+    return uniqueList(txes, account?.toLowerCase());
+  }, [txes, account]);
 
   return {
-    setAddress,
-    address,
     txLoading,
     offchainLoading,
-    potentialTxes,
+    onlyPotentialCVoxels,
     offchainMetaList,
   };
 };

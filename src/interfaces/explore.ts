@@ -22,6 +22,11 @@ export type TransactionLog = {
   tokenDecimal: string;
 };
 
+export type TransactionLogWithChainId = TransactionLog & {
+  chainId: number;
+  addressOfDuplicatedTx?: string[];
+};
+
 export type EtherscanResult = {
   status: string;
   message: string;

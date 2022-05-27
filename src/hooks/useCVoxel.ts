@@ -1,11 +1,4 @@
-import {
-  PublicID,
-  useConnection,
-  useCore,
-  usePublicRecord,
-  useViewerID,
-  useViewerRecord,
-} from "@self.id/framework";
+import { useConnection, usePublicRecord } from "@self.id/framework";
 import type { PublicRecord } from "@self.id/framework";
 import { useCallback, useState } from "react";
 import type {

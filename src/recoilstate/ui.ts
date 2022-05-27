@@ -1,22 +1,10 @@
-import { atom, useRecoilState, useSetRecoilState } from "recoil";
-
-export const rWalletModalOpen = atom({
-  key: "rWalletModalOpen",
-  default: false,
-});
+import { atom, useRecoilState } from "recoil";
 
 //loading
 export const rGlobalLoading = atom({
   key: "rGlobalLoading",
   default: false,
 });
-
-export const rGlobalLoadingText = atom({
-  key: "rGlobalLoadingText",
-  default: "",
-});
-
-export const useSetWalletModalOpen = () => useSetRecoilState(rWalletModalOpen);
 
 export const useStateGlobalLoading = () => useRecoilState(rGlobalLoading);
 
@@ -28,38 +16,10 @@ export const rManageTab = atom<"cvoxels" | "transactions" | "signatures">({
 
 export const useStateManageTab = () => useRecoilState(rManageTab);
 
-//login modal
-export const rLoginModal = atom({
-  key: "rLoginModal",
-  default: false,
-});
-export const useRLoginModal = () => useRecoilState(rLoginModal);
-
-//login modal path
-export const rPathForLoginModal = atom({
-  key: "rPathForLoginModal",
-  default: "",
-});
-export const useRPathForLoginModal = () => useRecoilState(rPathForLoginModal);
-
-//wallet modal
-export const rWalletWidget = atom({
-  key: "rWalletWidget",
-  default: false,
-});
-export const useRWalletWidget = () => useRecoilState(rWalletWidget);
-
-export const rGlobalTxLoadingModal = atom({
-  key: "rGlobalTxLoadingModal",
+// force update
+const rForceUpdate = atom<boolean>({
+  key: "rForceUpdate",
   default: false,
 });
 
-export const useStateRGlobalTxLoadingModal = () =>
-  useRecoilState(rGlobalTxLoadingModal);
-
-export const rGlobalTxHash = atom({
-  key: "rGlobalTxHash",
-  default: "",
-});
-
-export const useStateRGlobalTxHash = () => useRecoilState(rGlobalTxHash);
+export const useStateForceUpdate = () => useRecoilState(rForceUpdate);
