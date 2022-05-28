@@ -5,7 +5,6 @@ import { FC, useMemo } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faExternalLink,
-  faCircleCheck,
   faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import { CommonSpinner } from "../common/CommonSpinner";
@@ -13,6 +12,7 @@ import { convertTimestampToDateStr } from "@/utils/dateUtil";
 import { getNetworkSymbol } from "@/utils/networkUtil";
 import { selectTxType } from "../containers/home";
 import { useENS } from "@/hooks/useENS";
+import Check from "@/components/Transaction/check.svg";
 
 type TransactionItemProps = {
   index: number;
@@ -85,15 +85,12 @@ export const TransactionItem: FC<TransactionItemProps> = ({
       </div>
 
       <div className="text-left col-span-5 flex items-center">
-        <div className="flex-initial flex flex-col mr-3">
-          {/* TODO: duotone is only available in PRO and must be imported as an image. */}
-          <FontAwesomeIcon
-            className="w-3 h-3 ml-1 text-green-300"
-            icon={faCircleCheck}
-          />
-        </div>
+        <div className="mr-4 flex-auto overflow-hidden pl-6 relative">
+          {/*TODO: when error or pending(?) to be invisible*/}
+          <div className="absolute top-0 bottom-0 left-0 flex flex-col justify-center">
+            <Check className="w-3 h-3"/>
+          </div>
 
-        <div className="mr-4 flex-auto overflow-hidden">
           <div>
             <div className="text-2xs text-gray-500 font-semibold">Tx Hash</div>
             <div className="text-sm font-medium text-ellipsis overflow-hidden whitespace-nowrap w-full">
