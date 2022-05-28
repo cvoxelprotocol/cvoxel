@@ -8,43 +8,43 @@ export type TagOption = {
 };
 
 export const TagOptions: TagOption[] = [
-  { value: "Blockchain", label: "Blockchain", color: "#8E477F" },
-  { value: "Frontend", label: "Frontend", color: "#8E477F" },
-  { value: "Backend", label: "Backend", color: "#8E477F" },
-  { value: "NFT", label: "NFT", color: "#8E477F" },
-  { value: "Solidity", label: "Solidity", color: "#8E477F" },
-  { value: "Ethereum", label: "Ethereum", color: "#8E477F" },
-  { value: "Polygon", label: "Polygon", color: "#8E477F" },
-  { value: "Solana", label: "Solana", color: "#8E477F" },
-  { value: "Polkadot", label: "Polkadot", color: "#8E477F" },
-  { value: "Web", label: "Web", color: "#8E477F" },
-  { value: "Mobileapp", label: "Mobileapp", color: "#8E477F" },
-  { value: "DAO", label: "DAO", color: "#8E477F" },
-  { value: "Defi", label: "Defi", color: "#8E477F" },
-  { value: "Game", label: "Game", color: "#8E477F" },
-  { value: "Twitter", label: "Twitter", color: "#8E477F" },
-  { value: "Youtube", label: "Youtube", color: "#8E477F" },
-  { value: "Discord", label: "Discord", color: "#8E477F" },
-  { value: "Telegram", label: "Telegram", color: "#8E477F" },
-  { value: "ENS", label: "ENS", color: "#8E477F" },
+  { value: "Blockchain", label: "Blockchain", color: "#4791FF" },
+  { value: "Frontend", label: "Frontend", color: "#4791FF" },
+  { value: "Backend", label: "Backend", color: "#4791FF" },
+  { value: "NFT", label: "NFT", color: "#4791FF" },
+  { value: "Solidity", label: "Solidity", color: "#4791FF" },
+  { value: "Ethereum", label: "Ethereum", color: "#4791FF" },
+  { value: "Polygon", label: "Polygon", color: "#4791FF" },
+  { value: "Solana", label: "Solana", color: "#4791FF" },
+  { value: "Polkadot", label: "Polkadot", color: "#4791FF" },
+  { value: "Web", label: "Web", color: "#4791FF" },
+  { value: "Mobileapp", label: "Mobileapp", color: "#4791FF" },
+  { value: "DAO", label: "DAO", color: "#4791FF" },
+  { value: "Defi", label: "Defi", color: "#4791FF" },
+  { value: "Game", label: "Game", color: "#4791FF" },
+  { value: "Twitter", label: "Twitter", color: "#4791FF" },
+  { value: "Youtube", label: "Youtube", color: "#4791FF" },
+  { value: "Discord", label: "Discord", color: "#4791FF" },
+  { value: "Telegram", label: "Telegram", color: "#4791FF" },
+  { value: "ENS", label: "ENS", color: "#4791FF" },
   {
     value: "Community Moderator",
     label: "Community Moderator",
-    color: "#8E477F",
+    color: "#4791FF",
   },
-  { value: "Medium", label: "Medium", color: "#8E477F" },
-  { value: "Substack", label: "Substack", color: "#8E477F" },
-  { value: "Mirror", label: "Mirror", color: "#8E477F" },
-  { value: "MusicNFT", label: "MusicNFT", color: "#8E477F" },
-  { value: "Fundraise", label: "Fundraise", color: "#8E477F" },
-  { value: "Gitcoin", label: "Gitcoin", color: "#8E477F" },
-  { value: "ICO", label: "ICO", color: "#8E477F" },
-  { value: "Grant", label: "Grant", color: "#8E477F" },
+  { value: "Medium", label: "Medium", color: "#4791FF" },
+  { value: "Substack", label: "Substack", color: "#4791FF" },
+  { value: "Mirror", label: "Mirror", color: "#4791FF" },
+  { value: "MusicNFT", label: "MusicNFT", color: "#4791FF" },
+  { value: "Fundraise", label: "Fundraise", color: "#4791FF" },
+  { value: "Gitcoin", label: "Gitcoin", color: "#4791FF" },
+  { value: "ICO", label: "ICO", color: "#4791FF" },
+  { value: "Grant", label: "Grant", color: "#4791FF" },
 ];
 
 export const getTagOption = (tag: string): TagOption => {
   const tagOp = TagOptions.find((t) => t.value === tag);
-  return tagOp ? tagOp : { value: tag, label: tag, color: "#8E477F" };
+  return tagOp ? tagOp : { value: tag, label: tag, color: "#4791FF" };
 };
 
 export const colourStyles: StylesConfig<TagOption, true> = {
@@ -53,32 +53,9 @@ export const colourStyles: StylesConfig<TagOption, true> = {
     backgroundColor: "white",
     border: 0,
     boxShadow: "none",
-    display: "inline-block",
-  }),
-  placeholder: (base) => ({
-    ...base,
-    display: "none",
-  }),
-  menu: (base) => ({
-    ...base,
-    padding: "0.5rem",
-    width: "fit-content",
-  }),
-  menuList: () => ({
-    display: "flex",
-    flexDirection: "column",
-    overflow: "scroll",
-    maxHeight: "20rem",
-  }),
-  valueContainer: (base) => ({
-    ...base,
-    padding: "0",
   }),
   indicatorSeparator: (base) => ({
     ...base,
-    display: "none",
-  }),
-  indicatorsContainer: () => ({
     display: "none",
   }),
   dropdownIndicator: (base) => ({
@@ -86,25 +63,20 @@ export const colourStyles: StylesConfig<TagOption, true> = {
     display: "none",
   }),
   option: (styles, { data, isDisabled, isFocused, isSelected }) => {
-    const color = chroma(data.color || "#8E477F");
+    const color = chroma(data.color || "#4791FF");
     return {
       ...styles,
-      backgroundColor: color.alpha(0.3).css(),
-      padding: "0.5rem 1.25rem 0.5rem 1.25rem",
-      marginBottom: "0.75rem",
-      display: "inline-block",
-      borderRadius: "1rem",
-      width: "fit-content",
+      backgroundColor: isSelected
+        ? data.color
+        : isFocused
+        ? color.alpha(0.1).css()
+        : undefined,
       color: isSelected
         ? chroma.contrast(color, "white") > 2
           ? "white"
           : "black"
         : data.color,
       cursor: isDisabled ? "not-allowed" : "default",
-      ":hover": {
-        backgroundColor: data.color,
-        color: "white",
-      },
       ":active": {
         ...styles[":active"],
         backgroundColor: !isDisabled
@@ -116,31 +88,24 @@ export const colourStyles: StylesConfig<TagOption, true> = {
     };
   },
   multiValue: (styles, { data }) => {
-    const color = chroma(data.color || "#8E477F");
+    const color = chroma(data.color || "#4791FF");
     return {
       ...styles,
       backgroundColor: "#F6F6F6",
-      color: data.color || "#8E477F",
-      fontSize: "medium",
-      padding: "0.25rem 0.25rem 0.25rem 0.75rem",
-      borderRadius: "1rem",
-      margin: "0.5rem 0.5rem 0.5rem 0",
+      color: data.color || "#4791FF",
+      fontWeight: "bold",
     };
   },
   multiValueLabel: (styles, { data }) => ({
     ...styles,
-    color: data.color || "#8E477F",
+    color: data.color || "#4791FF",
   }),
-  multiValueRemove: (styles, { data }) => {
-    const color = chroma(data.color || "#8E477F");
-    return {
-      ...styles,
-      color: data.color || "#8E477F",
-      ":hover": {
-        backgroundColor: color.alpha(0.3).css(),
-        color: "white",
-        borderRadius: "1rem",
-      },
-    };
-  },
+  multiValueRemove: (styles, { data }) => ({
+    ...styles,
+    color: data.color || "#4791FF",
+    ":hover": {
+      backgroundColor: data.color || "#4791FF",
+      color: "white",
+    },
+  }),
 };

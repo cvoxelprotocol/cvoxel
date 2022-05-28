@@ -88,77 +88,72 @@ export const genreList: Genre[] = [
   },
 ];
 
-export const getGenreColorStyle = (
-  activeValue?: Genre
-): StylesConfig<Genre> => {
-  return {
-    control: (styles) => ({
+export const genreColorStyle: StylesConfig<Genre> = {
+  control: (styles) => ({
+    ...styles,
+    backgroundColor: "#white",
+    borderColor: "light-gray",
+    boxShadow: "none",
+    ":active": {
+      ...styles[":active"],
+      borderColor: "#A66497",
+    },
+    ":hover": {
+      ...styles[":hover"],
+      borderColor: "#A66497",
+    },
+    ":focus": {
+      ...styles[":focus"],
+      borderColor: "#A66497",
+    },
+  }),
+  indicatorSeparator: (base) => ({
+    ...base,
+    display: "none",
+  }),
+  dropdownIndicator: (base) => ({
+    ...base,
+    ":active": {
+      ...base[":active"],
+      color: "#8E477F",
+    },
+    ":hover": {
+      ...base[":hover"],
+      color: "#8E477F",
+    },
+  }),
+  option: (styles, { data, isFocused, isSelected }) => {
+    const color = chroma(data.colorCode);
+    return {
       ...styles,
-      backgroundColor: "#white",
-      borderColor: "light-gray",
-      boxShadow: "none",
+      ...dot(data.colorCode),
+      backgroundColor: isSelected
+        ? color.alpha(0.5).css()
+        : isFocused
+        ? color.alpha(0.1).css()
+        : undefined,
       ":active": {
         ...styles[":active"],
-        borderColor: "#A66497",
+        backgroundColor: color.alpha(0.3).css(),
       },
       ":hover": {
         ...styles[":hover"],
-        borderColor: "#A66497",
+        backgroundColor: color.alpha(0.3).css(),
       },
-      ":focus": {
-        ...styles[":focus"],
-        borderColor: "#A66497",
-      },
-      background: activeValue?.colorCode,
-    }),
-    indicatorSeparator: (base) => ({
-      ...base,
-      display: "none",
-    }),
-    dropdownIndicator: (base) => ({
-      ...base,
-      ":active": {
-        ...base[":active"],
-        color: "#8E477F",
-      },
-      ":hover": {
-        ...base[":hover"],
-        color: "#8E477F",
-      },
-      color: activeValue ? "#FFFFFF" : "#8E477F",
-    }),
-    option: (styles, { data, isFocused, isSelected }) => {
-      const color = chroma(data.colorCode);
-      return {
-        ...styles,
-        ...dot(data.colorCode),
-        backgroundColor: isSelected
-          ? color.alpha(0.5).css()
-          : isFocused
-          ? color.alpha(0.1).css()
-          : undefined,
-        ":active": {
-          ...styles[":active"],
-          backgroundColor: color.alpha(0.3).css(),
-        },
-        ":hover": {
-          ...styles[":hover"],
-          backgroundColor: color.alpha(0.3).css(),
-        },
-        fontWeight: "bold",
-      };
-    },
-    input: (styles) => ({ ...styles, fontWeight: "bold" }),
-    placeholder: (styles) => ({
-      ...styles,
       fontWeight: "bold",
-    }),
-    singleValue: (styles, { data }) => ({
-      ...styles,
-      fontWeight: "bold",
-      color: "#FFFFFF",
-    }),
-  };
+    };
+  },
+  input: (styles) => ({ ...styles, fontWeight: "bold" }),
+  placeholder: (styles) => ({
+    ...styles,
+    ...dot("#ccc"),
+    fontWeight: "bold",
+  }),
+  singleValue: (styles, { data }) => ({
+    ...styles,
+    ...dot(data.colorCode),
+    fontWeight: "bold",
+  }),
 };
 
 const dot = (color = "transparent") => ({

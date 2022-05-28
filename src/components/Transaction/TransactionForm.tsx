@@ -123,12 +123,12 @@ export const TransactionForm: FC<TransactionFormProps> = ({
         />
       </div>
       <div className="flex flex-wrap items-center">
-        <p className="font-semibold">URL(optional)</p>
+        <p className="font-semibold">Deliverable link(optional)</p>
       </div>
       <div className="mb-3">
         <input
           className="w-full my-1 py-1 px-6 border rounded-full text-xs md:text-sm hover:border-primary focus:outline-primary"
-          placeholder={"Enter URL of deliverables or submissions..."}
+          placeholder={"Enter Deliverable link.."}
           {...register("deliverable")}
         />
         <div className="w-full grid grid-cols-2 mb-2">
