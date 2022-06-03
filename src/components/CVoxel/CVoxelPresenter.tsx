@@ -6,6 +6,7 @@ import LineBox from "./LineBox";
 type Props = {
   position: THREE.Vector3;
   offset?: THREE.Vector3;
+  handleClick?: () => void;
 } & CVoxelVisType;
 
 const CVoxelPresenter: FC<Props> = (props) => {
@@ -26,12 +27,17 @@ const CVoxelPresenter: FC<Props> = (props) => {
   const voxelRef = useRef<THREE.Mesh>(null!);
   const [hover, setHover] = useState<boolean>(false);
 
+  const handleClick = () => {
+    props.handleClick?.();
+  };
+
   return (
     <group
       position={voxelPosition}
       scale={hover ? [0.8, 0.8, 0.8] : [1, 1, 1]}
       onPointerOver={(e) => setHover(true)}
       onPointerOut={(e) => setHover(false)}
+      onClick={handleClick}
     >
       <mesh
         receiveShadow
