@@ -9,7 +9,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "format": "",
+    "format": "npx eslint --fix './**/*.{ts,js,tsx,jsx}' && prettier --write './**/*.{ts,js,tsx,jsx}'",
     "ceramic": "ceramic daemon"
   },
   "dependencies": {
@@ -22,6 +22,7 @@
     "@web3-react/injected-connector": "^6.0.7",
     "@web3-react/types": "^6.0.7",
     "chroma-js": "^2.4.2",
+    "clsx": "^1.1.1",
     "dotenv": "^16.0.0",
     "ethers": "^5.5.4",
     "firebase": "^9.6.7",
@@ -52,6 +53,7 @@
     "@fortawesome/react-fontawesome": "^0.1.17",
     "@glazed/devtools": "^0.1.3",
     "@glazed/types": "^0.1.3",
+    "@svgr/webpack": "^6.2.1",
     "@types/chroma-js": "^2.1.3",
     "@types/firebase": "^3.2.1",
     "@types/node": "^16.11.11",
