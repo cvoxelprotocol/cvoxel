@@ -81,6 +81,8 @@ module.exports = {
       animation: {
         "slide-in": "slide-in 0.5s ease forwards",
         "fade-out": "fade-out 0.5s ease forwards",
+        "slide-from-right": "slide-from-right 0.3s ease forwards",
+        "slide-to-right": "slide-to-right 0.3s ease forwards",
       },
       keyframes: {
         "slide-in": {
@@ -90,6 +92,14 @@ module.exports = {
         "fade-out": {
           "0%": { transform: "scale(1)", opacity: 1 },
           "100%": { transform: "scale(0.2)", opacity: 0 },
+        },
+        "slide-from-right": {
+          "0%": { transform: "translateX(100%)" },
+          "100%": { transform: "translateX(0)" },
+        },
+        "slide-to-right": {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(100%)" },
         },
       },
     },
