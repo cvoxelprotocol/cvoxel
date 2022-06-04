@@ -69,7 +69,7 @@ export const TransactionItem: FC<TransactionItemProps> = ({
       {/*address and value*/}
       <div className="flex sm:col-span-3 h-full">
         {/*content*/}
-        <div className="flex sm:flex-col items-start w-full flex-auto">
+        <div className="flex sm:flex-col items-start w-full flex-auto overflow-hidden">
           <div className="flex-1 sm:flex-initial text-left">
             <div>
               <div className="text-xs text-primary">
@@ -78,18 +78,18 @@ export const TransactionItem: FC<TransactionItemProps> = ({
               <div></div>
             </div>
 
-            <div className="text-lg text-primary font-medium">
+            <div className="text-lg text-primary font-medium overflow-hidden">
               {ensLoading ? (
                 <CommonSpinner size="sm" />
               ) : (
-                <p className="break-words flex-wrap">{ens}</p>
+                <p className="break-words flex-wrap text-ellipsis overflow-hidden whitespace-nowrap w-32">{ens}</p>
               )}
             </div>
           </div>
 
-          <div className="flex-1 sm:flex-none text-xl font-medium flex-auto flex flex-col justify-center text-left sm:text-center h-full sm:h-fit">
-            <div className="flex sm:block">
-              <p className="text-md font-semibold">
+          <div className="flex-1 sm:flex-none text-xl font-medium flex-auto flex flex-col justify-center text-left sm:text-center h-full sm:h-fit overflow-hidden">
+            <div className="flex sm:block overflow-hidden">
+              <p className="text-md font-semibold text-ellipsis overflow-hidden whitespace-nowrap w-32 text-left">
                 {formatBigNumber(tx.value, 1, tx.tokenDecimal)}{" "}
                 {tx.tokenSymbol || getNetworkSymbol(tx.chainId)}
               </p>
