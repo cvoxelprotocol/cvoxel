@@ -62,38 +62,44 @@ export const TransactionItem: FC<TransactionItemProps> = ({
   };
 
   return (
-    <div className="w-full h-fit sm:max-h-[90px] rounded-lg shadow-lg bg-white dark:bg-card justify-between items-start text-xs sm:text-sm text-black dark:text-white break-words flex-wrap py-2 px-10 border-b border-b-gray-200 sm:grid grid-cols-12 gap-2">
+    <div className="w-full sm:h-fit relative sm:max-h-[90px] rounded-lg border sm:border-none border-secondary sm:shadow-lg bg-white dark:bg-card justify-between items-start text-xs sm:text-sm text-black dark:text-white break-words flex-wrap py-2 px-4 sm:px-10 sm:border-b sm:border-b-gray-200 grid grid-flow-col grid-rows-[2.5rem_2rem_0.5rem] grid-cols-1 sm:grid-rows-1 sm:grid-flow-row sm:grid-cols-12 gap-2">
       {/*address and value*/}
-      <div className="flex col-span-3 h-full">
+      <div className="flex sm:col-span-3 h-full">
         {/*content*/}
-        <div className="flex flex-col items-start w-full flex-auto">
-          <div className="h-full">
-            <div className="text-xs text-primary">From</div>
-            <div></div>
+        <div className="flex sm:flex-col items-start w-full flex-auto">
+          <div className="flex-1 sm:flex-initial text-left">
+            <div>
+              <div className="text-xs text-primary">From</div>
+              <div></div>
+            </div>
+
+            <div className="text-lg text-primary font-medium">
+              {ensLoading ? (
+                <CommonSpinner size="sm" />
+              ) : (
+                <p className="break-words flex-wrap">{ens}</p>
+              )}
+            </div>
           </div>
-          <div className="flex-initial text-lg text-primary font-medium">
-            {ensLoading ? (
-              <CommonSpinner size="sm" />
-            ) : (
-              <p className="break-words flex-wrap">{ens}</p>
-            )}
-          </div>
-          <div className="text-xl font-medium flex-auto flex flex-col justify-center">
-            <p className="text-md font-semibold">
-              {formatBigNumber(tx.value, 1, tx.tokenDecimal)}{" "}
-              {tx.tokenSymbol || getNetworkSymbol(tx.chainId)}
-            </p>
+
+          <div className="flex-1 sm:flex-none text-xl font-medium flex-auto flex flex-col justify-center text-left sm:text-center h-full sm:h-fit">
+            <div className="flex sm:block">
+              <p className="text-md font-semibold">
+                {formatBigNumber(tx.value, 1, tx.tokenDecimal)}{" "}
+                {tx.tokenSymbol || getNetworkSymbol(tx.chainId)}
+              </p>
+            </div>
           </div>
         </div>
         {/*border*/}
-        <div className="w-0.5 bg-gray-200 flex-initial" />
+        <div className="w-0.5 bg-gray-200 flex-initial hidden sm:block" />
       </div>
 
       {/*transaction*/}
-      <div className="text-left col-span-7 flex items-center">
-        <div className="mr-4 flex-auto overflow-hidden">
+      <div className="text-left sm:col-span-7 flex items-center">
+        <div className="flex sm:block mr-4 flex-auto overflow-hidden">
           {/*hash*/}
-          <div>
+          <div className="flex-1 overflow-hidden">
             <div className="text-2xs text-gray-500 font-semibold">Tx Hash</div>
             <div className="text-sm font-medium text-ellipsis overflow-hidden whitespace-nowrap w-full">
               {tx.hash}
@@ -101,16 +107,18 @@ export const TransactionItem: FC<TransactionItemProps> = ({
           </div>
 
           {/*timestamp*/}
-          <div className="text-2xs text-gray-500 font-semibold mt-2">
-            Timestamp
-          </div>
-          <div className="text-sm font-medium">
-            <p>{convertTimestampToDateStr(tx.timeStamp)}</p>
+          <div className="flex-1 sm:mt-2 overflow-hidden ml-2 sm:ml-0">
+            <div className="text-2xs text-gray-500 font-semibold">
+              Timestamp
+            </div>
+            <div className="text-sm font-medium text-ellipsis overflow-hidden whitespace-nowrap w-full">
+              {convertTimestampToDateStr(tx.timeStamp)}
+            </div>
           </div>
         </div>
 
         {/*external link*/}
-        <div>
+        <div className="hidden sm:block">
           <a
             className="flex items-center justify-center"
             href={exploreLink}
@@ -126,9 +134,10 @@ export const TransactionItem: FC<TransactionItemProps> = ({
       </div>
 
       {/*spacer for grid*/}
-      <div className="col-span-1" />
+      <div className="col-span-1 hidden sm:block" />
 
-      <div className="flex items-center justify-end col-span-1 h-full">
+      {/*expand*/}
+      <div className="flex items-center justify-center sm:justify-end col-span-1 h-full">
         <button onClick={() => handleClick()}>
           <div className="flex items-center p-4">
             <FontAwesomeIcon
@@ -137,6 +146,21 @@ export const TransactionItem: FC<TransactionItemProps> = ({
             />
           </div>
         </button>
+      </div>
+
+      {/*external link for sp*/}
+      <div className="sm:hidden absolute top-5 right-10">
+        <a
+          className="flex items-center justify-center"
+          href={exploreLink}
+          target="_blank"
+          rel="noreferrer"
+        >
+          <FontAwesomeIcon
+            className="w-4 h-4 ml-1 text-gray-400 hover:text-gray-300"
+            icon={faExternalLink}
+          />
+        </a>
       </div>
     </div>
   );
