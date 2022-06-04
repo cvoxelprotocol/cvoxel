@@ -9,7 +9,10 @@ import {
   faAngleUp,
 } from "@fortawesome/free-solid-svg-icons";
 import { CommonSpinner } from "../common/CommonSpinner";
-import { convertTimestampToDateStr } from "@/utils/dateUtil";
+import {
+  convertTimestampToDateStr,
+  convertTimestampToDateStrLocaleUS,
+} from "@/utils/dateUtil";
 import { getNetworkSymbol } from "@/utils/networkUtil";
 import { selectTxType } from "../containers/home";
 import { useENS } from "@/hooks/useENS";
@@ -69,7 +72,9 @@ export const TransactionItem: FC<TransactionItemProps> = ({
         <div className="flex sm:flex-col items-start w-full flex-auto">
           <div className="flex-1 sm:flex-initial text-left">
             <div>
-              <div className="text-xs text-primary">From</div>
+              <div className="text-xs text-primary">
+                {isPayee ? "From" : "To"}
+              </div>
               <div></div>
             </div>
 
@@ -112,7 +117,7 @@ export const TransactionItem: FC<TransactionItemProps> = ({
               Timestamp
             </div>
             <div className="text-sm font-medium text-ellipsis overflow-hidden whitespace-nowrap w-full">
-              {convertTimestampToDateStr(tx.timeStamp)}
+              {convertTimestampToDateStrLocaleUS(tx.timeStamp)}
             </div>
           </div>
         </div>
