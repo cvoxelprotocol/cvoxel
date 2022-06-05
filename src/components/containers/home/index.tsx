@@ -22,6 +22,7 @@ import { TransactionDetail } from "@/components/Transaction/TransactionDetail";
 import { TransactionForm } from "@/components/Transaction/TransactionForm";
 import type { CVoxelItem as ICVoxelItem } from "@/interfaces";
 import { useStateForceUpdate } from "@/recoilstate";
+import { NotificationItem } from "@/components/Notification/NotificationItem";
 
 export type selectTxType = {
   tx: TransactionLogWithChainId;
@@ -327,7 +328,7 @@ export const HomeContainer: FC = () => {
 
   const sigRequestMemo = useMemo(
     () => (
-      <div className="w-full max-w-[820px] text-center mx-auto cursor-pointer h-screen overflow-y-scroll space-y-2">
+      <div className="w-full max-w-[820px] text-center mx-auto cursor-pointer h-screen overflow-y-scroll space-y-6">
         {(!sigRequestCVoxels || sigRequestCVoxels.length === 0) && (
           <NoItemPresenter text="No Sig Requests yet..." />
         )}
@@ -336,11 +337,13 @@ export const HomeContainer: FC = () => {
           sigRequestCVoxels.map((tx) => {
             return (
               <div key={tx.txHash}>
-                <SigRequestItem
-                  tx={tx}
-                  account={account}
-                  handleClick={() => verify(tx)}
-                />
+                <NotificationItem tx={tx} account={account} />
+
+                {/*<SigRequestItem*/}
+                {/*  tx={tx}*/}
+                {/*  account={account}*/}
+                {/*  handleClick={() => verify(tx)}*/}
+                {/*/>*/}
               </div>
             );
           })}
