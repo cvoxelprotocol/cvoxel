@@ -1,4 +1,4 @@
-import { AvatarPlaceholder } from "@self.id/framework";
+import { AvatarPlaceholder } from "@self.id/ui";
 import { FC } from "react";
 import { CommonSpinner } from "./CommonSpinner";
 import { IconAvatar } from "./IconAvatar";
