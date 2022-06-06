@@ -1,4 +1,4 @@
-import { useConnection, usePublicRecord } from "@self.id/framework";
+import { usePublicRecord } from "@self.id/framework";
 import type { PublicRecord } from "@self.id/framework";
 import { useCallback, useState } from "react";
 import type {
@@ -8,9 +8,10 @@ import type {
   CVoxels,
 } from "@/interfaces/cVoxelType";
 import { TileDoc, useTileDoc } from "./useTileDoc";
+import { useConnect } from "./useCeramicAcount";
 
 export function useCVoxelsRecord(did: string): PublicRecord<CVoxels | null> {
-  return usePublicRecord<ModelTypes, "cVoxels">("cVoxels", did);
+  return usePublicRecord<ModelTypes, "workCredentials">("workCredentials", did);
 }
 
 export function useCVoxelRecord(id: string): TileDoc<CVoxel> {
@@ -18,7 +19,7 @@ export function useCVoxelRecord(id: string): TileDoc<CVoxel> {
 }
 
 export function useCVoxel(did: string, id: string) {
-  const connect = useConnection<ModelTypes>()[1];
+  const connect = useConnect();
   const cVoxelsRecord = useCVoxelsRecord(did);
   const cVoxelDoc = useTileDoc<CVoxel>(id);
   const [cVoxel, setCVoxel] = useState<CVoxel | null>(null);
@@ -26,7 +27,7 @@ export function useCVoxel(did: string, id: string) {
 
   const isValid = !!cVoxel?.summary;
 
-  const cVoxelItem = cVoxelsRecord.content?.cVoxels.find(
+  const cVoxelItem = cVoxelsRecord.content?.WorkCredentials.find(
     (item) => item.id === `ceramic://${id}`
   );
   const content =

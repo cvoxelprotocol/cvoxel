@@ -19,8 +19,8 @@ export const ProfileContainer: FC<CeramicProps> = ({ did }) => {
       <CVoxelsPresenter>
         {CVoxelsRecords.isLoading && <CommonLoading />}
         {!CVoxelsRecords.isLoading &&
-          CVoxelsRecords.content?.cVoxels &&
-          CVoxelsRecords.content.cVoxels.map((item) => {
+          CVoxelsRecords.content?.WorkCredentials &&
+          CVoxelsRecords.content.WorkCredentials.map((item) => {
             return (
               <CVoxelItem did={did} item={item} key={item.id} isOwner={false} />
             );
@@ -41,7 +41,7 @@ export const ProfileContainer: FC<CeramicProps> = ({ did }) => {
         <VisualizerPresenter
           ids={
             CVoxelsRecords.content
-              ? CVoxelsRecords.content.cVoxels.map((vox) => vox.id)
+              ? CVoxelsRecords.content.WorkCredentials.map((vox) => vox.id)
               : []
           }
         />

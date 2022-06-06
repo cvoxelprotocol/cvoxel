@@ -16,8 +16,9 @@ if (!process.env.SEED) {
   throw new Error('Missing SEED environment variable')
 }
 
-const CERAMIC_URL = process.env.NEXT_PUBLIC_CERAMIC_URL || 'http://localhost:7007'
-const modelJsonName = "model_dev.json"
+// const CERAMIC_URL = process.env.NEXT_PUBLIC_CERAMIC_URL || 'http://localhost:7007'
+const CERAMIC_URL = 'http://localhost:7007'
+const modelJsonName = "model_v2_dev.json"
 
 // The seed must be provided as an environment variable
 const seed = fromString(process.env.SEED, 'base16')
@@ -29,14 +30,15 @@ const did = new DID({
   provider: new Ed25519Provider(seed),
   resolver: getResolver(),
 })
-await did.authenticate()
+const auth = await did.authenticate()
+console.log({auth})
 
 // Connect to the Ceramic node
 const ceramic = new CeramicClient(CERAMIC_URL)
 ceramic.did = did
 
 // Create a manager for the model
-const manager = new ModelManager(ceramic)
+const manager = new ModelManager({ceramic})
 
 // Add basicProfile to the model
 manager.addJSONModel(profileModel)
@@ -44,9 +46,9 @@ manager.addJSONModel(AccountModel)
 manager.addJSONModel(alsoKnownAsModel)
 
 // Create the schemas
-const cVoxelSchemaID = await manager.createSchema('CVoxel', {
+const WorkCredentialSchemaID = await manager.createSchema('WorkCredential', {
   $schema: 'http://json-schema.org/draft-07/schema#',
-  title: 'CVoxel',
+  title: 'WorkCredential',
   type: 'object',
   properties: {
     to: {
@@ -69,9 +71,23 @@ const cVoxelSchemaID = await manager.createSchema('CVoxel', {
       type: 'string',
       title: 'detail',
     },
-    deliverable: {
-      type: 'string',
-      title: 'deliverable',
+    deliverables: {
+      type: "array",
+      title: 'deliverables',
+      items: {
+        type: 'object',
+        title: 'deliverableItem',
+        properties: {
+          format: {
+            type: 'string',
+            title: 'format',
+          },
+          value: {
+            type: 'string',
+            title: 'value',
+          }
+        },
+      },
     },
     value: {
       type: 'string',
@@ -173,20 +189,20 @@ const cVoxelSchemaID = await manager.createSchema('CVoxel', {
   required: ["to", "from", "summary", "value", "tokenSymbol", "networkId", "issuedTimestamp", "txHash"],
   additionalProperties:false,
 })
-const cVoxelsSchemaID = await manager.createSchema('CVoxels', {
+const WorkCredentialsSchemaID = await manager.createSchema('WorkCredentials', {
   $schema: 'http://json-schema.org/draft-07/schema#',
-  title: 'CVoxels',
+  title: 'WorkCredentials',
   type: 'object',
   properties: {
-    cVoxels: {
+    WorkCredentials: {
       type: 'array',
-      title: 'cVoxels',
+      title: 'WorkCredentials',
       items: {
         type: 'object',
-        title: 'CVoxelsItem',
+        title: 'WorkCredentialItem',
         properties: {
           id: {
-            $comment: `cip88:ref:${manager.getSchemaURL(cVoxelSchemaID)}`,
+            $comment: `cip88:ref:${manager.getSchemaURL(WorkCredentialSchemaID)}`,
             type: 'string',
             pattern: '^ceramic://.+(\\?version=.+)?',
             maxLength: 200,
@@ -203,9 +219,23 @@ const cVoxelsSchemaID = await manager.createSchema('CVoxels', {
             type: 'string',
             title: 'summary',
           },
-          deliverable: {
-            type: 'string',
-            title: 'deliverable',
+          deliverables: {
+            type: 'array',
+            title: 'deliverables',
+            items: {
+              type: 'object',
+              title: 'deliverableItem',
+              properties: {
+                format: {
+                  type: 'string',
+                  title: 'format',
+                },
+                value: {
+                  type: 'string',
+                  title: 'value',
+                }
+              },
+            },
           },
           fiatValue: {
             type: 'string',
@@ -214,6 +244,10 @@ const cVoxelsSchemaID = await manager.createSchema('CVoxels', {
           genre: {
             type: 'string',
             title: 'genre',
+          },
+          isVerified: {
+            type: 'boolean',
+            title: 'isVerified',
           },
           issuedTimestamp: {
             type: 'string',
@@ -226,28 +260,34 @@ const cVoxelsSchemaID = await manager.createSchema('CVoxels', {
   additionalProperties:false,
 })
 
+console.log({WorkCredentialSchemaID})
+console.log({WorkCredentialsSchemaID})
+
 // Create the definition using the created schema ID
-await manager.createDefinition('cVoxel', {
-  name: 'cVoxel',
-  description: 'cVoxel',
-  schema: manager.getSchemaURL(cVoxelSchemaID),
+const wc = await manager.createDefinition('workCredential', {
+  name: 'workCredential',
+  description: 'workCredential',
+  schema: manager.getSchemaURL(WorkCredentialSchemaID),
 })
 
-await manager.createDefinition('cVoxels', {
-  name: 'cVoxels',
-  description: 'cVoxels',
-  schema: manager.getSchemaURL(cVoxelsSchemaID),
+const wcs = await manager.createDefinition('workCredentials', {
+  name: 'workCredentials',
+  description: 'workCredentials',
+  schema: manager.getSchemaURL(WorkCredentialsSchemaID),
 })
 
-// Create a cVoxel with text that will be used as placeholder
-await manager.createTile(
-  "PlaceHodlerCVoxels",
-  { to: "toaddress", from: "from address",
-  summary: 'This is a summary for the CVoxel contents',
-value: "100000000", tokenSymbol: "ETH", networkId:1, issuedTimestamp: "12345678", txHash: "0xhgeohgoehgehgoehgoehoehge" },
-  { schema: manager.getSchemaURL(cVoxelSchemaID) }
-)
+console.log({wc})
+console.log({wcs})
+
+// // Create a WorkCredential with text that will be used as placeholder
+// await manager.createTile(
+//   "PlaceHodlerWorkCredential",
+//   { to: "toaddress", from: "from address",
+//   summary: 'This is a summary for the WorkCredential contents',
+// value: "100000000", tokenSymbol: "ETH", networkId:1, issuedTimestamp: "12345678", txHash: "0xhgeohgoehgehgoehgoehoehge" },
+//   { schema: manager.getSchemaURL(WorkCredentialSchemaID) }
+// )
 
 // Write model to JSON file
 await writeFile(new URL(`${modelJsonName}`, import.meta.url), JSON.stringify(manager.toJSON()))
-console.log('Encoded model written to scripts/model.json file')
+console.log(`Encoded model written to ${modelJsonName}`)

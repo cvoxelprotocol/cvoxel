@@ -17,7 +17,7 @@ export type CVoxel = {
   isPayer: boolean; // whether owner is payer or not
   summary: string; // work summary
   detail?: string; // work detail
-  deliverable?: string; // deliberable link
+  deliverables?: DeliverableItem[]; // deliberable link
   value: string; // reward value
   tokenSymbol: string; // eth, usdc, etc
   tokenDecimal: number;
@@ -41,6 +41,16 @@ export type CVoxel = {
   relatedAddresses: string[]; // all addresses related to this cvoxel. may contain both EOA and contract address
 };
 
+export type WorkCredentialForm = CVoxel & {
+  deliverableLink?: string;
+  deliverableCID?: string;
+};
+
+export type DeliverableItem = {
+  format: string;
+  value: string;
+};
+
 export type CVoxelWithId = CVoxel & {
   id: string;
 };
@@ -61,14 +71,15 @@ export type CVoxelItem = {
   txHash: string; // transfer tx hash
   isPayer: boolean;
   summary: string;
-  deliverable?: string; // deliberable link
+  deliverables?: DeliverableItem[]; // deliberable link
   fiatValue?: string;
   genre?: string; // main genre
+  isVerified?: boolean;
   issuedTimestamp: string;
 };
 
 export type CVoxels = {
-  cVoxels: CVoxelItem[];
+  WorkCredentials: CVoxelItem[];
 };
 
 export type ModelTypes = ModelTypeAliases<
@@ -76,16 +87,16 @@ export type ModelTypes = ModelTypeAliases<
     AlsoKnownAs: AlsoKnownAs;
     BasicProfile: BasicProfile;
     CryptoAccounts: CryptoAccountLinks;
-    CVoxel: CVoxel;
-    CVoxels: CVoxels;
+    WorkCredential: CVoxel;
+    WorkCredentials: CVoxels;
   },
   {
     alsoKnownAs: "AlsoKnownAs";
     basicProfile: "BasicProfile";
     cryptoAccounts: "CryptoAccounts";
-    cVoxels: "CVoxels";
-  },
-  { PlaceHodlerCVoxels: "CVoxel" }
+    workCredential: "WorkCredential";
+    workCredentials: "WorkCredentials";
+  }
 >;
 
 export type CVoxelVisType = {

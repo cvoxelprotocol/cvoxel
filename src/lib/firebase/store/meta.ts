@@ -2,6 +2,7 @@ import { firestore } from "../app";
 import { collection, getDocs, query, where } from "firebase/firestore/lite";
 import { DocumentData, QueryDocumentSnapshot } from "firebase/firestore/lite";
 import { CVoxelMetaDraft } from "@/interfaces/cVoxelType";
+import { DeliverableItemsFromStr } from "@/utils/cVoxelUtil";
 
 export const getCVoxelList = (address?: string): Promise<CVoxelMetaDraft[]> =>
   new Promise((resolve, reject) => {
@@ -16,6 +17,7 @@ export const getCVoxelList = (address?: string): Promise<CVoxelMetaDraft[]> =>
         const docs = result.empty
           ? []
           : result.docs.map((doc) => {
+              const d = doc.data();
               return { ...doc.data() } as CVoxelMetaDraft;
             });
         resolve(docs);
@@ -31,6 +33,9 @@ const converter = {
   },
   fromFirestore(snapshot: QueryDocumentSnapshot): CVoxelMetaDraft {
     let data = snapshot.data();
+    if (data.deliberable) {
+      data.deliberables = DeliverableItemsFromStr(data.deliberable);
+    }
     if (!isValid(data)) {
       console.error(data);
       throw new Error("invalid data");

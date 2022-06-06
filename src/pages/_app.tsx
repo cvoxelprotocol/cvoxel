@@ -17,7 +17,7 @@ import { useEffect } from "react";
 import Router from "next/router";
 import { LoadingModal } from "@/components/common/LoadingModal";
 
-const model: ModelTypesToAliases<ModelTypes> = cVoxelModel;
+const aliases: ModelTypesToAliases<ModelTypes> = cVoxelModel;
 
 function getLibrary(provider: any): Web3Provider {
   const library = new Web3Provider(provider);
@@ -67,10 +67,9 @@ export default function App({ Component, pageProps }: AppProps) {
               client={{
                 ceramic: CERAMIC_URL,
                 connectNetwork: CERAMIC_NETWORK,
-                model,
+                aliases,
               }}
               state={state}
-              ui={{ full: true, style: { display: "flex" } }}
             >
               <JotaiProvider>
                 <ThemeProvider attribute="class" defaultTheme={"light"}>

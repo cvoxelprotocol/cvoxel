@@ -1,11 +1,12 @@
 import { core } from "@/lib/ceramic/server";
 import {
-  useConnection,
+  useViewerConnection,
   useViewerID,
   usePublicRecord,
   BasicProfile,
   PublicRecord,
 } from "@self.id/framework";
+import { EthereumAuthProvider, SelfID } from "@self.id/web";
 import { useEffect, useCallback, useMemo } from "react";
 import { getProfileInfo } from "@/utils/ceramicUtils";
 import { useWalletAccount } from "./useWalletAccount";
@@ -19,9 +20,23 @@ export function useProfile(
   return usePublicRecord("basicProfile", id);
 }
 
+export const useConnect = (): (() => Promise<SelfID<ModelTypes> | null>) => {
+  const connect = useViewerConnection<ModelTypes>()[1];
+  return useCallback(async () => {
+    // @ts-ignore
+    const accounts = await window.ethereum.request({
+      method: "eth_requestAccounts",
+    });
+    return await connect(
+      // @ts-ignore
+      new EthereumAuthProvider(window.ethereum, accounts[0])
+    );
+  }, [connect]);
+};
+
 export const useMyCeramicAcount = () => {
-  const [connection, connect, disconnect] = useConnection<ModelTypes>();
-  const { connectWallet, disconnectWallet, account, chainId, active } =
+  const [connection, connect, disconnect] = useViewerConnection<ModelTypes>();
+  const { connectWallet, disconnectWallet, account, chainId, active, library } =
     useWalletAccount();
   const [did, setDid] = useDID();
   const viewerID = useViewerID<ModelTypes>();
@@ -74,8 +89,11 @@ export const useMyCeramicAcount = () => {
   }, [account]);
 
   const connectCeramic = async () => {
-    const id = await connect();
+    if (!(library && account)) return;
     await connectWallet();
+    const id = await connect(
+      new EthereumAuthProvider(library.provider, account)
+    );
   };
   const connectWalletOnly = async () => {
     await connectWallet();
