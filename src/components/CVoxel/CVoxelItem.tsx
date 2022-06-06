@@ -208,27 +208,27 @@ export const CVoxelItem: FC<Props> = ({
                   <div className="py-5 ml-1">
                     <p className="text-base text-black">Deliverable</p>
 
-                    {detailItem?.deliverable?.startsWith("http") ? (
-                      <a
-                        className="flex items-center flex-wrap"
-                        href={`${detailItem?.deliverable}`}
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        <p className="text-xs text-secondary">
-                          {shortenStr(detailItem?.deliverable)}
-                        </p>
-                        <FontAwesomeIcon
-                          className="w-3 h-3 ml-2"
-                          icon={faExternalLink}
-                          color={"#EFA9E0"}
-                        />
-                      </a>
-                    ) : (
-                      <p className="text-xs text-secondary">
-                        {shortenStr(detailItem?.deliverable)}
-                      </p>
-                    )}
+                    {detailItem?.deliverables && detailItem.deliverables.map(d => {
+                      return (
+                        <div key={d.value}>
+                          <a
+                            className="flex items-center flex-wrap"
+                            href={`${d.format==="url" ? d.value : `https://dweb.link/ipfs/${d.value}`}`}
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            <p className="text-xs text-secondary">
+                              {shortenStr(d.value)}
+                            </p>
+                            <FontAwesomeIcon
+                              className="w-3 h-3 ml-2"
+                              icon={faExternalLink}
+                              color={"#EFA9E0"}
+                            />
+                          </a>
+                        </div>
+                      )
+                    })}
                   </div>
                 </div>
                 <div className="w-1/4 flex-none">

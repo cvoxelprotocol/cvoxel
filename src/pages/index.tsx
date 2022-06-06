@@ -9,20 +9,19 @@ import { faCircleExclamation } from "@fortawesome/free-solid-svg-icons";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import Router from "next/router";
 import { Button } from "@/components/common/button/Button";
+import { ViewerConnectionState } from "@self.id/react";
 
 const HomePage: NextPage = () => {
   const { connection, did, account, connectWalletOnly } = useMyCeramicAcount();
-  const [currentStatus, setCurrentStatus] = useState<
-    "disconnected" | "connecting" | "failed" | "connected"
-  >(connection.status);
+  const [currentState, setcurrentState] = useState<ViewerConnectionState>(connection);
 
   useEffect(() => {
     if (
       connection.status === "connected" &&
       did &&
-      currentStatus !== "connected"
+      currentState.status !== "connected"
     ) {
-      setCurrentStatus(connection.status);
+      setcurrentState(connection);
       Router.push(`/${did}`);
     }
   }, [connection, did]);

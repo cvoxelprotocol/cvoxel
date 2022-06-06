@@ -1,12 +1,11 @@
 import { useCVoxelsRecord } from "@/hooks/useCVoxel";
 import { FC, useCallback, useMemo, useState, memo } from "react";
 import { Canvas } from "@react-three/fiber";
-import { CVoxel, CVoxelMetaDraft } from "@/interfaces/cVoxelType";
+import { DeliverableItem, CVoxelMetaDraft, WorkCredentialForm } from "@/interfaces/cVoxelType";
 import { useMyCeramicAcount } from "@/hooks/useCeramicAcount";
 import { useTab } from "@/hooks/useTab";
 import { useCVoxelList } from "@/hooks/useCVoxelList";
 import { TransactionLogWithChainId } from "@/interfaces/explore";
-import { useForm, FormProvider } from "react-hook-form";
 import { useDraftCVoxel } from "@/hooks/useDraftCVoxel";
 import { useSigRequest } from "@/hooks/useSigRequest";
 import CVoxelsPresenter from "@/components/CVoxel/CVoxelsPresenter";
@@ -22,6 +21,7 @@ import { TransactionDetail } from "@/components/Transaction/TransactionDetail";
 import { TransactionForm } from "@/components/Transaction/TransactionForm";
 import type { CVoxelItem as ICVoxelItem } from "@/interfaces";
 import { useStateForceUpdate } from "@/recoilstate";
+import { useFileUpload } from "@/hooks/useFileUpload";
 
 export type selectTxType = {
   tx: TransactionLogWithChainId;
@@ -43,46 +43,44 @@ export const HomeContainer: FC = () => {
   const { tabState, setTabState } = useTab();
   const draft = useDraftCVoxel();
   const { verifyWithCeramic, verifyWithoutCeramic } = useSigRequest();
+  const {resetUploadStatus} = useFileUpload()
 
   // TODO: This is temporary solution because of useTileDoc bug
   const [forceUpdateCVoxelList, setForceUpdateCVoxelList] =
     useStateForceUpdate();
 
-  const methods = useForm<CVoxel>();
-  const onSubmit = (data: any) => {
+  // const methods = useForm<WorkCredentialForm>();
+  const onPublish = (data: any) => {
     publish(data);
   };
 
   const handleClickTx = (tx: selectTxType | null) => {
     selectTx(tx);
-    if (
-      tx &&
-      selectedTx &&
-      selectedTx?.tx.hash.toLowerCase() !== tx?.tx.hash.toLowerCase()
-    ) {
-      methods.reset();
-    }
   };
 
   const publish = useCallback(
-    async (data: CVoxel) => {
+    async (data: WorkCredentialForm) => {
       if (!(selectedTx && account)) return;
       if (connection.status === "connected") {
-        const { summary, detail, deliverable, relatedAddresses, genre, tags } =
+        const { summary, detail, deliverableLink,deliverableCID, relatedAddresses, genre, tags } =
           data;
-        const result = await draft.publish(
+          let deliverables:DeliverableItem[] = []
+          if(deliverableLink) deliverables.push({format: "url", value: deliverableLink})
+          if(deliverableCID) deliverables.push({format: "cid", value: deliverableCID})
+
+        await draft.publish(
           account,
           selectedTx.tx,
           summary,
           detail,
-          deliverable,
+          deliverables,
           relatedAddresses,
           genre,
           tags
         );
-        if (result) {
+        if (draft.issueStatus==="completed") {
           selectTx(null);
-          methods.reset();
+          resetUploadStatus()
           setTabState("cvoxels");
         }
       } else {
@@ -98,22 +96,21 @@ export const HomeContainer: FC = () => {
   ) => {
     if (!(tx && account && offchainItem)) return;
     if (connection.status === "connected") {
-      const { summary, detail, deliverable, relatedAddresses, genre, tags } =
+      const { summary, detail, deliverables, relatedAddresses, genre, tags } =
         offchainItem;
-      const result = await draft.publish(
+      await draft.publish(
         account,
         tx,
         summary,
         detail,
-        deliverable,
+        deliverables,
         relatedAddresses,
         genre,
         tags,
         offchainItem
       );
-      if (result) {
+      if (draft.issueStatus==="completed") {
         selectTx(null);
-        methods.reset();
         setTabState("cvoxels");
       }
     } else {
@@ -127,22 +124,21 @@ export const HomeContainer: FC = () => {
   ) => {
     if (!(tx && account && offchainItem)) return;
     if (connection.status === "connected") {
-      const { summary, detail, deliverable, relatedAddresses, genre, tags } =
+      const { summary, detail, deliverables, relatedAddresses, genre, tags } =
         offchainItem;
-      const result = await draft.reClaim(
+      await draft.reClaim(
         account,
         tx,
         summary,
         detail,
-        deliverable,
+        deliverables,
         relatedAddresses,
         genre,
         tags,
         offchainItem
       );
-      if (result) {
+      if (draft.issueStatus==="completed") {
         selectTx(null);
-        methods.reset();
         setTabState("cvoxels");
       }
     } else {
@@ -175,7 +171,7 @@ export const HomeContainer: FC = () => {
 
   const sortCVoxels = useMemo(() => {
     if (!CVoxelsRecords.content) return [];
-    return CVoxelsRecords.content.cVoxels.sort((a, b) => {
+    return CVoxelsRecords.content.WorkCredentials.sort((a, b) => {
       return Number(a.issuedTimestamp) > Number(b.issuedTimestamp) ? -1 : 1;
     });
   }, [CVoxelsRecords.content]);
@@ -281,7 +277,7 @@ export const HomeContainer: FC = () => {
                       account={account?.toLowerCase()}
                       tx={tx}
                       offchainItem={selectedOffchainItem}
-                      connectionStatus={connection.status}
+                      connectionState={connection}
                       onClaim={publishFromExistedCVoxel}
                       reClaim={reClaimCVoxel}
                       cvoxels={sortCVoxels}
@@ -292,18 +288,12 @@ export const HomeContainer: FC = () => {
                         key={`${tx.hash}_form`}
                         className="w-full h-fit bg-white shadow-lg p-5 mb-4"
                       >
-                        <FormProvider {...methods}>
-                          <form
-                            className="w-full"
-                            onSubmit={methods.handleSubmit(onSubmit)}
-                          >
-                            <TransactionForm
-                              tx={tx}
-                              connectionStatus={connection.status}
-                              isFirstTime={sortCVoxels.length === 0}
-                            />
-                          </form>
-                        </FormProvider>
+                        <TransactionForm
+                          tx={tx}
+                          connectionState={connection}
+                          isFirstTime={sortCVoxels.length === 0}
+                          onSubmit={onPublish}
+                        />
                       </div>
                     </div>
                   )}
@@ -319,9 +309,9 @@ export const HomeContainer: FC = () => {
       account,
       selectedOffchainItem,
       connection.status,
-      methods,
       selectedTx,
       sortCVoxels,
+      handleClickTx,
     ]
   );
 
@@ -353,7 +343,7 @@ export const HomeContainer: FC = () => {
     () => (
       <Canvas shadows>
         <VisualizerPresenter
-          ids={CVoxelsRecords.content?.cVoxels.map((vox) => vox.id)}
+          ids={CVoxelsRecords.content?.WorkCredentials.map((vox) => vox.id)}
         />
       </Canvas>
     ),
