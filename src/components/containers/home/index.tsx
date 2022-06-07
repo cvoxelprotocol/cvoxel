@@ -22,6 +22,8 @@ import { TransactionDetail } from "@/components/Transaction/TransactionDetail";
 import { TransactionForm } from "@/components/Transaction/TransactionForm";
 import type { CVoxelItem as ICVoxelItem } from "@/interfaces";
 import { useStateForceUpdate } from "@/recoilstate";
+import {CVoxelsContainer} from "./CVoxelsContainer"
+import { AdminContainer } from "./AdminContainer";
 
 export type selectTxType = {
   tx: TransactionLogWithChainId;
@@ -374,38 +376,8 @@ export const HomeContainer: FC = () => {
 
   return (
     <main className="h-auto overflow-y-scroll text-black dark:text-white text-center">
-      <div className="flex flex-col items-center w-full h-full pb-12">
-        <div className="flex w-full items-center justify-center h-[300px] sm-h-[450px] relative max-w-[720px]">
-          {VisualizerPresenterMemo}
-        </div>
-        <div className="flex-none mb-12 w-full max-w-[720px]">
-          {ProfileCardMemo}
-        </div>
-        <div className="flex-none w-full max-w-[720px]">
-          <HomeTabsHeader />
-        </div>
-
-        <div className="flex-none w-full">
-          <div
-            className={tabState === "cvoxels" ? "block" : "hidden"}
-            id="cvoxels"
-          >
-            {CVoxelPresenterMemo}
-          </div>
-          <div
-            className={tabState === "transactions" ? "block" : "hidden"}
-            id="transactions"
-          >
-            {TransactionMemo}
-          </div>
-          <div
-            className={tabState === "signatures" ? "block" : "hidden"}
-            id="signatures"
-          >
-            {sigRequestMemo}
-          </div>
-        </div>
-      </div>
+      <CVoxelsContainer content={CVoxelsRecords.content} />
+      <AdminContainer />
     </main>
   );
 };
