@@ -1,18 +1,38 @@
 import * as THREE from "three";
-import { FC, useRef, useState, useEffect } from "react";
+import { FC, useRef, useState, useEffect, RefObject } from "react";
 import { useFrame } from "@react-three/fiber";
 import { OrbitControls, PerspectiveCamera, Plane } from "@react-three/drei";
-import { CVoxel } from "@/interfaces/cVoxelType";
+import { CVoxel, CVoxelMetaDraft, CVoxelWithId } from "@/interfaces/cVoxelType";
 import CVoxelPresenter from "./CVoxelPresenter";
 import { useVoxStyler } from "@/hooks/useVoxStyler";
 import { initCVoxel } from "@/constants/cVoxel";
 import { core } from "@/lib/ceramic/server";
+import type { CVoxelItem as ICVoxelItem } from "@/interfaces";
+
+type ShowDetailBox = ({
+  item,
+  offchainItems,
+}: {
+  item: ICVoxelItem;
+  offchainItems?: CVoxelMetaDraft[];
+}) => void;
+
+// NOTE: useCVoxelDetailBox cannot be called by VisualPresenter, so it is passed by props.
 type VisualizerPresenterProps = {
   ids?: string[];
+  showDetailBox?: ShowDetailBox;
+  zoom?: number;
 };
 
-const VisualizerPresenter: FC<VisualizerPresenterProps> = ({ ids }) => {
-  const [cVoxels, setCVoxels] = useState<CVoxel[]>([]);
+const VisualizerPresenter: FC<VisualizerPresenterProps> = ({
+  ids,
+  showDetailBox,
+  zoom = 2,
+}) => {
+  const [cVoxels, setCVoxels] = useState<CVoxelWithId[]>([]);
+  const [cVoxelsMap, setCVoxelsMap] = useState<{ [id: string]: ICVoxelItem }>(
+    {}
+  );
   const { cvoxelsForDisplay, convertCVoxelsForDisplay } = useVoxStyler(cVoxels);
 
   const cCollectionRef = useRef<THREE.Group>(new THREE.Group());
@@ -23,10 +43,10 @@ const VisualizerPresenter: FC<VisualizerPresenterProps> = ({ ids }) => {
 
     const loadVoxels = async () => {
       if (!ids) return;
-      const voxelsTemp: CVoxel[] = [];
+      const voxelsTemp: CVoxelWithId[] = [];
       for (let i = 0; i < ids!.length; i++) {
         const voxel = await core.tileLoader.load<CVoxel>(ids[i]);
-        voxelsTemp.push(voxel.content);
+        voxelsTemp.push({ ...voxel.content, id: ids[i] });
       }
       setCVoxels(voxelsTemp);
     };
@@ -52,9 +72,23 @@ const VisualizerPresenter: FC<VisualizerPresenterProps> = ({ ids }) => {
     };
   }, [cVoxels]);
 
+  useEffect(() => {
+    const m: { [id: string]: ICVoxelItem } = {};
+    cVoxels.forEach((vox) => {
+      m[vox.id] = vox;
+    });
+    setCVoxelsMap(m);
+  }, [cVoxels]);
+
   useFrame(() => {
     cCollectionRef.current.rotation.y += 0.005;
   });
+
+  const handleClickVox = (id: string) => {
+    if (cVoxelsMap[id] != undefined) {
+      showDetailBox?.({ item: cVoxelsMap[id] });
+    }
+  };
 
   return (
     <>
@@ -92,10 +126,17 @@ const VisualizerPresenter: FC<VisualizerPresenterProps> = ({ ids }) => {
       </Plane> */}
       <group ref={cCollectionRef} position={[0, 0, 0]}>
         {cvoxelsForDisplay.map(
-          (voxel, i) => voxel && <CVoxelPresenter {...voxel} key={i} />
+          (voxel, i) =>
+            voxel && (
+              <CVoxelPresenter
+                {...voxel}
+                key={i}
+                handleClick={() => handleClickVox(voxel.id)}
+              />
+            )
         )}
       </group>
-      <PerspectiveCamera makeDefault position={[10, 6, 10]} zoom={2} />
+      <PerspectiveCamera makeDefault position={[10, 6, 10]} zoom={zoom} />
     </>
   );
 };

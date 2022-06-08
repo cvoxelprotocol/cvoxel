@@ -22,6 +22,7 @@ import { TransactionDetail } from "@/components/Transaction/TransactionDetail";
 import { TransactionForm } from "@/components/Transaction/TransactionForm";
 import type { CVoxelItem as ICVoxelItem } from "@/interfaces";
 import { useStateForceUpdate } from "@/recoilstate";
+import { useCVoxelDetailBox } from "@/hooks/useCVoxelDetailBox";
 
 export type selectTxType = {
   tx: TransactionLogWithChainId;
@@ -47,6 +48,9 @@ export const HomeContainer: FC = () => {
   // TODO: This is temporary solution because of useTileDoc bug
   const [forceUpdateCVoxelList, setForceUpdateCVoxelList] =
     useStateForceUpdate();
+
+  // NOTE: Cannot be called by VisualPresenter, so call it here
+  const { showDetailBox } = useCVoxelDetailBox();
 
   const methods = useForm<CVoxel>();
   const onSubmit = (data: any) => {
@@ -354,6 +358,7 @@ export const HomeContainer: FC = () => {
       <Canvas shadows>
         <VisualizerPresenter
           ids={CVoxelsRecords.content?.cVoxels.map((vox) => vox.id)}
+          showDetailBox={showDetailBox}
         />
       </Canvas>
     ),
