@@ -107,7 +107,7 @@ const VisualizerPresenter: FC<VisualizerPresenterProps> = ({
       />
       {/* <pointLight position={[10, 10, 10]} /> */}
 
-      <OrbitControls enablePan={false} enableZoom={true} enableRotate={false} />
+      <OrbitControls enablePan={false} enableZoom={true} enableRotate={true} />
       <Plane
         receiveShadow
         rotation-x={-Math.PI / 2}
