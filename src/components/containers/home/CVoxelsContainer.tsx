@@ -3,12 +3,13 @@ import { ProfileCard } from "@/components/Profile/ProfileCard";
 import { useMyCeramicAcount } from "@/hooks/useCeramicAcount";
 import { CVoxels } from "@/interfaces";
 import { Canvas } from "@react-three/fiber";
-import { FC, useMemo } from "react";
+import { FC, useMemo,ReactNode } from "react";
 
 type props = {
     content?: CVoxels | null
+    children?: ReactNode;
 }
-export const CVoxelsContainer:FC<props> = ({content}) => {
+export const CVoxelsContainer:FC<props> = ({content, children}) => {
     const { did, name, avator, account } = useMyCeramicAcount();
 
     const VisualizerPresenterMemo = useMemo(
@@ -42,6 +43,7 @@ export const CVoxelsContainer:FC<props> = ({content}) => {
             <div className="flex-none mt-12 w-full max-w-[720px]">
                 {ProfileCardMemo}
             </div>
+            {children}
         </div>
     )
 }

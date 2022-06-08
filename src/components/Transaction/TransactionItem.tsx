@@ -9,16 +9,15 @@ import { CommonSpinner } from "../common/CommonSpinner";
 import { convertTimestampToDateStr } from "@/utils/dateUtil";
 import { NetworkChip } from "./NetworkChip";
 import { getNetworkSymbol } from "@/utils/networkUtil";
-import { selectTxType } from "../containers/home";
 import { useENS } from "@/hooks/useENS";
 
 type TransactionItemProps = {
   index: number;
   tx: TransactionLogWithChainId;
-  selectedTx: selectTxType | null;
+  selectedTx: TransactionLogWithChainId | null;
   account?: string | null;
   cVoxels?: CVoxelItem[];
-  onClickTx: (tx: selectTxType | null) => void;
+  onClickTx: (tx: TransactionLogWithChainId | null) => void;
 };
 
 export const TransactionItem: FC<TransactionItemProps> = ({
@@ -46,7 +45,7 @@ export const TransactionItem: FC<TransactionItemProps> = ({
   }, [tx.hash, tx.chainId]);
 
   const isSelecting = useMemo(() => {
-    return !!selectedTx && selectedTx.tx.hash === tx.hash;
+    return !!selectedTx && selectedTx.hash === tx.hash;
   }, [selectedTx, tx.hash]);
 
   const { ens, ensLoading } = useENS(isPayee ? tx.from : tx.to);
@@ -55,7 +54,7 @@ export const TransactionItem: FC<TransactionItemProps> = ({
     if (isSelecting) {
       onClickTx(null);
     } else {
-      onClickTx({ tx, index });
+      onClickTx(tx);
     }
   };
 

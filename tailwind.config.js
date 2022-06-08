@@ -12,7 +12,14 @@ module.exports = {
     fontFamily: {
       sans: ["Work Sans", ...defaultTheme.fontFamily.sans],
     },
-
+    screens: {
+      'xs': '320px',
+      'sm': '568px',
+      'md': '744px',
+      'lg': '1024px',
+      'xl': '1280px',
+      '2xl': '1512px',
+    },
     extend: {
       backgroundColor: (theme) => ({
         darkgray: "#24242B",

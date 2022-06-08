@@ -1,12 +1,12 @@
 import { useTab } from "@/hooks/useTab";
-import { FC, useCallback, useMemo, useState, memo } from "react";
-import { NoItemPresenter } from "../common/NoItemPresenter";
-import { CVoxelItem } from "../CVoxel/CVoxelItem";
-import CVoxelsPresenter from "../CVoxel/CVoxelsPresenter";
+import { FC, useMemo, useState, memo } from "react";
+import { NoItemPresenter } from "../../../common/NoItemPresenter";
+import { CVoxelItem } from "../../../CVoxel/CVoxelItem";
+import CVoxelsPresenter from "../../../CVoxel/CVoxelsPresenter";
 import type { CVoxelItem as ICVoxelItem, CVoxelMetaDraft, TransactionLogWithChainId } from "@/interfaces";
 import { useStateForceUpdate } from "@/recoilstate";
 import { useCVoxelsRecord } from "@/hooks/useCVoxel";
-import { CommonLoading } from "../common/CommonLoading";
+import { CommonLoading } from "../../../common/CommonLoading";
 import { useMyCeramicAcount } from "@/hooks/useCeramicAcount";
 import { useCVoxelList } from "@/hooks/useCVoxelList";
 
@@ -17,13 +17,12 @@ type CVoxelItemProp = {
   };
 
 export const MyCVoxelContainer:FC = () => {
-    const { connection, did, name, avator, account, connectCeramic } =
+    const { did, account } =
     useMyCeramicAcount();
   const { offchainMetaList, txLoading } =
     useCVoxelList();
   const CVoxelsRecords = useCVoxelsRecord(did);
-  const [selectedTx, selectTx] = useState<TransactionLogWithChainId | null>(null);
-  const { tabState, setTabState } = useTab();
+  const { setTabState } = useTab();
 
   // TODO: This is temporary solution because of useTileDoc bug
   const [forceUpdateCVoxelList, setForceUpdateCVoxelList] =
