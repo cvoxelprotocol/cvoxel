@@ -9,6 +9,7 @@ import { Toaster } from "react-hot-toast";
 import { Meta } from "./parts/Meta";
 import { useRouter } from "next/dist/client/router";
 import { Toast } from "@/components/common/toast/Toast";
+import { CVoxelDetailBox } from "@/components/CVoxel/CVoxelDetailBox";
 
 config.autoAddCss = false;
 
@@ -42,6 +43,7 @@ export const BaseLayout = ({ children }: Props) => {
       {isLoading && <LoadingModal />}
       <Toast />
       <Toaster />
+      <CVoxelDetailBox />
     </>
   );
 };

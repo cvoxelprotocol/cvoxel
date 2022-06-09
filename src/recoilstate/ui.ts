@@ -1,5 +1,10 @@
 import { atom, useRecoilState } from "recoil";
-import { CVoxelThree, TabKey } from "@/interfaces";
+import {
+  CVoxelItem as ICVoxelItem,
+  CVoxelMetaDraft,
+  CVoxelThree,
+  TabKey,
+} from "@/interfaces";
 
 //loading
 export const rGlobalLoading = atom({
@@ -48,3 +53,14 @@ export const rShowDrawer = atom<boolean>({
 });
 
 export const useStateShowDrawer = () => useRecoilState(rShowDrawer);
+
+// CVoxel detail box
+const rCVoxelDetailBox = atom<
+  | {
+      item: ICVoxelItem;
+      offchainItems?: CVoxelMetaDraft[];
+    }
+  | undefined
+>({ key: "rCVoxelDetailBox", default: undefined });
+
+export const useStateCVoxelDetailBox = () => useRecoilState(rCVoxelDetailBox);

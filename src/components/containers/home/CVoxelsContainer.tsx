@@ -1,6 +1,7 @@
 import VisualizerPresenter from "@/components/CVoxel/visualizerPresenter";
 import { ProfileCard } from "@/components/Profile/ProfileCard";
 import { useMyCeramicAcount } from "@/hooks/useCeramicAcount";
+import { useCVoxelDetailBox } from "@/hooks/useCVoxelDetailBox";
 import { CVoxels } from "@/interfaces";
 import { Canvas } from "@react-three/fiber";
 import { FC, useMemo,ReactNode } from "react";
@@ -11,12 +12,15 @@ type props = {
 }
 export const CVoxelsContainer:FC<props> = ({content, children}) => {
     const { did, name, avator, account } = useMyCeramicAcount();
+    // NOTE: Cannot be called by VisualPresenter, so call it here
+    const { showDetailBox } = useCVoxelDetailBox();
 
     const VisualizerPresenterMemo = useMemo(
         () => (
           <Canvas shadows>
             <VisualizerPresenter
               ids={content?.cVoxels.map((vox) => vox.id)}
+              showDetailBox={showDetailBox}
             />
           </Canvas>
         ),

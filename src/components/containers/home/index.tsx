@@ -10,7 +10,6 @@ export const HomeContainer: FC = () => {
   const CVoxelsRecords = useCVoxelsRecord(did);
 
   const MyPageContainerRef = useRef<HTMLDivElement>(null);
-
   const scrollToInfo = () => {
     MyPageContainerRef.current?.scrollIntoView({behavior: "smooth"})
   }
