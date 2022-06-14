@@ -33,7 +33,7 @@ export const BaseLayout = ({ children }: Props) => {
         ) : (
           <>
             <Header />
-            <div className="mx-auto px-4 w-full min-h-screen overflow-y-scroll pt-16 md:pt-24 bg-white dark:bg-darkgray break-words">
+            <div className="mx-auto px-4 w-full min-h-screen overflow-y-scroll bg-white dark:bg-darkgray break-words">
               {children}
             </div>
             <Footer />
