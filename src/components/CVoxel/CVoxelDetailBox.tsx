@@ -15,6 +15,7 @@ import { Canvas } from "@react-three/fiber";
 import { useENS } from "@/hooks/useENS";
 import { CommonSpinner } from "@/components/common/CommonSpinner";
 import clsx from "clsx";
+import { ShareButton } from "@/components/common/button/shareButton/ShareButton";
 
 export const CVoxelDetailBox: FC<{}> = () => {
   const [box] = useStateCVoxelDetailBox();
@@ -107,10 +108,7 @@ export const CVoxelDetailBox: FC<{}> = () => {
               color={"#A66497"}
             />
           </button>
-          {/*TODO: replace*/}
-          <button className="bg-primary-300 rounded py-1 px-4 text-white">
-            Share
-          </button>
+          <ShareButton />
         </div>
 
         {/*c-voxel*/}
