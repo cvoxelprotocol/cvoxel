@@ -26,6 +26,8 @@ export type CVoxel = {
   networkId: number; // eth mainnet = 1 | polygon mainnet = 137
   issuedTimestamp: string; //block timestamp
   txHash: string; // transfer tx hash
+  deliverableHash?: string; // hash value of all work descriptions(summary, detail, deliverables)
+  platform?: string; // a transaction platform if exists e.g, gitcoin
   relatedTxHashes?: string[]; //tx releated work
   tags?: string[]; //tags
   genre?: string; // main genre
@@ -74,6 +76,8 @@ export type CVoxelItem = {
   deliverables?: DeliverableItem[]; // deliberable link
   fiatValue?: string;
   genre?: string; // main genre
+  deliverableHash?: string; // hash value of all work descriptions(summary, detail, deliverables)
+  platform?: string; // a transaction platform if exists e.g, gitcoin
   isVerified?: boolean;
   issuedTimestamp: string;
 };

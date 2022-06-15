@@ -54,26 +54,32 @@ const WorkCredentialSchemaID = await manager.createSchema('WorkCredential', {
     to: {
       type: 'string',
       title: 'to',
+      description: "payee address"
     },
     from: {
       type: 'string',
       title: 'from',
+      description: "payer address"
     },
     isPayer: {
       type: 'boolean',
       title: 'isPayer',
+      description: "whether or not DID is payer"
     },
     summary: {
       type: 'string',
       title: 'summary',
+      description: "work summary"
     },
     detail: {
       type: 'string',
       title: 'detail',
+      description: "work detail"
     },
     deliverables: {
       type: "array",
       title: 'deliverables',
+      description: "work deliverables",
       items: {
         type: 'object',
         title: 'deliverableItem',
@@ -81,10 +87,12 @@ const WorkCredentialSchemaID = await manager.createSchema('WorkCredential', {
           format: {
             type: 'string',
             title: 'format',
+            description: "current formats are url or cid",
           },
           value: {
             type: 'string',
             title: 'value',
+            description: "work deliverable value(url/cid)",
           }
         },
       },
@@ -92,74 +100,82 @@ const WorkCredentialSchemaID = await manager.createSchema('WorkCredential', {
     value: {
       type: 'string',
       title: 'value',
+      description: "paid value",
     },
     tokenSymbol: {
       type: 'string',
       title: 'tokenSymbol',
+      description: "paid token symbol",
     },
     tokenDecimal: {
       type: 'number',
       title: 'tokenDecimal',
+      description: "paid token decimal",
     },
     fiatValue: {
       type: 'string',
       title: 'value',
+      description: "fiat price at the time of the transaction",
     },
     fiatSymbol: {
       type: 'string',
       title: 'fiatSymbol',
+      description: "currently only support USD",
     },
     networkId: {
       type: 'number',
       title: 'networkId',
+      description: "network id of the transaction",
     },
     issuedTimestamp: {
       type: 'string',
       title: 'issuedTimestamp',
+      description: "Time stamp of transaction occurrence",
     },
     txHash: {
       type: 'string',
       title: 'txHash',
+      description: "hash of the transaction",
     },
     jobType: {
       type: 'string',
       title: 'jobType',
+      description: "currently support fulltime, parttime, and onetime",
     },
     genre: {
       type: 'string',
       title: 'genre',
+      description: "work genre e.g, Dev, Design etc",
     },
     toSig: {
       type: 'string',
       title: 'toSig',
+      description: "signature of peyee",
     },
     fromSig: {
       type: 'string',
       title: 'fromSig',
+      description: "signature of peyer",
     },
     toSigner: {
       type: 'string',
       title: 'toSigner',
+      description: "Address of person signing as payee",
     },
     fromSigner: {
       type: 'string',
       title: 'fromSigner',
+      description: "Address of person signing as payer",
     },
     startTimestamp: {
       type: 'string',
       title: 'startTimestamp',
+      description: "Time stamp of work started",
     },
     endTimestamp: {
       type: 'string',
       title: 'endTimestamp',
-    },
-    createdAt: {
-      type: 'string',
-      title: 'createdAt',
-    },
-    updatedAt: {
-      type: 'string',
-      title: 'updatedAt',
+      description: "Time stamp of work ended",
     },
     relatedAddresses: {
       type: "array",
@@ -180,13 +196,32 @@ const WorkCredentialSchemaID = await manager.createSchema('WorkCredential', {
     tags: {
       type: "array",
       title: 'tags',
+      description: "work tags",
       items: {
         type: "string"
       },
       uniqueItems: true
+    },
+    deliverableHash: {
+      type: 'string',
+      title: 'deliverableHash',
+      description: "hash value of all work descriptions(summary, detail, deliverables)",
+    },
+    platform: {
+      type: 'string',
+      title: 'platform',
+      description: "a transaction platform if exists e.g, gitcoin",
+    },
+    createdAt: {
+      type: 'string',
+      title: 'createdAt',
+    },
+    updatedAt: {
+      type: 'string',
+      title: 'updatedAt',
     }
   },
-  required: ["to", "from", "summary", "value", "tokenSymbol", "networkId", "issuedTimestamp", "txHash"],
+  required: ["to", "from", "summary", "value", "tokenSymbol", "networkId", "issuedTimestamp"],
   additionalProperties:false,
 })
 const WorkCredentialsSchemaID = await manager.createSchema('WorkCredentials', {
@@ -200,6 +235,7 @@ const WorkCredentialsSchemaID = await manager.createSchema('WorkCredentials', {
       items: {
         type: 'object',
         title: 'WorkCredentialItem',
+        description: "work credential id",
         properties: {
           id: {
             $comment: `cip88:ref:${manager.getSchemaURL(WorkCredentialSchemaID)}`,
@@ -210,18 +246,22 @@ const WorkCredentialsSchemaID = await manager.createSchema('WorkCredentials', {
           txHash: {
             type: 'string',
             title: 'txHash',
+            description: "hash of the transaction",
           },
           isPayer: {
             type: 'boolean',
             title: 'isPayer',
+            description: "whether or not DID is payer",
           },
           summary: {
             type: 'string',
             title: 'summary',
+            description: "work summary"
           },
           deliverables: {
-            type: 'array',
+            type: "array",
             title: 'deliverables',
+            description: "work deliverables",
             items: {
               type: 'object',
               title: 'deliverableItem',
@@ -229,10 +269,12 @@ const WorkCredentialsSchemaID = await manager.createSchema('WorkCredentials', {
                 format: {
                   type: 'string',
                   title: 'format',
+                  description: "current formats are url or cid",
                 },
                 value: {
                   type: 'string',
                   title: 'value',
+                  description: "work deliverable value(url/cid)",
                 }
               },
             },
@@ -240,18 +282,32 @@ const WorkCredentialsSchemaID = await manager.createSchema('WorkCredentials', {
           fiatValue: {
             type: 'string',
             title: 'value',
+            description: "fiat price at the time of the transaction",
           },
           genre: {
             type: 'string',
             title: 'genre',
+            description: "work genre e.g, Dev, Design etc",
+          },
+          deliverableHash: {
+            type: 'string',
+            title: 'deliverableHash',
+            description: "hash value of all work descriptions(summary, detail, deliverables)",
+          },
+          platform: {
+            type: 'string',
+            title: 'platform',
+            description: "a transaction platform if exists e.g, gitcoin",
           },
           isVerified: {
             type: 'boolean',
             title: 'isVerified',
+            description: "Either both signatures exist or the transaction is via platform",
           },
           issuedTimestamp: {
             type: 'string',
             title: 'issuedTimestamp',
+            description: "Time stamp of transaction occurrence",
           },
         },
       },
