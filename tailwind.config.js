@@ -12,7 +12,14 @@ module.exports = {
     fontFamily: {
       sans: ["Work Sans", ...defaultTheme.fontFamily.sans],
     },
-
+    screens: {
+      'xs': '320px',
+      'sm': '568px',
+      'md': '744px',
+      'lg': '1024px',
+      'xl': '1280px',
+      '2xl': '1512px',
+    },
     extend: {
       backgroundColor: (theme) => ({
         darkgray: "#24242B",
@@ -23,6 +30,9 @@ module.exports = {
         logo: "#F1F1F3",
         basegray: "#C5C5C5",
       }),
+      fontSize: {
+        "2xs": ["0.5rem", "0.75rem"],
+      },
       colors: {
         // Unique Colors
         primary: "#8E477F",
@@ -76,6 +86,31 @@ module.exports = {
       },
       maxWidth: {
         modal: "708px",
+        toast: "4rem",
+      },
+      animation: {
+        "slide-in": "slide-in 0.5s ease forwards",
+        "fade-out": "fade-out 0.5s ease forwards",
+        "slide-from-right": "slide-from-right 0.3s ease forwards",
+        "slide-to-right": "slide-to-right 0.3s ease forwards",
+      },
+      keyframes: {
+        "slide-in": {
+          "0%": { transform: "translateY(-50%)", opacity: 0 },
+          "100%": { transform: "translateY(0)", opacity: 1 },
+        },
+        "fade-out": {
+          "0%": { transform: "scale(1)", opacity: 1 },
+          "100%": { transform: "scale(0.2)", opacity: 0 },
+        },
+        "slide-from-right": {
+          "0%": { transform: "translateX(100%)" },
+          "100%": { transform: "translateX(0)" },
+        },
+        "slide-to-right": {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(100%)" },
+        },
       },
     },
   },

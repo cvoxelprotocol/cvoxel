@@ -8,6 +8,9 @@ import { LoadingModal } from "@/components/common/LoadingModal";
 import { Toaster } from "react-hot-toast";
 import { Meta } from "./parts/Meta";
 import { useRouter } from "next/dist/client/router";
+import { Toast } from "@/components/common/toast/Toast";
+import { CVoxelDetailBox } from "@/components/CVoxel/CVoxelDetailBox";
+
 config.autoAddCss = false;
 
 type Props = {
@@ -30,7 +33,7 @@ export const BaseLayout = ({ children }: Props) => {
         ) : (
           <>
             <Header />
-            <div className="mx-auto px-4 w-full min-h-screen overflow-y-scroll pt-16 md:pt-24 bg-white dark:bg-darkgray break-words">
+            <div className="mx-auto px-4 w-full min-h-screen overflow-y-scroll bg-white dark:bg-darkgray break-words">
               {children}
             </div>
             <Footer />
@@ -38,7 +41,9 @@ export const BaseLayout = ({ children }: Props) => {
         )}
       </div>
       {isLoading && <LoadingModal />}
+      <Toast />
       <Toaster />
+      <CVoxelDetailBox />
     </>
   );
 };

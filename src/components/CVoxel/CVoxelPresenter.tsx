@@ -2,10 +2,12 @@ import * as THREE from "three";
 import { FC, useRef, useState, useMemo } from "react";
 import { CVoxelVisType } from "@/interfaces/cVoxelType";
 import LineBox from "./LineBox";
+import { ThreeEvent } from "@react-three/fiber";
 
 type Props = {
   position: THREE.Vector3;
   offset?: THREE.Vector3;
+  handleClick?: () => void;
 } & CVoxelVisType;
 
 const CVoxelPresenter: FC<Props> = (props) => {
@@ -26,12 +28,18 @@ const CVoxelPresenter: FC<Props> = (props) => {
   const voxelRef = useRef<THREE.Mesh>(null!);
   const [hover, setHover] = useState<boolean>(false);
 
+  const handleClick = (e:ThreeEvent<MouseEvent>) => {
+    e.stopPropagation()
+    props.handleClick?.();
+  };
+
   return (
     <group
       position={voxelPosition}
-      scale={hover ? [0.8, 0.8, 0.8] : [1, 1, 1]}
+      scale={hover ? [1.2, 1.2, 1.2] : [1, 1, 1]}
       onPointerOver={(e) => setHover(true)}
       onPointerOut={(e) => setHover(false)}
+      onClick={handleClick}
     >
       <mesh
         receiveShadow
