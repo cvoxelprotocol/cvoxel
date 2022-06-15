@@ -236,7 +236,7 @@ export const CVoxelItem: FC<Props> = ({
                     {detailItem && (
                       <>
                         <p className="font-medium text-lg">
-                          {formatBigNumber(detailItem.value, 6)}{" "}
+                        {formatBigNumber(detailItem?.value, 6, detailItem?.tokenDecimal.toString())}{" "}
                           {detailItem.tokenSymbol || detailItem.networkId}
                         </p>
                         {fiatVal && (

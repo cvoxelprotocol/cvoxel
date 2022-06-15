@@ -14,7 +14,7 @@ export function useCVoxelsRecord(did: string): PublicRecord<CVoxels | null> {
   return usePublicRecord<ModelTypes, "workCredentials">("workCredentials", did);
 }
 
-export function useCVoxelRecord(id: string): TileDoc<CVoxel> {
+export function useCVoxelRecord(id?: string): TileDoc<CVoxel> {
   return useTileDoc<CVoxel>(id);
 }
 

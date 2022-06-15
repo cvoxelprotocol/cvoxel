@@ -36,18 +36,22 @@ export const ProfileContainer: FC<CeramicProps> = ({ did }) => {
   );
 
   const VisualizerPresenterMemo = useMemo(
-    () => (
-      <Canvas shadows>
-        <VisualizerPresenter
-          ids={
-            CVoxelsRecords.content
-              ? CVoxelsRecords.content.WorkCredentials.map((vox) => vox.id)
-              : []
-          }
-        />
-      </Canvas>
-    ),
-    [CVoxelsRecords.content]
+    () => {
+      // avoid warning "useLayoutEffect does nothing on the server"
+      if(!process.browser) return null
+      return (
+        <Canvas shadows>
+          <VisualizerPresenter
+            ids={
+              CVoxelsRecords.content
+                ? CVoxelsRecords.content.WorkCredentials.map((vox) => vox.id)
+                : []
+            }
+          />
+        </Canvas>
+      )
+    },
+    [CVoxelsRecords.content, process.browser]
   );
 
   return (

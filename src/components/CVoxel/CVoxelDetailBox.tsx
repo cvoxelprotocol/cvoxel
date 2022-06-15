@@ -19,7 +19,7 @@ import clsx from "clsx";
 export const CVoxelDetailBox: FC<{}> = () => {
   const [box] = useStateCVoxelDetailBox();
 
-  const cVoxelItem = useCVoxelRecord(box?.item.id ?? "");
+  const cVoxelItem = useCVoxelRecord(box?.item.id);
 
   const detailItem = useMemo(() => {
     if (cVoxelItem.isError) {
@@ -116,12 +116,14 @@ export const CVoxelDetailBox: FC<{}> = () => {
 
         {/*c-voxel*/}
         <div className="mt-2">
-          <Canvas>
-            <VisualizerPresenter
-              ids={box ? [box.item.id] : undefined}
-              zoom={6}
-            />
-          </Canvas>
+          {box && box.item.id && (
+            <Canvas>
+              <VisualizerPresenter
+                ids={box ? [box.item.id] : undefined}
+                zoom={6}
+              />
+            </Canvas>
+          )}
         </div>
 
         {/*address*/}
@@ -168,7 +170,7 @@ export const CVoxelDetailBox: FC<{}> = () => {
           {detailItem && (
             <>
               <p className="font-medium text-lg">
-                {formatBigNumber(detailItem?.value, 1)}{" "}
+                {formatBigNumber(detailItem?.value, 8, detailItem?.tokenDecimal.toString())}{" "}
                 {detailItem.tokenSymbol || detailItem.networkId}
               </p>
               {fiatVal && (
