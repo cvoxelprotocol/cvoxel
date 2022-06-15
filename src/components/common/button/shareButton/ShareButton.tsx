@@ -55,7 +55,7 @@ export const ShareButton: FC<{}> = () => {
       );
 
       // NOTE: When using voxel IDs
-      // url.searchParams.set("voxelid","")
+      // u.searchParams.set("voxelid","")
 
       return u.toString();
     }
@@ -74,7 +74,7 @@ export const ShareButton: FC<{}> = () => {
     u.searchParams.set("url", url);
 
     // NOTE: When using additional texts
-    // url.searchParams.set("text", "");
+    // u.searchParams.set("text", "");
 
     return u.toString();
   };
