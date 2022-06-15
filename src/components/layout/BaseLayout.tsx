@@ -25,7 +25,7 @@ export const BaseLayout = ({ children }: Props) => {
   const { isLoading } = useModal();
 
   return (
-    <>
+    <div className="flex">
       <Meta />
       <div className={"text-sm " + styles.background_base}>
         {router.pathname.startsWith("/intro") ? (
@@ -44,6 +44,6 @@ export const BaseLayout = ({ children }: Props) => {
       <Toast />
       <Toaster />
       <CVoxelDetailBox />
-    </>
+    </div>
   );
 };
