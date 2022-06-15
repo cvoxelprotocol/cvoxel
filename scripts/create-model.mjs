@@ -212,6 +212,28 @@ const WorkCredentialSchemaID = await manager.createSchema('WorkCredential', {
       title: 'platform',
       description: "a transaction platform if exists e.g, gitcoin",
     },
+    subtasks: {
+      type: "array",
+      title: 'subtasks',
+      description: "subtasks",
+      items: {
+        type: 'object',
+        title: 'subtask',
+        properties: {
+          detail: {
+            type: 'string',
+            title: 'detail',
+            description: "work detail"
+          },
+          genre: {
+            type: 'string',
+            title: 'genre',
+            description: "work genre e.g, Dev, Design etc",
+          },
+          
+        },
+      },
+    },
     createdAt: {
       type: 'string',
       title: 'createdAt',

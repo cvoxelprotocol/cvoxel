@@ -38,6 +38,7 @@ export type CVoxel = {
   fromSigner: string; // who signed this cvoxel as payer actually. Only EOA supported
   startTimestamp?: string; //timestamp to start work
   endTimestamp?: string; //timestamp to end work
+  subtasks?: Subtask[];
   createdAt?: string; //timestamp to be created
   updatedAt?: string; //timestamp to be updated
   relatedAddresses: string[]; // all addresses related to this cvoxel. may contain both EOA and contract address
@@ -51,6 +52,11 @@ export type WorkCredentialForm = CVoxel & {
 export type DeliverableItem = {
   format: string;
   value: string;
+};
+
+export type Subtask = {
+  detail: string;
+  genre: string;
 };
 
 export type CVoxelWithId = CVoxel & {

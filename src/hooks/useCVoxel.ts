@@ -8,7 +8,7 @@ import type {
   CVoxels,
 } from "@/interfaces/cVoxelType";
 import { TileDoc, useTileDoc } from "./useTileDoc";
-import { useConnect } from "./useCeramicAcount";
+import { useMyCeramicAcount } from "./useCeramicAcount";
 
 export function useCVoxelsRecord(did: string): PublicRecord<CVoxels | null> {
   return usePublicRecord<ModelTypes, "workCredentials">("workCredentials", did);
@@ -19,7 +19,7 @@ export function useCVoxelRecord(id?: string): TileDoc<CVoxel> {
 }
 
 export function useCVoxel(did: string, id: string) {
-  const connect = useConnect();
+  const { connectCeramic, mySelfID } = useMyCeramicAcount();
   const cVoxelsRecord = useCVoxelsRecord(did);
   const cVoxelDoc = useTileDoc<CVoxel>(id);
   const [cVoxel, setCVoxel] = useState<CVoxel | null>(null);
@@ -63,7 +63,7 @@ export function useCVoxel(did: string, id: string) {
     setEditionState({ status: "loading" });
 
     try {
-      const selfID = await connect();
+      const selfID = mySelfID || (await connectCeramic());
       if (selfID == null) {
         setEditionState({ status: "pending" });
         return false;
@@ -79,7 +79,15 @@ export function useCVoxel(did: string, id: string) {
     } catch (error) {
       setEditionState({ status: "failed", error });
     }
-  }, [connect, editionState, isValid, cVoxel, cVoxelDoc, setEditionState]);
+  }, [
+    editionState,
+    isValid,
+    cVoxel,
+    cVoxelDoc,
+    setEditionState,
+    mySelfID,
+    connectCeramic,
+  ]);
 
   return {
     isEditable,

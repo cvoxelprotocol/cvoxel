@@ -13,6 +13,7 @@ import { useWalletAccount } from "./useWalletAccount";
 import { Caip10Link } from "@ceramicnetwork/stream-caip10-link";
 import { ModelTypes } from "@/interfaces";
 import { useDID } from "@/recoilstate";
+import { useStateMySelfID } from "@/recoilstate/ceramic";
 
 export function useProfile(
   id: string
@@ -20,22 +21,9 @@ export function useProfile(
   return usePublicRecord("basicProfile", id);
 }
 
-export const useConnect = (): (() => Promise<SelfID<ModelTypes> | null>) => {
-  const connect = useViewerConnection<ModelTypes>()[1];
-  return useCallback(async () => {
-    // @ts-ignore
-    const accounts = await window.ethereum.request({
-      method: "eth_requestAccounts",
-    });
-    return await connect(
-      // @ts-ignore
-      new EthereumAuthProvider(window.ethereum, accounts[0])
-    );
-  }, [connect]);
-};
-
 export const useMyCeramicAcount = () => {
   const [connection, connect, disconnect] = useViewerConnection<ModelTypes>();
+  const [mySelfID, setMySelfID] = useStateMySelfID();
   const { connectWallet, disconnectWallet, account, chainId, active, library } =
     useWalletAccount();
   const [did, setDid] = useDID();
@@ -88,12 +76,14 @@ export const useMyCeramicAcount = () => {
     }
   }, [account]);
 
-  const connectCeramic = async () => {
-    if (!(library && account)) return;
+  const connectCeramic = async (): Promise<SelfID<ModelTypes> | null> => {
+    if (!(library && account)) return null;
     await connectWallet();
-    const id = await connect(
+    const selfID = await connect(
       new EthereumAuthProvider(library.provider, account)
     );
+    setMySelfID(selfID);
+    return selfID;
   };
   const connectWalletOnly = async () => {
     await connectWallet();
@@ -101,6 +91,7 @@ export const useMyCeramicAcount = () => {
   const disconnectCeramic = () => {
     disconnect();
     disconnectWallet();
+    setMySelfID(null);
   };
 
   return {
@@ -110,6 +101,7 @@ export const useMyCeramicAcount = () => {
     viewerID,
     did,
     account,
+    mySelfID,
     name: displayProfile.displayName,
     avator: displayProfile.avatarSrc,
     description: displayProfile.bio,

@@ -16,21 +16,21 @@ import { useToast } from "./useToast";
 import { useViewerRecord } from "@self.id/framework";
 import { extractCVoxel } from "@/utils/cVoxelUtil";
 import { convertDateToTimestampStr } from "@/utils/dateUtil";
-import { useConnect } from "./useCeramicAcount";
+import { useMyCeramicAcount } from "./useCeramicAcount";
 
 export function useSigRequest() {
-  const { chainId, account } = useWeb3React<Web3Provider>();
+  const { account } = useWeb3React<Web3Provider>();
   const cVoxelsRecord = useViewerRecord<ModelTypes, "workCredentials">(
     "workCredentials"
   );
   const { showLoading, closeLoading } = useModal();
   const cVoxelService = getCVoxelService();
   const { lancInfo, lancError } = useToast();
-  const connect = useConnect();
+  const { connectCeramic, mySelfID } = useMyCeramicAcount();
 
   const verifyWithCeramic = async (tx: CVoxelMetaDraft) => {
     if (!account) return;
-    const selfID = await connect();
+    const selfID = mySelfID || (await connectCeramic());
     if (selfID == null || selfID.did == null) {
       lancError();
       return false;

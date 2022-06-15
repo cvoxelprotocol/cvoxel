@@ -34,8 +34,7 @@ export const MyTxContainer:FC = () => {
   const publish = useCallback(
     async (data: WorkCredentialForm) => {
       if (!(selectedTx && account)) return;
-      if (connection.status === "connected") {
-        const { summary, detail, deliverableLink,deliverableCID, relatedAddresses, genre, tags } =
+      const { summary, detail, deliverableLink,deliverableCID, relatedAddresses, genre, tags } =
           data;
           let deliverables:DeliverableItem[] = []
           if(deliverableLink) deliverables.push({format: "url", value: deliverableLink})
@@ -55,9 +54,6 @@ export const MyTxContainer:FC = () => {
           resetUploadStatus()
           setTabState("cvoxels");
         }
-      } else {
-        await connectCeramic();
-      }
     },
     [draft]
   );
@@ -67,8 +63,7 @@ export const MyTxContainer:FC = () => {
     offchainItem: CVoxelMetaDraft
   ) => {
     if (!(tx && account && offchainItem)) return;
-    if (connection.status === "connected") {
-      const { summary, detail, deliverables, relatedAddresses, genre, tags } =
+    const { summary, detail, deliverables, relatedAddresses, genre, tags } =
         offchainItem;
       const result = await draft.publish(
         account,
@@ -85,9 +80,6 @@ export const MyTxContainer:FC = () => {
         selectTx(null);
         setTabState("cvoxels");
       }
-    } else {
-      await connectCeramic();
-    }
   };
 
   const reClaimCVoxel = async (
@@ -95,8 +87,7 @@ export const MyTxContainer:FC = () => {
     offchainItem: CVoxelMetaDraft
   ) => {
     if (!(tx && account && offchainItem)) return;
-    if (connection.status === "connected") {
-      const { summary, detail, deliverables, relatedAddresses, genre, tags } =
+    const { summary, detail, deliverables, relatedAddresses, genre, tags } =
         offchainItem;
       const result = await draft.reClaim(
         account,
@@ -113,9 +104,6 @@ export const MyTxContainer:FC = () => {
         selectTx(null);
         setTabState("cvoxels");
       }
-    } else {
-      await connectCeramic();
-    }
   };
 
   const selectedOffchainItem = useMemo(() => {

@@ -4,7 +4,7 @@ import {
 } from "@/constants/toastMessage";
 import { CVoxel } from "@/interfaces";
 import { convertDateToTimestampStr } from "@/utils/dateUtil";
-import { useConnect } from "./useCeramicAcount";
+import { useMyCeramicAcount } from "./useCeramicAcount";
 import { useCVoxelRecord } from "./useCVoxel";
 import { useModal } from "./useModal";
 import { useToast } from "./useToast";
@@ -13,11 +13,11 @@ export const useUpdateCVoxel = (id: string) => {
   const cVoxelItem = useCVoxelRecord(id);
   const { showLoading, closeLoading } = useModal();
   const { lancInfo, lancError } = useToast();
-  const connect = useConnect();
+  const { connectCeramic, mySelfID } = useMyCeramicAcount();
 
   const update = async (newItem: CVoxel) => {
     try {
-      const selfID = await connect();
+      const selfID = mySelfID || (await connectCeramic());
       if (selfID == null) {
         lancError();
         return false;

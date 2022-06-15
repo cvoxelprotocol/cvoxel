@@ -19,11 +19,11 @@ import {
 import { extractCVoxel } from "@/utils/cVoxelUtil";
 import { getNetworkSymbol } from "@/utils/networkUtil";
 import { convertDateToTimestampStr } from "@/utils/dateUtil";
-import { useConnect } from "./useCeramicAcount";
+import { useMyCeramicAcount } from "./useCeramicAcount";
 import { useStateIssueStatus } from "@/recoilstate/cvoxel";
 
 export function useDraftCVoxel() {
-  const connect = useConnect();
+  const { connectCeramic, mySelfID } = useMyCeramicAcount();
   const cVoxelsRecord = useViewerRecord<ModelTypes, "workCredentials">(
     "workCredentials"
   );
@@ -31,7 +31,6 @@ export function useDraftCVoxel() {
   const cVoxelService = getCVoxelService();
   const { lancInfo, lancError } = useToast();
   const [issueStatus, setIssueStatus] = useStateIssueStatus();
-  // const [draft, setDraft] = useStateDraftCVoxel();
 
   const publish = useCallback(
     async (
@@ -49,7 +48,7 @@ export function useDraftCVoxel() {
         return false;
       }
 
-      const selfID = await connect();
+      const selfID = mySelfID || (await connectCeramic());
       if (selfID == null || selfID.did == null) {
         lancError();
         return false;
@@ -134,7 +133,13 @@ export function useDraftCVoxel() {
         return false;
       }
     },
-    [connect, cVoxelsRecord, isLoading, cVoxelsRecord.isLoadable]
+    [
+      mySelfID,
+      connectCeramic,
+      cVoxelsRecord,
+      isLoading,
+      cVoxelsRecord.isLoadable,
+    ]
   );
 
   const reClaim = useCallback(
@@ -153,7 +158,7 @@ export function useDraftCVoxel() {
         return false;
       }
 
-      const selfID = await connect();
+      const selfID = mySelfID || (await connectCeramic());
       if (selfID == null || selfID.did == null) {
         lancError();
         return false;
@@ -215,7 +220,13 @@ export function useDraftCVoxel() {
         return false;
       }
     },
-    [connect, cVoxelsRecord, isLoading, cVoxelsRecord.isLoadable]
+    [
+      mySelfID,
+      connectCeramic,
+      cVoxelsRecord,
+      isLoading,
+      cVoxelsRecord.isLoadable,
+    ]
   );
 
   const createDraftObjectWithSig = async (
