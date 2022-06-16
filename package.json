@@ -32,7 +32,6 @@
     "ethers": "^5.5.4",
     "firebase": "^9.6.7",
     "grommet": "^2.19.1",
-    "jotai": "^1.4.6",
     "key-did-provider-ed25519": "^2.0.0",
     "key-did-resolver": "^2.0.4",
     "next": "12.0.1",

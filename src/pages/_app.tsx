@@ -1,6 +1,5 @@
 import type { ModelTypesToAliases } from "@glazed/types";
 import { Provider as SelfIDProvider } from "@self.id/framework";
-import { Provider as JotaiProvider } from "jotai";
 import type { AppProps } from "next/app";
 import { CERAMIC_NETWORK, CERAMIC_URL } from "@/constants/common";
 import { cVoxelModel } from "@/lib/ceramic/dataModel";
@@ -71,14 +70,12 @@ export default function App({ Component, pageProps }: AppProps) {
               }}
               state={state}
             >
-              <JotaiProvider>
-                <ThemeProvider attribute="class" defaultTheme={"light"}>
+              <ThemeProvider attribute="class" defaultTheme={"light"}>
                   <BaseLayout>
                     <Component {...props} />
                   </BaseLayout>
                   {isLoading && <LoadingModal />}
                 </ThemeProvider>
-              </JotaiProvider>
             </SelfIDProvider>
           </Hydrate>
         </QueryClientProvider>

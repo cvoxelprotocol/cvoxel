@@ -38,7 +38,7 @@ export const ProfileContainer: FC<CeramicProps> = ({ did }) => {
   const VisualizerPresenterMemo = useMemo(
     () => {
       // avoid warning "useLayoutEffect does nothing on the server"
-      if(!process.browser) return null
+      if(!process.browser) return <></>
       return (
         <Canvas shadows>
           <VisualizerPresenter
