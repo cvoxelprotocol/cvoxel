@@ -9,10 +9,3 @@ export const issueStatus = atom<"completed" | "issuing" | "failed" | undefined>(
 );
 
 export const useStateIssueStatus = () => useRecoilState(issueStatus);
-
-export const draftCVoxel = atom<WorkCredentialForm | null>({
-  key: "draftCVoxel",
-  default: null,
-});
-
-export const useStateDraftCVoxel = () => useRecoilState(issueStatus);
