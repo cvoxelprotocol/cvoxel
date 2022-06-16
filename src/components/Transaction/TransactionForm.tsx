@@ -172,9 +172,16 @@ export const TransactionForm: FC<TransactionFormProps> = ({
         )}
         <FileUploader />
         <div className="w-full grid grid-cols-2 mb-2">
-          <span className="cols-span-1 px-3 text-xs text-red-600">
-            {errors.deliverables && errors.deliverables.map(d => d.value)}
-          </span>
+          {errors && errors.deliverableLink && (
+            <span className="cols-span-1 px-3 text-xs text-red-600">
+              {errors.deliverableLink.message}
+            </span>
+          )}
+          {errors && errors.deliverableCID && (
+            <span className="cols-span-1 px-3 text-xs text-red-600">
+              {errors.deliverableCID.message}
+            </span>
+          )}
         </div>
       </div>
       <div className="text-right py-4 space-x-4 flex justify-end items-center">
