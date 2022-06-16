@@ -36,7 +36,7 @@ const CVoxelPresenter: FC<Props> = (props) => {
   return (
     <group
       position={voxelPosition}
-      scale={hover ? [0.8, 0.8, 0.8] : [1, 1, 1]}
+      scale={hover ? [1.2, 1.2, 1.2] : [1, 1, 1]}
       onPointerOver={(e) => setHover(true)}
       onPointerOut={(e) => setHover(false)}
       onClick={handleClick}

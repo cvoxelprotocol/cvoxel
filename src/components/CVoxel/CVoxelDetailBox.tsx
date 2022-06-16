@@ -69,8 +69,9 @@ export const CVoxelDetailBox: FC<{}> = () => {
   };
   useEffect(() => {
     documentClickHandler.current = (e) => {
-      if (boxRef.current != null && boxRef.current.contains(e.target as Node))
-        return;
+      const dom = e.target as Node
+      // keep showing detail when a user clicks the detail card or other voxels.
+      if (boxRef.current != null && (boxRef.current.contains(dom) || dom.nodeName==="CANVAS")) return;
 
       setIsShow(false);
       removeDocumentClickHandler();
