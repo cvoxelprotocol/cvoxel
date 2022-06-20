@@ -73,8 +73,8 @@ export const ShareButton: FC<{}> = () => {
     const u = new URL("https://twitter.com/intent/tweet");
     u.searchParams.set("url", url);
 
-    // NOTE: When using additional texts
-    // u.searchParams.set("text", "");
+    u.searchParams.set("text", "I made a new Vess on @C_Voxel");
+    u.searchParams.set("hashtags", "Vess,WorkCredential");
 
     return u.toString();
   };
