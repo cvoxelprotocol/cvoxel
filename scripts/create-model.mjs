@@ -18,7 +18,7 @@ if (!process.env.SEED) {
 
 // const CERAMIC_URL = process.env.NEXT_PUBLIC_CERAMIC_URL || 'http://localhost:7007'
 const CERAMIC_URL = 'http://localhost:7007'
-const modelJsonName = "model_v2_dev.json"
+const modelJsonName = "model_v2.json"
 
 // The seed must be provided as an environment variable
 const seed = fromString(process.env.SEED, 'base16')

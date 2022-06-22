@@ -8,7 +8,7 @@ dotenv.config();
 
 // const CERAMIC_URL = process.env.NEXT_PUBLIC_CERAMIC_URL || 'http://localhost:7007'
 const CERAMIC_URL = 'http://localhost:7007'
-const modelJsonName = "model_v2_dev.json"
+const modelJsonName = "model_v2.json"
 const aliasesFile = "aliases.ts"
 
 // Connect to the Ceramic node
