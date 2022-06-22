@@ -9,7 +9,10 @@ export const formatBigNumber = (
   value: BigNumberish,
   precision = 2,
   decimals: string = "18"
-): string => Number(formatUnits(value, decimals)).toFixed(precision);
+): string =>
+  Number(formatUnits(value, decimals)).toLocaleString(undefined, {
+    maximumFractionDigits: precision,
+  });
 
 export const formatBigNumberWithoutPrecision = (
   value: BigNumberish,

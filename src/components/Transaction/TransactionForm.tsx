@@ -1,32 +1,53 @@
+import { useDraftCVoxel } from "@/hooks/useDraftCVoxel";
+import { useFileUpload } from "@/hooks/useFileUpload";
 import { useInternalTransactions } from "@/hooks/useInternalTransactions";
-import { CVoxel, TransactionLogWithChainId } from "@/interfaces";
+import { WorkCredentialForm, TransactionLogWithChainId } from "@/interfaces";
+import { ViewerConnectionState } from "@self.id/react";
 import { FC, useMemo, useEffect } from "react";
-import { useFormContext } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { Button } from "../common/button/Button";
 import { CommonSpinner } from "../common/CommonSpinner";
+import { FileUploader } from "./FileUploader";
 import { GenreList } from "./GenreList";
 import { InternalTransactionContainer } from "./InternalTransactionContainer";
 import { TagForm } from "./TagForm";
 
 type TransactionFormProps = {
   tx: TransactionLogWithChainId;
-  connectionStatus: "disconnected" | "connecting" | "failed" | "connected";
+  connectionState: ViewerConnectionState;
   isFirstTime?: boolean;
+  onSubmit:(data: any) => void
 };
 
 export const TransactionForm: FC<TransactionFormProps> = ({
   tx,
-  connectionStatus,
+  connectionState,
   isFirstTime,
+  onSubmit
 }) => {
   const { internalTxs, internalTxLoading } = useInternalTransactions(tx);
+  const {cid, status} = useFileUpload()
+  const {issueStatus} = useDraftCVoxel()
 
   const {
     register,
     setValue,
     getValues,
+    handleSubmit,
+    reset,
     formState: { errors },
-  } = useFormContext<CVoxel>();
+  } = useForm<WorkCredentialForm>();
+
+  const onClickSubmit = (data:any) => {
+    if(!data) return
+    onSubmit(data)
+  }
+
+  useEffect(() => {
+    if(issueStatus==="completed") {
+      reset()
+    }
+  },[issueStatus, reset])
 
   const relatedAddress = useMemo(() => {
     let merged: string[] | null = tx.addressOfDuplicatedTx || null;
@@ -55,17 +76,25 @@ export const TransactionForm: FC<TransactionFormProps> = ({
     register("genre", { required: "Please select genre" });
   }, [relatedAddress, tx]);
 
+  useEffect(() => {
+    if(status==="completed" && cid) {
+      setValue("deliverableCID", cid)
+    }
+
+  },[cid, status])
+
   return (
-    <>
+    <form
+        className="w-full"
+        onSubmit={handleSubmit(onClickSubmit)}
+      >
       {/* title */}
       <div className="flex flex-wrap items-center">
         <p className="font-semibold">
           Activity Summary
-          {errors && errors.summary && (
-            <span className="cols-span-1 px-3 text-xs text-red-600">
-              {errors.summary.message}
+          <span className="cols-span-1 px-3 text-xs text-red-600">
+              {errors.summary?.message}
             </span>
-          )}
         </p>
       </div>
       <div className="mb-3">
@@ -123,32 +152,50 @@ export const TransactionForm: FC<TransactionFormProps> = ({
         />
       </div>
       <div className="flex flex-wrap items-center">
-        <p className="font-semibold">Deliverable link(optional)</p>
+        <p className="font-semibold">Deliverable Link(optional)</p>
       </div>
       <div className="mb-3">
         <input
           className="w-full my-1 py-1 px-6 border rounded-full text-xs md:text-sm hover:border-primary focus:outline-primary"
           placeholder={"Enter Deliverable link.."}
-          {...register("deliverable")}
+          {...register("deliverableLink")}
         />
+      </div>
+      <div className="flex flex-wrap items-center">
+        <p className="font-semibold">Deliverable CID(optional)</p>
+      </div>
+      <div className="mb-3">
+        {cid && (
+          <p
+            className="w-full my-1 py-1 px-6 border rounded-full text-xs md:text-sm hover:border-primary focus:outline-primary text-left"
+          >{cid}</p> 
+        )}
+        <FileUploader />
         <div className="w-full grid grid-cols-2 mb-2">
-          <span className="cols-span-1 px-3 text-xs text-red-600">
-            {errors.deliverable?.message}
-          </span>
+          {errors && errors.deliverableLink && (
+            <span className="cols-span-1 px-3 text-xs text-red-600">
+              {errors.deliverableLink.message}
+            </span>
+          )}
+          {errors && errors.deliverableCID && (
+            <span className="cols-span-1 px-3 text-xs text-red-600">
+              {errors.deliverableCID.message}
+            </span>
+          )}
         </div>
       </div>
       <div className="text-right py-4 space-x-4 flex justify-end items-center">
-        {connectionStatus === "connecting" && <CommonSpinner />}
+        {connectionState.status === "connecting" && <CommonSpinner />}
         <Button
           text={
-            connectionStatus === "connected"
+            connectionState.status === "connected"
               ? "Create"
-              : connectionStatus === "connecting"
+              : connectionState.status === "connecting"
               ? "Connecitng..."
               : "Connect DID for Create"
           }
           buttonType={"submit"}
-          color={connectionStatus === "connected" ? "grad-blue" : "grad-red"}
+          color={connectionState.status === "connected" ? "grad-blue" : "grad-red"}
         />
       </div>
       <InternalTransactionContainer
@@ -156,6 +203,6 @@ export const TransactionForm: FC<TransactionFormProps> = ({
         internalTxs={internalTxs}
         internalTxLoading={internalTxLoading}
       />
-    </>
+    </form>
   );
 };

@@ -19,8 +19,8 @@ export const ProfileContainer: FC<CeramicProps> = ({ did }) => {
       <CVoxelsPresenter>
         {CVoxelsRecords.isLoading && <CommonLoading />}
         {!CVoxelsRecords.isLoading &&
-          CVoxelsRecords.content?.cVoxels &&
-          CVoxelsRecords.content.cVoxels.map((item) => {
+          CVoxelsRecords.content?.WorkCredentials &&
+          CVoxelsRecords.content.WorkCredentials.map((item) => {
             return (
               <CVoxelItem did={did} item={item} key={item.id} isOwner={false} />
             );
@@ -36,18 +36,22 @@ export const ProfileContainer: FC<CeramicProps> = ({ did }) => {
   );
 
   const VisualizerPresenterMemo = useMemo(
-    () => (
-      <Canvas shadows>
-        <VisualizerPresenter
-          ids={
-            CVoxelsRecords.content
-              ? CVoxelsRecords.content.cVoxels.map((vox) => vox.id)
-              : []
-          }
-        />
-      </Canvas>
-    ),
-    [CVoxelsRecords.content]
+    () => {
+      // avoid warning "useLayoutEffect does nothing on the server"
+      if(typeof window === undefined) return <></>
+      return (
+        <Canvas shadows>
+          <VisualizerPresenter
+            ids={
+              CVoxelsRecords.content
+                ? CVoxelsRecords.content.WorkCredentials.map((vox) => vox.id)
+                : []
+            }
+          />
+        </Canvas>
+      )
+    },
+    [CVoxelsRecords.content, process.browser]
   );
 
   return (

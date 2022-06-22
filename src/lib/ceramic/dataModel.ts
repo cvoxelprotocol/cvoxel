@@ -1,8 +1,8 @@
 import { CERAMIC_NETWORK } from "@/constants/common";
 import type { ModelTypes } from "@/interfaces/cVoxelType";
 import type { ModelTypesToAliases } from "@glazed/types";
-import devModel from "../../model_dev.json";
-import prodModel from "../../model_prod.json";
+// import prodModel from "../../model_prod.json";
+import { aliases as devModelAliases } from "../../__generated__/aliases";
 
 export const cVoxelModel: ModelTypesToAliases<ModelTypes> =
-  CERAMIC_NETWORK === "mainnet" ? prodModel : devModel;
+  CERAMIC_NETWORK === "mainnet" ? devModelAliases : devModelAliases;

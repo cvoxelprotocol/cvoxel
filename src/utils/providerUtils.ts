@@ -102,8 +102,8 @@ export const getMessageForSignature = (
   deliverable?: string
 ): string => {
   return `Claim C-Voxel for work detail below\n\nsummary: ${summary}\ndescription: ${
-    description || ""
+    description ?? ""
   }\ndeliverable: ${
-    deliverable || ""
+    deliverable ?? ""
   }\ntxHash: ${txHash}\naddress: ${txAddress}`;
 };

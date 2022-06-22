@@ -8,7 +8,6 @@ import Image from "next/image"
 export const HomeContainer: FC = () => {
   const { did } = useMyCeramicAcount();
   const CVoxelsRecords = useCVoxelsRecord(did);
-
   const MyPageContainerRef = useRef<HTMLDivElement>(null);
   const scrollToInfo = () => {
     MyPageContainerRef.current?.scrollIntoView({behavior: "smooth"})

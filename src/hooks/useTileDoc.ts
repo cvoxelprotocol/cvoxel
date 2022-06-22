@@ -17,7 +17,7 @@ export type TileDoc<ContentType> = {
   update(content: ContentType): Promise<void>;
 };
 
-export const useTileDoc = <ContentType>(id: string): TileDoc<ContentType> => {
+export const useTileDoc = <ContentType>(id?: string): TileDoc<ContentType> => {
   const queryClient = useQueryClient();
   const viewerID = useViewerID();
 
@@ -27,8 +27,11 @@ export const useTileDoc = <ContentType>(id: string): TileDoc<ContentType> => {
     isError,
     error,
   } = useQuery<TileDocument<ContentType>>(
-    id,
-    async () => await core.tileLoader.load<ContentType>(id)
+    id || "noId",
+    async () => await core.tileLoader.load<ContentType>(id || ""),
+    {
+      enabled: !!id,
+    }
   );
 
   const isController =
@@ -44,7 +47,7 @@ export const useTileDoc = <ContentType>(id: string): TileDoc<ContentType> => {
     },
     {
       onSuccess: (doc: TileDocument<ContentType>) => {
-        queryClient.setQueryData(id, doc);
+        queryClient.setQueryData(id || "noId", doc);
       },
     }
   );

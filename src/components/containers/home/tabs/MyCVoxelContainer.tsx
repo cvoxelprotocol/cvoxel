@@ -1,9 +1,9 @@
 import { useTab } from "@/hooks/useTab";
-import { FC, useMemo, useState, memo } from "react";
+import { FC, useMemo, memo } from "react";
 import { NoItemPresenter } from "../../../common/NoItemPresenter";
 import { CVoxelItem } from "../../../CVoxel/CVoxelItem";
 import CVoxelsPresenter from "../../../CVoxel/CVoxelsPresenter";
-import type { CVoxelItem as ICVoxelItem, CVoxelMetaDraft, TransactionLogWithChainId } from "@/interfaces";
+import type { CVoxelItem as ICVoxelItem, CVoxelMetaDraft } from "@/interfaces";
 import { useStateForceUpdate } from "@/recoilstate";
 import { useCVoxelsRecord } from "@/hooks/useCVoxel";
 import { CommonLoading } from "../../../common/CommonLoading";
@@ -34,7 +34,7 @@ export const MyCVoxelContainer:FC = () => {
 
   const sortCVoxels = useMemo(() => {
     if (!CVoxelsRecords.content) return [];
-    return CVoxelsRecords.content.cVoxels.sort((a, b) => {
+    return CVoxelsRecords.content.WorkCredentials.sort((a, b) => {
       return Number(a.issuedTimestamp) > Number(b.issuedTimestamp) ? -1 : 1;
     });
   }, [CVoxelsRecords.content]);

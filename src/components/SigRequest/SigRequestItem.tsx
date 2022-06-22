@@ -95,9 +95,27 @@ export const SigRequestItem: FC<SigRequestItemProps> = ({
         <p className="py-2 text-md whitespace-pre-wrap">{tx.detail}</p>
         <div className="py-5">
           <p className="py-2 text-md">Deliverable</p>
-          <p className="text-secondary">
-            {tx.deliverable ? shortenStr(tx.deliverable) : "No Deliverable"}
-          </p>
+          {tx?.deliverables && tx.deliverables.map(d => {
+            return (
+              <div key={d.value}>
+                <a
+                  className="flex items-center flex-wrap"
+                  href={`${d.format==="url" ? d.value : `https://dweb.link/ipfs/${d.value}`}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <p className="text-xs text-secondary">
+                    {shortenStr(d.value)}
+                  </p>
+                  <FontAwesomeIcon
+                    className="w-3 h-3 ml-2"
+                    icon={faExternalLink}
+                    color={"#EFA9E0"}
+                  />
+                </a>
+              </div>
+            )
+          })}
         </div>
         <div className=" bg-gray-200 h-[1px] mx-auto w-11/12"></div>
         <div className="w-full flex items-center justify-end pt-4 pb-5 px-5">

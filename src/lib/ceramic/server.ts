@@ -18,7 +18,7 @@ export const createRequestClient = (
   return new RequestClient({
     ceramic: CERAMIC_URL,
     cookie: ctx.req.headers.cookie,
-    model: cVoxelModel,
+    aliases: cVoxelModel,
   });
 };
 
@@ -32,7 +32,7 @@ export const getRequestState = async (
 
   if (isDIDstring(did)) {
     if (isSupportedDID(did)) {
-      prefetch.push(requestClient.prefetch("cVoxels", did));
+      prefetch.push(requestClient.prefetch("workCredentials", did));
       prefetch.push(requestClient.prefetch("basicProfile", did));
       await Promise.all(prefetch);
     }

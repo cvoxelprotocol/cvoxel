@@ -36,7 +36,7 @@ export const useVoxStyler = (cVoxels: CVoxelWithId[]) => {
           lattice: false,
           scale: 1.0,
         };
-        const { value, deliverable, toSig, fromSig, genre, fiatValue } = voxel;
+        const { value, deliverables, toSig, fromSig, genre, fiatValue } = voxel;
         let hue, lightness, saturation: number;
 
         /* Set opacity from sigs */
@@ -45,7 +45,7 @@ export const useVoxStyler = (cVoxels: CVoxelWithId[]) => {
         }
 
         /* Set lattice from deliverable */
-        if (deliverable !== "") {
+        if (!deliverables || deliverables.length === 0) {
           voxelTemp["lattice"] = true;
         }
 
