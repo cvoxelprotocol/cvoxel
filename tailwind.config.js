@@ -32,9 +32,35 @@ module.exports = {
       }),
       fontSize: {
         "2xs": ["0.5rem", "0.75rem"],
+
+        // V2 UI Fonts
+        display: {
+          sm: ["2.25rem", "2.25rem"],
+          md: ["2.8125rem", "3.25rem"],
+          lg: ["3.5625rem", "4rem"],
+        },
+        headline: {
+          sm: ["1.5rem", "2rem"],
+          md: ["1.75rem", "2.25rem"],
+          lg: ["2rem", "2.5rem"],
+        },
+        title: {
+          sm: ["0.875", "1.25rem"],
+          md: ["1rem", "1.5rem"],
+          lg: ["1.375rem", "1.75rem"],
+        },
+        label: {
+          sm: ["0.6875rem", "1rem"],
+          md: ["0.75rem", "1rem"],
+          lg: ["0.875rem", "1.25rem"],
+        },
+        body: {
+          sm: ["0.75rem", "1rem"],
+          md: ["0.875rem", "1.25rem"],
+          lg: ["1rem", "1.5rem"],
+        },
       },
       colors: {
-
         // UI V1 Colors
 
         // Unique Colors
