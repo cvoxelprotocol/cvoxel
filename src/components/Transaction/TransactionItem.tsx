@@ -26,7 +26,6 @@ type TransactionItemProps = {
 
 export const TransactionItem: FC<TransactionItemProps> = ({
   tx,
-  index,
   account,
   cVoxels,
   onClickTx,
@@ -40,7 +39,7 @@ export const TransactionItem: FC<TransactionItemProps> = ({
     return !cVoxels
       ? false
       : cVoxels?.some(
-          (cv) => cv.txHash.toLowerCase() === tx.hash.toLowerCase()
+          (cv) => cv.txHash?.toLowerCase() === tx.hash.toLowerCase()
         );
   }, [cVoxels, tx.hash]);
 

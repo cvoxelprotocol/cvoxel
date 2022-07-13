@@ -103,7 +103,6 @@ export function useSigRequest() {
     tx: CVoxelMetaDraft,
     address: string
   ): Promise<CVoxel | null> => {
-    const to = tx.to.toLowerCase();
     const from = tx.from.toLowerCase();
     const usr = address.toLowerCase();
 
@@ -119,8 +118,10 @@ export function useSigRequest() {
     const meta = extractCVoxel(metaDraft);
 
     try {
+      const sig = isPayer ? meta.fromSig : meta.toSig;
+      if (!(sig && meta.txHash)) return null;
       const status = await updateDraftWighVerify(
-        isPayer ? meta.fromSig : meta.toSig,
+        sig,
         meta.txHash,
         usr,
         tx.networkId.toString()
@@ -138,6 +139,7 @@ export function useSigRequest() {
     isPayer: boolean
   ): Promise<CVoxelMetaDraft | null> => {
     try {
+      if (!tx.txHash) return null;
       const nowTimestamp = convertDateToTimestampStr(new Date());
       //get hash
       const deliverable =

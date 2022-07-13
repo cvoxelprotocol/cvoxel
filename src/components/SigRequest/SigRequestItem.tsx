@@ -29,6 +29,7 @@ export const SigRequestItem: FC<SigRequestItemProps> = ({
   }, [account, tx]);
 
   const exploreLink = useMemo(() => {
+    if (!tx.txHash) return;
     return getExploreLink(tx.txHash, tx.networkId);
   }, [tx.txHash, tx.networkId]);
 
