@@ -38,13 +38,24 @@ export const useCVoxelList = () => {
 
   const onlyPotentialCVoxels = useMemo(() => {
     if (!txes || txes.length === 0) return [];
-    return uniqueList(txes, account?.toLowerCase());
+    return uniqueList("none", txes, account?.toLowerCase());
+  }, [txes, account]);
+
+  const sentTXList = useMemo(() => {
+    if (!txes || txes.length === 0) return [];
+    return uniqueList("sent", txes, account?.toLowerCase());
+  }, [txes, account]);
+
+  const recievedTXList = useMemo(() => {
+    if (!txes || txes.length === 0) return [];
+    return uniqueList("received", txes, account?.toLowerCase());
   }, [txes, account]);
 
   return {
     txLoading,
     offchainLoading,
-    onlyPotentialCVoxels,
+    sentTXList,
+    recievedTXList,
     offchainMetaList,
   };
 };
