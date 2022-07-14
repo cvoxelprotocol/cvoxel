@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { FC, useRef, useState, useEffect, RefObject } from "react";
+import { FC, useRef, useState, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
 import { OrbitControls, PerspectiveCamera, Plane } from "@react-three/drei";
 import { CVoxel, CVoxelMetaDraft, CVoxelWithId } from "@/interfaces/cVoxelType";
@@ -33,10 +33,9 @@ const VisualizerPresenter: FC<VisualizerPresenterProps> = ({
   const [cVoxelsMap, setCVoxelsMap] = useState<{ [id: string]: ICVoxelItem }>(
     {}
   );
-  const { cvoxelsForDisplay, convertCVoxelsForDisplay } = useVoxStyler(cVoxels);
+  const { cvoxelsForDisplay, convertCVoxelsForDisplay } = useVoxStyler();
 
   const cCollectionRef = useRef<THREE.Group>(new THREE.Group());
-  const offset = new THREE.Vector3(0, 0, 0);
 
   useEffect(() => {
     let isMounted = true;
@@ -66,18 +65,15 @@ const VisualizerPresenter: FC<VisualizerPresenterProps> = ({
 
   useEffect(() => {
     let isMounted = true;
-    convertCVoxelsForDisplay();
-    return () => {
-      isMounted = false;
-    };
-  }, [cVoxels]);
-
-  useEffect(() => {
+    convertCVoxelsForDisplay(cVoxels);
     const m: { [id: string]: ICVoxelItem } = {};
     cVoxels.forEach((vox) => {
       m[vox.id] = vox;
     });
     setCVoxelsMap(m);
+    return () => {
+      isMounted = false;
+    };
   }, [cVoxels]);
 
   useFrame(() => {
