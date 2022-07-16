@@ -17,28 +17,46 @@ export type CVoxel = {
   isPayer: boolean; // whether owner is payer or not
   summary: string; // work summary
   detail?: string; // work detail
-  deliverable?: string; // deliberable link
+  deliverables?: DeliverableItem[]; // deliberable link
   value: string; // reward value
   tokenSymbol: string; // eth, usdc, etc
-  tokenDecimal: number;
+  tokenDecimal: number; // token decimals
   fiatValue?: string; //reward value as USD
   fiatSymbol?: string; // currently only USD supported
   networkId: number; // eth mainnet = 1 | polygon mainnet = 137
   issuedTimestamp: string; //block timestamp
-  txHash: string; // transfer tx hash
-  relatedTxHashes?: string[]; //tx releated work
-  tags?: string[]; //tags
+  txHash?: string; // transfer tx hash
+  jobType?: "FullTime" | "PartTime" | "OneTime"; // default=OneTime
   genre?: string; // main genre
-  jobType: "FullTime" | "PartTime" | "OneTime"; // default=OneTime
-  toSig: string; // sig of payee
-  fromSig: string; // sig of payer
-  toSigner: string; // who signed this cvoxel as payee actually. Only EOA supported
-  fromSigner: string; // who signed this cvoxel as payer actually. Only EOA supported
+  tags?: string[]; //tags
+  toSig?: string; // sig of payee
+  fromSig?: string; // sig of payer
+  toSigner?: string; // who signed this cvoxel as payee actually. Only EOA supported
+  fromSigner?: string; // who signed this cvoxel as payer actually. Only EOA supported
   startTimestamp?: string; //timestamp to start work
   endTimestamp?: string; //timestamp to end work
+  relatedAddresses: string[]; // all addresses related to this cvoxel. may contain both EOA and contract address
+  relatedTxHashes?: string[]; //tx releated work
+  deliverableHash?: string; // hash value of all work descriptions(summary, detail, deliverables)
+  platform?: string; // a transaction platform if exists e.g, gitcoin
+  subtasks?: Subtask[];
   createdAt?: string; //timestamp to be created
   updatedAt?: string; //timestamp to be updated
-  relatedAddresses: string[]; // all addresses related to this cvoxel. may contain both EOA and contract address
+};
+
+export type WorkCredentialForm = CVoxel & {
+  deliverableLink?: string;
+  deliverableCID?: string;
+};
+
+export type DeliverableItem = {
+  format: string;
+  value: string;
+};
+
+export type Subtask = {
+  detail: string;
+  genre: string;
 };
 
 export type CVoxelWithId = CVoxel & {
@@ -58,17 +76,20 @@ export type CVoxelDraftAndMeta = {
 
 export type CVoxelItem = {
   id: string;
-  txHash: string; // transfer tx hash
+  txHash?: string; // transfer tx hash
   isPayer: boolean;
   summary: string;
-  deliverable?: string; // deliberable link
+  deliverables?: DeliverableItem[]; // deliberable link
   fiatValue?: string;
   genre?: string; // main genre
+  deliverableHash?: string; // hash value of all work descriptions(summary, detail, deliverables)
+  platform?: string; // a transaction platform if exists e.g, gitcoin
+  isVerified?: boolean;
   issuedTimestamp: string;
 };
 
 export type CVoxels = {
-  cVoxels: CVoxelItem[];
+  WorkCredentials: CVoxelItem[];
 };
 
 export type ModelTypes = ModelTypeAliases<
@@ -76,16 +97,16 @@ export type ModelTypes = ModelTypeAliases<
     AlsoKnownAs: AlsoKnownAs;
     BasicProfile: BasicProfile;
     CryptoAccounts: CryptoAccountLinks;
-    CVoxel: CVoxel;
-    CVoxels: CVoxels;
+    WorkCredential: CVoxel;
+    WorkCredentials: CVoxels;
   },
   {
     alsoKnownAs: "AlsoKnownAs";
     basicProfile: "BasicProfile";
     cryptoAccounts: "CryptoAccounts";
-    cVoxels: "CVoxels";
-  },
-  { PlaceHodlerCVoxels: "CVoxel" }
+    workCredential: "WorkCredential";
+    workCredentials: "WorkCredentials";
+  }
 >;
 
 export type CVoxelVisType = {

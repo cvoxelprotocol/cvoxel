@@ -1,10 +1,10 @@
-import { CVoxel, CVoxelMetaDraft } from "@/interfaces";
+import { CVoxel, CVoxelMetaDraft, DeliverableItem } from "@/interfaces";
 
 export const extractCVoxel = (tx: CVoxelMetaDraft): CVoxel => {
   const {
     summary,
     detail,
-    deliverable,
+    deliverables,
     jobType,
     from,
     to,
@@ -17,6 +17,9 @@ export const extractCVoxel = (tx: CVoxelMetaDraft): CVoxel => {
     networkId,
     issuedTimestamp,
     txHash,
+    deliverableHash,
+    platform,
+    subtasks,
     relatedTxHashes,
     genre,
     tags,
@@ -33,7 +36,7 @@ export const extractCVoxel = (tx: CVoxelMetaDraft): CVoxel => {
   return {
     summary,
     detail,
-    deliverable,
+    deliverables,
     jobType,
     from,
     to,
@@ -46,6 +49,9 @@ export const extractCVoxel = (tx: CVoxelMetaDraft): CVoxel => {
     networkId,
     issuedTimestamp,
     txHash,
+    deliverableHash: deliverableHash || "",
+    platform: platform || "",
+    subtasks: subtasks || [],
     relatedTxHashes,
     genre,
     tags: tags || [],
@@ -59,4 +65,22 @@ export const extractCVoxel = (tx: CVoxelMetaDraft): CVoxel => {
     createdAt: createdAt || "",
     updatedAt: updatedAt || "",
   };
+};
+
+export const DeliverableItemsFromStr = (
+  deliverable?: string
+): DeliverableItem[] => {
+  if (!deliverable) return [];
+  const deliverables: DeliverableItem[] = deliverable.split(",").map((d) => {
+    return d.startsWith("https://")
+      ? {
+          format: "url",
+          value: d,
+        }
+      : {
+          format: "cid",
+          value: d,
+        };
+  });
+  return deliverables;
 };

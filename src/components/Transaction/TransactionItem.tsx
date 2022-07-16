@@ -10,7 +10,6 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { CommonSpinner } from "../common/CommonSpinner";
 import {
-  convertTimestampToDateStr,
   convertTimestampToDateStrLocaleUS,
 } from "@/utils/dateUtil";
 import { getNetworkSymbol } from "@/utils/networkUtil";
@@ -27,7 +26,6 @@ type TransactionItemProps = {
 
 export const TransactionItem: FC<TransactionItemProps> = ({
   tx,
-  index,
   account,
   cVoxels,
   onClickTx,
@@ -41,7 +39,7 @@ export const TransactionItem: FC<TransactionItemProps> = ({
     return !cVoxels
       ? false
       : cVoxels?.some(
-          (cv) => cv.txHash.toLowerCase() === tx.hash.toLowerCase()
+          (cv) => cv.txHash?.toLowerCase() === tx.hash.toLowerCase()
         );
   }, [cVoxels, tx.hash]);
 
@@ -86,10 +84,10 @@ export const TransactionItem: FC<TransactionItemProps> = ({
             </div>
           </div>
 
-          <div className="flex-1 sm:flex-none text-xl font-medium flex-auto flex flex-col justify-center text-left sm:text-center h-full sm:h-fit overflow-hidden">
+          <div className=" sm:flex-none text-xl font-medium flex-auto flex flex-col justify-center text-left sm:text-center h-full sm:h-fit overflow-hidden">
             <div className="flex sm:block overflow-hidden">
-              <p className="text-md font-semibold text-ellipsis overflow-hidden whitespace-nowrap w-32 text-left">
-                {formatBigNumber(tx.value, 1, tx.tokenDecimal)}{" "}
+              <p className="text-base font-semibold text-ellipsis overflow-hidden whitespace-nowrap w-32 text-left">
+                {formatBigNumber(tx.value, 6, tx.tokenDecimal)}{" "}
                 {tx.tokenSymbol || getNetworkSymbol(tx.chainId)}
               </p>
             </div>

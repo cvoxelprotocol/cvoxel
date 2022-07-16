@@ -1,5 +1,6 @@
 import { useMyCeramicAcount } from "@/hooks/useCeramicAcount";
-import { AvatarPlaceholder, formatDID } from "@self.id/framework";
+import { formatDID } from "@self.id/framework";
+import { AvatarPlaceholder } from "@self.id/ui";
 import { DropButton } from "grommet";
 import { useState } from "react";
 import { DisplayAvatar } from "../DisplayAvatar";

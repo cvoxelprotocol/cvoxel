@@ -19,7 +19,7 @@ export const CVoxelsContainer:FC<props> = ({content, children}) => {
         () => (
           <Canvas shadows>
             <VisualizerPresenter
-              ids={content?.cVoxels.map((vox) => vox.id)}
+              ids={content?.WorkCredentials.map((vox) => vox.id)}
               showDetailBox={showDetailBox}
             />
           </Canvas>

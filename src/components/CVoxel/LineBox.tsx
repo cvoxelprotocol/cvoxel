@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { FC, useState, useMemo, useEffect } from "react";
+import { FC, useState, useEffect } from "react";
 import { Line } from "@react-three/drei";
 
 type Props = {

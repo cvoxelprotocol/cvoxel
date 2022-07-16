@@ -192,19 +192,26 @@ module.exports = {
         toast: "4rem",
       },
       animation: {
-        "slide-in": "slide-in 0.5s ease forwards",
+        "fade-in-fast": "fade-in 0.2s ease forwards",
+        "fade-out-fast": "fade-out 0.2s ease forwards",
+        "fade-in": "fade-in 0.5s ease forwards",
         "fade-out": "fade-out 0.5s ease forwards",
+        "slide-in": "slide-in 0.5s ease forwards",
         "slide-from-right": "slide-from-right 0.3s ease forwards",
         "slide-to-right": "slide-to-right 0.3s ease forwards",
       },
       keyframes: {
-        "slide-in": {
-          "0%": { transform: "translateY(-50%)", opacity: 0 },
-          "100%": { transform: "translateY(0)", opacity: 1 },
+        "fade-in": {
+          "0%": { transform: "scale(0.2)", opacity: 0 },
+          "100%": { transform: "scale(1)", opacity: 1 },
         },
         "fade-out": {
           "0%": { transform: "scale(1)", opacity: 1 },
           "100%": { transform: "scale(0.2)", opacity: 0 },
+        },
+        "slide-in": {
+          "0%": { transform: "translateY(-50%)", opacity: 0 },
+          "100%": { transform: "translateY(0)", opacity: 1 },
         },
         "slide-from-right": {
           "0%": { transform: "translateX(100%)" },

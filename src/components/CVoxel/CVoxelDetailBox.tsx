@@ -15,11 +15,12 @@ import { Canvas } from "@react-three/fiber";
 import { useENS } from "@/hooks/useENS";
 import { CommonSpinner } from "@/components/common/CommonSpinner";
 import clsx from "clsx";
+import { ShareButton } from "@/components/common/button/shareButton/ShareButton";
 
 export const CVoxelDetailBox: FC<{}> = () => {
   const [box] = useStateCVoxelDetailBox();
 
-  const cVoxelItem = useCVoxelRecord(box?.item.id ?? "");
+  const cVoxelItem = useCVoxelRecord(box?.item.id);
 
   const detailItem = useMemo(() => {
     if (cVoxelItem.isError) {
@@ -112,21 +113,20 @@ export const CVoxelDetailBox: FC<{}> = () => {
               color={"#A66497"}
             />
           </button>
-          {/*TODO: replace*/}
-          <button className="bg-primary-300 rounded py-1 px-4 text-white">
-            Share
-          </button>
+          <ShareButton />
         </div>
 
         {/*c-voxel*/}
         <div className="mt-2">
-          <Canvas>
-            <VisualizerPresenter
-              ids={box ? [box.item.id] : undefined}
-              zoom={6}
-              disableHover
-            />
-          </Canvas>
+          {box && box.item.id && (
+            <Canvas>
+              <VisualizerPresenter
+                ids={box ? [box.item.id] : undefined}
+                zoom={6}
+                disableHover
+              />
+            </Canvas>
+          )}
         </div>
 
         {/*address*/}
@@ -173,7 +173,7 @@ export const CVoxelDetailBox: FC<{}> = () => {
           {detailItem && (
             <>
               <p className="font-medium text-lg">
-                {formatBigNumber(detailItem?.value, 1)}{" "}
+                {formatBigNumber(detailItem?.value, 8, detailItem?.tokenDecimal.toString())}{" "}
                 {detailItem.tokenSymbol || detailItem.networkId}
               </p>
               {fiatVal && (
@@ -207,25 +207,25 @@ export const CVoxelDetailBox: FC<{}> = () => {
         </div>
 
         {/*deliverables*/}
-        {detailItem?.deliverable && (
+        {detailItem?.deliverables && (
           <div className="mt-2">
             <div className="text-lg font-medium">Deliverables</div>
             <div>
-              {detailItem?.deliverable?.startsWith("http") ? (
-                <Link href={detailItem?.deliverable} passHref>
-                  <a
-                    className="text-blue-500 hover:text-blue-800"
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    {shortenStr(detailItem?.deliverable)}
-                  </a>
-                </Link>
-              ) : (
-                <p className="text-xs text-secondary">
-                  {shortenStr(detailItem?.deliverable)}
-                </p>
-              )}
+            {detailItem?.deliverables && detailItem.deliverables.map(d => {
+                return (
+                  <div key={d.value}>
+                    <Link href={`${d.format==="url" ? d.value : `https://dweb.link/ipfs/${d.value}`}`} passHref>
+                      <a
+                        className="text-xs text-secondary"
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        {shortenStr(d.value)}
+                      </a>
+                    </Link>
+                  </div>
+                )
+              })}
             </div>
           </div>
         )}
