@@ -58,7 +58,7 @@ export const MyCVoxelContainer: FC = () => {
   const CVoxelPresenterMemo = useMemo(
     () => (
       <>
-        <div className="flex mx-6 mt-6 space-x-3 items-center">
+        <div className="flex mx-6 py-3 space-x-3 items-center border border-x-0 border-t-0 border-b-light-outline dark:border-b-dark-outline">
           <div className="text-light-on-surface dark:text-dark-on-surface text-3xl font-medium">
             Voxels
           </div>

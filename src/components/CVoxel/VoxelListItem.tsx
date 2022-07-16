@@ -14,6 +14,7 @@ import { convertTimestampToDateStr } from "@/utils/dateUtil";
 import { useCVoxelRecord } from "@/hooks/useCVoxel";
 import { useENS } from "@/hooks/useENS";
 import { CommonSpinner } from "@/components/common/CommonSpinner";
+import clsx from "clsx";
 
 type Props = {
   item: ICVoxelItem;
@@ -70,11 +71,19 @@ export const VoxelListItem: FC<Props> = ({ item }) => {
   };
 
   return (
-    <div className="w-full border border-light-on-primary-container dark:border-dark-on-primary-container rounded-lg flex overflow-hidden">
-      <div className="w-36 max-h-36">
+    <div className="w-full border border-light-on-primary-container dark:border-dark-on-primary-container rounded-lg flex overflow-hidden min-h-44">
+      {/* NOTE: if voxel state exist, add padding bottom*/}
+      <div className={clsx("w-40 max-h-40 relative", false && "pb-4")}>
         <Canvas>
-          <VisualizerPresenter ids={[item.id]} zoom={5} disableHover />
+          <VisualizerPresenter ids={[item.id]} zoom={6} disableHover />
         </Canvas>
+
+        {/* TODO: show voxel state */}
+        {/*<div className="absolute bottom-1 left-0 right-0">*/}
+        {/*  <div className="text-sm text-light-on-primary-container dark:text-dark-on-primary-container bg-light-primary-container dark:bg-dark-primary-container inline-block px-2 py-0.5 rounded-full border border-light-secondary font-medium">*/}
+        {/*    Portfolio*/}
+        {/*  </div>*/}
+        {/*</div>*/}
       </div>
       <div className="bg-light-surface-1 dark:bg-dark-surface-1 flex-auto text-left p-4 space-y-3">
         <div className="flex justify-between">
