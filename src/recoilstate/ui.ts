@@ -4,6 +4,8 @@ import {
   CVoxelMetaDraft,
   CVoxelThree,
   TabKey,
+  TransactionLogWithChainId,
+  TxTabKey,
 } from "@/interfaces";
 
 //loading
@@ -38,6 +40,14 @@ export const rManageTab = atom<TabKey>({
 
 export const useStateManageTab = () => useRecoilState(rManageTab);
 
+//tx tab
+export const rManageTxTab = atom<TxTabKey>({
+  key: "rManageTxTab",
+  default: "received",
+});
+
+export const useStateManageTxTab = () => useRecoilState(rManageTxTab);
+
 // force update
 const rForceUpdate = atom<boolean>({
   key: "rForceUpdate",
@@ -64,3 +74,10 @@ const rCVoxelDetailBox = atom<
 >({ key: "rCVoxelDetailBox", default: undefined });
 
 export const useStateCVoxelDetailBox = () => useRecoilState(rCVoxelDetailBox);
+
+export const selectedTx = atom<TransactionLogWithChainId | null>({
+  key: "selectedTx",
+  default: null,
+});
+
+export const useStateSelectedTx = () => useRecoilState(selectedTx);

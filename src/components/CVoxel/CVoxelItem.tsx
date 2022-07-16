@@ -58,7 +58,7 @@ export const CVoxelItem: FC<Props> = ({
     if (!detailItem) return false;
     if (detailItem && detailItem.toSig && detailItem.fromSig) return false;
     const item = offchainItems?.find(
-      (item) => item.txHash.toLowerCase() === detailItem.txHash.toLowerCase()
+      (item) => item.txHash?.toLowerCase() === detailItem.txHash?.toLowerCase()
     );
     if (!item) return false;
     return (
@@ -72,7 +72,7 @@ export const CVoxelItem: FC<Props> = ({
   // },[detailItem])
 
   const exploreLink = useMemo(() => {
-    if (!detailItem) return;
+    if (!(detailItem && detailItem.txHash)) return;
     return getExploreLink(detailItem.txHash, detailItem.networkId);
   }, [detailItem?.txHash, detailItem?.networkId]);
 

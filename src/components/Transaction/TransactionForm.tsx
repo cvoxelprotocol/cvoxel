@@ -15,14 +15,12 @@ import { TagForm } from "./TagForm";
 type TransactionFormProps = {
   tx: TransactionLogWithChainId;
   connectionState: ViewerConnectionState;
-  isFirstTime?: boolean;
   onSubmit:(data: any) => void
 };
 
 export const TransactionForm: FC<TransactionFormProps> = ({
   tx,
   connectionState,
-  isFirstTime,
   onSubmit
 }) => {
   const { internalTxs, internalTxLoading } = useInternalTransactions(tx);
@@ -57,18 +55,6 @@ export const TransactionForm: FC<TransactionFormProps> = ({
     return merged ? merged.concat(from).concat(to) : from.concat(to);
   }, [internalTxs, tx]);
 
-  const summaryPlaceHolder = useMemo(() => {
-    return isFirstTime
-      ? "Enter a summary... (e.g.Bitcoin Development)"
-      : "Enter a summary...";
-  }, [isFirstTime]);
-
-  const descPlaceHolder = useMemo(() => {
-    return isFirstTime
-      ? "Write your description here... (e.g.My name is Satoshi Nakamoto and I authored the papaer and developed Bitcoin.)"
-      : "Write your description here...";
-  }, [isFirstTime]);
-
   useEffect(() => {
     if (relatedAddress && relatedAddress.length > 0) {
       setValue("relatedAddresses", relatedAddress);
@@ -100,7 +86,7 @@ export const TransactionForm: FC<TransactionFormProps> = ({
       <div className="mb-3">
         <input
           className="w-full my-1 py-1 px-6 border rounded-full text-xs md:text-sm hover:border-primary focus:outline-primary"
-          placeholder={summaryPlaceHolder}
+          placeholder={"Enter a summary..."}
           {...register("summary", { required: "Please enter a summary" })}
         />
       </div>
@@ -113,7 +99,7 @@ export const TransactionForm: FC<TransactionFormProps> = ({
         <textarea
           className="w-full my-1 py-2 px-6 border rounded-xl text-xs md:text-sm hover:border-primary focus:outline-primary"
           rows={3}
-          placeholder={descPlaceHolder}
+          placeholder={"Write your description here..."}
           {...register("detail")}
         />
         <div className="w-full grid grid-cols-2 mb-2">

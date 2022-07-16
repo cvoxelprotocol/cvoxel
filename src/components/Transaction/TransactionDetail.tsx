@@ -64,7 +64,7 @@ export const TransactionDetail: FC<TransactionDetailProps> = ({
     if (
       cvoxels &&
       !cvoxels.find(
-        (cv) => cv.txHash.toLowerCase() === offchainItem.txHash.toLowerCase()
+        (cv) => cv.txHash?.toLowerCase() === offchainItem.txHash?.toLowerCase()
       )
     )
       return true;

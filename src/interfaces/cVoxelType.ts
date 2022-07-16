@@ -20,28 +20,28 @@ export type CVoxel = {
   deliverables?: DeliverableItem[]; // deliberable link
   value: string; // reward value
   tokenSymbol: string; // eth, usdc, etc
-  tokenDecimal: number;
+  tokenDecimal: number; // token decimals
   fiatValue?: string; //reward value as USD
   fiatSymbol?: string; // currently only USD supported
   networkId: number; // eth mainnet = 1 | polygon mainnet = 137
   issuedTimestamp: string; //block timestamp
-  txHash: string; // transfer tx hash
-  deliverableHash?: string; // hash value of all work descriptions(summary, detail, deliverables)
-  platform?: string; // a transaction platform if exists e.g, gitcoin
-  relatedTxHashes?: string[]; //tx releated work
-  tags?: string[]; //tags
+  txHash?: string; // transfer tx hash
+  jobType?: "FullTime" | "PartTime" | "OneTime"; // default=OneTime
   genre?: string; // main genre
-  jobType: "FullTime" | "PartTime" | "OneTime"; // default=OneTime
-  toSig: string; // sig of payee
-  fromSig: string; // sig of payer
-  toSigner: string; // who signed this cvoxel as payee actually. Only EOA supported
-  fromSigner: string; // who signed this cvoxel as payer actually. Only EOA supported
+  tags?: string[]; //tags
+  toSig?: string; // sig of payee
+  fromSig?: string; // sig of payer
+  toSigner?: string; // who signed this cvoxel as payee actually. Only EOA supported
+  fromSigner?: string; // who signed this cvoxel as payer actually. Only EOA supported
   startTimestamp?: string; //timestamp to start work
   endTimestamp?: string; //timestamp to end work
+  relatedAddresses: string[]; // all addresses related to this cvoxel. may contain both EOA and contract address
+  relatedTxHashes?: string[]; //tx releated work
+  deliverableHash?: string; // hash value of all work descriptions(summary, detail, deliverables)
+  platform?: string; // a transaction platform if exists e.g, gitcoin
   subtasks?: Subtask[];
   createdAt?: string; //timestamp to be created
   updatedAt?: string; //timestamp to be updated
-  relatedAddresses: string[]; // all addresses related to this cvoxel. may contain both EOA and contract address
 };
 
 export type WorkCredentialForm = CVoxel & {
@@ -76,7 +76,7 @@ export type CVoxelDraftAndMeta = {
 
 export type CVoxelItem = {
   id: string;
-  txHash: string; // transfer tx hash
+  txHash?: string; // transfer tx hash
   isPayer: boolean;
   summary: string;
   deliverables?: DeliverableItem[]; // deliberable link
