@@ -69,9 +69,13 @@ export const CVoxelDetailBox: FC<{}> = () => {
   };
   useEffect(() => {
     documentClickHandler.current = (e) => {
-      const dom = e.target as Node
+      const dom = e.target as Node;
       // keep showing detail when a user clicks the detail card or other voxels.
-      if (boxRef.current != null && (boxRef.current.contains(dom) || dom.nodeName==="CANVAS")) return;
+      if (
+        boxRef.current != null &&
+        (boxRef.current.contains(dom) || dom.nodeName === "CANVAS")
+      )
+        return;
 
       setIsShow(false);
       removeDocumentClickHandler();
@@ -120,6 +124,7 @@ export const CVoxelDetailBox: FC<{}> = () => {
             <VisualizerPresenter
               ids={box ? [box.item.id] : undefined}
               zoom={6}
+              disableHover
             />
           </Canvas>
         </div>
