@@ -6,8 +6,14 @@ import { ToolTip } from "@/components/common/ToolTip";
 import clsx from "clsx";
 import Link from "next/link";
 import { useRouter } from "next/dist/client/router";
+import Share from "@/components/CVoxel/VoxelDetail/share.svg";
 
-export const ShareButton: FC<{}> = () => {
+type Props = {
+  voxelID: string;
+  valiant?: "button" | "icon";
+};
+
+export const ShareButton: FC<Props> = ({ voxelID, valiant = "button" }) => {
   const [showMenu, setShowMenu] = useState<boolean>(false);
   const [url, setURL] = useState<string>("");
 
@@ -55,7 +61,7 @@ export const ShareButton: FC<{}> = () => {
       );
 
       // NOTE: When using voxel IDs
-      // u.searchParams.set("voxelid","")
+      u.searchParams.set("voxel", voxelID);
 
       return u.toString();
     }
@@ -73,7 +79,7 @@ export const ShareButton: FC<{}> = () => {
     const u = new URL("https://twitter.com/intent/tweet");
     u.searchParams.set("url", url);
 
-    u.searchParams.set("text", "I made a new Vess on @C_Voxel");
+    u.searchParams.set("text", "I made a new Vess on @vess_id");
     u.searchParams.set("hashtags", "Vess,WorkCredential");
 
     return u.toString();
@@ -81,12 +87,21 @@ export const ShareButton: FC<{}> = () => {
 
   return (
     <div ref={ref} className="relative">
-      <button
-        className="bg-primary-300 px-3 py-1.5 text-white rounded"
-        onClick={handleClickButton}
-      >
-        Share
-      </button>
+      {valiant == "button" && (
+        <button
+          className="bg-primary-300 px-3 py-1.5 text-white rounded"
+          onClick={handleClickButton}
+        >
+          Share
+        </button>
+      )}
+
+      {valiant == "icon" && (
+        <button onClick={handleClickButton}>
+          <Share />
+        </button>
+      )}
+
       <div
         className={clsx(
           "absolute bg-white shadow-lg rounded-lg right-0 p-4 min-w-max z-10",

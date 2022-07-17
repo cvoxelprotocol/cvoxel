@@ -14,7 +14,7 @@ export const convertTimestampToDateStrLocaleUS = (
   const d = new Date(Number(timestamp) * 1000);
   d.getMonth();
   const month = d.toLocaleString("en-US", { month: "short" });
-  const day = d.getDay();
+  const day = d.getDate();
   const year = d.getFullYear();
   const hours = String(d.getHours()).padStart(2, "0");
   const minutes = String(d.getMinutes()).padStart(2, "0");

@@ -4,24 +4,17 @@ import { formatDID } from "@self.id/framework";
 import { useMyCeramicAcount } from "@/hooks/useCeramicAcount";
 
 type MyProfileCardProps = {
-  handleClick?: () => void
-}
-export const MyProfileCard: FC<MyProfileCardProps> = ({handleClick}) => {
-  const {
-    connection,
-    account,
-    did,
-    name,
-    avator,
-  } = useMyCeramicAcount();
+  handleClick?: () => void;
+};
+export const MyProfileCard: FC<MyProfileCardProps> = ({ handleClick }) => {
+  const { connection, account, did, name, avator } = useMyCeramicAcount();
   const getLabel = useMemo(() => {
     if (name && name !== "") return name;
-    if(did) return formatDID(did, 12)
-    return account ||  "No DID Found";
+    if (did) return formatDID(did, 12);
+    return account || "No DID Found";
   }, [name, did, account]);
 
-
-  if (connection.status==="connecting") {
+  if (connection.status === "connecting") {
     return <DisplayAvatar label="Loading..." loading />;
   }
 
@@ -33,11 +26,7 @@ export const MyProfileCard: FC<MyProfileCardProps> = ({handleClick}) => {
       }
       onClick={handleClick}
     >
-      <DisplayAvatar
-        did={did}
-        label={getLabel}
-        src={avator}
-      />
+      <DisplayAvatar did={did} label={getLabel} src={avator} />
     </div>
   );
 };

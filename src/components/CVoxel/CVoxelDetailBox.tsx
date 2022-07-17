@@ -70,9 +70,13 @@ export const CVoxelDetailBox: FC<{}> = () => {
   };
   useEffect(() => {
     documentClickHandler.current = (e) => {
-      const dom = e.target as Node
+      const dom = e.target as Node;
       // keep showing detail when a user clicks the detail card or other voxels.
-      if (boxRef.current != null && (boxRef.current.contains(dom) || dom.nodeName==="CANVAS")) return;
+      if (
+        boxRef.current != null &&
+        (boxRef.current.contains(dom) || dom.nodeName === "CANVAS")
+      )
+        return;
 
       setIsShow(false);
       removeDocumentClickHandler();
@@ -109,7 +113,7 @@ export const CVoxelDetailBox: FC<{}> = () => {
               color={"#A66497"}
             />
           </button>
-          <ShareButton />
+          <ShareButton voxelID={box?.item.id ?? ""} />
         </div>
 
         {/*c-voxel*/}
@@ -119,6 +123,7 @@ export const CVoxelDetailBox: FC<{}> = () => {
               <VisualizerPresenter
                 ids={box ? [box.item.id] : undefined}
                 zoom={6}
+                disableHover
               />
             </Canvas>
           )}
@@ -168,7 +173,11 @@ export const CVoxelDetailBox: FC<{}> = () => {
           {detailItem && (
             <>
               <p className="font-medium text-lg">
-                {formatBigNumber(detailItem?.value, 8, detailItem?.tokenDecimal.toString())}{" "}
+                {formatBigNumber(
+                  detailItem?.value,
+                  8,
+                  detailItem?.tokenDecimal.toString()
+                )}{" "}
                 {detailItem.tokenSymbol || detailItem.networkId}
               </p>
               {fiatVal && (
@@ -206,21 +215,29 @@ export const CVoxelDetailBox: FC<{}> = () => {
           <div className="mt-2">
             <div className="text-lg font-medium">Deliverables</div>
             <div>
-            {detailItem?.deliverables && detailItem.deliverables.map(d => {
-                return (
-                  <div key={d.value}>
-                    <Link href={`${d.format==="url" ? d.value : `https://dweb.link/ipfs/${d.value}`}`} passHref>
-                      <a
-                        className="text-xs text-secondary"
-                        target="_blank"
-                        rel="noreferrer"
+              {detailItem?.deliverables &&
+                detailItem.deliverables.map((d) => {
+                  return (
+                    <div key={d.value}>
+                      <Link
+                        href={`${
+                          d.format === "url"
+                            ? d.value
+                            : `https://dweb.link/ipfs/${d.value}`
+                        }`}
+                        passHref
                       >
-                        {shortenStr(d.value)}
-                      </a>
-                    </Link>
-                  </div>
-                )
-              })}
+                        <a
+                          className="text-xs text-secondary"
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          {shortenStr(d.value)}
+                        </a>
+                      </Link>
+                    </div>
+                  );
+                })}
             </div>
           </div>
         )}

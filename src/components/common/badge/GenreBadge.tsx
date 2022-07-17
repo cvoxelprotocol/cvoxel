@@ -13,7 +13,7 @@ export const GenreBadge: FC<GenreBadgeProps> = ({
   return (
     <span
       className={
-        "inline-flex items-center justify-center px-2 py-0.5 m-1 text-xs font-semibold leading-none rounded-sm bg-opacity-80 " +
+        "inline-flex items-center justify-center px-2 py-1 m-1 text-xs font-medium leading-none rounded-sm bg-opacity-80 " +
         (isSelected ? `${baseColor} text-white` : "bg-gray-300 text-gray-500")
       }
     >

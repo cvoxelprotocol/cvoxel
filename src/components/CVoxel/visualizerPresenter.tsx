@@ -22,12 +22,14 @@ type VisualizerPresenterProps = {
   ids?: string[];
   showDetailBox?: ShowDetailBox;
   zoom?: number;
+  disableHover?: boolean;
 };
 
 const VisualizerPresenter: FC<VisualizerPresenterProps> = ({
   ids,
   showDetailBox,
   zoom = 2,
+  disableHover,
 }) => {
   const [cVoxels, setCVoxels] = useState<CVoxelWithId[]>([]);
   const [cVoxelsMap, setCVoxelsMap] = useState<{ [id: string]: ICVoxelItem }>(
@@ -128,6 +130,7 @@ const VisualizerPresenter: FC<VisualizerPresenterProps> = ({
                 {...voxel}
                 key={i}
                 handleClick={() => handleClickVox(voxel.id)}
+                disableHover={disableHover}
               />
             )
         )}
