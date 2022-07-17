@@ -2,7 +2,7 @@ import { useTab } from "@/hooks/useTab";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { NoItemPresenter } from "../../../common/NoItemPresenter";
 import CVoxelsPresenter from "../../../CVoxel/CVoxelsPresenter";
-import type { CVoxelItem as ICVoxelItem, CVoxelMetaDraft } from "@/interfaces";
+import type { CVoxelItem as ICVoxelItem } from "@/interfaces";
 import { useStateForceUpdate } from "@/recoilstate";
 import { useCVoxelsRecord } from "@/hooks/useCVoxel";
 import { CommonLoading } from "../../../common/CommonLoading";
@@ -13,12 +13,6 @@ import { useRouter } from "next/dist/client/router";
 import { NavBar } from "@/components/CVoxel/NavBar/NavBar";
 import { VoxelDetail } from "@/components/CVoxel/VoxelDetail/VoxelDetail";
 import { SearchData } from "@/components/common/search/Search";
-
-type CVoxelItemProp = {
-  item: ICVoxelItem;
-  did: string;
-  offchainItems?: CVoxelMetaDraft[];
-};
 
 export const MyCVoxelContainer: FC = () => {
   const { did, account } = useMyCeramicAcount();
@@ -42,10 +36,7 @@ export const MyCVoxelContainer: FC = () => {
   }, [CVoxelsRecords.content]);
 
   const router = useRouter();
-  const [currentVoxelID, setCurrentVoxelID] = useState<string | undefined>();
-
   const handleClickNavBackButton = useCallback(() => {
-    setCurrentVoxelID(undefined);
     router.push(router.asPath.split("?")[0]);
   }, [router]);
 
@@ -75,15 +66,11 @@ export const MyCVoxelContainer: FC = () => {
     return false;
   };
 
-  useEffect(() => {
-    if (router.isReady) {
-      const { voxel } = router.query;
-
-      if (typeof voxel == "string") {
-        setCurrentVoxelID(voxel);
-      }
+  const currentVoxelID = useMemo(() => {
+    if (typeof router.query["voxel"] == "string") {
+      return router.query["voxel"];
     }
-  }, [router.query, router.isReady]);
+  }, [router.query]);
 
   const currentVoxel = useMemo(
     () => sortCVoxels.find((voxel) => voxel.id == currentVoxelID),
@@ -101,7 +88,7 @@ export const MyCVoxelContainer: FC = () => {
         />
 
         {!!currentVoxel ? (
-          <div className="mt-6 px-6">
+          <div className="mt-6 sm:px-6">
             <VoxelDetail
               item={currentVoxel}
               offchainItems={offchainMetaList}

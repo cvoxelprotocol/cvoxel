@@ -17,7 +17,7 @@ export const NavBar: FC<Props> = ({
   onClear,
 }) => {
   return (
-    <div className="flex mx-6 h-20 space-x-3 items-center border border-x-0 border-t-0 border-b-light-outline dark:border-b-dark-outline">
+    <div className="hidden sm:flex mx-6 h-20 space-x-3 items-center border border-x-0 border-t-0 border-b-light-outline dark:border-b-dark-outline">
       {!!currentVoxelID && (
         <button onClick={handleClickBackButton}>
           <LeftArrow className="text-light-on-surface-variant dark:text-dark-on-surface-variant " />
@@ -27,11 +27,13 @@ export const NavBar: FC<Props> = ({
         Voxels
       </div>
       {currentVoxelID == undefined && (
-        <Search
-          onSubmit={onSubmit}
-          onClear={onClear}
-          placeholder="Search your voxels"
-        />
+        <div className="hidden lg:block w-full">
+          <Search
+            onSubmit={onSubmit}
+            onClear={onClear}
+            placeholder="Search your voxels"
+          />
+        </div>
       )}
     </div>
   );

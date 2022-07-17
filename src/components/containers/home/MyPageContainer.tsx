@@ -19,10 +19,10 @@ export const MyPageContainer:FC<props> = ({content}) => {
             <div className="sm:hidden w-full">
               <HomeSPHeader />
             </div>
-          <div className="hidden sm:block w-[280px] col-span-1">
+          <div className="hidden sm:block md:w-[280px] col-span-1">
             <HomeTabsHeader />
           </div>
-          <div className="flex-none w-full max-w-[744px] col-span-1">
+          <div className="flex-none w-full sm:w-[calc(100%-95px)] md:w-[calc(100%-280px)] max-w-[744px] col-span-1">
             <div
               className={tabState === "cvoxels" ? "block" : "hidden"}
               id="cvoxels"

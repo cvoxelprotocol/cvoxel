@@ -92,7 +92,7 @@ export const VoxelDetail: FC<Props> = ({
   const { did: did } = useMyCeramicAcount();
 
   // component
-  const Direction = () => {
+  const PcDirection = () => {
     return item.isPayer ? (
       <div className="flex items-center space-x-3">
         <NamePlate did={did} isMe hasBackgroundColor />
@@ -108,10 +108,26 @@ export const VoxelDetail: FC<Props> = ({
     );
   };
 
+  const SpDirection = () => {
+    return item.isPayer ? (
+      <div className="flex items-center space-x-3">
+        <NamePlate did={did} isMe hasBackgroundColor withoutIcon />
+        <RightArrow />
+        <NamePlate address={detailItem?.to ?? ""} withoutIcon />
+      </div>
+    ) : (
+      <div className="flex items-center space-x-3">
+        <NamePlate did={did} isMe hasBackgroundColor withoutIcon />
+        <LeftArrow />
+        <NamePlate address={detailItem?.from ?? ""} withoutIcon />
+      </div>
+    );
+  };
+
   return (
     <div className="w-full border border-light-on-primary-container dark:border-dark-on-primary-container rounded-2xl overflow-hidden bg-light-surface-1 dark:bg-dark-surface-1">
-      <div className="flex w-full">
-        <div className="flex-initial w-52 h-52 relative bg-light-surface dark:bg-dark-surface rounded-br-2xl">
+      <div className="lg:flex w-full">
+        <div className="flex-initial w-full lg:w-52 h-52 relative bg-light-surface dark:bg-dark-surface rounded-br-2xl rounded-bl-2xl lg:rounded-bl-none">
           <Canvas>
             <VisualizerPresenter ids={[item.id]} zoom={6} disableHover />
           </Canvas>
@@ -121,7 +137,7 @@ export const VoxelDetail: FC<Props> = ({
           </div>
         </div>
 
-        <div className="text-left w-full space-y-3 mx-8 py-8 border-b-2 border-b-light-inverse-primary dark:border-b-dark-inverse-primary">
+        <div className="text-left w-full space-y-3 mx-3 sm:mx-8 py-3 lg:py-8 lg:border-b-2 border-b-light-inverse-primary dark:border-b-dark-inverse-primary">
           {detailItem?.createdAt && (
             <div className="text-light-on-surface dark:text-dark-on-surface text-sm">
               {convertTimestampToDateStr(detailItem.createdAt)}
@@ -154,12 +170,17 @@ export const VoxelDetail: FC<Props> = ({
         </div>
       </div>
 
-      <div className="p-8 text-left space-y-8">
+      <div className="px-3 sm:px-8 pb-3 lg:py-8 text-left space-y-8">
         <div>
           <p className="mb-2 text-light-on-surface-variant dark:text-light-on-surface-variant font-medium">
             PAYER & PAYEE
           </p>
-          <Direction />
+          <div className="hidden lg:block">
+            <PcDirection />
+          </div>
+          <div className="lg:hidden">
+            <SpDirection />
+          </div>
         </div>
 
         {/* TODO: status implement */}
@@ -222,7 +243,7 @@ export const VoxelDetail: FC<Props> = ({
 
       <div className="bg-light-outline dark:bg-dark-outline h-[1px] w-full" />
 
-      <div className="flex w-full px-8 py-6 space-x-6">
+      <div className="lg:flex w-full px-3 sm:px-8 py-6 space-y-3 lg:space-y-0 lg:space-x-6">
         {detailItem?.value && (
           <a
             className="flex items-center flex-wrap"
@@ -230,7 +251,7 @@ export const VoxelDetail: FC<Props> = ({
             target="_blank"
             rel="noreferrer"
           >
-            <div className="flex-initial">
+            <div className="flex-initial flex lg:block">
               <div className="text-lg font-medium">
                 {formatBigNumber(
                   detailItem?.value,
@@ -240,7 +261,7 @@ export const VoxelDetail: FC<Props> = ({
                 {detailItem.tokenSymbol || detailItem.networkId}
               </div>
               <div className="flex items-center justify-center">
-                <div className="text-xs text-light-on-surface-variant dark:text-dark-on-surface-variant">
+                <div className="ml-2 lg:ml-0 text-xs text-light-on-surface-variant dark:text-dark-on-surface-variant">
                   Explorer
                 </div>
                 <FontAwesomeIcon

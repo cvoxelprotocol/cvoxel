@@ -16,6 +16,7 @@ type Props = {
   hasBackgroundColor?: boolean;
   onClick?: () => void;
   iconOnly?: boolean;
+  withoutIcon?: boolean;
 };
 
 export const NamePlate: FC<Props> = ({
@@ -26,6 +27,7 @@ export const NamePlate: FC<Props> = ({
   hasBackgroundColor = false,
   onClick,
   iconOnly = false,
+  withoutIcon = false,
 }) => {
   const { ens, ensLoading } = useENS(address);
 
@@ -142,14 +144,18 @@ export const NamePlate: FC<Props> = ({
       )}
       onClick={onClick}
     >
-      {displayProfile.avatarSrc ? (
-        <IconAvatar
-          size={avatarSize}
-          src={displayProfile.avatarSrc}
-          flex={false}
-        />
-      ) : (
-        <AvatarPlaceholder did={did} size={avatarSizePixel} />
+      {!withoutIcon && (
+        <>
+          {displayProfile.avatarSrc ? (
+            <IconAvatar
+              size={avatarSize}
+              src={displayProfile.avatarSrc}
+              flex={false}
+            />
+          ) : (
+            <AvatarPlaceholder did={did} size={avatarSizePixel} />
+          )}
+        </>
       )}
 
       {!iconOnly && <>{!!did ? <DidContent /> : <AddressContent />}</>}

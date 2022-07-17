@@ -11,10 +11,10 @@ export const HomeTabsHeader: FC = () => {
     <>
       <div className="w-full min-h-screen text-center border-r border-secondary">
         <ul className={"w-full text-left p-4"} role="tablist">
-          <li className="hidden md:block text-center pt-8 pb-4">
+          <li className="sm:hidden md:block text-center pt-8 pb-4">
             <NamePlate did={did} size="lg" isMe />
           </li>
-          <li className="block md:hidden justify-center pt-8 pb-4">
+          <li className="hidden sm:flex md:hidden justify-center pt-8 pb-4">
             <NamePlate did={did} isMe iconOnly />
           </li>
           <TabListItem type="cvoxels" clickTab={() => console.log("hoge")} />
