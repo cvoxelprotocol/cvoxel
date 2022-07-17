@@ -1,11 +1,12 @@
 import { useMyCeramicAcount } from "@/hooks/useCeramicAcount";
 import { formatDID } from "@self.id/framework";
-import { AvatarPlaceholder } from "@self.id/ui";
+import { AvatarPlaceholder } from "@/components/common/avatar/AvatarPlaceholder";
 import { DropButton } from "grommet";
 import { useState } from "react";
 import { DisplayAvatar } from "../DisplayAvatar";
 import Router from "next/router";
 import { IconAvatar } from "../IconAvatar";
+import { NamePlate } from "@/components/common/NamePlate";
 
 type MenuButtonProps = {
   label: string;
@@ -87,15 +88,12 @@ export default function AccountButton() {
         }}
         open={isMenuOpen}
       >
-        <DisplayAvatar
-          did={did}
-          label={
-            name ? name : did ? formatDID(did, 12) : formatDID(account, 12)
-          }
-          loading={connection.status === "connecting"}
-          src={avator}
-          hiddenLabelOnSp={true}
-        />
+        <div className="hidden md:block">
+          <NamePlate did={did} isMe size="lg" />
+        </div>
+        <div className="block md:hidden">
+          <NamePlate did={did} isMe iconOnly />
+        </div>
       </DropButton>
     );
   }

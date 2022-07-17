@@ -21,10 +21,10 @@ import { Button } from "@/components/common/button/Button";
 import { useUpdateCVoxel } from "@/hooks/useUpdateCVoxel";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faExternalLink } from "@fortawesome/free-solid-svg-icons";
-import Link from "next/link";
 import { getExploreLink } from "@/utils/etherscanUtils";
 import { ShareButton } from "@/components/common/button/shareButton/ShareButton";
 import { formatBigNumber } from "@/utils/ethersUtil";
+import { useMyCeramicAcount } from "@/hooks/useCeramicAcount";
 
 type Props = {
   item: ICVoxelItem;
@@ -89,17 +89,19 @@ export const VoxelDetail: FC<Props> = ({
     return getExploreLink(detailItem.txHash, detailItem.networkId);
   }, [detailItem?.txHash, detailItem?.networkId]);
 
+  const { did: did } = useMyCeramicAcount();
+
   // component
   const Direction = () => {
     return item.isPayer ? (
       <div className="flex items-center space-x-3">
-        <NamePlate address={detailItem?.from ?? ""} isMe hasBackgroundColor />
+        <NamePlate did={did} isMe hasBackgroundColor />
         <RightArrow />
         <NamePlate address={detailItem?.to ?? ""} />
       </div>
     ) : (
       <div className="flex items-center space-x-3">
-        <NamePlate address={detailItem?.to ?? ""} isMe hasBackgroundColor />
+        <NamePlate did={did} isMe hasBackgroundColor />
         <LeftArrow />
         <NamePlate address={detailItem?.from ?? ""} />
       </div>
