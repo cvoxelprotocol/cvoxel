@@ -45,7 +45,7 @@ export const useVoxStyler = () => {
         }
 
         /* Set lattice from deliverable */
-        if (!deliverables || deliverables.length === 0) {
+        if (deliverables && deliverables.length > 0) {
           voxelTemp["lattice"] = true;
         }
 
