@@ -29,7 +29,7 @@ export const Button: FC<Props> = ({
   } else if (color == "grad-blue") {
     buttonColor += "bg-gradient-to-tr from-accent_l to-accent_r ";
   } else if (color == "primary") {
-    buttonColor += "bg-primary ";
+    buttonColor += "bg-light-primary dark:bg-dark-primary ";
   } else if (color == "secondary") {
     buttonColor += "bg-secondary ";
   }
@@ -37,7 +37,7 @@ export const Button: FC<Props> = ({
   /* Set button variant styles */
   if (variant == "contained") {
     buttonVariant =
-      " text-lg text-text-white font-sans font-normal rounded-full  ";
+      " text-md text-text-white font-sans font-normal rounded-full  ";
   }
 
   /* Merge those styles */
@@ -45,7 +45,7 @@ export const Button: FC<Props> = ({
 
   return (
     <button
-      className={"w-fit h-fit px-4 py-2 rounded-full " + buttonStyle}
+      className={"w-fit h-fit px-6 py-3 rounded-full " + buttonStyle}
       onClick={onClick}
       type={buttonType}
     >
