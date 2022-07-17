@@ -1,7 +1,7 @@
 import { FC, useMemo } from "react";
 import { useMyCeramicAcount } from "@/hooks/useCeramicAcount";
 import { IconAvatar } from "@/components/common/IconAvatar";
-import { AvatarPlaceholder } from "@self.id/framework";
+import { AvatarPlaceholder } from "@self.id/ui";
 import LeftArrow from "@/components/CVoxel/VoxelListItem/left-arrow.svg";
 import RightArrow from "@/components/CVoxel/VoxelListItem/right-arrow.svg";
 import { GenreBadge } from "@/components/common/badge/GenreBadge";
@@ -78,21 +78,26 @@ export const VoxelListItem: FC<Props> = ({ item }) => {
   return (
     <Link href={`${router.asPath.split("?")[0]}?voxel=${item.id}`}>
       <a className="w-full">
-        <div className="w-full border border-light-on-primary-container dark:border-dark-on-primary-container rounded-lg flex overflow-hidden min-h-44">
+        <div className="w-full h-40 border border-light-on-primary-container dark:border-dark-on-primary-container rounded-lg flex overflow-hidden min-h-44 bg-light-surface-1 dark:bg-dark-surface-1">
           {/* NOTE: if voxel state exist, add padding bottom*/}
-          <div className={clsx("w-40 max-h-40 relative", false && "pb-4")}>
+          <div
+            className={clsx(
+              "rounded-r-lg w-40 relative bg-light-surface dark:bg-dark-surface",
+              false && "pb-6"
+            )}
+          >
             <Canvas>
               <VisualizerPresenter ids={[item.id]} zoom={6} disableHover />
             </Canvas>
 
             {/* TODO: show voxel state */}
-            {/*<div className="absolute bottom-1 left-0 right-0">*/}
+            {/*<div className="absolute bottom-2 left-0 right-0">*/}
             {/*  <div className="text-sm text-light-on-primary-container dark:text-dark-on-primary-container bg-light-primary-container dark:bg-dark-primary-container inline-block px-2 py-0.5 rounded-full border border-light-secondary font-medium">*/}
             {/*    Portfolio*/}
             {/*  </div>*/}
             {/*</div>*/}
           </div>
-          <div className="bg-light-surface-1 dark:bg-dark-surface-1 flex-auto text-left p-4 space-y-3">
+          <div className=" flex-auto text-left p-4 space-y-3">
             <div className="flex justify-between">
               <Direction />
               {detailItem?.createdAt && (
@@ -109,22 +114,26 @@ export const VoxelListItem: FC<Props> = ({ item }) => {
                 </div>
               )}
 
-              {detailItem?.deliverable?.startsWith("http") ? (
-                <a
-                  className="flex items-center flex-wrap"
-                  href={`${detailItem?.deliverable}`}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <p className="text-light-secondary dark:text-dark-secondary text-md">
-                    {detailItem?.deliverable}
-                  </p>
-                </a>
-              ) : (
-                <p className="text-xs text-secondary">
-                  {shortenStr(detailItem?.deliverable)}
-                </p>
-              )}
+              {detailItem?.deliverables &&
+                detailItem.deliverables.length > 0 &&
+                detailItem?.deliverables.map((deliverable) =>
+                  deliverable.value.startsWith("http") ? (
+                    <a
+                      className="flex items-center flex-wrap"
+                      href={`${deliverable.value}`}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      <p className="text-light-secondary dark:text-dark-secondary text-md">
+                        {deliverable.value}
+                      </p>
+                    </a>
+                  ) : (
+                    <p className="text-md text-secondary">
+                      {shortenStr(deliverable.value)}
+                    </p>
+                  )
+                )}
             </div>
 
             <div className="flex">

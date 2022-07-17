@@ -1,7 +1,6 @@
 import { useTab } from "@/hooks/useTab";
-import { FC, useMemo, memo } from "react";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { NoItemPresenter } from "../../../common/NoItemPresenter";
-import { CVoxelItem } from "../../../CVoxel/CVoxelItem";
 import CVoxelsPresenter from "../../../CVoxel/CVoxelsPresenter";
 import type { CVoxelItem as ICVoxelItem, CVoxelMetaDraft } from "@/interfaces";
 import { useStateForceUpdate } from "@/recoilstate";
@@ -9,8 +8,11 @@ import { useCVoxelsRecord } from "@/hooks/useCVoxel";
 import { CommonLoading } from "../../../common/CommonLoading";
 import { useMyCeramicAcount } from "@/hooks/useCeramicAcount";
 import { useCVoxelList } from "@/hooks/useCVoxelList";
-import { VoxelListItem } from "@/components/CVoxel/VoxelListItem";
-import { Search } from "@/components/common/search/Search";
+import { VoxelListItem } from "@/components/CVoxel/VoxelListItem/VoxelListItem";
+import { useRouter } from "next/dist/client/router";
+import { NavBar } from "@/components/CVoxel/NavBar/NavBar";
+import { VoxelDetail } from "@/components/CVoxel/VoxelDetail/VoxelDetail";
+import { SearchData } from "@/components/common/search/Search";
 
 type CVoxelItemProp = {
   item: ICVoxelItem;
@@ -39,59 +41,101 @@ export const MyCVoxelContainer: FC = () => {
     });
   }, [CVoxelsRecords.content]);
 
-  // eslint-disable-next-line react/display-name
-  const CVoxelItemMemo = memo<CVoxelItemProp>(
-    ({ item, offchainItems, did }) => (
-      <CVoxelItem
-        did={did}
-        item={item}
-        offchainItems={offchainItems}
-        isOwner={true}
-        notifyUpdated={forceReload}
-      />
-    )
+  const router = useRouter();
+  const [currentVoxelID, setCurrentVoxelID] = useState<string | undefined>();
+
+  const handleClickNavBackButton = useCallback(() => {
+    setCurrentVoxelID(undefined);
+    router.push(router.asPath.split("?")[0]);
+  }, [router]);
+
+  // search
+  const [keyword, setKeyword] = useState<string>();
+  const handleSearchSubmit = (data: SearchData) => {
+    if (!data.value) return;
+    const keyword = data.value;
+    setKeyword(keyword);
+  };
+
+  const handleSearchClear = () => {
+    setKeyword("");
+  };
+
+  // TODO: improvement search logic
+  const isHitSearch = (voxel: ICVoxelItem) => {
+    if (!keyword) {
+      return false;
+    }
+    if (voxel.summary.match(keyword)) {
+      return true;
+    }
+    if (voxel.genre?.match(keyword)) {
+      return true;
+    }
+    return false;
+  };
+
+  useEffect(() => {
+    if (router.isReady) {
+      const { voxel } = router.query;
+
+      if (typeof voxel == "string") {
+        setCurrentVoxelID(voxel);
+      }
+    }
+  }, [router.query, router.isReady]);
+
+  const currentVoxel = useMemo(
+    () => sortCVoxels.find((voxel) => voxel.id == currentVoxelID),
+    [currentVoxelID, sortCVoxels]
   );
 
-  const CVoxelPresenterMemo = useMemo(
+  return useMemo(
     () => (
       <>
-        <div className="flex mx-6 py-3 space-x-3 items-center border border-x-0 border-t-0 border-b-light-outline dark:border-b-dark-outline">
-          <div className="text-light-on-surface dark:text-dark-on-surface text-3xl font-medium">
-            Voxels
-          </div>
-          {/* TODO: add search handler */}
-          <Search onSubmit={() => {}} />
-        </div>
+        <NavBar
+          handleClickBackButton={handleClickNavBackButton}
+          currentVoxelID={currentVoxelID}
+          onSubmit={handleSearchSubmit}
+          onClear={handleSearchClear}
+        />
 
-        <CVoxelsPresenter>
-          {!txLoading && (!sortCVoxels || sortCVoxels.length === 0) && (
-            <div className="mx-auto">
-              <NoItemPresenter text="No C-Voxels yet..." />
-              {account && (
-                <button
-                  onClick={() => setTabState("transactions")}
-                  className="text-white rounded-full bg-gradient-to-r from-border_l to-border_r py-2 px-5"
-                >
-                  Create C-Voxel
-                </button>
-              )}
-            </div>
-          )}
-          {txLoading && <CommonLoading />}
-          {!txLoading &&
-            sortCVoxels &&
-            sortCVoxels.map((item) => {
-              return (
-                // <CVoxelItemMemo
-                //   key={item.id}
-                //   item={item}
-                //   did={did}
-                //   offchainItems={offchainMetaList}
-                // />
-                <VoxelListItem key={item.id} item={item} />
-              );
-            })}
-        </CVoxelsPresenter>
+        {!!currentVoxel ? (
+          <div className="mt-6 px-6">
+            <VoxelDetail
+              item={currentVoxel}
+              offchainItems={offchainMetaList}
+              isOwner={true}
+              notifyUpdated={forceReload}
+            />
+          </div>
+        ) : (
+          <CVoxelsPresenter>
+            {!txLoading && (!sortCVoxels || sortCVoxels.length === 0) && (
+              <div className="mx-auto">
+                <NoItemPresenter text="No C-Voxels yet..." />
+                {account && (
+                  <button
+                    onClick={() => setTabState("transactions")}
+                    className="text-white rounded-full bg-gradient-to-r from-border_l to-border_r py-2 px-5"
+                  >
+                    Create C-Voxel
+                  </button>
+                )}
+              </div>
+            )}
+            {txLoading && <CommonLoading />}
+            {!txLoading &&
+              sortCVoxels &&
+              sortCVoxels
+                .filter((voxel) =>
+                  !!keyword && keyword != "" ? isHitSearch(voxel) : true
+                )
+                .map((item) => {
+                  return <VoxelListItem key={item.id} item={item} />;
+                })}
+          </CVoxelsPresenter>
+        )}
       </>
     ),
     [
@@ -101,8 +145,8 @@ export const MyCVoxelContainer: FC = () => {
       offchainMetaList,
       did,
       forceUpdateCVoxelList,
+      currentVoxelID,
+      keyword,
     ]
   );
-
-  return CVoxelPresenterMemo;
 };
