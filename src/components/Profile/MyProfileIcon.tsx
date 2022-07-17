@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { AvatarPlaceholder } from "@self.id/ui";
+import { AvatarPlaceholder } from "@/components/common/avatar/AvatarPlaceholder";
 import { useMyCeramicAcount } from "@/hooks/useCeramicAcount";
 import { CommonSpinner } from "../common/CommonSpinner";
 import { IconAvatar } from "../common/IconAvatar";
