@@ -1,26 +1,22 @@
 import { useTab } from "@/hooks/useTab";
-import { FC, useMemo, memo } from "react";
+import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { NoItemPresenter } from "../../../common/NoItemPresenter";
-import { CVoxelItem } from "../../../CVoxel/CVoxelItem";
 import CVoxelsPresenter from "../../../CVoxel/CVoxelsPresenter";
-import type { CVoxelItem as ICVoxelItem, CVoxelMetaDraft } from "@/interfaces";
+import type { CVoxelItem as ICVoxelItem } from "@/interfaces";
 import { useStateForceUpdate } from "@/recoilstate";
 import { useCVoxelsRecord } from "@/hooks/useCVoxel";
 import { CommonLoading } from "../../../common/CommonLoading";
 import { useMyCeramicAcount } from "@/hooks/useCeramicAcount";
 import { useCVoxelList } from "@/hooks/useCVoxelList";
+import { VoxelListItem } from "@/components/CVoxel/VoxelListItem/VoxelListItem";
+import { useRouter } from "next/dist/client/router";
+import { NavBar } from "@/components/CVoxel/NavBar/NavBar";
+import { VoxelDetail } from "@/components/CVoxel/VoxelDetail/VoxelDetail";
+import { SearchData } from "@/components/common/search/Search";
 
-type CVoxelItemProp = {
-    item: ICVoxelItem;
-    did: string;
-    offchainItems?: CVoxelMetaDraft[];
-  };
-
-export const MyCVoxelContainer:FC = () => {
-    const { did, account } =
-    useMyCeramicAcount();
-  const { offchainMetaList, txLoading } =
-    useCVoxelList();
+export const MyCVoxelContainer: FC = () => {
+  const { did, account } = useMyCeramicAcount();
+  const { offchainMetaList, txLoading } = useCVoxelList();
   const CVoxelsRecords = useCVoxelsRecord(did);
   const { setTabState } = useTab();
 
@@ -39,21 +35,68 @@ export const MyCVoxelContainer:FC = () => {
     });
   }, [CVoxelsRecords.content]);
 
-  // eslint-disable-next-line react/display-name
-  const CVoxelItemMemo = memo<CVoxelItemProp>(
-    ({ item, offchainItems, did }) => (
-      <CVoxelItem
-        did={did}
-        item={item}
-        offchainItems={offchainItems}
-        isOwner={true}
-        notifyUpdated={forceReload}
-      />
-    )
+  const router = useRouter();
+  const handleClickNavBackButton = useCallback(() => {
+    router.push(router.asPath.split("?")[0]);
+  }, [router]);
+
+  // search
+  const [keyword, setKeyword] = useState<string>();
+  const handleSearchSubmit = (data: SearchData) => {
+    if (!data.value) return;
+    const keyword = data.value;
+    setKeyword(keyword);
+  };
+
+  const handleSearchClear = () => {
+    setKeyword("");
+  };
+
+  // TODO: improvement search logic
+  const isHitSearch = (voxel: ICVoxelItem) => {
+    if (!keyword) {
+      return false;
+    }
+    if (voxel.summary.match(keyword)) {
+      return true;
+    }
+    if (voxel.genre?.match(keyword)) {
+      return true;
+    }
+    return false;
+  };
+
+  const currentVoxelID = useMemo(() => {
+    if (typeof router.query["voxel"] == "string") {
+      return router.query["voxel"];
+    }
+  }, [router.query]);
+
+  const currentVoxel = useMemo(
+    () => sortCVoxels.find((voxel) => voxel.id == currentVoxelID),
+    [currentVoxelID, sortCVoxels]
   );
 
-    const CVoxelPresenterMemo = useMemo(
-        () => (
+  return useMemo(
+    () => (
+      <>
+        <NavBar
+          handleClickBackButton={handleClickNavBackButton}
+          currentVoxelID={currentVoxelID}
+          onSubmit={handleSearchSubmit}
+          onClear={handleSearchClear}
+        />
+
+        {!!currentVoxel ? (
+          <div className="mt-6 sm:px-6">
+            <VoxelDetail
+              item={currentVoxel}
+              offchainItems={offchainMetaList}
+              isOwner={true}
+              notifyUpdated={forceReload}
+            />
+          </div>
+        ) : (
           <CVoxelsPresenter>
             {!txLoading && (!sortCVoxels || sortCVoxels.length === 0) && (
               <div className="mx-auto">
@@ -71,27 +114,26 @@ export const MyCVoxelContainer:FC = () => {
             {txLoading && <CommonLoading />}
             {!txLoading &&
               sortCVoxels &&
-              sortCVoxels.map((item) => {
-                return (
-                  <CVoxelItemMemo
-                    key={item.id}
-                    item={item}
-                    did={did}
-                    offchainItems={offchainMetaList}
-                  />
-                );
-              })}
+              sortCVoxels
+                .filter((voxel) =>
+                  !!keyword && keyword != "" ? isHitSearch(voxel) : true
+                )
+                .map((item) => {
+                  return <VoxelListItem key={item.id} item={item} />;
+                })}
           </CVoxelsPresenter>
-        ),
-        [
-          txLoading,
-          sortCVoxels,
-          account,
-          offchainMetaList,
-          did,
-          forceUpdateCVoxelList,
-        ]
-      );
-
-    return CVoxelPresenterMemo
-}
+        )}
+      </>
+    ),
+    [
+      txLoading,
+      sortCVoxels,
+      account,
+      offchainMetaList,
+      did,
+      forceUpdateCVoxelList,
+      currentVoxelID,
+      keyword,
+    ]
+  );
+};

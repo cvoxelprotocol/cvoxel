@@ -59,6 +59,7 @@
     "@glazed/devtools": "^0.2.0",
     "@glazed/types": "^0.1.3",
     "@svgr/webpack": "^6.2.1",
+    "@tailwindcss/line-clamp": "^0.4.0",
     "@types/chroma-js": "^2.1.3",
     "@types/firebase": "^3.2.1",
     "@types/formidable": "^2.0.5",

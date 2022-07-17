@@ -5,10 +5,10 @@ import { useCVoxelsRecord } from "@/hooks/useCVoxel";
 import { useUserCeramicAcount } from "@/hooks/useCeramicAcount";
 import VisualizerPresenter from "@/components/CVoxel/visualizerPresenter";
 import CVoxelsPresenter from "@/components/CVoxel/CVoxelsPresenter";
-import { CVoxelItem } from "@/components/CVoxel/CVoxelItem";
 import { NoItemPresenter } from "@/components/common/NoItemPresenter";
 import { ProfileCard } from "@/components/Profile/ProfileCard";
 import { CommonLoading } from "@/components/common/CommonLoading";
+import { VoxelListItem } from "@/components/CVoxel/VoxelListItem/VoxelListItem";
 
 export const ProfileContainer: FC<CeramicProps> = ({ did }) => {
   const { name, avator, profileRecord } = useUserCeramicAcount(did);
@@ -21,9 +21,7 @@ export const ProfileContainer: FC<CeramicProps> = ({ did }) => {
         {!CVoxelsRecords.isLoading &&
           CVoxelsRecords.content?.WorkCredentials &&
           CVoxelsRecords.content.WorkCredentials.map((item) => {
-            return (
-              <CVoxelItem did={did} item={item} key={item.id} isOwner={false} />
-            );
+            return <VoxelListItem key={item.id} item={item} />;
           })}
         {!CVoxelsRecords.isLoading && !CVoxelsRecords.content && (
           <div className="mx-auto">
@@ -35,24 +33,21 @@ export const ProfileContainer: FC<CeramicProps> = ({ did }) => {
     [CVoxelsRecords.isLoading, CVoxelsRecords.content, did]
   );
 
-  const VisualizerPresenterMemo = useMemo(
-    () => {
-      // avoid warning "useLayoutEffect does nothing on the server"
-      if(typeof window === undefined) return <></>
-      return (
-        <Canvas shadows>
-          <VisualizerPresenter
-            ids={
-              CVoxelsRecords.content
-                ? CVoxelsRecords.content.WorkCredentials.map((vox) => vox.id)
-                : []
-            }
-          />
-        </Canvas>
-      )
-    },
-    [CVoxelsRecords.content, process.browser]
-  );
+  const VisualizerPresenterMemo = useMemo(() => {
+    // avoid warning "useLayoutEffect does nothing on the server"
+    if (typeof window === undefined) return <></>;
+    return (
+      <Canvas shadows>
+        <VisualizerPresenter
+          ids={
+            CVoxelsRecords.content
+              ? CVoxelsRecords.content.WorkCredentials.map((vox) => vox.id)
+              : []
+          }
+        />
+      </Canvas>
+    );
+  }, [CVoxelsRecords.content, process.browser]);
 
   return (
     <main className="h-auto overflow-y-scroll text-black dark:text-white text-center">

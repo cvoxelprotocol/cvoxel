@@ -1,20 +1,17 @@
 import { useTab } from "@/hooks/useTab";
 import { FC, useMemo, useCallback } from "react";
 import { NoItemPresenter } from "../../../common/NoItemPresenter";
-import type {  CVoxelMetaDraft } from "@/interfaces";
+import type { CVoxelMetaDraft } from "@/interfaces";
 import { useMyCeramicAcount } from "@/hooks/useCeramicAcount";
 import { useCVoxelList } from "@/hooks/useCVoxelList";
 import { SigRequestItem } from "@/components/SigRequest/SigRequestItem";
 import { useSigRequest } from "@/hooks/useSigRequest";
 
-
-export const MyNotificationContainer:FC = () => {
-    const { did, account } =
-    useMyCeramicAcount();
-    const { offchainMetaList } = useCVoxelList();
-  const {  setTabState } = useTab();
+export const MyNotificationContainer: FC = () => {
+  const { did, account } = useMyCeramicAcount();
+  const { offchainMetaList } = useCVoxelList();
+  const { setTabState } = useTab();
   const { verifyWithCeramic, verifyWithoutCeramic } = useSigRequest();
-
 
   const verify = useCallback(
     async (tx: CVoxelMetaDraft) => {
@@ -72,5 +69,5 @@ export const MyNotificationContainer:FC = () => {
     [sigRequestCVoxels, account, verify]
   );
 
-    return sigRequestMemo
-}
+  return sigRequestMemo;
+};

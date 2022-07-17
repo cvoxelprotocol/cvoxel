@@ -8,10 +8,20 @@ type Props = {
   position: THREE.Vector3;
   offset?: THREE.Vector3;
   handleClick?: () => void;
+  disableHover?: boolean;
 } & CVoxelVisType;
 
-const CVoxelPresenter: FC<Props> = (props) => {
-  const voxelColor = useMemo(() => new THREE.Color(props.color), [props.color]);
+const CVoxelPresenter: FC<Props> = ({
+  color,
+  opacity,
+  lattice,
+  scale,
+  position,
+  offset,
+  handleClick,
+  disableHover = false,
+}) => {
+  const voxelColor = useMemo(() => new THREE.Color(color), [color]);
   const lineColor = useMemo(() => {
     let lineColorHSL: THREE.HSL = { h: 0, s: 0, l: 0 };
     voxelColor.getHSL(lineColorHSL);
@@ -19,43 +29,40 @@ const CVoxelPresenter: FC<Props> = (props) => {
   }, [voxelColor]);
 
   const voxelPosition = useMemo(
-    () =>
-      props.position.sub(
-        props.offset ? props.offset : new THREE.Vector3(0, 0, 0)
-      ),
-    [props.position, props.offset]
+    () => position.sub(offset ? offset : new THREE.Vector3(0, 0, 0)),
+    [position, offset]
   );
   const voxelRef = useRef<THREE.Mesh>(null!);
   const [hover, setHover] = useState<boolean>(false);
 
-  const handleClick = (e:ThreeEvent<MouseEvent>) => {
-    e.stopPropagation()
-    props.handleClick?.();
+  const handleVoxelClick = (e: ThreeEvent<MouseEvent>) => {
+    e.stopPropagation();
+    handleClick?.();
   };
 
   return (
     <group
       position={voxelPosition}
-      scale={hover ? [1.2, 1.2, 1.2] : [1, 1, 1]}
+      scale={!disableHover && hover ? [1.2, 1.2, 1.2] : [1, 1, 1]}
       onPointerOver={(e) => setHover(true)}
       onPointerOut={(e) => setHover(false)}
-      onClick={handleClick}
+      onClick={handleVoxelClick}
     >
       <mesh
         receiveShadow
         castShadow
         position={[0, 0, 0]}
         ref={voxelRef}
-        scale={props.scale}
+        scale={scale}
       >
         <boxGeometry args={[1, 1, 1]} />
         <meshStandardMaterial
           transparent
           color={voxelColor}
-          opacity={props.opacity}
+          opacity={opacity}
         />
       </mesh>
-      {props.lattice ? (
+      {lattice ? (
         <LineBox width={1} height={1} depth={1} lineColor={lineColor} />
       ) : null}
     </group>

@@ -26,8 +26,8 @@ const HomePage: NextPage = () => {
   }, [connection, did]);
 
   const onSubmit = (data: SearchData) => {
-    if (!data.address) return;
-    const link = data.address;
+    if (!data.value) return;
+    const link = data.value;
     Router.push(`/${link}`);
   };
 
