@@ -135,6 +135,7 @@ module.exports = {
           "inverse-surface": "rgba(51, 47, 51, 1)",
           "inverse-primary": "rgba(240, 175, 255, 1)",
           shadow: "rgba(0, 0, 0, 1)",
+          "sig-request-layer": "#5394DA",
         },
         dark: {
           primary: "rgba(240, 175, 255, 1)",
@@ -171,6 +172,7 @@ module.exports = {
           "inverse-surface": "rgba(232, 224, 229, 1)",
           "inverse-primary": "rgba(154, 0, 205, 1)",
           shadow: "rgba(0, 0, 0, 1)",
+          "sig-request-layer": "#5394DA",
         },
       },
       dropShadow: {

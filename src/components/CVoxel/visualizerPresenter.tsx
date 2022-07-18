@@ -4,7 +4,7 @@ import { useFrame } from "@react-three/fiber";
 import { OrbitControls, PerspectiveCamera, Plane } from "@react-three/drei";
 import { CVoxel, CVoxelMetaDraft, CVoxelWithId } from "@/interfaces/cVoxelType";
 import CVoxelPresenter from "./CVoxelPresenter";
-import { useVoxStyler } from "@/hooks/useVoxStyler";
+import { CVoxelThreeWithId, useVoxStyler } from "@/hooks/useVoxStyler";
 import { initCVoxel } from "@/constants/cVoxel";
 import { core } from "@/lib/ceramic/server";
 import type { CVoxelItem as ICVoxelItem } from "@/interfaces";
@@ -23,13 +23,15 @@ type VisualizerPresenterProps = {
   showDetailBox?: ShowDetailBox;
   zoom?: number;
   disableHover?: boolean;
+  voxelsForDisplay?: (CVoxelThreeWithId | undefined)[]; // For direct insertion e.g. draft data
 };
 
 const VisualizerPresenter: FC<VisualizerPresenterProps> = ({
   ids,
   showDetailBox,
   zoom = 2,
-  disableHover,
+  disableHover = false,
+  voxelsForDisplay,
 }) => {
   const [cVoxels, setCVoxels] = useState<CVoxelWithId[]>([]);
   const [cVoxelsMap, setCVoxelsMap] = useState<{ [id: string]: ICVoxelItem }>(
@@ -122,17 +124,40 @@ const VisualizerPresenter: FC<VisualizerPresenterProps> = ({
       >
         <meshBasicMaterial color={"white"} opacity={0.5} />
       </Plane> */}
+
       <group ref={cCollectionRef} position={[0, 0, 0]}>
-        {cvoxelsForDisplay.map(
-          (voxel, i) =>
-            voxel && (
-              <CVoxelPresenter
-                {...voxel}
-                key={i}
-                handleClick={() => handleClickVox(voxel.id)}
-                disableHover={disableHover}
-              />
+        {!!voxelsForDisplay ? (
+          <>
+            (
+            {voxelsForDisplay.map(
+              (voxel, i) =>
+                voxel && (
+                  <CVoxelPresenter
+                    {...voxel}
+                    key={i}
+                    handleClick={() => handleClickVox(voxel.id)}
+                    disableHover={disableHover}
+                  />
+                )
+            )}
             )
+          </>
+        ) : (
+          <>
+            (
+            {cvoxelsForDisplay.map(
+              (voxel, i) =>
+                voxel && (
+                  <CVoxelPresenter
+                    {...voxel}
+                    key={i}
+                    handleClick={() => handleClickVox(voxel.id)}
+                    disableHover={disableHover}
+                  />
+                )
+            )}
+            )
+          </>
         )}
       </group>
       <PerspectiveCamera makeDefault position={[10, 6, 10]} zoom={zoom} />

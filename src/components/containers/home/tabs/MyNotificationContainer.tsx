@@ -1,11 +1,14 @@
 import { useTab } from "@/hooks/useTab";
-import { FC, useMemo, useCallback } from "react";
+import { FC, useCallback, useMemo } from "react";
 import { NoItemPresenter } from "../../../common/NoItemPresenter";
 import type { CVoxelMetaDraft } from "@/interfaces";
 import { useMyCeramicAcount } from "@/hooks/useCeramicAcount";
 import { useCVoxelList } from "@/hooks/useCVoxelList";
-import { SigRequestItem } from "@/components/SigRequest/SigRequestItem";
 import { useSigRequest } from "@/hooks/useSigRequest";
+import { SigRequestListItem } from "@/components/SigRequest/SigRequestListItem/SigRequestListItem";
+import { useRouter } from "next/router";
+import { NavBar } from "@/components/SigRequest/NavBar/NavBar";
+import { SigRequestDetail } from "@/components/SigRequest/SigRequestDetail/SigRequestDetail";
 
 export const MyNotificationContainer: FC = () => {
   const { did, account } = useMyCeramicAcount();
@@ -13,7 +16,7 @@ export const MyNotificationContainer: FC = () => {
   const { setTabState } = useTab();
   const { verifyWithCeramic, verifyWithoutCeramic } = useSigRequest();
 
-  const verify = useCallback(
+  const handleVerify = useCallback(
     async (tx: CVoxelMetaDraft) => {
       if (did) {
         const result = await verifyWithCeramic(tx);
@@ -45,29 +48,57 @@ export const MyNotificationContainer: FC = () => {
     );
   }, [offchainMetaList, account]);
 
-  const sigRequestMemo = useMemo(
-    () => (
-      <div className="w-full max-w-[820px] text-center mx-auto cursor-pointer h-screen overflow-y-scroll space-y-2">
-        {(!sigRequestCVoxels || sigRequestCVoxels.length === 0) && (
-          <NoItemPresenter text="No Sig Requests yet..." />
-        )}
-        {sigRequestCVoxels &&
-          sigRequestCVoxels.length > 0 &&
-          sigRequestCVoxels.map((tx) => {
-            return (
-              <div key={tx.txHash}>
-                <SigRequestItem
-                  tx={tx}
-                  account={account}
-                  handleClick={() => verify(tx)}
-                />
-              </div>
-            );
-          })}
-      </div>
-    ),
-    [sigRequestCVoxels, account, verify]
+  const router = useRouter();
+
+  const currentTxHash = useMemo(() => {
+    if (typeof router.query["tx"] == "string") {
+      return router.query["tx"];
+    }
+  }, [router.query]);
+
+  const currentTx = useMemo(
+    () => sigRequestCVoxels?.find((item) => item.txHash == currentTxHash),
+    [currentTxHash, sigRequestCVoxels]
   );
 
-  return sigRequestMemo;
+  const handleClickNavBackButton = useCallback(() => {
+    router.push(router.asPath.split("?")[0]);
+  }, [router]);
+
+  return useMemo(
+    () => (
+      <>
+        <NavBar
+          handleClickBackButton={handleClickNavBackButton}
+          currentTxHash={currentTxHash}
+        />
+
+        {!!currentTx ? (
+          <div className="mt-6 sm:px-6">
+            <SigRequestDetail
+              offchainItem={currentTx}
+              account={account}
+              onVerify={handleVerify}
+            />
+          </div>
+        ) : (
+          <div className="w-full max-w-[820px] text-center mx-auto cursor-pointer h-screen overflow-y-scroll py-6 sm:px-6 space-y-6">
+            {(!sigRequestCVoxels || sigRequestCVoxels.length === 0) && (
+              <NoItemPresenter text="No Sig Requests yet..." />
+            )}
+            {sigRequestCVoxels &&
+              sigRequestCVoxels.length > 0 &&
+              sigRequestCVoxels.map((tx) => {
+                return (
+                  <div key={tx.txHash}>
+                    <SigRequestListItem offchainItem={tx} />
+                  </div>
+                );
+              })}
+          </div>
+        )}
+      </>
+    ),
+    [sigRequestCVoxels, account, handleVerify]
+  );
 };

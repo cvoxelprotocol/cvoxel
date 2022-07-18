@@ -1,4 +1,4 @@
-import { FC, useMemo, MouseEvent } from "react";
+import { FC, useEffect, useMemo } from "react";
 import { useMyCeramicAcount } from "@/hooks/useCeramicAcount";
 import { IconAvatar } from "@/components/common/IconAvatar";
 import { AvatarPlaceholder } from "@/components/common/avatar/AvatarPlaceholder";
@@ -7,34 +7,36 @@ import RightArrow from "@/components/CVoxel/VoxelListItem/right-arrow.svg";
 import { GenreBadge } from "@/components/common/badge/GenreBadge";
 import { getGenre } from "@/utils/genreUtil";
 import { TagBadge } from "@/components/common/badge/TagBadge";
-import { CVoxelItem as ICVoxelItem } from "@/interfaces";
+import { CVoxelMetaDraft } from "@/interfaces";
 import { shortenStr } from "@/utils/objectUtil";
 import { Canvas } from "@react-three/fiber";
 import VisualizerPresenter from "@/components/CVoxel/visualizerPresenter";
 import { convertTimestampToDateStr } from "@/utils/dateUtil";
-import { useCVoxelRecord } from "@/hooks/useCVoxel";
+import { useENS } from "@/hooks/useENS";
+import { CommonSpinner } from "@/components/common/CommonSpinner";
 import clsx from "clsx";
 import Link from "next/link";
 import { useRouter } from "next/dist/client/router";
+import { useVoxStyler } from "@/hooks/useVoxStyler";
 import { TxDirection } from "@/components/common/TxDirection";
 
 type Props = {
-  item: ICVoxelItem;
+  offchainItem: CVoxelMetaDraft;
 };
 
-export const VoxelListItem: FC<Props> = ({ item }) => {
-  // item detail
-  const cVoxelItem = useCVoxelRecord(item.id);
-  const detailItem = useMemo(() => {
-    return cVoxelItem.content || null;
-  }, [cVoxelItem.content, cVoxelItem]);
-
-  const goToDeliverable = (e: MouseEvent<HTMLButtonElement>, link: string) => {
-    e.preventDefault();
-    window.open(link, "_blank");
-  };
-
+export const SigRequestListItem: FC<Props> = ({ offchainItem }) => {
   const router = useRouter();
+
+  // convert display
+  const { cvoxelsForDisplay, convertCVoxelsForDisplay } = useVoxStyler();
+
+  useEffect(() => {
+    let isMounted = true;
+    convertCVoxelsForDisplay([{ ...offchainItem, id: "0" }]);
+    return () => {
+      isMounted = false;
+    };
+  }, [offchainItem]);
 
   const PcContent = () => {
     return (
@@ -47,8 +49,21 @@ export const VoxelListItem: FC<Props> = ({ item }) => {
           )}
         >
           <Canvas>
-            <VisualizerPresenter ids={[item.id]} zoom={6} disableHover />
+            <VisualizerPresenter
+              zoom={6}
+              disableHover
+              voxelsForDisplay={cvoxelsForDisplay}
+            />
           </Canvas>
+
+          <div className="absolute bg-light-sig-request-layer dark:bg-dark-sig-request-layer top-0 bottom-0 left-0 right-0 opacity-70">
+            <div className="h-full flex items-center p-3 justify-center">
+              <p className="text-light-surface dark:text-dark-surface font-medium text-xl">
+                Signature
+                <br /> Request
+              </p>
+            </div>
+          </div>
 
           {/* TODO: show voxel state */}
           {/*<div className="absolute bottom-2 left-0 right-0">*/}
@@ -60,37 +75,40 @@ export const VoxelListItem: FC<Props> = ({ item }) => {
         <div className=" flex-auto text-left p-4 space-y-3">
           <div className="flex justify-between">
             <TxDirection
-              from={detailItem?.from}
-              to={detailItem?.to}
-              isPayer={item.isPayer}
+              from={offchainItem.from}
+              to={offchainItem.to}
+              isPayer={offchainItem.isPayer}
             />
-            {detailItem?.createdAt && (
+            {offchainItem?.createdAt && (
               <div className="text-light-on-surface dark:text-dark-on-surface text-sm">
-                {convertTimestampToDateStr(detailItem.createdAt)}
+                {convertTimestampToDateStr(offchainItem.createdAt)}
               </div>
             )}
           </div>
 
           <div>
-            {detailItem?.summary && (
+            {offchainItem?.summary && (
               <div className="text-light-on-primary-container dark:text-dark-on-error-container text-2xl font-medium">
-                {detailItem?.summary}
+                {offchainItem?.summary}
               </div>
             )}
 
-            {detailItem?.deliverables &&
-              detailItem.deliverables.length > 0 &&
-              detailItem?.deliverables.map((deliverable) =>
+            {offchainItem?.deliverables &&
+              offchainItem.deliverables.length > 0 &&
+              offchainItem?.deliverables.map((deliverable) =>
                 deliverable.value.startsWith("http") ? (
-                  <button
-                    key={deliverable.value}
-                    className="text-light-secondary dark:text-dark-secondary text-md text-left"
-                    onClick={(e) => goToDeliverable(e, deliverable.value)}
+                  <a
+                    className="flex items-center flex-wrap"
+                    href={`${deliverable.value}`}
+                    target="_blank"
+                    rel="noreferrer"
                   >
-                    {deliverable.value}
-                  </button>
+                    <p className="text-light-secondary dark:text-dark-secondary text-md">
+                      {deliverable.value}
+                    </p>
+                  </a>
                 ) : (
-                  <p className="text-md text-secondary" key={deliverable.value}>
+                  <p className="text-md text-secondary">
                     {shortenStr(deliverable.value)}
                   </p>
                 )
@@ -98,19 +116,19 @@ export const VoxelListItem: FC<Props> = ({ item }) => {
           </div>
 
           <div className="flex">
-            {detailItem?.genre ? (
+            {offchainItem?.genre ? (
               <GenreBadge
-                text={detailItem.genre}
+                text={offchainItem.genre}
                 baseColor={
-                  getGenre(detailItem.genre)?.bgColor || "bg-[#b7b7b7]"
+                  getGenre(offchainItem.genre)?.bgColor || "bg-[#b7b7b7]"
                 }
                 isSelected={true}
               />
             ) : (
               <></>
             )}
-            {detailItem?.tags &&
-              detailItem.tags.map((tag) => {
+            {offchainItem?.tags &&
+              offchainItem.tags.map((tag) => {
                 return <TagBadge key={tag} text={tag} />;
               })}
           </div>
@@ -124,7 +142,11 @@ export const VoxelListItem: FC<Props> = ({ item }) => {
       <div className="w-full">
         <div className="w-full h-32 relative bg-light-surface dark:bg-dark-surface rounded-b-lg">
           <Canvas>
-            <VisualizerPresenter ids={[item.id]} zoom={6} disableHover />
+            <VisualizerPresenter
+              voxelsForDisplay={cvoxelsForDisplay}
+              zoom={6}
+              disableHover
+            />
           </Canvas>
 
           {/* TODO: show voxel state */}
@@ -134,60 +156,72 @@ export const VoxelListItem: FC<Props> = ({ item }) => {
           {/*  </div>*/}
           {/*</div>*/}
 
+          <div className="absolute bg-light-sig-request-layer dark:bg-dark-sig-request-layer top-0 bottom-0 left-0 right-0 opacity-70">
+            <div className="h-full flex items-center p-3 justify-center">
+              <p className="text-light-surface dark:text-dark-surface font-medium text-xl">
+                Signature
+                <br /> Request
+              </p>
+            </div>
+          </div>
+
           <div className="absolute right-2 top-2">
             <TxDirection
-              from={detailItem?.from}
-              to={detailItem?.to}
-              isPayer={item.isPayer}
+              from={offchainItem.from}
+              to={offchainItem.to}
+              isPayer={offchainItem.isPayer}
             />
           </div>
         </div>
 
         <div className="text-left px-8 py-3">
-          {detailItem?.createdAt && (
+          {offchainItem?.createdAt && (
             <div className="text-light-on-surface dark:text-dark-on-surface text-sm">
-              {convertTimestampToDateStr(detailItem.createdAt)}
+              {convertTimestampToDateStr(offchainItem.createdAt)}
             </div>
           )}
 
-          {detailItem?.summary && (
+          {offchainItem?.summary && (
             <div className="text-light-on-primary-container dark:text-dark-on-error-container text-xl font-medium">
-              {detailItem?.summary}
+              {offchainItem?.summary}
             </div>
           )}
 
-          {detailItem?.deliverables &&
-            detailItem.deliverables.length > 0 &&
-            detailItem?.deliverables.map((deliverable) =>
+          {offchainItem?.deliverables &&
+            offchainItem.deliverables.length > 0 &&
+            offchainItem?.deliverables.map((deliverable) =>
               deliverable.value.startsWith("http") ? (
-                <button
-                  key={deliverable.value}
-                  className="text-light-secondary dark:text-dark-secondary text-md text-left"
-                  onClick={(e) => goToDeliverable(e, deliverable.value)}
+                <a
+                  className="flex items-center flex-wrap"
+                  href={`${deliverable.value}`}
+                  target="_blank"
+                  rel="noreferrer"
                 >
-                  {deliverable.value}
-                </button>
+                  <p className="text-light-secondary dark:text-dark-secondary text-md">
+                    {deliverable.value}
+                  </p>
+                </a>
               ) : (
-                <p key={deliverable.value} className="text-md text-secondary">
+                <p className="text-md text-secondary">
                   {shortenStr(deliverable.value)}
                 </p>
               )
             )}
 
           <div className="flex">
-            {detailItem?.genre ? (
+            {offchainItem?.genre ? (
               <GenreBadge
-                text={detailItem.genre}
+                text={offchainItem.genre}
                 baseColor={
-                  getGenre(detailItem.genre)?.bgColor || "bg-[#b7b7b7]"
+                  getGenre(offchainItem.genre)?.bgColor || "bg-[#b7b7b7]"
                 }
                 isSelected={true}
               />
             ) : (
               <></>
             )}
-            {detailItem?.tags &&
-              detailItem.tags.map((tag) => {
+            {offchainItem?.tags &&
+              offchainItem.tags.map((tag) => {
                 return <TagBadge key={tag} text={tag} />;
               })}
           </div>
@@ -197,7 +231,7 @@ export const VoxelListItem: FC<Props> = ({ item }) => {
   };
 
   return (
-    <Link href={`${router.asPath.split("?")[0]}?voxel=${item.id}`}>
+    <Link href={`${router.asPath.split("?")[0]}?tx=${offchainItem.txHash}`}>
       <a className="w-full">
         <div className="w-full border border-light-on-primary-container dark:border-dark-on-primary-container rounded-lg overflow-hidden bg-light-surface-1 dark:bg-dark-surface-1">
           <div className="hidden lg:block w-full">

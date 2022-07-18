@@ -15,17 +15,17 @@ import { TagForm } from "./TagForm";
 type TransactionFormProps = {
   tx: TransactionLogWithChainId;
   connectionState: ViewerConnectionState;
-  onSubmit:(data: any) => void
+  onSubmit: (data: any) => void;
 };
 
 export const TransactionForm: FC<TransactionFormProps> = ({
   tx,
   connectionState,
-  onSubmit
+  onSubmit,
 }) => {
   const { internalTxs, internalTxLoading } = useInternalTransactions(tx);
-  const {cid, status} = useFileUpload()
-  const {issueStatus} = useDraftCVoxel()
+  const { cid, status } = useFileUpload();
+  const { issueStatus } = useDraftCVoxel();
 
   const {
     register,
@@ -36,16 +36,16 @@ export const TransactionForm: FC<TransactionFormProps> = ({
     formState: { errors },
   } = useForm<WorkCredentialForm>();
 
-  const onClickSubmit = (data:any) => {
-    if(!data) return
-    onSubmit(data)
-  }
+  const onClickSubmit = (data: any) => {
+    if (!data) return;
+    onSubmit(data);
+  };
 
   useEffect(() => {
-    if(issueStatus==="completed") {
-      reset()
+    if (issueStatus === "completed") {
+      reset();
     }
-  },[issueStatus, reset])
+  }, [issueStatus, reset]);
 
   const relatedAddress = useMemo(() => {
     let merged: string[] | null = tx.addressOfDuplicatedTx || null;
@@ -63,29 +63,25 @@ export const TransactionForm: FC<TransactionFormProps> = ({
   }, [relatedAddress, tx]);
 
   useEffect(() => {
-    if(status==="completed" && cid) {
-      setValue("deliverableCID", cid)
+    if (status === "completed" && cid) {
+      setValue("deliverableCID", cid);
     }
-
-  },[cid, status])
+  }, [cid, status]);
 
   return (
-    <form
-        className="w-full"
-        onSubmit={handleSubmit(onClickSubmit)}
-      >
+    <form className="w-full" onSubmit={handleSubmit(onClickSubmit)}>
       {/* title */}
       <div className="flex flex-wrap items-center">
         <p className="font-semibold">
           Activity Summary
           <span className="cols-span-1 px-3 text-xs text-red-600">
-              {errors.summary?.message}
-            </span>
+            {errors.summary?.message}
+          </span>
         </p>
       </div>
       <div className="mb-3">
         <input
-          className="w-full my-1 py-1 px-6 border rounded-full text-xs md:text-sm hover:border-primary focus:outline-primary"
+          className="w-full my-1 py-1 px-6 border rounded-full text-xs md:text-sm hover:border-primary focus:outline-primary bg-light-surface-variant dark:bg-dark-surface-variant"
           placeholder={"Enter a summary..."}
           {...register("summary", { required: "Please enter a summary" })}
         />
@@ -97,7 +93,7 @@ export const TransactionForm: FC<TransactionFormProps> = ({
       </div>
       <div className="mb-3">
         <textarea
-          className="w-full my-1 py-2 px-6 border rounded-xl text-xs md:text-sm hover:border-primary focus:outline-primary"
+          className="w-full my-1 py-2 px-6 border rounded-xl text-xs md:text-sm hover:border-primary focus:outline-primary bg-light-surface-variant dark:bg-dark-surface-variant"
           rows={3}
           placeholder={"Write your description here..."}
           {...register("detail")}
@@ -138,23 +134,23 @@ export const TransactionForm: FC<TransactionFormProps> = ({
         />
       </div>
       <div className="flex flex-wrap items-center">
-        <p className="font-semibold">Deliverable Link(optional)</p>
+        <p className="font-semibold">Deliverables(optional)</p>
       </div>
       <div className="mb-3">
         <input
-          className="w-full my-1 py-1 px-6 border rounded-full text-xs md:text-sm hover:border-primary focus:outline-primary"
+          className="w-full my-1 py-1 px-6 border rounded-full text-xs md:text-sm hover:border-primary focus:outline-primary bg-light-surface-variant dark:bg-dark-surface-variant"
           placeholder={"Enter Deliverable link.."}
           {...register("deliverableLink")}
         />
       </div>
-      <div className="flex flex-wrap items-center">
-        <p className="font-semibold">Deliverable CID(optional)</p>
-      </div>
+      {/*<div className="flex flex-wrap items-center">*/}
+      {/*  <p className="font-semibold">Deliverable CID(optional)</p>*/}
+      {/*</div>*/}
       <div className="mb-3">
         {cid && (
-          <p
-            className="w-full my-1 py-1 px-6 border rounded-full text-xs md:text-sm hover:border-primary focus:outline-primary text-left"
-          >{cid}</p> 
+          <p className="w-full my-1 py-1 px-6 border rounded-full text-xs md:text-sm hover:border-primary focus:outline-primary text-left">
+            {cid}
+          </p>
         )}
         <FileUploader />
         <div className="w-full grid grid-cols-2 mb-2">
@@ -181,7 +177,9 @@ export const TransactionForm: FC<TransactionFormProps> = ({
               : "Connect DID for Create"
           }
           buttonType={"submit"}
-          color={connectionState.status === "connected" ? "grad-blue" : "grad-red"}
+          color={
+            connectionState.status === "connected" ? "grad-blue" : "grad-red"
+          }
         />
       </div>
       <InternalTransactionContainer

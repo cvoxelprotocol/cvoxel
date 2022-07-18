@@ -27,6 +27,14 @@ export const HomeSPHeader: FC = () => {
     return router.pathname == "/[did]" && !!router.query["voxel"];
   }, [router.isReady, router.pathname, router.asPath]);
 
+  const isSigRequestDetail = useMemo(() => {
+    if (!router.isReady) {
+      return false;
+    }
+
+    return router.pathname == "/[did]" && !!router.query["tx"];
+  }, [router.isReady, router.pathname, router.asPath]);
+
   const handleClickNavBackButton = useCallback(() => {
     router.push(router.asPath.split("?")[0]);
   }, [router]);
@@ -36,7 +44,7 @@ export const HomeSPHeader: FC = () => {
       className={"w-full grid items-center justify-around grid-cols-6 py-1"}
       role="tablist"
     >
-      {isVoxelDetail ? (
+      {isVoxelDetail || isSigRequestDetail ? (
         <button onClick={handleClickNavBackButton}>
           <LeftArrow className="w-6 h-6 text-light-on-surface-variant dark:text-dark-on-surface-variant" />
         </button>

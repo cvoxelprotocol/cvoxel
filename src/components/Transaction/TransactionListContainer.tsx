@@ -5,7 +5,12 @@ import { TransactionDetail } from "./TransactionDetail";
 import { TransactionForm } from "./TransactionForm";
 import { TransactionItem } from "./TransactionItem";
 import { useTab } from "@/hooks/useTab";
-import type {CVoxelMetaDraft, TransactionLogWithChainId,DeliverableItem,WorkCredentialForm } from "@/interfaces";
+import type {
+  CVoxelMetaDraft,
+  TransactionLogWithChainId,
+  DeliverableItem,
+  WorkCredentialForm,
+} from "@/interfaces";
 import { useCVoxelsRecord } from "@/hooks/useCVoxel";
 import { useMyCeramicAcount } from "@/hooks/useCeramicAcount";
 import { useDraftCVoxel } from "@/hooks/useDraftCVoxel";
@@ -13,21 +18,23 @@ import { useFileUpload } from "@/hooks/useFileUpload";
 import { useStateForceUpdate, useStateSelectedTx } from "@/recoilstate";
 
 type TransactionListContainerProps = {
-    txList: TransactionLogWithChainId[]
-    offchainLoading: boolean
-    offchainMetaList?: CVoxelMetaDraft[]
-}
-export const TransactionListContainer:FC<TransactionListContainerProps> = ({txList,offchainLoading,offchainMetaList}) => {
-    const { connection, did, account } =
-    useMyCeramicAcount();
-    const CVoxelsRecords = useCVoxelsRecord(did);
-  const [selectedTx, selectTx] = useStateSelectedTx()
-  const {  setTabState } = useTab();
+  txList: TransactionLogWithChainId[];
+  offchainLoading: boolean;
+  offchainMetaList?: CVoxelMetaDraft[];
+};
+export const TransactionListContainer: FC<TransactionListContainerProps> = ({
+  txList,
+  offchainLoading,
+  offchainMetaList,
+}) => {
+  const { connection, did, account } = useMyCeramicAcount();
+  const CVoxelsRecords = useCVoxelsRecord(did);
+  const [selectedTx, selectTx] = useStateSelectedTx();
+  const { setTabState } = useTab();
   const draft = useDraftCVoxel();
-  const {resetUploadStatus} = useFileUpload()
+  const { resetUploadStatus } = useFileUpload();
   // TODO: This is temporary solution because of useTileDoc bug
-  const [_, setForceUpdateCVoxelList] =
-    useStateForceUpdate();
+  const [_, setForceUpdateCVoxelList] = useStateForceUpdate();
 
   const onPublish = (data: any) => {
     publish(data);
@@ -40,27 +47,36 @@ export const TransactionListContainer:FC<TransactionListContainerProps> = ({txLi
   const publish = useCallback(
     async (data: WorkCredentialForm) => {
       if (!(selectedTx && account)) return;
-      const { summary, detail, deliverableLink,deliverableCID, relatedAddresses, genre, tags } =
-          data;
-          let deliverables:DeliverableItem[] = []
-          if(deliverableLink) deliverables.push({format: "url", value: deliverableLink})
-          if(deliverableCID) deliverables.push({format: "cid", value: deliverableCID})
-        const result = await draft.publish(
-          account,
-          selectedTx,
-          summary,
-          detail,
-          deliverables,
-          relatedAddresses,
-          genre,
-          tags
-        );
-        if (result) {
-          selectTx(null);
-          resetUploadStatus()
-          setTabState("cvoxels");
-          setForceUpdateCVoxelList(true);
-        }
+      const {
+        summary,
+        detail,
+        deliverableLink,
+        deliverableCID,
+        relatedAddresses,
+        genre,
+        tags,
+      } = data;
+      let deliverables: DeliverableItem[] = [];
+      if (deliverableLink)
+        deliverables.push({ format: "url", value: deliverableLink });
+      if (deliverableCID)
+        deliverables.push({ format: "cid", value: deliverableCID });
+      const result = await draft.publish(
+        account,
+        selectedTx,
+        summary,
+        detail,
+        deliverables,
+        relatedAddresses,
+        genre,
+        tags
+      );
+      if (result) {
+        selectTx(null);
+        resetUploadStatus();
+        setTabState("cvoxels");
+        setForceUpdateCVoxelList(true);
+      }
     },
     [draft]
   );
@@ -71,22 +87,22 @@ export const TransactionListContainer:FC<TransactionListContainerProps> = ({txLi
   ) => {
     if (!(tx && account && offchainItem)) return;
     const { summary, detail, deliverables, relatedAddresses, genre, tags } =
-        offchainItem;
-      const result = await draft.publish(
-        account,
-        tx,
-        summary,
-        detail,
-        deliverables,
-        relatedAddresses,
-        genre,
-        tags,
-        offchainItem
-      );
-      if (result) {
-        selectTx(null);
-        setTabState("cvoxels");
-      }
+      offchainItem;
+    const result = await draft.publish(
+      account,
+      tx,
+      summary,
+      detail,
+      deliverables,
+      relatedAddresses,
+      genre,
+      tags,
+      offchainItem
+    );
+    if (result) {
+      selectTx(null);
+      setTabState("cvoxels");
+    }
   };
 
   const reClaimCVoxel = async (
@@ -95,22 +111,22 @@ export const TransactionListContainer:FC<TransactionListContainerProps> = ({txLi
   ) => {
     if (!(tx && account && offchainItem)) return;
     const { summary, detail, deliverables, relatedAddresses, genre, tags } =
-        offchainItem;
-      const result = await draft.reClaim(
-        account,
-        tx,
-        summary,
-        detail,
-        deliverables,
-        relatedAddresses,
-        genre,
-        tags,
-        offchainItem
-      );
-      if (result) {
-        selectTx(null);
-        setTabState("cvoxels");
-      }
+      offchainItem;
+    const result = await draft.reClaim(
+      account,
+      tx,
+      summary,
+      detail,
+      deliverables,
+      relatedAddresses,
+      genre,
+      tags,
+      offchainItem
+    );
+    if (result) {
+      selectTx(null);
+      setTabState("cvoxels");
+    }
   };
 
   const selectedOffchainItem = useMemo(() => {
@@ -120,12 +136,11 @@ export const TransactionListContainer:FC<TransactionListContainerProps> = ({txLi
 
   const TransactionMemo = useMemo(
     () => (
-      <div className="w-full max-w-[720px] text-center mx-auto cursor-pointer h-screen overflow-y-scroll">
+      <div className="w-full max-w-[720px] text-center mx-auto cursor-pointer h-screen overflow-y-scroll sm:px-6 space-y-6">
         <p className="text-primary font-medium text-xs pt-2 pb-4 sm:text-right">{`Supported Networks: Ethereum & Polygon`}</p>
-        {!offchainLoading &&
-          (!txList || txList.length === 0) && (
-            <NoItemPresenter text="No Tx Found..." />
-          )}
+        {!offchainLoading && (!txList || txList.length === 0) && (
+          <NoItemPresenter text="No Tx Found..." />
+        )}
         {offchainLoading && <CommonLoading />}
         {!offchainLoading &&
           txList.length > 0 &&
@@ -156,7 +171,7 @@ export const TransactionListContainer:FC<TransactionListContainerProps> = ({txLi
                     <div key={`${tx.hash}_form_container`} className="mb-4">
                       <div
                         key={`${tx.hash}_form`}
-                        className="w-full h-fit bg-white shadow-lg p-5 mb-4"
+                        className="w-full h-fit p-5 mb-4 bg-light-surface-2 dark:bg-dark-surface-2 border border-light-on-surface-variant dark:border-dark-on-surface-variant border-t-0 rounded-b-lg"
                       >
                         <TransactionForm
                           tx={tx}
@@ -184,5 +199,5 @@ export const TransactionListContainer:FC<TransactionListContainerProps> = ({txLi
     ]
   );
 
-    return TransactionMemo
-}
+  return TransactionMemo;
+};
