@@ -47,7 +47,7 @@ export const Button: FC<Props> = ({
   /* Set button variant styles */
   if (variant == "contained") {
     buttonVariant =
-      "text-md text-light-surface dark:text-dark-surface font-sans font-normal rounded-full font-medium";
+      "text-md text-light-surface dark:text-dark-surface font-sans font-normal rounded-full font-medium hover:opacity-20";
   }
 
   /* Merge those styles */
