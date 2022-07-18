@@ -19,12 +19,12 @@ type CVoxelVisTypeWithId = CVoxelVisType & { id: string };
 
 const sigmoid_a: number = 1;
 
-export const useVoxStyler = (cVoxels: CVoxelWithId[]) => {
+export const useVoxStyler = () => {
   const [cvoxelsForDisplay, setCvoxelsForDisplay] = useState<
     (CVoxelThreeWithId | undefined)[]
   >([]);
 
-  const convertCVoxelsForDisplay = useCallback(() => {
+  const convertCVoxelsForDisplay = useCallback((cVoxels: CVoxelWithId[]) => {
     const styledVoxel: CVoxelVisTypeWithId[] = [];
     let stackedVoxels: (CVoxelThreeWithId | undefined)[] = [];
     if (cVoxels.length != 0) {
@@ -32,7 +32,7 @@ export const useVoxStyler = (cVoxels: CVoxelWithId[]) => {
         let voxelTemp: CVoxelVisTypeWithId = {
           id: voxel.id,
           color: "",
-          opacity: 0.8,
+          opacity: 0.6,
           lattice: false,
           scale: 1.0,
         };
@@ -41,11 +41,11 @@ export const useVoxStyler = (cVoxels: CVoxelWithId[]) => {
 
         /* Set opacity from sigs */
         if (toSig != "" && fromSig != "") {
-          voxelTemp["opacity"] = 1;
+          voxelTemp["opacity"] = 0.8;
         }
 
         /* Set lattice from deliverable */
-        if (!deliverables || deliverables.length === 0) {
+        if (deliverables && deliverables.length > 0) {
           voxelTemp["lattice"] = true;
         }
 
@@ -194,7 +194,7 @@ export const useVoxStyler = (cVoxels: CVoxelWithId[]) => {
       stackedVoxels = [...newStackedVoxels];
     }
     setCvoxelsForDisplay(stackedVoxels);
-  }, [cVoxels]);
+  }, []);
 
   return { cvoxelsForDisplay, convertCVoxelsForDisplay };
 };

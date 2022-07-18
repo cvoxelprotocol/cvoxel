@@ -1,4 +1,4 @@
-import { FC, useMemo } from "react";
+import { FC, useMemo, MouseEvent } from "react";
 import { useMyCeramicAcount } from "@/hooks/useCeramicAcount";
 import { IconAvatar } from "@/components/common/IconAvatar";
 import { AvatarPlaceholder } from "@/components/common/avatar/AvatarPlaceholder";
@@ -31,6 +31,11 @@ export const VoxelListItem: FC<Props> = ({ item }) => {
   const detailItem = useMemo(() => {
     return cVoxelItem.content || null;
   }, [cVoxelItem.content, cVoxelItem]);
+
+  const goToDeliverable = (e:MouseEvent<HTMLButtonElement>, link: string) => {
+    e.preventDefault()
+    window.open(link, "_blank")
+  }
 
   const Direction = () => {
     const { ens: fromEns, ensLoading: fromEnsLoading } = useENS(
@@ -122,18 +127,11 @@ export const VoxelListItem: FC<Props> = ({ item }) => {
               detailItem.deliverables.length > 0 &&
               detailItem?.deliverables.map((deliverable) =>
                 deliverable.value.startsWith("http") ? (
-                  <a
-                    className="flex items-center flex-wrap"
-                    href={`${deliverable.value}`}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    <p className="text-light-secondary dark:text-dark-secondary text-md">
-                      {deliverable.value}
-                    </p>
-                  </a>
+                  <button key={deliverable.value} className="text-light-secondary dark:text-dark-secondary text-md text-left" onClick={(e) => goToDeliverable(e, deliverable.value)}>
+                    {deliverable.value}
+                  </button>
                 ) : (
-                  <p className="text-md text-secondary">
+                  <p className="text-md text-secondary" key={deliverable.value}>
                     {shortenStr(deliverable.value)}
                   </p>
                 )
@@ -199,18 +197,11 @@ export const VoxelListItem: FC<Props> = ({ item }) => {
             detailItem.deliverables.length > 0 &&
             detailItem?.deliverables.map((deliverable) =>
               deliverable.value.startsWith("http") ? (
-                <a
-                  className="flex items-center flex-wrap"
-                  href={`${deliverable.value}`}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <p className="text-light-secondary dark:text-dark-secondary text-md">
-                    {deliverable.value}
-                  </p>
-                </a>
+                <button key={deliverable.value} className="text-light-secondary dark:text-dark-secondary text-md text-left" onClick={(e) => goToDeliverable(e, deliverable.value)}>
+                  {deliverable.value}
+                </button>
               ) : (
-                <p className="text-md text-secondary">
+                <p key={deliverable.value} className="text-md text-secondary">
                   {shortenStr(deliverable.value)}
                 </p>
               )
