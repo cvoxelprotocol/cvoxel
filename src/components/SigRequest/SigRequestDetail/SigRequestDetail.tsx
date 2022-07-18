@@ -44,13 +44,11 @@ export const SigRequestDetail: FC<Props> = ({
   const { did: did } = useMyCeramicAcount();
 
   // convert display
-  const { cvoxelsForDisplay, convertCVoxelsForDisplay } = useVoxStyler([
-    { ...offchainItem, id: "0" },
-  ]);
+  const { cvoxelsForDisplay, convertCVoxelsForDisplay } = useVoxStyler();
 
   useEffect(() => {
     let isMounted = true;
-    convertCVoxelsForDisplay();
+    convertCVoxelsForDisplay([{ ...offchainItem, id: "0" }]);
     return () => {
       isMounted = false;
     };
