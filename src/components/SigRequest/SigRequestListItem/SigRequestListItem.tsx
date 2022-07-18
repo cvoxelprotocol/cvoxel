@@ -18,60 +18,13 @@ import clsx from "clsx";
 import Link from "next/link";
 import { useRouter } from "next/dist/client/router";
 import { useVoxStyler } from "@/hooks/useVoxStyler";
+import { TxDirection } from "@/components/common/TxDirection";
 
 type Props = {
   offchainItem: CVoxelMetaDraft;
 };
 
 export const SigRequestListItem: FC<Props> = ({ offchainItem }) => {
-  const { did, avator } = useMyCeramicAcount();
-
-  const Direction = () => {
-    const { ens: fromEns, ensLoading: fromEnsLoading } = useENS(
-      offchainItem?.from
-    );
-    const { ens: toEns, ensLoading: toEnsLoading } = useENS(offchainItem?.to);
-
-    return offchainItem.isPayer ? (
-      <div className="flex items-center space-x-2">
-        <div className="hidden lg:block">
-          {avator ? (
-            <IconAvatar size={"sm"} src={avator} flex={false} />
-          ) : (
-            <AvatarPlaceholder did={did} size={32} />
-          )}
-        </div>
-
-        <RightArrow />
-        <div className="rounded-full border border-light-primary dark:border-dark-primary bg-light-surface dark:bg-dark-surface text-light-primary dark:text-dark-primary px-2 py-1 text-sm">
-          {toEnsLoading ? (
-            <CommonSpinner size="sm" />
-          ) : (
-            <p className="break-words flex-wrap">{toEns}</p>
-          )}
-        </div>
-      </div>
-    ) : (
-      <div className="flex items-center space-x-2">
-        <div className="hidden lg:block">
-          {avator ? (
-            <IconAvatar size={"sm"} src={avator} flex={false} />
-          ) : (
-            <AvatarPlaceholder did={did} size={32} />
-          )}
-        </div>
-        <LeftArrow />
-        <div className="rounded-full border border-light-primary dark:border-dark-primary bg-light-surface dark:bg-dark-surface text-light-primary dark:text-dark-primary px-2 py-1 text-sm">
-          {fromEnsLoading ? (
-            <CommonSpinner size="sm" />
-          ) : (
-            <p className="break-words flex-wrap">{fromEns}</p>
-          )}
-        </div>
-      </div>
-    );
-  };
-
   const router = useRouter();
 
   // convert display
@@ -123,7 +76,11 @@ export const SigRequestListItem: FC<Props> = ({ offchainItem }) => {
         </div>
         <div className=" flex-auto text-left p-4 space-y-3">
           <div className="flex justify-between">
-            <Direction />
+            <TxDirection
+              from={offchainItem.from}
+              to={offchainItem.to}
+              isPayer={offchainItem.isPayer}
+            />
             {offchainItem?.createdAt && (
               <div className="text-light-on-surface dark:text-dark-on-surface text-sm">
                 {convertTimestampToDateStr(offchainItem.createdAt)}
@@ -202,7 +159,11 @@ export const SigRequestListItem: FC<Props> = ({ offchainItem }) => {
           {/*</div>*/}
 
           <div className="absolute right-2 top-2">
-            <Direction />
+            <TxDirection
+              from={offchainItem.from}
+              to={offchainItem.to}
+              isPayer={offchainItem.isPayer}
+            />
           </div>
         </div>
 

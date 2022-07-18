@@ -18,65 +18,18 @@ import { CommonSpinner } from "@/components/common/CommonSpinner";
 import clsx from "clsx";
 import Link from "next/link";
 import { useRouter } from "next/dist/client/router";
+import { TxDirection } from "@/components/common/TxDirection";
 
 type Props = {
   item: ICVoxelItem;
 };
 
 export const VoxelListItem: FC<Props> = ({ item }) => {
-  const { did, avator } = useMyCeramicAcount();
-
   // item detail
   const cVoxelItem = useCVoxelRecord(item.id);
   const detailItem = useMemo(() => {
     return cVoxelItem.content || null;
   }, [cVoxelItem.content, cVoxelItem]);
-
-  const Direction = () => {
-    const { ens: fromEns, ensLoading: fromEnsLoading } = useENS(
-      detailItem?.from
-    );
-    const { ens: toEns, ensLoading: toEnsLoading } = useENS(detailItem?.to);
-
-    return item.isPayer ? (
-      <div className="flex items-center space-x-2">
-        <div className="hidden lg:block">
-          {avator ? (
-            <IconAvatar size={"sm"} src={avator} flex={false} />
-          ) : (
-            <AvatarPlaceholder did={did} size={32} />
-          )}
-        </div>
-
-        <RightArrow />
-        <div className="rounded-full border border-light-primary dark:border-dark-primary bg-light-surface dark:bg-dark-surface text-light-primary dark:text-dark-primary px-2 py-1 text-sm">
-          {toEnsLoading ? (
-            <CommonSpinner size="sm" />
-          ) : (
-            <p className="break-words flex-wrap">{toEns}</p>
-          )}
-        </div>
-      </div>
-    ) : (
-      <div className="flex items-center space-x-2">
-        <div className="hidden lg:block">
-          {avator ? (
-            <IconAvatar size={"sm"} src={avator} flex={false} />
-          ) : (
-            <AvatarPlaceholder did={did} size={32} />
-          )}
-        </div>
-        <LeftArrow />
-        <div className="rounded-full border border-light-primary dark:border-dark-primary bg-light-surface dark:bg-dark-surface text-light-primary dark:text-dark-primary px-2 py-1 text-sm">
-          {fromEnsLoading ? (
-            <CommonSpinner size="sm" />
-          ) : (
-            <p className="break-words flex-wrap">{fromEns}</p>
-          )}
-        </div>
-      </div>
-    );
-  };
 
   const router = useRouter();
 
@@ -103,7 +56,11 @@ export const VoxelListItem: FC<Props> = ({ item }) => {
         </div>
         <div className=" flex-auto text-left p-4 space-y-3">
           <div className="flex justify-between">
-            <Direction />
+            <TxDirection
+              from={detailItem?.from}
+              to={detailItem?.to}
+              isPayer={item.isPayer}
+            />
             {detailItem?.createdAt && (
               <div className="text-light-on-surface dark:text-dark-on-surface text-sm">
                 {convertTimestampToDateStr(detailItem.createdAt)}
@@ -178,7 +135,11 @@ export const VoxelListItem: FC<Props> = ({ item }) => {
           {/*</div>*/}
 
           <div className="absolute right-2 top-2">
-            <Direction />
+            <TxDirection
+              from={detailItem?.from}
+              to={detailItem?.to}
+              isPayer={item.isPayer}
+            />
           </div>
         </div>
 
