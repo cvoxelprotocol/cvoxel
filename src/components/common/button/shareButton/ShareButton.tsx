@@ -98,20 +98,22 @@ export const ShareButton: FC<Props> = ({ voxelID, valiant = "button" }) => {
 
       {valiant == "icon" && (
         <button onClick={handleClickButton}>
-          <Share />
+          <Share className="text-light-on-surface-variant dark:text-dark-on-surface-variant" />
         </button>
       )}
 
       <div
         className={clsx(
-          "absolute bg-white shadow-lg rounded-lg right-0 p-4 min-w-max z-10",
+          "absolute bg-light-background dark:bg-dark-background dark:border-dark-outline dark:border shadow-lg rounded-lg right-0 p-4 min-w-max z-10",
           showMenu ? undefined : "opacity-0 pointer-events-none" // To control the animation of tooltips
         )}
       >
         <div className="flex items-center text-black hover:text-gray-500 relative">
-          <LinkIcon className="mr-2 w-5" />
+          <LinkIcon className="mr-2 w-5 text-light-on-surface-variant dark:text-dark-on-surface-variant" />
           <CopyToClipboard text={url} onCopy={handleOnCopy}>
-            <button>Copy link</button>
+            <button className="text-light-on-surface-variant dark:text-dark-on-surface-variant">
+              Copy link
+            </button>
           </CopyToClipboard>
           <div
             className={clsx(
@@ -123,9 +125,13 @@ export const ShareButton: FC<Props> = ({ voxelID, valiant = "button" }) => {
           </div>
         </div>
         <div className="flex items-center mt-3 text-black hover:text-gray-500">
-          <Twitter className="mr-2 w-5" />
+          <Twitter className="mr-2 w-5 text-light-on-surface-variant dark:text-dark-on-surface-variant" />
           <Link href={makeTwitterURL()} passHref>
-            <a target="_blank" rel="noreferrer">
+            <a
+              target="_blank"
+              rel="noreferrer"
+              className="text-light-on-surface-variant dark:text-dark-on-surface-variant"
+            >
               Share on Twitter
             </a>
           </Link>

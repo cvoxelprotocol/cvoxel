@@ -16,6 +16,10 @@ import { useENS } from "@/hooks/useENS";
 import { CommonSpinner } from "@/components/common/CommonSpinner";
 import clsx from "clsx";
 import { ShareButton } from "@/components/common/button/shareButton/ShareButton";
+import { TxDirection } from "@/components/common/TxDirection";
+import { NamePlate } from "@/components/common/NamePlate";
+import RightArrow from "@/components/CVoxel/VoxelListItem/right-arrow.svg";
+import LeftArrow from "@/components/CVoxel/VoxelListItem/left-arrow.svg";
 
 export const CVoxelDetailBox: FC<{}> = () => {
   const [box] = useStateCVoxelDetailBox();
@@ -95,155 +99,127 @@ export const CVoxelDetailBox: FC<{}> = () => {
   }, [box]);
 
   return (
-    <div className="relative">
+    <div className="relative ">
       <div
         className={clsx(
-          "top-24 right-0 absolute bg-white border rounded-l-2xl border-y-secondary border-l-secondary p-10 z-10 w-72 sm:w-96 max-h-screen overflow-scroll",
+          "bg-light-surface-1 dark:bg-dark-surface-1 top-24 right-0 absolute border rounded-l-2xl border-y-light-outline border-l-light-outline dark:border-y-dark-outline dark:border-l-dark-outline z-10 w-72 sm:w-96 max-h-screen overflow-scroll",
           !isMount && "hidden",
           isShow ? "animate-slide-from-right" : "animate-slide-to-right"
         )}
         ref={boxRef}
       >
-        {/*share button*/}
-        <div className="flex justify-between">
-          <button className="sm:opacity-0" onClick={handleClose}>
-            <FontAwesomeIcon
-              className="w-6 h-6 mr-4"
-              icon={faClose}
-              color={"#A66497"}
-            />
-          </button>
-          <ShareButton voxelID={box?.item.id ?? ""} />
-        </div>
+        <div className="px-8 relative bg-light-background dark:bg-dark-background">
+          {/*share button*/}
+          <div className="absolute top-4 right-4">
+            <ShareButton voxelID={box?.item.id ?? ""} valiant="icon" />
+          </div>
 
-        {/*c-voxel*/}
-        <div className="mt-2">
-          {box && box.item.id && (
-            <Canvas>
-              <VisualizerPresenter
-                ids={box ? [box.item.id] : undefined}
-                zoom={6}
-                disableHover
+          <div className="absolute top-4 left-4">
+            <button className="sm:opacity-0" onClick={handleClose}>
+              <FontAwesomeIcon
+                className="w-6 h-6 text-light-on-surface-variant dark:text-dark-on-surface-variant"
+                icon={faClose}
+                // color={"#A66497"}
               />
-            </Canvas>
-          )}
-        </div>
+            </button>
+          </div>
 
-        {/*address*/}
-        <div className="mt-2">
-          {detailItem && (
-            <>
-              <div className="border rounded-full border-secondary px-3 py-1 text-primary font-medium text-xl mr-4 inline-block">
-                {fromEnsLoading ? (
-                  <CommonSpinner size="sm" />
-                ) : (
-                  <p className="break-words flex-wrap">{fromEns}</p>
-                )}
-              </div>
-              <div className="flex items-center justify-end mt-2">
-                <FontAwesomeIcon
-                  className="w-6 h-6 mr-4"
-                  icon={faArrowRight}
-                  color={"#A66497"}
+          {/*c-voxel*/}
+          <div className="h-52">
+            {box && box.item.id && (
+              <Canvas>
+                <VisualizerPresenter
+                  ids={box ? [box.item.id] : undefined}
+                  zoom={5}
+                  disableHover
                 />
-                <div className="border rounded-full border-gray-300 px-3 py-1 text-primary font-medium text-xl">
-                  {toEnsLoading ? (
-                    <CommonSpinner size="sm" />
-                  ) : (
-                    <p className="break-words flex-wrap">{toEns}</p>
-                  )}
-                </div>
-              </div>
-            </>
-          )}
-        </div>
+              </Canvas>
+            )}
+          </div>
 
-        {/*date*/}
-        <div className="mt-4 text-primary">
-          {box && convertTimestampToDateStr(box.item.issuedTimestamp)}
-        </div>
-
-        {/*title*/}
-        <div className="mt-1 text-xl font-medium">
-          {detailItem ? detailItem.summary : box?.item.summary ?? ""}
-        </div>
-
-        {/*value*/}
-        <div className="mt-1">
-          {detailItem && (
-            <>
-              <p className="font-medium text-lg">
-                {formatBigNumber(
-                  detailItem?.value,
-                  8,
-                  detailItem?.tokenDecimal.toString()
-                )}{" "}
-                {detailItem.tokenSymbol || detailItem.networkId}
-              </p>
-              {fiatVal && (
-                <p className="text-gray-400 text-xs">
-                  {`(${Number(fiatVal).toFixed(2)} ${
-                    detailItem.fiatSymbol || "USD"
-                  })`}
-                </p>
-              )}
-            </>
-          )}
-        </div>
-
-        {/*genre and tags*/}
-        <div className="flex mt-2 items-center">
-          {detailItem?.genre ? (
-            <GenreBadge
-              text={detailItem.genre}
-              baseColor={getGenre(detailItem.genre)?.bgColor || "bg-[#b7b7b7]"}
-              isSelected={true}
+          <div className="absolute bottom-2 right-0 left-0 flex justify-center">
+            <TxDirection
+              isPayer={box?.item.isPayer ?? false}
+              from={detailItem?.from}
+              to={detailItem?.to}
             />
-          ) : (
-            <></>
-          )}
-          <div className="ml-2 flex items-center flex-wrap">
-            {detailItem?.tags &&
-              detailItem.tags.map((tag) => {
-                return <TagBadge key={tag} text={tag} />;
-              })}
           </div>
         </div>
 
-        {/*deliverables*/}
-        {detailItem?.deliverables && (
-          <div className="mt-2">
-            <div className="text-lg font-medium">Deliverables</div>
-            <div>
-              {detailItem?.deliverables &&
-                detailItem.deliverables.map((d) => {
-                  return (
-                    <div key={d.value}>
-                      <Link
-                        href={`${
-                          d.format === "url"
-                            ? d.value
-                            : `https://dweb.link/ipfs/${d.value}`
-                        }`}
-                        passHref
-                      >
-                        <a
-                          className="text-xs text-secondary"
-                          target="_blank"
-                          rel="noreferrer"
-                        >
-                          {shortenStr(d.value)}
-                        </a>
-                      </Link>
-                    </div>
-                  );
+        <div className="px-8 py-6 space-y-3">
+          <div className="text-left w-full space-y-3 py-3 dark:border-b-dark-inverse-primary">
+            {detailItem?.createdAt && (
+              <div className="text-light-on-surface dark:text-dark-on-surface text-sm">
+                {convertTimestampToDateStr(detailItem.createdAt)}
+              </div>
+            )}
+
+            {detailItem?.summary && (
+              <div className="text-light-on-primary-container dark:text-dark-on-error-container text-2xl font-medium line-clamp-3">
+                {detailItem?.summary}
+              </div>
+            )}
+
+            <div className="flex">
+              {detailItem?.genre ? (
+                <GenreBadge
+                  text={detailItem.genre}
+                  baseColor={
+                    getGenre(detailItem.genre)?.bgColor || "bg-[#b7b7b7]"
+                  }
+                  isSelected={true}
+                />
+              ) : (
+                <></>
+              )}
+              {detailItem?.tags &&
+                detailItem.tags.map((tag) => {
+                  return <TagBadge key={tag} text={tag} />;
                 })}
             </div>
           </div>
-        )}
 
-        {/*description*/}
-        <div className="mt-2 whitespace-pre-wrap">{detailItem?.detail}</div>
+          {/*deliverables*/}
+          {detailItem?.deliverables && detailItem.deliverables.length > 0 && (
+            <div>
+              <p className="mb-2 text-light-on-surface-variant dark:text-light-on-surface-variant font-medium">
+                DELIVERABLES
+              </p>
+
+              {detailItem?.deliverables.map((deliverable) =>
+                deliverable.value.startsWith("http") ? (
+                  <a
+                    className="flex items-center flex-wrap"
+                    href={`${deliverable.value}`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <p className="text-light-secondary dark:text-dark-secondary text-md">
+                      {deliverable.value}
+                    </p>
+                  </a>
+                ) : (
+                  <p className="text-md text-secondary">
+                    {shortenStr(deliverable.value)}
+                  </p>
+                )
+              )}
+            </div>
+          )}
+
+          {/*description*/}
+          {detailItem?.detail && (
+            <div>
+              <p className="mb-2 text-light-on-surface-variant dark:text-light-on-surface-variant font-medium">
+                DESCRIPTION
+              </p>
+
+              <div className="text-light-on-surface dark:text-dark-on-surface font-medium">
+                {detailItem?.detail}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
