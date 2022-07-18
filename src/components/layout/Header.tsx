@@ -1,9 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import styles from "@/styles/Layout.module.css";
 import dynamic from "next/dynamic";
-import { useTheme } from "next-themes";
 
 const AccountButton = dynamic(
   () => import("@/components/common/button/AccountButton"),
@@ -12,21 +10,15 @@ const AccountButton = dynamic(
   }
 );
 export const Header = () => {
-  const { theme } = useTheme();
   return (
     <>
-      <nav
-        className={
-          (theme === "dark" ? styles.appbar_dark : styles.appbar) +
-          " py-1 px-3 md:px-14 "
-        }
-      >
+      <nav className="py-1 px-3 md:px-14 flex justify-between items-center fixed z-40 w-full h-[72px] left-0 top-0 bg-light-surface-opacity-0.7 dark:bg-dark-surface-opacity-0.7">
         <div className="w-full grid grid-cols-3 mx-auto items-center justify-evenly">
           <div className="flex justify-center items-center col-span-1 col-start-2 cursor-pointer w-full">
             <Link href="/" passHref>
               <div className="text-center flex">
                 <Image
-                  src="/cvoxel_logo_icon.png"
+                  src="/vess-logo-icon.png"
                   alt="LanC"
                   objectFit="cover"
                   width="48px"

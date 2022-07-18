@@ -47,66 +47,70 @@ export const getTagOption = (tag: string): TagOption => {
   return tagOp ? tagOp : { value: tag, label: tag, color: "#8E477F" };
 };
 
-export const colourStyles: StylesConfig<TagOption, true> = {
-  control: (styles) => ({
-    ...styles,
-    backgroundColor: "white",
-    border: 0,
-    boxShadow: "none",
-    background: "rgba(235, 223, 233, 1)", // TODO: dark mode
-  }),
-  indicatorSeparator: (base) => ({
-    ...base,
-    display: "none",
-  }),
-  dropdownIndicator: (base) => ({
-    ...base,
-    display: "none",
-  }),
-  option: (styles, { data, isDisabled, isFocused, isSelected }) => {
-    const color = chroma(data.color || "#8E477F");
-    return {
+export const colourStyles = (
+  isDarkMode: boolean
+): StylesConfig<TagOption, true> => {
+  return {
+    control: (styles) => ({
       ...styles,
-      backgroundColor: isSelected
-        ? data.color
-        : isFocused
-        ? color.alpha(0.1).css()
-        : undefined,
-      color: isSelected
-        ? chroma.contrast(color, "white") > 2
-          ? "white"
-          : "black"
-        : data.color,
-      cursor: isDisabled ? "not-allowed" : "default",
-      ":active": {
-        ...styles[":active"],
-        backgroundColor: !isDisabled
-          ? isSelected
-            ? data.color
-            : color.alpha(0.3).css()
+      backgroundColor: "white",
+      border: 0,
+      boxShadow: "none",
+      background: isDarkMode ? "rgba(76, 68, 77, 1)" : "rgba(235, 223, 233, 1)",
+    }),
+    indicatorSeparator: (base) => ({
+      ...base,
+      display: "none",
+    }),
+    dropdownIndicator: (base) => ({
+      ...base,
+      display: "none",
+    }),
+    option: (styles, { data, isDisabled, isFocused, isSelected }) => {
+      const color = chroma(data.color || "#8E477F");
+      return {
+        ...styles,
+        backgroundColor: isSelected
+          ? data.color
+          : isFocused
+          ? color.alpha(0.1).css()
           : undefined,
-      },
-    };
-  },
-  multiValue: (styles, { data }) => {
-    const color = chroma(data.color || "#8E477F");
-    return {
-      ...styles,
-      backgroundColor: "#F6F6F6",
-      color: data.color || "#8E477F",
-      fontWeight: "bold",
-    };
-  },
-  multiValueLabel: (styles, { data }) => ({
-    ...styles,
-    color: data.color || "#8E477F",
-  }),
-  multiValueRemove: (styles, { data }) => ({
-    ...styles,
-    color: data.color || "#8E477F",
-    ":hover": {
-      backgroundColor: data.color || "#8E477F",
-      color: "white",
+        color: isSelected
+          ? chroma.contrast(color, "white") > 2
+            ? "white"
+            : "black"
+          : data.color,
+        cursor: isDisabled ? "not-allowed" : "default",
+        ":active": {
+          ...styles[":active"],
+          backgroundColor: !isDisabled
+            ? isSelected
+              ? data.color
+              : color.alpha(0.3).css()
+            : undefined,
+        },
+      };
     },
-  }),
+    multiValue: (styles, { data }) => {
+      const color = chroma(data.color || "#8E477F");
+      return {
+        ...styles,
+        backgroundColor: "#F6F6F6",
+        color: data.color || "#8E477F",
+        fontWeight: "bold",
+      };
+    },
+    multiValueLabel: (styles, { data }) => ({
+      ...styles,
+      color: data.color || "#8E477F",
+    }),
+    multiValueRemove: (styles, { data }) => ({
+      ...styles,
+      color: data.color || "#8E477F",
+      ":hover": {
+        backgroundColor: data.color || "#8E477F",
+        color: "white",
+      },
+    }),
+  };
 };

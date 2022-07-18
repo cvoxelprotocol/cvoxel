@@ -16,6 +16,7 @@ import { useMyCeramicAcount } from "@/hooks/useCeramicAcount";
 import { useDraftCVoxel } from "@/hooks/useDraftCVoxel";
 import { useFileUpload } from "@/hooks/useFileUpload";
 import { useStateForceUpdate, useStateSelectedTx } from "@/recoilstate";
+import { useThemeMode } from "@/hooks/useThemeMode";
 
 type TransactionListContainerProps = {
   txList: TransactionLogWithChainId[];
@@ -134,10 +135,12 @@ export const TransactionListContainer: FC<TransactionListContainerProps> = ({
     return offchainMetaList?.find((meta) => meta.txHash === selectedTx.hash);
   }, [selectedTx, offchainMetaList]);
 
+  const { themeMode } = useThemeMode();
+
   const TransactionMemo = useMemo(
     () => (
       <div className="w-full max-w-[720px] text-center mx-auto cursor-pointer h-screen overflow-y-scroll sm:px-6 space-y-6">
-        <p className="text-primary font-medium text-xs pt-2 pb-4 sm:text-right">{`Supported Networks: Ethereum & Polygon`}</p>
+        <p className="text-light-on-surface dark:text-dark-on-surface font-medium text-xs pt-2 pb-4 sm:text-right">{`Supported Networks: Ethereum & Polygon`}</p>
         {!offchainLoading && (!txList || txList.length === 0) && (
           <NoItemPresenter text="No Tx Found..." />
         )}
@@ -196,6 +199,7 @@ export const TransactionListContainer: FC<TransactionListContainerProps> = ({
       selectedTx,
       connection,
       CVoxelsRecords.content?.WorkCredentials,
+      themeMode,
     ]
   );
 

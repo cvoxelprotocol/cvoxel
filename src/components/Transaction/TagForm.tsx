@@ -4,9 +4,10 @@ import {
   TagOption,
   TagOptions,
 } from "@/constants/tags";
-import { FC, useMemo } from "react";
+import {FC, useEffect, useMemo} from "react";
 import CreatableSelect from "react-select/creatable";
 import { ActionMeta, OnChangeValue } from "react-select";
+import { useThemeMode } from "@/hooks/useThemeMode";
 
 type TagFormProps = {
   handleTags: (tags: string[]) => void;
@@ -25,13 +26,16 @@ export const TagForm: FC<TagFormProps> = ({ handleTags, tags }) => {
     return !tags ? undefined : tags.map((v) => getTagOption(v));
   }, [tags]);
 
+  const { themeMode } = useThemeMode();
+  const isDarkMode = useMemo(() => themeMode == "dark", [themeMode]);
+
   return (
     <CreatableSelect
       isMulti
       defaultValue={defaultVal}
       onChange={handleChange}
       options={TagOptions}
-      styles={colourStyles}
+      styles={colourStyles(isDarkMode)}
       placeholder={"Enter tags as you like.."}
       className={"border-none border-b-gray-400"}
     />

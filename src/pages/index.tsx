@@ -86,7 +86,7 @@ const HomePage: NextPage = () => {
               <Button
                 text="Go To Mypage"
                 href={`/${did || account}`}
-                color="grad-blue"
+                color="primary"
               />
             </div>
           )}

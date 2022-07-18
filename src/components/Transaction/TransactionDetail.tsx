@@ -198,7 +198,7 @@ export const TransactionDetail: FC<TransactionDetailProps> = ({
             }
             buttonType={"button"}
             onClick={() => onClaim(tx, offchainItem)}
-            color={connectionState.status === "connected" ? "grad-blue" : "grad-red"}
+            color={connectionState.status === "connected" ? "primary" : "secondary"}
           />
         </div>
       )}
@@ -215,7 +215,7 @@ export const TransactionDetail: FC<TransactionDetailProps> = ({
             }
             buttonType={"button"}
             onClick={() => handleReclaim()}
-            color={connectionState.status === "connected" ? "grad-blue" : "grad-red"}
+            color={connectionState.status === "connected" ? "primary" : "secondary"}
           />
         </div>
       )}

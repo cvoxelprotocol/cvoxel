@@ -6,15 +6,17 @@ import { CVoxels } from "@/interfaces";
 import { FC } from "react";
 import { MyTxContainer } from "./tabs/MyTxContainer";
 import { MyNotificationContainer } from "./tabs/MyNotificationContainer";
+import { Arrow } from "@/components/common/arrow/Arrow";
 
 type props = {
   content?: CVoxels | null;
+  scrollToVisual: () => void;
 };
-export const MyPageContainer: FC<props> = ({ content }) => {
+export const MyPageContainer: FC<props> = ({ content, scrollToVisual }) => {
   const { tabState } = useTab();
 
   return (
-    <div className="relative w-full max-w-5xl min-h-screen border-t border-secondary mx-auto">
+    <div className="relative w-full max-w-5xl min-h-screen mx-auto">
       <div className="sm:flex sm:grid-cols-2">
         <div className="sm:hidden w-full">
           <HomeSPHeader />
@@ -22,7 +24,7 @@ export const MyPageContainer: FC<props> = ({ content }) => {
         <div className="hidden sm:block md:w-[280px] col-span-1">
           <HomeTabsHeader />
         </div>
-        <div className="flex-none w-full sm:w-[calc(100%-95px)] md:w-[calc(100%-280px)] max-w-[744px] col-span-1">
+        <div className="flex-none w-full sm:w-[calc(100%-95px)] md:w-[calc(100%-280px)] max-w-[744px] col-span-1 lg:pt-10">
           <div
             className={tabState === "cvoxels" ? "block" : "hidden"}
             id="cvoxels"
@@ -41,6 +43,14 @@ export const MyPageContainer: FC<props> = ({ content }) => {
           >
             <MyNotificationContainer />
           </div>
+        </div>
+      </div>
+
+      <div className="absolute top-2 left-0 right-0 hidden lg:block">
+        <div className="mx-auto inline-block">
+          <button onClick={scrollToVisual}>
+            <Arrow size="lg" direction="up" />
+          </button>
         </div>
       </div>
     </div>

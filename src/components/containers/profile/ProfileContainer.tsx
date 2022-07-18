@@ -9,6 +9,7 @@ import { NoItemPresenter } from "@/components/common/NoItemPresenter";
 import { ProfileCard } from "@/components/Profile/ProfileCard";
 import { CommonLoading } from "@/components/common/CommonLoading";
 import { VoxelListItem } from "@/components/CVoxel/VoxelListItem/VoxelListItem";
+import { NamePlate } from "@/components/common/NamePlate";
 
 export const ProfileContainer: FC<CeramicProps> = ({ did }) => {
   const { name, avator, profileRecord } = useUserCeramicAcount(did);
@@ -55,13 +56,8 @@ export const ProfileContainer: FC<CeramicProps> = ({ did }) => {
         <div className="flex w-full items-center justify-center h-[450px] relative max-w-[720px]">
           {VisualizerPresenterMemo}
         </div>
-        <div className="flex-none mb-12 w-full max-w-[720px]">
-          <ProfileCard
-            did={did}
-            name={name}
-            avator={avator}
-            isLoading={profileRecord.isLoading}
-          />
+        <div className="flex-none mb-12 w-fit">
+          <NamePlate size="lg" did={did} />
         </div>
         {CVoxelsPresenterMemo}
       </div>
