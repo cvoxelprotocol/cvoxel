@@ -14,7 +14,7 @@ type RoomType = {
   priority?: number;
 }[][];
 
-type CVoxelThreeWithId = CVoxelThree & { id: string };
+export type CVoxelThreeWithId = CVoxelThree & { id: string };
 type CVoxelVisTypeWithId = CVoxelVisType & { id: string };
 
 const sigmoid_a: number = 1;
