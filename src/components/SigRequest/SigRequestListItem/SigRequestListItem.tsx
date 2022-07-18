@@ -42,7 +42,7 @@ export const SigRequestListItem: FC<Props> = ({ offchainItem }) => {
 
   const PcContent = () => {
     return (
-      <div className="flex h-44">
+      <div className="flex h-48">
         {/* NOTE: if voxel state exist, add padding bottom*/}
         <div
           className={clsx(
@@ -157,6 +157,15 @@ export const SigRequestListItem: FC<Props> = ({ offchainItem }) => {
           {/*    Portfolio*/}
           {/*  </div>*/}
           {/*</div>*/}
+
+          <div className="absolute bg-light-sig-request-layer dark:bg-dark-sig-request-layer top-0 bottom-0 left-0 right-0 opacity-70">
+            <div className="h-full flex items-center p-3 justify-center">
+              <p className="text-light-surface dark:text-dark-surface font-medium text-xl">
+                Signature
+                <br /> Request
+              </p>
+            </div>
+          </div>
 
           <div className="absolute right-2 top-2">
             <TxDirection

@@ -53,6 +53,7 @@ export const colourStyles: StylesConfig<TagOption, true> = {
     backgroundColor: "white",
     border: 0,
     boxShadow: "none",
+    background: "rgba(235, 223, 233, 1)", // TODO: dark mode
   }),
   indicatorSeparator: (base) => ({
     ...base,

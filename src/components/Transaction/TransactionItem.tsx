@@ -3,17 +3,12 @@ import { getExploreLink } from "@/utils/etherscanUtils";
 import { formatBigNumber } from "@/utils/ethersUtil";
 import { FC, useMemo } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faExternalLink,
-  faAngleDown,
-  faAngleUp,
-} from "@fortawesome/free-solid-svg-icons";
-import { CommonSpinner } from "../common/CommonSpinner";
-import {
-  convertTimestampToDateStrLocaleUS,
-} from "@/utils/dateUtil";
+import { faExternalLink } from "@fortawesome/free-solid-svg-icons";
+import { convertTimestampToDateStrLocaleUS } from "@/utils/dateUtil";
 import { getNetworkSymbol } from "@/utils/networkUtil";
-import { useENS } from "@/hooks/useENS";
+import { TxDirection } from "@/components/common/TxDirection";
+import { Arrow } from "@/components/common/arrow/Arrow";
+import clsx from "clsx";
 
 type TransactionItemProps = {
   index: number;
@@ -31,17 +26,9 @@ export const TransactionItem: FC<TransactionItemProps> = ({
   onClickTx,
   selectedTx,
 }) => {
-  const isPayee = useMemo(() => {
-    return account?.toLowerCase() === tx.to.toLowerCase();
+  const isPayer = useMemo(() => {
+    return account?.toLowerCase() === tx.from.toLowerCase();
   }, [account, tx]);
-
-  const isAlreadyCreated = useMemo(() => {
-    return !cVoxels
-      ? false
-      : cVoxels?.some(
-          (cv) => cv.txHash?.toLowerCase() === tx.hash.toLowerCase()
-        );
-  }, [cVoxels, tx.hash]);
 
   const exploreLink = useMemo(() => {
     return getExploreLink(tx.hash, tx.chainId);
@@ -50,8 +37,6 @@ export const TransactionItem: FC<TransactionItemProps> = ({
   const isSelecting = useMemo(() => {
     return !!selectedTx && selectedTx.hash === tx.hash;
   }, [selectedTx, tx.hash]);
-
-  const { ens, ensLoading } = useENS(isPayee ? tx.from : tx.to);
 
   const handleClick = () => {
     if (isSelecting) {
@@ -62,96 +47,88 @@ export const TransactionItem: FC<TransactionItemProps> = ({
   };
 
   return (
-    <div className="w-full sm:h-fit relative sm:max-h-[90px] rounded-lg border sm:border-none border-secondary sm:shadow-lg bg-white dark:bg-card justify-between items-start text-xs sm:text-sm text-black dark:text-white break-words flex-wrap py-2 px-4 sm:px-10 sm:border-b sm:border-b-gray-200 grid grid-flow-col grid-rows-[2.5rem_2rem_0.5rem] grid-cols-1 sm:grid-rows-1 sm:grid-flow-row sm:grid-cols-12 gap-2">
+    <div
+      className={clsx(
+        "w-full h-36 lg:h-32 overflow-hidden relative rounded-lg border border-light-on-surface-variant dark:border-dark-on-surface-variant justify-between items-start text-xs lg:text-sm text-black dark:text-white break-words flex-wrap grid grid-flow-col grid-rows-[2.5rem_2rem_0.5rem] grid-cols-1 lg:grid-rows-1 lg:grid-flow-row lg:grid-cols-12 gap-y-2 gap-x-0 lg:gap-x-2 lg:gap-y-0 bg-light-surface-2 dark:bg-dark-surface-2",
+        isSelecting && "border-b-0 rounded-b-none"
+      )}
+    >
       {/*address and value*/}
-      <div className="flex sm:col-span-3 h-full">
+      <div className="flex lg:col-span-4 h-full">
         {/*content*/}
-        <div className="flex sm:flex-col items-start w-full flex-auto overflow-hidden">
-          <div className="flex-1 sm:flex-initial text-left">
-            <div>
-              <div className="text-xs text-primary">
-                {isPayee ? "From" : "To"}
-              </div>
-              <div></div>
-            </div>
-
-            <div className="text-lg text-primary font-medium overflow-hidden">
-              {ensLoading ? (
-                <CommonSpinner size="sm" />
-              ) : (
-                <p className="break-words flex-wrap text-ellipsis overflow-hidden whitespace-nowrap w-32">{ens}</p>
-              )}
-            </div>
+        <div className="flex lg:flex-col items-start lg:justify-center lg:pl-8 w-full flex-auto overflow-hidden bg-light-surface-1 dark:bg-dark-surface-1 lg:rounded-r-2xl lg:space-y-3">
+          <div className="w-1/2 lg:w-full lg:flex-none flex justify-center items-center lg:block h-full lg:h-fit">
+            <TxDirection from={tx.from} to={tx.to} isPayer={isPayer} />
           </div>
 
-          <div className=" sm:flex-none text-xl font-medium flex-auto flex flex-col justify-center text-left sm:text-center h-full sm:h-fit overflow-hidden">
-            <div className="flex sm:block overflow-hidden">
-              <p className="text-base font-semibold text-ellipsis overflow-hidden whitespace-nowrap w-32 text-left">
+          <div className="w-1/2 lg:w-full lg:flex-none text-xl font-medium flex-auto flex flex-col justify-center text-left lg:text-center h-full lg:h-fit overflow-hidden">
+            <div className="flex lg:block overflow-hidden items-end space-x-1 text-start">
+              <span className="text-light-on-secondary-container dark:text-light-on-secondary-container font-semibold text-ellipsis overflow-hidden whitespace-nowrap text-left">
                 {formatBigNumber(tx.value, 6, tx.tokenDecimal)}{" "}
+              </span>
+              <span className="text-light-on-secondary-container dark:text-light-on-secondary-container text-sm">
                 {tx.tokenSymbol || getNetworkSymbol(tx.chainId)}
-              </p>
+              </span>
             </div>
           </div>
         </div>
-        {/*border*/}
-        <div className="w-0.5 bg-gray-200 flex-initial hidden sm:block" />
       </div>
 
       {/*transaction*/}
-      <div className="text-left sm:col-span-7 flex items-center">
-        <div className="flex sm:block mr-4 flex-auto overflow-hidden">
+      <div className="text-left lg:col-span-6 flex items-center h-full px-2">
+        <div className="flex lg:flex-col lg:justify-center lg:mr-4 flex-auto overflow-hidden">
           {/*hash*/}
           <div className="flex-1 overflow-hidden">
-            <div className="text-2xs text-gray-500 font-semibold">Tx Hash</div>
-            <div className="text-sm font-medium text-ellipsis overflow-hidden whitespace-nowrap w-full">
+            <div className="text-xs text-gray-500 font-semibold">Tx Hash</div>
+            <div className="text-sm font-medium text-ellipsis overflow-hidden whitespace-nowrap w-full bg-light-surface dark:bg-dark-surface px-2 py-0.5 rounded-lg">
               {tx.hash}
             </div>
           </div>
 
           {/*timestamp*/}
-          <div className="flex-1 sm:mt-2 overflow-hidden ml-2 sm:ml-0">
-            <div className="text-2xs text-gray-500 font-semibold">
-              Timestamp
-            </div>
-            <div className="text-sm font-medium text-ellipsis overflow-hidden whitespace-nowrap w-full">
+          <div className="flex-1 lg:mt-2 overflow-hidden ml-2 lg:ml-0">
+            <div className="text-xs text-gray-500 font-semibold">Timestamp</div>
+            <div className="text-sm font-medium text-ellipsis overflow-hidden whitespace-nowrap w-full bg-light-surface dark:bg-dark-surface px-2 py-0.5 rounded-lg">
               {convertTimestampToDateStrLocaleUS(tx.timeStamp)}
             </div>
           </div>
         </div>
 
         {/*external link*/}
-        <div className="hidden sm:block">
+      </div>
+
+      {/*expand*/}
+      <div className="flex flex-col items-center lg:items-end justify-between lg:col-span-2 h-full pr-8 py-3">
+        <div className="hidden lg:block">
           <a
             className="flex items-center justify-center"
             href={exploreLink}
             target="_blank"
             rel="noreferrer"
           >
-            <FontAwesomeIcon
-              className="w-4 h-4 ml-1 text-gray-400 hover:text-gray-300"
-              icon={faExternalLink}
-            />
+            <div className="flex px-2 py-0.5">
+              <div>Explorer</div>
+              <FontAwesomeIcon
+                className="w-4 h-4 ml-1 text-gray-400 hover:text-gray-300"
+                icon={faExternalLink}
+              />
+            </div>
           </a>
         </div>
-      </div>
 
-      {/*spacer for grid*/}
-      <div className="col-span-1 hidden sm:block" />
-
-      {/*expand*/}
-      <div className="flex items-center justify-center sm:justify-end col-span-1 h-full">
         <button onClick={() => handleClick()}>
           <div className="flex items-center p-4">
-            <FontAwesomeIcon
-              className="w-5 h-5 mr-1 text-primary hover:text-secondary"
-              icon={isSelecting ? faAngleUp : faAngleDown}
-            />
+            {isSelecting ? (
+              <Arrow size="sm" direction="up" />
+            ) : (
+              <Arrow size="sm" direction="down" />
+            )}
           </div>
         </button>
       </div>
 
       {/*external link for sp*/}
-      <div className="sm:hidden absolute top-5 right-10">
+      <div className="lg:hidden absolute top-3 right-10">
         <a
           className="flex items-center justify-center"
           href={exploreLink}

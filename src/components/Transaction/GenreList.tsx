@@ -30,7 +30,9 @@ export const GenreList: FC<GenreListProps> = ({ handleGenre, genre }) => {
         options={genreList}
         styles={genreColorStyle}
         placeholder={"Select Genre"}
-        className={"border-none border-b-gray-400"}
+        className={
+          "border-none border-b-gray-400 bg-light-surface-variant dark:bg-dark-surface-variant"
+        }
       />
     </div>
   );

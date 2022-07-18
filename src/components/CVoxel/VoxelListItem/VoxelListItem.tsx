@@ -1,9 +1,4 @@
 import { FC, useMemo } from "react";
-import { useMyCeramicAcount } from "@/hooks/useCeramicAcount";
-import { IconAvatar } from "@/components/common/IconAvatar";
-import { AvatarPlaceholder } from "@/components/common/avatar/AvatarPlaceholder";
-import LeftArrow from "@/components/CVoxel/VoxelListItem/left-arrow.svg";
-import RightArrow from "@/components/CVoxel/VoxelListItem/right-arrow.svg";
 import { GenreBadge } from "@/components/common/badge/GenreBadge";
 import { getGenre } from "@/utils/genreUtil";
 import { TagBadge } from "@/components/common/badge/TagBadge";
@@ -13,8 +8,6 @@ import { Canvas } from "@react-three/fiber";
 import VisualizerPresenter from "@/components/CVoxel/visualizerPresenter";
 import { convertTimestampToDateStr } from "@/utils/dateUtil";
 import { useCVoxelRecord } from "@/hooks/useCVoxel";
-import { useENS } from "@/hooks/useENS";
-import { CommonSpinner } from "@/components/common/CommonSpinner";
 import clsx from "clsx";
 import Link from "next/link";
 import { useRouter } from "next/dist/client/router";
@@ -35,7 +28,7 @@ export const VoxelListItem: FC<Props> = ({ item }) => {
 
   const PcContent = () => {
     return (
-      <div className="flex h-44">
+      <div className="flex h-48">
         {/* NOTE: if voxel state exist, add padding bottom*/}
         <div
           className={clsx(
