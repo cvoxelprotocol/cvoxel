@@ -71,11 +71,11 @@ export default function App({ Component, pageProps }: AppProps) {
               state={state}
             >
               <ThemeProvider attribute="class" defaultTheme={"light"}>
-                  <BaseLayout>
-                    <Component {...props} />
-                  </BaseLayout>
-                  {isLoading && <LoadingModal />}
-                </ThemeProvider>
+                <BaseLayout>
+                  <Component {...props} />
+                </BaseLayout>
+                {isLoading && <LoadingModal />}
+              </ThemeProvider>
             </SelfIDProvider>
           </Hydrate>
         </QueryClientProvider>

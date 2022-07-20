@@ -21,6 +21,8 @@ import { getNetworkSymbol } from "@/utils/networkUtil";
 import { convertDateToTimestampStr } from "@/utils/dateUtil";
 import { useMyCeramicAcount } from "./useCeramicAcount";
 import { useStateIssueStatus } from "@/recoilstate/cvoxel";
+import { useCVoxelToast } from "@/hooks/useCVoxelToast";
+import { useVoxStyler } from "@/hooks/useVoxStyler";
 
 export function useDraftCVoxel() {
   const { connectCeramic, mySelfID } = useMyCeramicAcount();
@@ -31,6 +33,10 @@ export function useDraftCVoxel() {
   const cVoxelService = getCVoxelService();
   const { lancInfo, lancError } = useToast();
   const [issueStatus, setIssueStatus] = useStateIssueStatus();
+
+  const { showToast } = useCVoxelToast();
+
+  const { cvoxelsForDisplay, convertCVoxelsForDisplay } = useVoxStyler();
 
   const publish = useCallback(
     async (
@@ -122,7 +128,20 @@ export function useDraftCVoxel() {
         });
 
         closeLoading();
-        lancInfo(CVOXEL_CREATION_SUCCEED);
+        convertCVoxelsForDisplay([{ ...meta, id: "0" }]);
+        if (
+          !!cvoxelsForDisplay &&
+          cvoxelsForDisplay.length > 0 &&
+          !!cvoxelsForDisplay[0]
+        ) {
+          await showToast({
+            message: "Created!",
+            voxel: cvoxelsForDisplay[0],
+            duration: 3,
+          });
+        } else {
+          lancInfo(CVOXEL_CREATION_SUCCEED);
+        }
         setIssueStatus("completed");
         return true;
       } catch (error) {

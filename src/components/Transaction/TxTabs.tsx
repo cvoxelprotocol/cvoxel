@@ -1,31 +1,34 @@
-import { FC,MouseEvent } from "react";
+import { FC, MouseEvent } from "react";
 import { useTxTab } from "@/hooks/useTab";
-import clsx from 'clsx';
+import clsx from "clsx";
 import { TX_TAB_NAME } from "@/interfaces";
 
 export const TxTabs: FC = () => {
   const { tabState, setTabState } = useTxTab();
 
-  const receivedTab = (e:MouseEvent<HTMLAnchorElement>) => {
+  const receivedTab = (e: MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
-    setTabState("received")
-  }
+    setTabState("received");
+  };
 
-  const sentTab = (e:MouseEvent<HTMLAnchorElement>) => {
+  const sentTab = (e: MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
-    setTabState("sent")
-  }
+    setTabState("sent");
+  };
 
   return (
     <>
-      <div className="w-full text-center border-b border-secondary">
+      <div className="w-full text-center border-b border-light-outline dark:border-dark-outline mx-6">
         <ul
-          className={ "w-full flex items-center pt-4 pb-1 px-4 space-x-4"}
+          className={"w-full flex items-center h-20 space-x-4"}
           role="txTablist"
         >
           <li className="">
             <a
-              className={clsx("text-primary text-base md:text-2xl leading-normal flex items-center space-x-1",tabState === "received" ? " font-bold " : "")}
+              className={clsx(
+                "text-light-on-surface dark:text-dark-on-surface text-xl md:text-3xl leading-normal flex items-center space-x-1",
+                tabState === "received" ? " font-bold " : ""
+              )}
               onClick={receivedTab}
               data-toggle="tab"
               href="#recieved"
@@ -33,10 +36,13 @@ export const TxTabs: FC = () => {
             >
               <span className="ml-2 ">{TX_TAB_NAME["received"]}</span>
             </a>
-        </li>
-        <li className="">
+          </li>
+          <li className="">
             <a
-              className={clsx("text-primary text-base md:text-2xl leading-normal flex items-center space-x-1",tabState === "sent" ? " font-bold " : "")}
+              className={clsx(
+                "text-light-on-surface dark:text-dark-on-surface text-xl md:text-3xl leading-normal flex items-center space-x-1",
+                tabState === "sent" ? " font-bold " : ""
+              )}
               onClick={sentTab}
               data-toggle="tab"
               href="#sent"
@@ -44,7 +50,7 @@ export const TxTabs: FC = () => {
             >
               <span className="ml-2 ">{TX_TAB_NAME["sent"]}</span>
             </a>
-        </li>
+          </li>
         </ul>
       </div>
     </>

@@ -81,3 +81,10 @@ export const selectedTx = atom<TransactionLogWithChainId | null>({
 });
 
 export const useStateSelectedTx = () => useRecoilState(selectedTx);
+
+export const themeMode = atom<"light" | "dark">({
+  key: "themeMode",
+  default: "light",
+});
+
+export const useStateThemeMode = () => useRecoilState(themeMode);

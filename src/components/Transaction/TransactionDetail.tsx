@@ -90,12 +90,12 @@ export const TransactionDetail: FC<TransactionDetailProps> = ({
   };
 
   return (
-    <div className="w-full h-fit bg-white text-left shadow-lg p-5 mb-4">
+    <div className="w-full h-fit text-left shadow-lg p-5 mb-4 bg-light-surface-2 dark:bg-dark-surface-2 border border-light-on-surface-variant dark:border-dark-on-surface-variant border-t-0 rounded-b-lg">
       <div className="flex flex-wrap items-center">
         <p className="font-semibold">Title</p>
       </div>
       <div className="mb-3">
-        <p className="w-full my-1 py-1 px-6 border rounded-full text-xs md:text-sm">
+        <p className="w-full my-1 py-1 px-6 border rounded-full text-xs md:text-sm bg-light-surface-variant dark:bg-dark-surface-variant">
           {offchainItem.summary}
         </p>
       </div>
@@ -106,7 +106,7 @@ export const TransactionDetail: FC<TransactionDetailProps> = ({
       </div>
       <div className="mb-3">
         <textarea
-          className="w-full my-1 py-2 px-6 border rounded-xl text-xs md:text-sm"
+          className="w-full my-1 py-2 px-6 border rounded-xl text-xs md:text-sm bg-light-surface-variant dark:bg-dark-surface-variant"
           rows={3}
           readOnly
           value={offchainItem.detail || "No Description"}
@@ -174,16 +174,24 @@ export const TransactionDetail: FC<TransactionDetailProps> = ({
         <p className="font-semibold">Deliverable link(optional)</p>
       </div>
       <div className="mb-3">
-        {offchainItem.deliverables && offchainItem.deliverables?.length>0 && offchainItem.deliverables?.map(d => {
-          return (
-            <p key={d.value} className="w-full my-1 py-1 px-6 border rounded-full text-xs md:text-sm">{d.value}</p>
-          )
-        })}
-        {!offchainItem.deliverables || offchainItem.deliverables.length===0 && (
-          <p className="w-full my-1 py-1 px-6 border rounded-full text-xs md:text-sm">
-            No Deliverable
-          </p>
-        )}
+        {offchainItem.deliverables &&
+          offchainItem.deliverables?.length > 0 &&
+          offchainItem.deliverables?.map((d) => {
+            return (
+              <p
+                key={d.value}
+                className="w-full my-1 py-1 px-6 border rounded-full text-xs md:text-sm"
+              >
+                {d.value}
+              </p>
+            );
+          })}
+        {!offchainItem.deliverables ||
+          (offchainItem.deliverables.length === 0 && (
+            <p className="w-full my-1 py-1 px-6 border rounded-full text-xs md:text-sm">
+              No Deliverable
+            </p>
+          ))}
       </div>
       {claimable && (
         <div className="text-right py-4 space-x-4 flex justify-end items-center">
@@ -198,7 +206,9 @@ export const TransactionDetail: FC<TransactionDetailProps> = ({
             }
             buttonType={"button"}
             onClick={() => onClaim(tx, offchainItem)}
-            color={connectionState.status === "connected" ? "grad-blue" : "grad-red"}
+            color={
+              connectionState.status === "connected" ? "primary" : "secondary"
+            }
           />
         </div>
       )}
@@ -215,7 +225,9 @@ export const TransactionDetail: FC<TransactionDetailProps> = ({
             }
             buttonType={"button"}
             onClick={() => handleReclaim()}
-            color={connectionState.status === "connected" ? "grad-blue" : "grad-red"}
+            color={
+              connectionState.status === "connected" ? "primary" : "secondary"
+            }
           />
         </div>
       )}

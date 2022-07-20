@@ -178,7 +178,7 @@ export const TransactionForm: FC<TransactionFormProps> = ({
           }
           buttonType={"submit"}
           color={
-            connectionState.status === "connected" ? "grad-blue" : "grad-red"
+            connectionState.status === "connected" ? "primary" : "secondary"
           }
         />
       </div>

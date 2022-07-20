@@ -8,10 +8,9 @@ import { useRouter } from "next/router";
 
 type TabListItemProps = {
   type: TabKey;
-  clickTab: () => void;
 };
 
-export const TabListItem: FC<TabListItemProps> = ({ type, clickTab }) => {
+export const TabListItem: FC<TabListItemProps> = ({ type }) => {
   const { tabState, setTabState } = useTab();
   const [open, setOpen] = useStateShowDrawer();
 
@@ -34,11 +33,12 @@ export const TabListItem: FC<TabListItemProps> = ({ type, clickTab }) => {
   };
 
   return (
-    <li className="w-full py-3">
+    <li className="w-full ">
       <a
         className={clsx(
-          "text-primary text-base md:text-2xl leading-normal flex items-center space-x-1",
-          tabState === type ? " font-bold " : " font-medium "
+          "text-primary text-base md:text-2xl leading-normal flex items-center space-x-1 py-3 px-2",
+          tabState === type &&
+            "bg-light-secondary-container dark:bg-dark-secondary-container rounded-full"
         )}
         onClick={switchTab}
         data-toggle="tab"
@@ -47,14 +47,14 @@ export const TabListItem: FC<TabListItemProps> = ({ type, clickTab }) => {
       >
         <div
           className={clsx(
-            "w-[36px] h-[29px] flex items-center justify-center sm:mx-auto md:mx-0",
-            tabState === type &&
-              "bg-[url('/icon/header/bg-icon.svg')]  bg-no-repeat"
+            "w-[36px] h-[29px] flex items-center justify-center sm:mx-auto md:mx-0"
           )}
         >
-          <Image src={icon} alt={title} width={26} height={26} />
+          <Image src={icon} alt={title} width={26} height={26} className="text-light-on-surface-variant dark:text-dark-on-surface-variant" />
         </div>
-        <span className="ml-2 sm:hidden md:block">{title}</span>
+        <span className="ml-2 sm:hidden md:block text-light-on-surface-variant dark:text-dark-on-surface-variant">
+          {title}
+        </span>
       </a>
     </li>
   );
