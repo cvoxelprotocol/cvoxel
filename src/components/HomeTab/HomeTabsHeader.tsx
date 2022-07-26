@@ -17,7 +17,7 @@ export const HomeTabsHeader: FC = () => {
 
   return (
     <>
-      <div className="w-full min-h-screen text-center bg-light-surface-1 dark:bg-dark-surface-1 rounded-r-2xl">
+      <div className="w-full h-[calc(100vh-3rem)] text-center bg-light-surface-1 dark:bg-dark-surface-1 rounded-r-2xl">
         <ul className={"w-full text-left p-4"} role="tablist">
           <li className="sm:hidden md:block text-center pt-8 pb-4 mb-4">
             <NamePlate did={did} size="lg" isMe hasBackgroundColor />

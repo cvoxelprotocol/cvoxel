@@ -139,7 +139,7 @@ export const TransactionListContainer: FC<TransactionListContainerProps> = ({
 
   const TransactionMemo = useMemo(
     () => (
-      <div className="w-full max-w-[720px] text-center mx-auto cursor-pointer h-screen overflow-y-scroll sm:px-6 space-y-6">
+      <div className="w-full max-w-[820px] lg:h-[calc(100vh-5rem-2.5rem-3rem)] text-center mx-auto cursor-pointer h-screen overflow-y-scroll sm:px-6 space-y-6">
         <p className="text-light-on-surface dark:text-dark-on-surface font-medium text-xs pt-2 pb-4 sm:text-right">{`Supported Networks: Ethereum & Polygon`}</p>
         {!offchainLoading && (!txList || txList.length === 0) && (
           <NoItemPresenter text="No Tx Found..." />
