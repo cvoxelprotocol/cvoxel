@@ -2,7 +2,7 @@ import { isCAIP10string, isDIDstring } from "@self.id/framework";
 import type { GetServerSideProps } from "next";
 import { isEthereumAddress } from "@/utils/ceramicUtils";
 import { ETH_CHAIN_ID } from "@/constants/common";
-import { getRequestState } from "../../lib/ceramic/server";
+import { getRequestState } from "@/lib/ceramic/server";
 import { CeramicProps, CeramicSupport } from "@/interfaces/ceramic";
 import { NextPage } from "next";
 import { useMyCeramicAcount } from "@/hooks/useCeramicAcount";
