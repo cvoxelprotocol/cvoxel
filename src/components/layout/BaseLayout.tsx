@@ -35,12 +35,13 @@ export const BaseLayout = ({ children }: Props) => {
   return (
     <div className="flex">
       <Meta />
-      <div className="text-sm bg-light-background dark:bg-dark-background relative w-full h-screen overflow-y-scroll">
+      <div className="text-sm bg-light-background dark:bg-dark-background relative w-screen h-screen overflow-y-scroll overflow-x-hidden">
         {router.pathname.startsWith("/intro") ? (
           <div className="bg-white">{children}</div>
         ) : (
           <div className="relative">
             <Header />
+            <CVoxelDetailBox />
             <div className="mx-auto -m-[72px] px-4 w-full break-words">
               {children}
             </div>
@@ -54,7 +55,6 @@ export const BaseLayout = ({ children }: Props) => {
       {isLoading && <LoadingModal />}
       <Toast />
       <Toaster />
-      <CVoxelDetailBox />
     </div>
   );
 };
