@@ -34,6 +34,7 @@ const VisualizerPresenter: FC<VisualizerPresenterProps> = ({
   voxelsForDisplay,
 }) => {
   const [cVoxels, setCVoxels] = useState<CVoxelWithId[]>([]);
+  const [isInitVoxels, setIsInitVoxels] = useState<boolean>(true);
   const [cVoxelsMap, setCVoxelsMap] = useState<{ [id: string]: ICVoxelItem }>(
     {}
   );
@@ -59,6 +60,7 @@ const VisualizerPresenter: FC<VisualizerPresenterProps> = ({
         setCVoxels(initCVoxel);
       } else {
         loadVoxels();
+        setIsInitVoxels(false);
       }
     }
 
@@ -135,8 +137,10 @@ const VisualizerPresenter: FC<VisualizerPresenterProps> = ({
                   <CVoxelPresenter
                     {...voxel}
                     key={i}
-                    handleClick={() => handleClickVox(voxel.id)}
-                    disableHover={disableHover}
+                    handleClick={
+                      isInitVoxels ? undefined : () => handleClickVox(voxel.id)
+                    }
+                    disableHover={isInitVoxels ? true : disableHover}
                   />
                 )
             )}
@@ -151,8 +155,10 @@ const VisualizerPresenter: FC<VisualizerPresenterProps> = ({
                   <CVoxelPresenter
                     {...voxel}
                     key={i}
-                    handleClick={() => handleClickVox(voxel.id)}
-                    disableHover={disableHover}
+                    handleClick={
+                      isInitVoxels ? undefined : () => handleClickVox(voxel.id)
+                    }
+                    disableHover={isInitVoxels ? true : disableHover}
                   />
                 )
             )}

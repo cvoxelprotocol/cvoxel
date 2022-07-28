@@ -12,7 +12,7 @@ const AccountButton = dynamic(
 export const Header = () => {
   return (
     <>
-      <nav className="py-1 px-3 md:px-14 flex justify-between items-center z-40 w-full h-[72px] bg-light-background dark:bg-dark-background">
+      <nav className="py-1 px-3 md:px-14 flex justify-between items-center z-40 w-full h-[72px] bg-light-background dark:bg-dark-background relative">
         <div className="w-full grid grid-cols-3 mx-auto items-center justify-evenly">
           <div className="flex justify-center items-center col-span-1 col-start-2 cursor-pointer w-full">
             <Link href="/" passHref>
