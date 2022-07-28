@@ -9,8 +9,8 @@ type TabType = typeof TAB_NAME;
 export type TabKey = keyof TabType;
 
 export const TX_TAB_NAME = {
-  received: "Received TX",
-  sent: "Sent TX",
+  received: "Received",
+  sent: "Sent",
 } as const;
 
 type TxTabType = typeof TX_TAB_NAME;
