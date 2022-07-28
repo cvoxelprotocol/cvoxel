@@ -8,11 +8,11 @@ import { NamePlate } from "@/components/common/NamePlate";
 import Router from "next/router";
 
 type props = {
+  did: string
   content?: CVoxels | null;
   children?: ReactNode;
 };
-export const CVoxelsContainer: FC<props> = ({ content, children }) => {
-  const { did } = useMyCeramicAcount();
+export const CVoxelsContainer: FC<props> = ({ did, content, children }) => {
   // NOTE: Cannot be called by VisualPresenter, so call it here
   const { showDetailBox } = useCVoxelDetailBox();
 

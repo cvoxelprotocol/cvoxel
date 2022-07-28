@@ -28,6 +28,7 @@ import { useMyCeramicAcount } from "@/hooks/useCeramicAcount";
 
 type Props = {
   item: ICVoxelItem;
+  did: string;
   offchainItems?: CVoxelMetaDraft[];
   notifyUpdated?: () => void;
   isOwner: boolean;
@@ -35,6 +36,7 @@ type Props = {
 
 export const VoxelDetail: FC<Props> = ({
   item,
+  did,
   offchainItems,
   notifyUpdated,
   isOwner,
@@ -88,8 +90,6 @@ export const VoxelDetail: FC<Props> = ({
     if (!detailItem || !detailItem.txHash) return;
     return getExploreLink(detailItem.txHash, detailItem.networkId);
   }, [detailItem?.txHash, detailItem?.networkId]);
-
-  const { did: did } = useMyCeramicAcount();
 
   // component
   const PcDirection = () => {
@@ -203,13 +203,14 @@ export const VoxelDetail: FC<Props> = ({
                   href={`${deliverable.value}`}
                   target="_blank"
                   rel="noreferrer"
+                  key={deliverable.value}
                 >
                   <p className="text-light-secondary dark:text-dark-secondary text-md">
                     {deliverable.value}
                   </p>
                 </a>
               ) : (
-                <p className="text-md text-secondary">
+                <p className="text-md text-secondary" key={deliverable.value}>
                   {shortenStr(deliverable.value)}
                 </p>
               )
