@@ -71,7 +71,7 @@ export const NamePlate: FC<Props> = ({
 
   const AddressContent = () => {
     return (
-      <>
+      <div className="flex items-center space-x-0.5">
         {!isENS && (
           <div
             className={clsx(
@@ -104,12 +104,12 @@ export const NamePlate: FC<Props> = ({
             .eth
           </div>
         )}
-      </>
+      </div>
     );
   };
 
   const DidContent = () => (
-    <>
+    <div className="flex items-center space-x-0.5">
       <div
         className={clsx(
           "rounded bg-light-primary dark:bg-dark-primary text-light-on-primary dark:text-dark-on-primary font-medium px-1 text-xs",
@@ -126,7 +126,7 @@ export const NamePlate: FC<Props> = ({
       >
         {shortenStr(did?.replace("did:", ""), 8)}
       </div>
-    </>
+    </div>
   );
 
   const profileRecord = useProfile(did ?? "");
@@ -137,7 +137,7 @@ export const NamePlate: FC<Props> = ({
   return (
     <div
       className={clsx(
-        "flex rounded-full border border-light-primary dark:border-dark-primary items-center space-x-2 overflow-hidden px-3",
+        "flex rounded-full border border-light-primary dark:border-dark-primary items-center overflow-hidden px-3",
         bg,
         size == "lg" ? "py-1.5" : "py-0.5",
         !!onClick && "cursor-pointer"
@@ -145,7 +145,7 @@ export const NamePlate: FC<Props> = ({
       onClick={onClick}
     >
       {!withoutIcon && (
-        <>
+        <div className="mr-2">
           {displayProfile.avatarSrc ? (
             <IconAvatar
               size={avatarSize}
@@ -155,7 +155,7 @@ export const NamePlate: FC<Props> = ({
           ) : (
             <AvatarPlaceholder did={did} size={avatarSizePixel} />
           )}
-        </>
+        </div>
       )}
 
       {!iconOnly && <>{!!did ? <DidContent /> : <AddressContent />}</>}
