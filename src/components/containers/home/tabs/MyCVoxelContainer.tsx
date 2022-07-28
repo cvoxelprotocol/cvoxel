@@ -57,10 +57,10 @@ export const MyCVoxelContainer: FC = () => {
     if (!keyword) {
       return false;
     }
-    if (voxel.summary.match(keyword)) {
+    if (voxel.summary.toLowerCase().match(keyword.toLowerCase())) {
       return true;
     }
-    if (voxel.genre?.match(keyword)) {
+    if (voxel.genre?.toLowerCase().match(keyword.toLowerCase())) {
       return true;
     }
     return false;
@@ -91,6 +91,7 @@ export const MyCVoxelContainer: FC = () => {
           <div className="mt-6 sm:px-6">
             <VoxelDetail
               item={currentVoxel}
+              did={did}
               offchainItems={offchainMetaList}
               isOwner={true}
               notifyUpdated={forceReload}
