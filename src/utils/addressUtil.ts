@@ -7,7 +7,9 @@ export const getDIDFromAddress = async (
 ): Promise<string | undefined> => {
   if (isEthereumAddress(address)) {
     const caip10 = `${ETH_CHAIN_ID}${address}`;
-    return await core.getAccountDID(caip10);
+    try {
+      return await core.getAccountDID(caip10);
+    } catch (e) {}
   } else {
     return undefined;
   }

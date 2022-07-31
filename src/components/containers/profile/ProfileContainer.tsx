@@ -111,7 +111,7 @@ export const ProfileContainer: FC<Props> = ({ did }) => {
   };
 
   return (
-    <main className="text-center snap-y snap-mandatory h-screen">
+    <main className="text-center ">
       <div
         className="relative snap-start snap-always min-h-screen"
         ref={visualContainerRef}
