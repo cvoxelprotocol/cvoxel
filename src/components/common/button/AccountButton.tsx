@@ -7,6 +7,7 @@ import { DisplayAvatar } from "../DisplayAvatar";
 import Router from "next/router";
 import { IconAvatar } from "../IconAvatar";
 import { NamePlate } from "@/components/common/NamePlate";
+import { Button } from "@/components/common/button/Button";
 
 type MenuButtonProps = {
   label: string;
@@ -101,12 +102,10 @@ export default function AccountButton() {
   return connection.status === "connecting" ? (
     <DisplayAvatar label="Connecting..." loading hiddenLabelOnSp={true} />
   ) : (
-    <button
-      className="rounded-full px-2 py-1.5 text-xs sm:px-4 sm:text-base  text-white bg-gradient-to-r from-border_l to-border_r"
+    <Button
+      text="Connect Wallet"
       onClick={() => connectWalletOnly()}
-    >
-      {" "}
-      Connect Wallet
-    </button>
+      color="primary"
+    />
   );
 }

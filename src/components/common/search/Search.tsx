@@ -1,14 +1,14 @@
-import { FC, FormEventHandler, useEffect } from "react";
+import { FC, FormEventHandler } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import SearchIcon from "@/components/common/search/search.svg";
 
-const defaultPlaceholder = "Search C-Voxel by Wallet address or DID";
+const defaultPlaceholder = "Search DID or wallet address";
 
 export type SearchData = {
   value: string;
 };
 
-type SearchProps = {
+export type SearchProps = {
   onSubmit: SubmitHandler<SearchData>;
   placeholder?: string;
   onClear?: () => void;
@@ -36,7 +36,7 @@ export const Search: FC<SearchProps> = ({
         <SearchIcon className="w-4 h-4 ml-2 text-light-on-surface-variant dark:text-dark-on-surface-variant" />
       </button>
       <input
-        className="w-full my-1 py-2 pr-6 sm:pl-16 pl-12 border rounded-full text-sm md:text-sm hover:outline-secondary focus:outline-secondary bg-light-surface-variant dark:bg-dark-surface-variant placeholder:text-light-on-surface-variant dark:placeholder:text-dark-on-surface-variant"
+        className="w-full my-1 py-2 pr-6 sm:pl-12 pl-8 border rounded-full text-sm md:text-sm hover:outline-secondary focus:outline-secondary bg-light-surface-variant dark:bg-dark-surface-variant placeholder:text-light-on-surface-variant dark:placeholder:text-dark-on-surface-variant"
         placeholder={placeholder}
         type="search"
         {...register("value", {

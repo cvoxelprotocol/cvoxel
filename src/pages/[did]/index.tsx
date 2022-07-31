@@ -32,7 +32,7 @@ export const getServerSideProps: GetServerSideProps<
   } else if (isEthereumAddress(did)) {
     // If an Ethereum address is provided, redirect to CAIP-10 URL
     return {
-      redirect: { destination: `/${did}${ETH_CHAIN_ID}`, permanent: false },
+      redirect: { destination: `/${ETH_CHAIN_ID}${did}`, permanent: false },
     };
   } else if (isCAIP10string(did)) {
     try {
