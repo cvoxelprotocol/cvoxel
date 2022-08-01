@@ -1,32 +1,21 @@
-import { useTab } from "@/hooks/useTab";
-import { FC, useCallback, useEffect, useMemo, useState } from "react";
-import { NoItemPresenter } from "../../../common/NoItemPresenter";
-import CVoxelsPresenter from "../../../CVoxel/CVoxelsPresenter";
+import { FC, useCallback, useMemo, useState } from "react";
+import { NoItemPresenter } from "../../common/NoItemPresenter";
+import CVoxelsPresenter from "../../CVoxel/CVoxelsPresenter";
 import type { CVoxelItem as ICVoxelItem } from "@/interfaces";
-import { useStateForceUpdate } from "@/recoilstate";
 import { useCVoxelsRecord } from "@/hooks/useCVoxel";
-import { CommonLoading } from "../../../common/CommonLoading";
-import { useMyCeramicAcount } from "@/hooks/useCeramicAcount";
-import { useCVoxelList } from "@/hooks/useCVoxelList";
+import { CommonLoading } from "../../common/CommonLoading";
 import { VoxelListItem } from "@/components/CVoxel/VoxelListItem/VoxelListItem";
 import { useRouter } from "next/dist/client/router";
 import { NavBar } from "@/components/CVoxel/NavBar/NavBar";
 import { VoxelDetail } from "@/components/CVoxel/VoxelDetail/VoxelDetail";
 import { SearchData } from "@/components/common/search/Search";
 
-export const MyCVoxelContainer: FC = () => {
-  const { did, account } = useMyCeramicAcount();
-  const { offchainMetaList, txLoading } = useCVoxelList();
+type UserCVoxelContainerProps = {
+  did: string
+  currentVoxelID?: string
+}
+export const UserCVoxelContainer: FC<UserCVoxelContainerProps> = ({did, currentVoxelID}) => {
   const CVoxelsRecords = useCVoxelsRecord(did);
-  const { setTabState } = useTab();
-
-  // TODO: This is temporary solution because of useTileDoc bug
-  const [forceUpdateCVoxelList, setForceUpdateCVoxelList] =
-    useStateForceUpdate();
-
-  const forceReload = () => {
-    setForceUpdateCVoxelList(true);
-  };
 
   const sortCVoxels = useMemo(() => {
     if (!CVoxelsRecords.content) return [];
@@ -66,12 +55,6 @@ export const MyCVoxelContainer: FC = () => {
     return false;
   };
 
-  const currentVoxelID = useMemo(() => {
-    if (typeof router.query["voxel"] == "string") {
-      return router.query["voxel"];
-    }
-  }, [router.query]);
-
   const currentVoxel = useMemo(
     () => sortCVoxels.find((voxel) => voxel.id == currentVoxelID),
     [currentVoxelID, sortCVoxels]
@@ -80,40 +63,29 @@ export const MyCVoxelContainer: FC = () => {
   return useMemo(
     () => (
       <>
-        <NavBar
+      <NavBar
           handleClickBackButton={handleClickNavBackButton}
           currentVoxelID={currentVoxelID}
           onSubmit={handleSearchSubmit}
           onClear={handleSearchClear}
         />
-
         {!!currentVoxel ? (
           <div className="mt-6 sm:px-6">
             <VoxelDetail
-              item={currentVoxel}
               did={did}
-              offchainItems={offchainMetaList}
-              isOwner={true}
-              notifyUpdated={forceReload}
+              item={currentVoxel}
+              isOwner={false}
             />
           </div>
         ) : (
           <CVoxelsPresenter>
-            {!txLoading && (!sortCVoxels || sortCVoxels.length === 0) && (
+            {!CVoxelsRecords.isLoading && (!sortCVoxels || sortCVoxels.length === 0) && (
               <div className="mx-auto">
                 <NoItemPresenter text="No C-Voxels yet..." />
-                {account && (
-                  <button
-                    onClick={() => setTabState("transactions")}
-                    className="text-white rounded-full bg-gradient-to-r from-border_l to-border_r py-2 px-5"
-                  >
-                    Create C-Voxel
-                  </button>
-                )}
               </div>
             )}
-            {txLoading && <CommonLoading />}
-            {!txLoading &&
+            {CVoxelsRecords.isLoading && <CommonLoading />}
+            {!CVoxelsRecords.isLoading &&
               sortCVoxels &&
               sortCVoxels
                 .filter((voxel) =>
@@ -127,12 +99,9 @@ export const MyCVoxelContainer: FC = () => {
       </>
     ),
     [
-      txLoading,
+      CVoxelsRecords.isLoading,
       sortCVoxels,
-      account,
-      offchainMetaList,
       did,
-      forceUpdateCVoxelList,
       currentVoxelID,
       keyword,
     ]
