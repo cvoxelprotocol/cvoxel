@@ -4,8 +4,6 @@ import {
 } from "@/constants/toastMessage";
 import { updateDraftWighVerify } from "@/lib/firebase/functions/verify";
 import { getCVoxelService } from "@/services/CVoxel/CVoxelService";
-import { Web3Provider } from "@self.id/multiauth";
-import { useWeb3React } from "@web3-react/core";
 import type {
   CVoxel,
   CVoxelMetaDraft,
@@ -19,24 +17,26 @@ import { convertDateToTimestampStr } from "@/utils/dateUtil";
 import { useMyCeramicAcount } from "./useCeramicAcount";
 
 export function useSigRequest() {
-  const { account } = useWeb3React<Web3Provider>();
   const cVoxelsRecord = useViewerRecord<ModelTypes, "workCredentials">(
     "workCredentials"
   );
   const { showLoading, closeLoading } = useModal();
   const cVoxelService = getCVoxelService();
   const { lancInfo, lancError } = useToast();
-  const { connectCeramic, mySelfID } = useMyCeramicAcount();
+  const { connectCeramic, mySelfID, account } = useMyCeramicAcount();
 
   const verifyWithCeramic = async (tx: CVoxelMetaDraft) => {
-    if (!account) return;
-    const selfID = mySelfID || (await connectCeramic());
-    if (selfID == null || selfID.did == null) {
+    if (!account) {
       lancError();
       return false;
     }
+    const selfID = mySelfID || (await connectCeramic());
+    if (selfID == null || selfID.did == null) {
+      lancError("Please retry again");
+      return false;
+    }
     if (!cVoxelsRecord.isLoadable) {
-      lancError();
+      lancError("Please retry again");
       return false;
     }
 
@@ -44,6 +44,7 @@ export function useSigRequest() {
     try {
       const isPayer = tx.from.toLowerCase() === account.toLowerCase();
       const meta = await verifyCVoxel(tx, account);
+      console.log({ meta });
       if (meta) {
         const doc = await selfID.client.dataModel.createTile("WorkCredential", {
           ...meta,
@@ -139,7 +140,6 @@ export function useSigRequest() {
     isPayer: boolean
   ): Promise<CVoxelMetaDraft | null> => {
     try {
-      if (!tx.txHash) return null;
       const nowTimestamp = convertDateToTimestampStr(new Date());
       //get hash
       const deliverable =
@@ -147,7 +147,7 @@ export function useSigRequest() {
           ? tx.deliverables.map((d) => d.value).join(",")
           : undefined;
       const { signature, _ } = await cVoxelService.getMessageHash(
-        tx.txHash,
+        tx.txHash || "",
         account,
         tx.summary,
         tx.detail,
@@ -156,7 +156,10 @@ export function useSigRequest() {
 
       if (
         isPayer &&
-        tx.relatedAddresses.map((a) => a.toLowerCase()).includes(account) &&
+        (tx.from.toLowerCase() === account.toLocaleLowerCase() ||
+          tx.relatedAddresses
+            .map((a) => a.toLowerCase())
+            .includes(account.toLowerCase())) &&
         (!tx.fromSig || tx.fromSig === "")
       ) {
         return {
@@ -167,7 +170,10 @@ export function useSigRequest() {
         };
       } else if (
         !isPayer &&
-        tx.relatedAddresses.map((a) => a.toLowerCase()).includes(account) &&
+        (tx.to.toLowerCase() === account.toLocaleLowerCase() ||
+          tx.relatedAddresses
+            .map((a) => a.toLowerCase())
+            .includes(account.toLowerCase())) &&
         (!tx.toSig || tx.toSig === "")
       ) {
         return {
