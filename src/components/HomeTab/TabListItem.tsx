@@ -5,6 +5,10 @@ import clsx from "clsx";
 import { TabKey, TAB_NAME } from "@/interfaces";
 import { useStateShowDrawer } from "@/recoilstate";
 import { useRouter } from "next/router";
+import VoxelsIcon from "@/components/HomeTab/voxels-icon.svg";
+import TransactionIcon from "@/components/HomeTab/transaction-icon.svg";
+import SearchIcon from "@/components/HomeTab/search-icon.svg";
+import NotificationIcon from "@/components/HomeTab/notification-icon.svg";
 
 type TabListItemProps = {
   type: TabKey;
@@ -18,8 +22,17 @@ export const TabListItem: FC<TabListItemProps> = ({ type }) => {
     return TAB_NAME[type];
   }, [type]);
 
-  const icon = useMemo(() => {
-    return `/icon/header/${type}.svg`;
+  const Icon = useMemo(() => {
+    switch (type) {
+      case "cvoxels":
+        return <VoxelsIcon />;
+      case "transactions":
+        return <TransactionIcon />;
+      case "search":
+        return <SearchIcon />;
+      case "notifications":
+        return <NotificationIcon />;
+    }
   }, [type]);
 
   const router = useRouter();
@@ -36,7 +49,7 @@ export const TabListItem: FC<TabListItemProps> = ({ type }) => {
     <li className="w-full ">
       <a
         className={clsx(
-          "text-primary text-base md:text-2xl leading-normal flex items-center space-x-1 py-3 px-2",
+          "text-light-on-surface-variant dark:text-dark-on-surface-variant text-base md:text-lg leading-normal flex items-center space-x-1 py-3 px-2",
           tabState === type &&
             "bg-light-secondary-container dark:bg-dark-secondary-container rounded-full"
         )}
@@ -50,9 +63,23 @@ export const TabListItem: FC<TabListItemProps> = ({ type }) => {
             "w-[36px] h-[29px] flex items-center justify-center sm:mx-auto md:mx-0"
           )}
         >
-          <Image src={icon} alt={title} width={26} height={26} className="text-light-on-surface-variant dark:text-dark-on-surface-variant" />
+          <div
+            className={clsx(
+              "text-light-on-surface-variant dark:text-dark-on-surface-variant w-[26px] h-[26px]",
+              tabState === type &&
+                "text-light-on-secondary-container dark:text-dark-on-secondary-container"
+            )}
+          >
+            {Icon}
+          </div>
         </div>
-        <span className="ml-2 sm:hidden md:block text-light-on-surface-variant dark:text-dark-on-surface-variant">
+        <span
+          className={clsx(
+            "ml-2 sm:hidden md:block text-light-on-surface-variant dark:text-dark-on-surface-variant",
+            tabState === type &&
+              "text-light-on-secondary-container dark:text-dark-on-secondary-container"
+          )}
+        >
           {title}
         </span>
       </a>

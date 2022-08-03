@@ -1,5 +1,5 @@
 export const TAB_NAME = {
-  cvoxels: "Voxels",
+  cvoxels: "VOXELs",
   transactions: "Transactions",
   notifications: "Notifications",
   search: "Search",

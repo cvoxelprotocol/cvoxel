@@ -39,41 +39,41 @@ export const HomeTabsHeader: FC = () => {
           />
         </div>
 
-        <div className="h-[2px] w-10/12 bg-light-primary mx-auto md:mt-12" />
+        <div className="h-[2px] w-10/12 bg-light-primary mx-auto md:mt-12 opacity-10" />
 
-        <ul className="w-full text-left py-4 px-5">
-          <li className="py-3">
-            <Link href="/intro" passHref>
-              <a
-                className="text-base md:text-2xl text-light-on-surface-variant dark:text-dark-on-surface-variant"
-                target="_blank"
-                rel="noreferrer"
-              >
-                About
-              </a>
-            </Link>
-          </li>
-          <li className="py-3">
-            <a
-              className="text-base md:text-2xl text-light-on-surface-variant dark:text-dark-on-surface-variant"
-              href="https://docs.cvoxel.xyz/"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Doc
-            </a>
-          </li>
-          <li className="py-3">
-            <a
-              className="text-base md:text-2xl text-light-on-surface-variant dark:text-dark-on-surface-variant"
-              href="https://discord.gg/TBJFmJv6uZ"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Discord
-            </a>
-          </li>
-        </ul>
+        {/*<ul className="w-full text-left py-4 px-5">*/}
+        {/*  <li className="py-3">*/}
+        {/*    <Link href="/intro" passHref>*/}
+        {/*      <a*/}
+        {/*        className="text-base md:text-2xl text-light-on-surface-variant dark:text-dark-on-surface-variant"*/}
+        {/*        target="_blank"*/}
+        {/*        rel="noreferrer"*/}
+        {/*      >*/}
+        {/*        About*/}
+        {/*      </a>*/}
+        {/*    </Link>*/}
+        {/*  </li>*/}
+        {/*  <li className="py-3">*/}
+        {/*    <a*/}
+        {/*      className="text-base md:text-2xl text-light-on-surface-variant dark:text-dark-on-surface-variant"*/}
+        {/*      href="https://docs.cvoxel.xyz/"*/}
+        {/*      target="_blank"*/}
+        {/*      rel="noreferrer"*/}
+        {/*    >*/}
+        {/*      Doc*/}
+        {/*    </a>*/}
+        {/*  </li>*/}
+        {/*  <li className="py-3">*/}
+        {/*    <a*/}
+        {/*      className="text-base md:text-2xl text-light-on-surface-variant dark:text-dark-on-surface-variant"*/}
+        {/*      href="https://discord.gg/TBJFmJv6uZ"*/}
+        {/*      target="_blank"*/}
+        {/*      rel="noreferrer"*/}
+        {/*    >*/}
+        {/*      Discord*/}
+        {/*    </a>*/}
+        {/*  </li>*/}
+        {/*</ul>*/}
       </div>
     </>
   );
