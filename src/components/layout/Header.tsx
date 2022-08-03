@@ -17,7 +17,7 @@ export const Header = () => {
           <Link href="/" passHref>
             <div className="text-center flex">
               <Image
-                src="/vess-logo-icon.png"
+                src="/vess-logo.png"
                 alt="LanC"
                 objectFit="cover"
                 width="48px"
