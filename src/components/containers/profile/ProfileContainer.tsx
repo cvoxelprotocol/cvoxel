@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect, useMemo, useRef } from "react";
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useCVoxelsRecord } from "@/hooks/useCVoxel";
 import { CVoxelsContainer } from "@/components/containers/home/CVoxelsContainer";
 import { Arrow } from "@/components/common/arrow/Arrow";
@@ -47,13 +47,21 @@ export const ProfileContainer: FC<Props> = ({ did }) => {
     router.push(`/${link}`);
   };
 
+  const [isConnect, setIsConnect] = useState<boolean>(false);
   const connect = async () => {
     try {
       await connectWalletOnly();
+      setIsConnect(true);
     } catch (error) {
       console.log("error:", error);
     }
   };
+
+  useEffect(() => {
+    if (isConnect && !!account) {
+      router.push(`/${account}`);
+    }
+  }, [isConnect, account]);
 
   const sortCVoxels = useMemo(() => {
     if (!CVoxelsRecords.content) return [];

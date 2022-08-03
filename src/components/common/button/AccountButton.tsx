@@ -2,12 +2,12 @@ import { useMyCeramicAcount } from "@/hooks/useCeramicAcount";
 import { formatDID } from "@self.id/framework";
 import { AvatarPlaceholder } from "@/components/common/avatar/AvatarPlaceholder";
 import { DropButton } from "grommet";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DisplayAvatar } from "../DisplayAvatar";
-import Router from "next/router";
 import { IconAvatar } from "../IconAvatar";
 import { NamePlate } from "@/components/common/NamePlate";
 import { Button } from "@/components/common/button/Button";
+import { useRouter } from "next/router";
 
 type MenuButtonProps = {
   label: string;
@@ -35,11 +35,28 @@ export default function AccountButton() {
     avator,
   } = useMyCeramicAcount();
   const [isMenuOpen, setMenuOpen] = useState(false);
+  const router = useRouter();
 
   const goToMypage = () => {
     if (!did && !account) return;
-    Router.push(`/${did ? did : account}`);
+    router.push(`/${did ? did : account}`);
   };
+
+  const [isConnect, setIsConnect] = useState<boolean>(false);
+  const connect = async () => {
+    try {
+      await connectWalletOnly();
+      setIsConnect(true);
+    } catch (error) {
+      console.log("error:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (isConnect && !!account) {
+      router.push(`/${account}`);
+    }
+  }, [isConnect, account]);
 
   if (account) {
     const buttons =
@@ -102,10 +119,6 @@ export default function AccountButton() {
   return connection.status === "connecting" ? (
     <DisplayAvatar label="Connecting..." loading hiddenLabelOnSp={true} />
   ) : (
-    <Button
-      text="Connect Wallet"
-      onClick={() => connectWalletOnly()}
-      color="primary"
-    />
+    <Button text="Connect Wallet" onClick={() => connect()} color="primary" />
   );
 }
