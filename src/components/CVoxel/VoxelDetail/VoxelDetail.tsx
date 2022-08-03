@@ -134,13 +134,13 @@ export const VoxelDetail: FC<Props> = ({
   const SpDirection = () => {
     return item.isPayer ? (
       <div className="flex items-center space-x-3">
-        <NamePlate did={myDid} isMe hasBackgroundColor withoutIcon />
+        <NamePlate did={fromDid} address={detailItem?.from ?? ""} isMe={fromDid == myDid} hasBackgroundColor withoutIcon />
         <RightArrow />
         <NamePlate address={detailItem?.to ?? ""} withoutIcon />
       </div>
     ) : (
       <div className="flex items-center space-x-3">
-        <NamePlate did={myDid} isMe hasBackgroundColor withoutIcon />
+        <NamePlate did={toDid} address={detailItem?.to ?? ""} isMe={toDid == myDid} hasBackgroundColor withoutIcon />
         <LeftArrow />
         <NamePlate address={detailItem?.from ?? ""} withoutIcon />
       </div>
@@ -226,13 +226,14 @@ export const VoxelDetail: FC<Props> = ({
                   href={`${deliverable.value}`}
                   target="_blank"
                   rel="noreferrer"
+                  key={deliverable.value}
                 >
                   <p className="text-light-secondary dark:text-dark-secondary text-md">
                     {deliverable.value}
                   </p>
                 </a>
               ) : (
-                <p className="text-md text-secondary">
+                <p className="text-md text-secondary" key={deliverable.value}>
                   {shortenStr(deliverable.value)}
                 </p>
               )

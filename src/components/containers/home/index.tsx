@@ -3,7 +3,6 @@ import { FC, useRef } from "react";
 import { useMyCeramicAcount } from "@/hooks/useCeramicAcount";
 import { CVoxelsContainer } from "./CVoxelsContainer";
 import { MyPageContainer } from "./MyPageContainer";
-import Image from "next/image";
 import { Arrow } from "@/components/common/arrow/Arrow";
 
 export const HomeContainer: FC = () => {
@@ -24,7 +23,7 @@ export const HomeContainer: FC = () => {
         className="relative snap-start snap-always min-h-screen"
         ref={visualContainerRef}
       >
-        <CVoxelsContainer content={CVoxelsRecords.content}>
+        <CVoxelsContainer did={did} content={CVoxelsRecords.content}>
           <div className="absolute bottom-0 pb-12">
             <div className="relative mx-auto cursor-pointer">
               <button onClick={() => scrollToInfo()}>

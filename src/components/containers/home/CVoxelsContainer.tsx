@@ -1,19 +1,18 @@
 import VisualizerPresenter from "@/components/CVoxel/visualizerPresenter";
-import { useMyCeramicAcount } from "@/hooks/useCeramicAcount";
 import { useCVoxelDetailBox } from "@/hooks/useCVoxelDetailBox";
 import { CVoxels } from "@/interfaces";
 import { Canvas } from "@react-three/fiber";
 import { FC, useMemo, ReactNode } from "react";
 import { NamePlate } from "@/components/common/NamePlate";
 import Router from "next/router";
-import { Search, SearchData } from "@/components/common/search/Search";
+import { SearchData } from "@/components/common/search/Search";
 import { UserSearch } from "@/components/common/search/UserSearch";
 
 type props = {
   content?: CVoxels | null;
   children?: ReactNode;
   mode?: "nameplate" | "search";
-  did?: string;
+  did: string;
   onClearUser?: () => void;
 };
 export const CVoxelsContainer: FC<props> = ({
@@ -23,7 +22,6 @@ export const CVoxelsContainer: FC<props> = ({
   did,
   onClearUser,
 }) => {
-  const { did: myDid } = useMyCeramicAcount();
   // NOTE: Cannot be called by VisualPresenter, so call it here
   const { showDetailBox } = useCVoxelDetailBox();
 
@@ -40,8 +38,8 @@ export const CVoxelsContainer: FC<props> = ({
   );
 
   const handleClickNamePlate = () => {
-    if (!myDid) return;
-    Router.push(`/${myDid}`);
+    if (!did) return;
+    Router.push(`/${did}`);
   };
 
   const handleSearch = (data: SearchData) => {
@@ -59,7 +57,7 @@ export const CVoxelsContainer: FC<props> = ({
         <div className="flex-none mt-12 w-full max-w-[720px]">
           <div className="w-fit mx-auto">
             <NamePlate
-              did={myDid}
+              did={did}
               size="lg"
               onClick={handleClickNamePlate}
               isMe

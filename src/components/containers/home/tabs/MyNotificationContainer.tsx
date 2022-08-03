@@ -9,18 +9,22 @@ import { SigRequestListItem } from "@/components/SigRequest/SigRequestListItem/S
 import { useRouter } from "next/router";
 import { NavBar } from "@/components/SigRequest/NavBar/NavBar";
 import { SigRequestDetail } from "@/components/SigRequest/SigRequestDetail/SigRequestDetail";
+import { useStateForceUpdate } from "@/recoilstate";
 
 export const MyNotificationContainer: FC = () => {
   const { did, account } = useMyCeramicAcount();
   const { offchainMetaList } = useCVoxelList();
   const { setTabState } = useTab();
   const { verifyWithCeramic, verifyWithoutCeramic } = useSigRequest();
+  // TODO: This is temporary solution because of useTileDoc bug
+  const [_, setForceUpdateCVoxelList] = useStateForceUpdate();
 
   const handleVerify = useCallback(
     async (tx: CVoxelMetaDraft) => {
       if (did) {
         const result = await verifyWithCeramic(tx);
         if (result) {
+          setForceUpdateCVoxelList(true);
           setTabState("cvoxels");
         }
       } else {
@@ -31,7 +35,7 @@ export const MyNotificationContainer: FC = () => {
   );
 
   const sigRequestCVoxels = useMemo(() => {
-    if (!(account && offchainMetaList)) return offchainMetaList;
+    if (!(account && offchainMetaList)) return [];
     return offchainMetaList.filter(
       (tx) =>
         tx.relatedAddresses.includes(account?.toLowerCase()) &&
