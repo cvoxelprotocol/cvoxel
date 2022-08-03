@@ -92,7 +92,6 @@ export const MyCVoxelContainer: FC = () => {
           <div className="mt-6 sm:px-6">
             <VoxelDetail
               item={currentVoxel}
-              did={did}
               offchainItems={offchainMetaList}
               isOwner={true}
               notifyUpdated={forceReload}

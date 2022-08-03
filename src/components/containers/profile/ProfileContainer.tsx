@@ -1,21 +1,14 @@
-import { FC, useCallback, useMemo, useRef } from "react";
+import { FC, useCallback, useEffect, useMemo, useRef } from "react";
 import { useCVoxelsRecord } from "@/hooks/useCVoxel";
-import CVoxelsPresenter from "@/components/CVoxel/CVoxelsPresenter";
-import { NoItemPresenter } from "@/components/common/NoItemPresenter";
-import { CommonLoading } from "@/components/common/CommonLoading";
-import { VoxelListItem } from "@/components/CVoxel/VoxelListItem/VoxelListItem";
 import { CVoxelsContainer } from "@/components/containers/home/CVoxelsContainer";
 import { Arrow } from "@/components/common/arrow/Arrow";
 import { SearchData } from "@/components/common/search/Search";
 import { Button } from "@/components/common/button/Button";
 import { useMyCeramicAcount } from "@/hooks/useCeramicAcount";
-import Router from "next/router";
 import { useRouter } from "next/router";
-import { VoxelDetail } from "@/components/CVoxel/VoxelDetail/VoxelDetail";
-import { useCVoxelList } from "@/hooks/useCVoxelList";
-import { useStateForceUpdate } from "@/recoilstate";
 import LeftArrow from "@/components/CVoxel/NavBar/left-arrow.svg";
 import { UserSearch } from "@/components/common/search/UserSearch";
+import { UserCVoxelContainer } from "@/components/containers/profile/UserCVoxelContainer";
 
 type Props = {
   did: string;
@@ -32,34 +25,10 @@ export const ProfileContainer: FC<Props> = ({ did }) => {
   }, [router.query]);
 
   useEffect(() => {
-    if(currentVoxelID){
-      scrollToInfo()
+    if (currentVoxelID) {
+      scrollToInfo();
     }
-  },[])
-
-  const CVoxelsPresenterMemo = useMemo(
-    () =>
-      did == "" ? (
-        <div className="mx-auto">
-          <NoItemPresenter text="Not searched yet" />
-        </div>
-      ) : (
-        <CVoxelsPresenter>
-          {CVoxelsRecords.isLoading && <CommonLoading />}
-          {!CVoxelsRecords.isLoading &&
-            CVoxelsRecords.content?.WorkCredentials &&
-            CVoxelsRecords.content.WorkCredentials.map((item) => {
-              return <VoxelListItem key={item.id} item={item} />;
-            })}
-          {!CVoxelsRecords.isLoading && !CVoxelsRecords.content && (
-            <div className="mx-auto">
-              <NoItemPresenter text="No Voxels yet" />
-            </div>
-          )}
-        </CVoxelsPresenter>
-      ),
-    [CVoxelsRecords.isLoading, CVoxelsRecords.content, did]
-  );
+  }, []);
 
   const myPageContainerRef = useRef<HTMLDivElement>(null);
   const visualContainerRef = useRef<HTMLDivElement>(null);
@@ -75,7 +44,7 @@ export const ProfileContainer: FC<Props> = ({ did }) => {
   const handleSearch = (data: SearchData) => {
     if (!data.value) return;
     const link = data.value;
-    Router.push(`/${link}`);
+    router.push(`/${link}`);
   };
 
   const connect = async () => {
@@ -92,28 +61,6 @@ export const ProfileContainer: FC<Props> = ({ did }) => {
       return Number(a.issuedTimestamp) > Number(b.issuedTimestamp) ? -1 : 1;
     });
   }, [CVoxelsRecords.content]);
-
-  const router = useRouter();
-
-  const currentVoxelID = useMemo(() => {
-    if (typeof router.query["voxel"] == "string") {
-      return router.query["voxel"];
-    }
-  }, [router.query]);
-
-  const currentVoxel = useMemo(
-    () => sortCVoxels.find((voxel) => voxel.id == currentVoxelID),
-    [currentVoxelID, sortCVoxels]
-  );
-
-  const { offchainMetaList } = useCVoxelList();
-
-  // TODO: This is temporary solution because of useTileDoc bug
-  const [forceUpdateCVoxelList, setForceUpdateCVoxelList] =
-    useStateForceUpdate();
-  const forceReload = () => {
-    setForceUpdateCVoxelList(true);
-  };
 
   const handleClickNavBackButton = useCallback(() => {
     router.push(router.asPath.split("?")[0]);
@@ -199,55 +146,9 @@ export const ProfileContainer: FC<Props> = ({ did }) => {
               </div>
             </div>
           </div>
-
-          <div className="max-w-[820px] mx-auto">
-            {!!currentVoxel ? (
-              <div className="mt-6 sm:px-6">
-                <VoxelDetail
-                  item={currentVoxel}
-                  offchainItems={offchainMetaList}
-                  isOwner={true}
-                  notifyUpdated={forceReload}
-                />
-              </div>
-            ) : (
-              CVoxelsPresenterMemo
-            )}
-          </div>
+          <UserCVoxelContainer did={did} currentVoxelID={currentVoxelID} />
         </div>
       </div>
     </main>
   );
-
-          {/*return (*/}
-          {/*<main className="text-black dark:text-white text-center snap-y snap-mandatory h-screen overflow-scroll">*/}
-          {/*  <div*/}
-          {/*    className="relative snap-start snap-always min-h-screen"*/}
-          {/*    ref={visualContainerRef}*/}
-          {/*  >*/}
-          {/*    <CVoxelsContainer did={did} content={CVoxelsRecords.content}>*/}
-          {/*      <div className="absolute bottom-0 pb-12">*/}
-          {/*        <div className="relative mx-auto w-28 h-16 cursor-pointer">*/}
-          {/*          <button onClick={() => scrollToInfo()}>*/}
-          {/*            <Arrow size="lg" direction="down" />*/}
-          {/*          </button>*/}
-          {/*        </div>*/}
-          {/*      </div>*/}
-          {/*    </CVoxelsContainer>*/}
-          {/*  </div>*/}
-          {/*  <div className="snap-start snap-always min-h-screen pt-24" ref={myPageContainerRef}>*/}
-          {/*    <div className="mx-auto w-28 h-16 cursor-pointer">*/}
-          {/*      <button onClick={() => scrollToVisual()}>*/}
-          {/*        <Arrow size="lg" direction="up" />*/}
-          {/*      </button>*/}
-          {/*    </div>*/}
-          {/*    <div className="flex-none mb-6 w-fit mx-auto">*/}
-          {/*      <NamePlate size="lg" did={did} />*/}
-          {/*    </div>*/}
-          {/*    <div className="mx-auto flex-none w-full sm:w-[calc(100%-95px)] md:w-[calc(100%-280px)] max-w-[744px] col-span-1 ">*/}
-          {/*      <UserCVoxelContainer did={did} currentVoxelID={currentVoxelID}/>*/}
-          {/*    </div>*/}
-          {/*  </div>*/}
-          {/*</main>*/}
-          {/*);*/}
 };
