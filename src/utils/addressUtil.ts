@@ -9,8 +9,10 @@ export const getDIDFromAddress = async (
     const caip10 = `${ETH_CHAIN_ID}${address}`;
     try {
       return await core.getAccountDID(caip10);
-    } catch (e) {}
+    } catch (e) {
+      return "";
+    }
   } else {
-    return undefined;
+    return "";
   }
 };

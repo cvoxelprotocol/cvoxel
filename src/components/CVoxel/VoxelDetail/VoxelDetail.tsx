@@ -118,13 +118,23 @@ export const VoxelDetail: FC<Props> = ({
   const PcDirection = () => {
     return item.isPayer ? (
       <div className="flex items-center space-x-3">
-        <NamePlate did={fromDid} address={detailItem?.from ?? ""} isMe={fromDid == myDid} hasBackgroundColor />
+        <NamePlate
+          did={fromDid}
+          address={detailItem?.from}
+          isMe={fromDid == myDid}
+          hasBackgroundColor
+        />
         <RightArrow />
         <NamePlate address={detailItem?.to ?? ""} />
       </div>
     ) : (
       <div className="flex items-center space-x-3">
-        <NamePlate did={toDid} address={detailItem?.to ?? ""} isMe={toDid == myDid} hasBackgroundColor />
+        <NamePlate
+          did={toDid}
+          address={detailItem?.to}
+          isMe={toDid == myDid}
+          hasBackgroundColor
+        />
         <LeftArrow />
         <NamePlate address={detailItem?.from ?? ""} />
       </div>
@@ -134,13 +144,25 @@ export const VoxelDetail: FC<Props> = ({
   const SpDirection = () => {
     return item.isPayer ? (
       <div className="flex items-center space-x-3">
-        <NamePlate did={fromDid} address={detailItem?.from ?? ""} isMe={fromDid == myDid} hasBackgroundColor withoutIcon />
+        <NamePlate
+          did={fromDid}
+          address={detailItem?.from ?? ""}
+          isMe={fromDid == myDid}
+          hasBackgroundColor
+          withoutIcon
+        />
         <RightArrow />
         <NamePlate address={detailItem?.to ?? ""} withoutIcon />
       </div>
     ) : (
       <div className="flex items-center space-x-3">
-        <NamePlate did={toDid} address={detailItem?.to ?? ""} isMe={toDid == myDid} hasBackgroundColor withoutIcon />
+        <NamePlate
+          did={toDid}
+          address={detailItem?.to ?? ""}
+          isMe={toDid == myDid}
+          hasBackgroundColor
+          withoutIcon
+        />
         <LeftArrow />
         <NamePlate address={detailItem?.from ?? ""} withoutIcon />
       </div>

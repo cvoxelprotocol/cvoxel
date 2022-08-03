@@ -42,16 +42,34 @@ export const TxDirection: FC<Props> = ({ from, to, isPayer }) => {
   }, [from]);
 
   const displayProfile = useMemo(() => {
+    if (isPayer && fromDid == undefined) {
+      return undefined;
+    }
+
+    if (!isPayer && toDid == undefined) {
+      return undefined;
+    }
+
     return getProfileInfo((isPayer ? fromDid : toDid) ?? "");
   }, [isPayer, fromDid, toDid]);
 
   return isPayer ? (
     <div className="flex items-center space-x-2">
       <div className="hidden lg:block">
-        {displayProfile && displayProfile.avatarSrc ? (
-          <IconAvatar size={"sm"} src={displayProfile.avatarSrc} flex={false} />
+        {!!displayProfile ? (
+          <>
+            {displayProfile.avatarSrc ? (
+              <IconAvatar
+                size={"sm"}
+                src={displayProfile.avatarSrc}
+                flex={false}
+              />
+            ) : (
+              <AvatarPlaceholder did={fromDid} size={32} />
+            )}
+          </>
         ) : (
-          <AvatarPlaceholder did={fromDid} size={32} />
+          <CommonSpinner />
         )}
       </div>
 

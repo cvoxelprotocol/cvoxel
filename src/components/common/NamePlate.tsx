@@ -142,8 +142,12 @@ export const NamePlate: FC<Props> = ({
 
   const profileRecord = useProfile(did ?? "");
   const displayProfile = useMemo(() => {
+    if (did == undefined && address == undefined) {
+      return undefined;
+    }
+
     return getProfileInfo(did ?? "", profileRecord.content);
-  }, [profileRecord.content, did]);
+  }, [did, address, profileRecord.content]);
 
   return (
     <div
@@ -167,14 +171,20 @@ export const NamePlate: FC<Props> = ({
       )}
       {!withoutIcon && (
         <div className="mr-2">
-          {displayProfile.avatarSrc ? (
-            <IconAvatar
-              size={avatarSize}
-              src={displayProfile.avatarSrc}
-              flex={false}
-            />
+          {!!displayProfile ? (
+            <>
+              {displayProfile.avatarSrc ? (
+                <IconAvatar
+                  size={avatarSize}
+                  src={displayProfile.avatarSrc}
+                  flex={false}
+                />
+              ) : (
+                <AvatarPlaceholder did={did} size={avatarSizePixel} />
+              )}
+            </>
           ) : (
-            <AvatarPlaceholder did={did} size={avatarSizePixel} />
+            <CommonSpinner />
           )}
         </div>
       )}
