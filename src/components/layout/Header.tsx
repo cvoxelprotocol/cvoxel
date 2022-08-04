@@ -20,8 +20,8 @@ export const Header = () => {
                 src="/vess-logo.png"
                 alt="LanC"
                 objectFit="cover"
-                width="48px"
-                height="40px"
+                width="55px"
+                height="50px"
               />
             </div>
           </Link>
