@@ -21,7 +21,8 @@ export const Meta: FC<MetaData> = ({
   pageImgHeight,
 }) => {
   const defaultTitle = "VESS | Shape Your Work Identity";
-  const defaultDescription = "VESS is a decentralized self-sovereign work credentials protocol that everyone can stack their work credentials and shape their work identities.";
+  const defaultDescription =
+    "VESS is a decentralized self-sovereign work credentials protocol that everyone can stack their work credentials and shape their work identities.";
 
   const title = pageTitle ? `${pageTitle} | ${defaultTitle}` : defaultTitle;
   const description = pageDescription ? pageDescription : defaultDescription;
