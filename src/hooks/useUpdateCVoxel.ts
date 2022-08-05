@@ -2,23 +2,22 @@ import {
   CVOXEL_UPDATE_FAILED,
   CVOXEL_UPDATE_SUCCEED,
 } from "@/constants/toastMessage";
-import { CVoxel, CVoxelItem, ModelTypes } from "@/interfaces";
+import { CVoxel } from "@/interfaces";
 import { convertDateToTimestampStr } from "@/utils/dateUtil";
-import { useConnection } from "@self.id/framework";
-import { useViewerRecord } from "@self.id/react";
+import { useMyCeramicAcount } from "./useCeramicAcount";
 import { useCVoxelRecord } from "./useCVoxel";
 import { useModal } from "./useModal";
 import { useToast } from "./useToast";
 
 export const useUpdateCVoxel = (id: string) => {
-  const connect = useConnection<ModelTypes>()[1];
   const cVoxelItem = useCVoxelRecord(id);
   const { showLoading, closeLoading } = useModal();
   const { lancInfo, lancError } = useToast();
+  const { connectCeramic, mySelfID } = useMyCeramicAcount();
 
   const update = async (newItem: CVoxel) => {
     try {
-      const selfID = await connect();
+      const selfID = mySelfID || (await connectCeramic());
       if (selfID == null) {
         lancError();
         return false;

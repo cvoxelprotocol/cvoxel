@@ -1,4 +1,4 @@
-import { AvatarPlaceholder } from "@self.id/framework";
+import { AvatarPlaceholder } from "@self.id/ui";
 import { FC } from "react";
 import { CommonSpinner } from "./CommonSpinner";
 import { IconAvatar } from "./IconAvatar";
@@ -23,9 +23,9 @@ export const DisplayAvatar: FC<Props> = ({
       <CommonSpinner />
     </div>
   ) : src ? (
-    <IconAvatar size={"sm"} src={src} flex={false} />
+    <IconAvatar size={"md"} src={src} flex={false} />
   ) : (
-    <AvatarPlaceholder did={did} size={32} />
+    <AvatarPlaceholder did={did} size={40} />
   );
 
   return (
@@ -33,7 +33,7 @@ export const DisplayAvatar: FC<Props> = ({
       {avatar}
       <p
         className={
-          "text-primary dark:text-white text-sm font-semibold " +
+          "text-primary dark:text-white text-2xl font-semibold " +
           (hiddenLabelOnSp ? "hidden md:block" : "block")
         }
       >

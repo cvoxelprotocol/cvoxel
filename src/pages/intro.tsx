@@ -1,5 +1,5 @@
 import { Button } from "@/components/common/button/Button";
-import BurgerMenu from "@/components/layout/BurgerMenu";
+import {BurgerMenu} from "@/components/layout/BurgerMenu";
 import { NextPage } from "next";
 import Image from "next/image";
 
@@ -142,11 +142,11 @@ const Intro: NextPage = () => {
                 {" "}
                 on <span className=" font-bold">Web3.0</span>
               </p>
-              <p className="my-4 text-xl md:text-2xl font-normal text-center md:text-right">
+              <div className="my-4 text-xl md:text-2xl font-normal text-center md:text-right">
                 <p>You can change your transactions into “C-Voxel”</p>
                 <p>and easiliy share them on Web3.0</p>
                 <p>as your on-chain CV.</p>
-              </p>
+              </div>
               <div className="flex justify-center md:justify-end">
                 <Button
                   text="Go to App"
@@ -173,7 +173,7 @@ const Intro: NextPage = () => {
                 <h3 className="mb-4 text-4xl text-medium font-semibold">
                   Proof-of-Career Protocol
                 </h3>
-                <p className="text-justify">
+                <div className="text-justify">
                   <p>
                     C-Voxel is a voxel that has your work data tied to your Tx
                     hash. It can be created by very simple steps with{" "}
@@ -187,7 +187,7 @@ const Intro: NextPage = () => {
                     Let’s share your C-Voxel to your DAO member and make it easy
                     to proof your career !!
                   </p>
-                </p>
+                </div>
               </div>
               <div className="flex-shrink-0 mt-8 md:mt-0 md:ml-40 md:mr-20">
                 <Image

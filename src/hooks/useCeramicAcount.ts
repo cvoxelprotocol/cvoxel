@@ -1,17 +1,19 @@
 import { core } from "@/lib/ceramic/server";
 import {
-  useConnection,
+  useViewerConnection,
   useViewerID,
   usePublicRecord,
   BasicProfile,
   PublicRecord,
 } from "@self.id/framework";
+import { EthereumAuthProvider, SelfID } from "@self.id/web";
 import { useEffect, useCallback, useMemo } from "react";
 import { getProfileInfo } from "@/utils/ceramicUtils";
 import { useWalletAccount } from "./useWalletAccount";
 import { Caip10Link } from "@ceramicnetwork/stream-caip10-link";
 import { ModelTypes } from "@/interfaces";
 import { useDID } from "@/recoilstate";
+import { useStateMySelfID } from "@/recoilstate/ceramic";
 
 export function useProfile(
   id: string
@@ -20,8 +22,9 @@ export function useProfile(
 }
 
 export const useMyCeramicAcount = () => {
-  const [connection, connect, disconnect] = useConnection<ModelTypes>();
-  const { connectWallet, disconnectWallet, account, chainId, active } =
+  const [connection, connect, disconnect] = useViewerConnection<ModelTypes>();
+  const [mySelfID, setMySelfID] = useStateMySelfID();
+  const { connectWallet, disconnectWallet, account, chainId, active, library } =
     useWalletAccount();
   const [did, setDid] = useDID();
   const viewerID = useViewerID<ModelTypes>();
@@ -73,9 +76,14 @@ export const useMyCeramicAcount = () => {
     }
   }, [account]);
 
-  const connectCeramic = async () => {
-    const id = await connect();
+  const connectCeramic = async (): Promise<SelfID<ModelTypes> | null> => {
+    if (!(library && account)) return null;
     await connectWallet();
+    const selfID = await connect(
+      new EthereumAuthProvider(library.provider, account)
+    );
+    setMySelfID(selfID);
+    return selfID;
   };
   const connectWalletOnly = async () => {
     await connectWallet();
@@ -83,6 +91,7 @@ export const useMyCeramicAcount = () => {
   const disconnectCeramic = () => {
     disconnect();
     disconnectWallet();
+    setMySelfID(null);
   };
 
   return {
@@ -92,6 +101,7 @@ export const useMyCeramicAcount = () => {
     viewerID,
     did,
     account,
+    mySelfID,
     name: displayProfile.displayName,
     avator: displayProfile.avatarSrc,
     description: displayProfile.bio,

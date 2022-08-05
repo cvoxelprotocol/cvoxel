@@ -12,6 +12,7 @@ export const getExploreLink = (hash: string, chainId: number = 1): string => {
 };
 
 export const uniqueList = (
+  filter: "sent" | "received" | "none",
   lists: TransactionLogWithChainId[],
   address?: string
 ): TransactionLogWithChainId[] => {
@@ -41,6 +42,26 @@ export const uniqueList = (
         result.push(sorted[i]);
       }
     }
+  }
+  //return all list if no address
+  if (!address) {
+    return result.sort((a, b) => {
+      return Number(a.timeStamp) > Number(b.timeStamp) ? -1 : 1;
+    });
+  }
+  if (filter === "received") {
+    return result
+      .filter((r) => r.to.toLowerCase() === address?.toLowerCase())
+      .sort((a, b) => {
+        return Number(a.timeStamp) > Number(b.timeStamp) ? -1 : 1;
+      });
+  }
+  if (filter === "sent") {
+    return result
+      .filter((r) => r.from.toLowerCase() === address?.toLowerCase())
+      .sort((a, b) => {
+        return Number(a.timeStamp) > Number(b.timeStamp) ? -1 : 1;
+      });
   }
   return result.sort((a, b) => {
     return Number(a.timeStamp) > Number(b.timeStamp) ? -1 : 1;

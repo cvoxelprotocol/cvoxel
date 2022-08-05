@@ -4,8 +4,6 @@ import {
 } from "@/constants/toastMessage";
 import { updateDraftWighVerify } from "@/lib/firebase/functions/verify";
 import { getCVoxelService } from "@/services/CVoxel/CVoxelService";
-import { Web3Provider } from "@self.id/multiauth";
-import { useWeb3React } from "@web3-react/core";
 import type {
   CVoxel,
   CVoxelMetaDraft,
@@ -13,27 +11,32 @@ import type {
 } from "@/interfaces/cVoxelType";
 import { useModal } from "./useModal";
 import { useToast } from "./useToast";
-import { useConnection, useViewerRecord } from "@self.id/framework";
+import { useViewerRecord } from "@self.id/framework";
 import { extractCVoxel } from "@/utils/cVoxelUtil";
 import { convertDateToTimestampStr } from "@/utils/dateUtil";
+import { useMyCeramicAcount } from "./useCeramicAcount";
 
 export function useSigRequest() {
-  const { chainId, account } = useWeb3React<Web3Provider>();
-  const connect = useConnection<ModelTypes>()[1];
-  const cVoxelsRecord = useViewerRecord<ModelTypes, "cVoxels">("cVoxels");
+  const cVoxelsRecord = useViewerRecord<ModelTypes, "workCredentials">(
+    "workCredentials"
+  );
   const { showLoading, closeLoading } = useModal();
   const cVoxelService = getCVoxelService();
   const { lancInfo, lancError } = useToast();
+  const { connectCeramic, mySelfID, account } = useMyCeramicAcount();
 
   const verifyWithCeramic = async (tx: CVoxelMetaDraft) => {
-    if (!account) return;
-    const selfID = await connect();
-    if (selfID == null || selfID.did == null) {
+    if (!account) {
       lancError();
       return false;
     }
+    const selfID = mySelfID || (await connectCeramic());
+    if (selfID == null || selfID.did == null) {
+      lancError("Please retry again");
+      return false;
+    }
     if (!cVoxelsRecord.isLoadable) {
-      lancError();
+      lancError("Please retry again");
       return false;
     }
 
@@ -41,21 +44,22 @@ export function useSigRequest() {
     try {
       const isPayer = tx.from.toLowerCase() === account.toLowerCase();
       const meta = await verifyCVoxel(tx, account);
+      console.log({ meta });
       if (meta) {
-        const doc = await selfID.client.dataModel.createTile("CVoxel", {
+        const doc = await selfID.client.dataModel.createTile("WorkCredential", {
           ...meta,
         });
-        const cVoxels = cVoxelsRecord.content?.cVoxels ?? [];
+        const cVoxels = cVoxelsRecord.content?.WorkCredentials ?? [];
         const docUrl = doc.id.toUrl();
         await cVoxelsRecord.set({
-          cVoxels: [
+          WorkCredentials: [
             ...cVoxels,
             {
               id: docUrl,
               summary: meta.summary,
               isPayer: isPayer,
               txHash: meta.txHash,
-              deliverable: meta.deliverable,
+              deliverables: meta.deliverables,
               fiatValue: meta.fiatValue,
               genre: meta.genre,
               issuedTimestamp: meta.issuedTimestamp,
@@ -100,7 +104,6 @@ export function useSigRequest() {
     tx: CVoxelMetaDraft,
     address: string
   ): Promise<CVoxel | null> => {
-    const to = tx.to.toLowerCase();
     const from = tx.from.toLowerCase();
     const usr = address.toLowerCase();
 
@@ -116,8 +119,10 @@ export function useSigRequest() {
     const meta = extractCVoxel(metaDraft);
 
     try {
+      const sig = isPayer ? meta.fromSig : meta.toSig;
+      if (!(sig && meta.txHash)) return null;
       const status = await updateDraftWighVerify(
-        isPayer ? meta.fromSig : meta.toSig,
+        sig,
         meta.txHash,
         usr,
         tx.networkId.toString()
@@ -137,17 +142,24 @@ export function useSigRequest() {
     try {
       const nowTimestamp = convertDateToTimestampStr(new Date());
       //get hash
+      const deliverable =
+        tx.deliverables && tx.deliverables.length > 0
+          ? tx.deliverables.map((d) => d.value).join(",")
+          : undefined;
       const { signature, _ } = await cVoxelService.getMessageHash(
-        tx.txHash,
+        tx.txHash || "",
         account,
         tx.summary,
         tx.detail,
-        tx.deliverable
+        deliverable
       );
 
       if (
         isPayer &&
-        tx.relatedAddresses.map((a) => a.toLowerCase()).includes(account) &&
+        (tx.from.toLowerCase() === account.toLocaleLowerCase() ||
+          tx.relatedAddresses
+            .map((a) => a.toLowerCase())
+            .includes(account.toLowerCase())) &&
         (!tx.fromSig || tx.fromSig === "")
       ) {
         return {
@@ -158,7 +170,10 @@ export function useSigRequest() {
         };
       } else if (
         !isPayer &&
-        tx.relatedAddresses.map((a) => a.toLowerCase()).includes(account) &&
+        (tx.to.toLowerCase() === account.toLocaleLowerCase() ||
+          tx.relatedAddresses
+            .map((a) => a.toLowerCase())
+            .includes(account.toLowerCase())) &&
         (!tx.toSig || tx.toSig === "")
       ) {
         return {
