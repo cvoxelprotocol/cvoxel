@@ -1,28 +1,29 @@
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowRight, faClose } from "@fortawesome/free-solid-svg-icons";
-import Link from "next/link";
+import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { GenreBadge } from "@/components/common/badge/GenreBadge";
 import { getGenre } from "@/utils/genreUtil";
 import { TagBadge } from "@/components/common/badge/TagBadge";
 import { shortenStr } from "@/utils/objectUtil";
 import { convertTimestampToDateStr } from "@/utils/dateUtil";
-import { formatBigNumber } from "@/utils/ethersUtil";
+// import { formatBigNumber } from "@/utils/ethersUtil";
 import VisualizerPresenter from "@/components/CVoxel/visualizerPresenter";
 import { useCVoxelRecord } from "@/hooks/useCVoxel";
 import { useStateCVoxelDetailBox } from "@/recoilstate";
 import { Canvas } from "@react-three/fiber";
-import { useENS } from "@/hooks/useENS";
-import { CommonSpinner } from "@/components/common/CommonSpinner";
+// import { useENS } from "@/hooks/useENS";
+// import { CommonSpinner } from "@/components/common/CommonSpinner";
 import clsx from "clsx";
 import { ShareButton } from "@/components/common/button/shareButton/ShareButton";
 import { TxDirection } from "@/components/common/TxDirection";
-import { NamePlate } from "@/components/common/NamePlate";
-import RightArrow from "@/components/CVoxel/VoxelListItem/right-arrow.svg";
-import LeftArrow from "@/components/CVoxel/VoxelListItem/left-arrow.svg";
+// import { NamePlate } from "@/components/common/NamePlate";
+// import RightArrow from "@/components/CVoxel/VoxelListItem/right-arrow.svg";
+// import LeftArrow from "@/components/CVoxel/VoxelListItem/left-arrow.svg";
+import { useWalletAccount } from "@/hooks/useWalletAccount";
 
 export const CVoxelDetailBox: FC<{}> = () => {
   const [box] = useStateCVoxelDetailBox();
+  const { account } = useWalletAccount();
 
   const cVoxelItem = useCVoxelRecord(box?.item.id);
 
@@ -33,23 +34,28 @@ export const CVoxelDetailBox: FC<{}> = () => {
     return cVoxelItem.content || null;
   }, [cVoxelItem.content, cVoxelItem]);
 
-  const { ens: fromEns, ensLoading: fromEnsLoading } = useENS(detailItem?.from);
-  const { ens: toEns, ensLoading: toEnsLoading } = useENS(detailItem?.to);
+  const isOwner = useMemo(() => {
+    if(!account) return false
+    return detailItem?.from.toLowerCase() === account.toLowerCase() || detailItem?.to.toLowerCase() === account.toLowerCase()
+  },[account,detailItem])
 
-  const offchainItem = useMemo(() => {
-    return box?.offchainItems?.find(
-      (offchain) => offchain.txHash === box?.item.txHash
-    );
-  }, [box?.offchainItems, box?.item]);
+  // const { ens: fromEns, ensLoading: fromEnsLoading } = useENS(detailItem?.from);
+  // const { ens: toEns, ensLoading: toEnsLoading } = useENS(detailItem?.to);
 
-  const fiatVal = useMemo(() => {
-    if (detailItem && detailItem.fiatValue) {
-      return detailItem.fiatValue;
-    } else if (offchainItem && offchainItem.fiatValue) {
-      return offchainItem.fiatValue;
-    }
-    return null;
-  }, [detailItem, offchainItem]);
+  // const offchainItem = useMemo(() => {
+  //   return box?.offchainItems?.find(
+  //     (offchain) => offchain.txHash === box?.item.txHash
+  //   );
+  // }, [box?.offchainItems, box?.item]);
+
+  // const fiatVal = useMemo(() => {
+  //   if (detailItem && detailItem.fiatValue) {
+  //     return detailItem.fiatValue;
+  //   } else if (offchainItem && offchainItem.fiatValue) {
+  //     return offchainItem.fiatValue;
+  //   }
+  //   return null;
+  // }, [detailItem, offchainItem]);
 
   const [isShow, setIsShow] = useState<boolean>(false);
   const [isMount, setIsMount] = useState<boolean>(false);
@@ -111,7 +117,7 @@ export const CVoxelDetailBox: FC<{}> = () => {
         <div className="px-8 relative bg-light-background dark:bg-dark-background">
           {/*share button*/}
           <div className="absolute top-4 right-4">
-            <ShareButton voxelID={box?.item.id ?? ""} valiant="icon" />
+            <ShareButton voxelID={box?.item.id ?? ""} valiant="icon" isOwner={isOwner}/>
           </div>
 
           <div className="absolute top-4 left-4">
@@ -193,13 +199,14 @@ export const CVoxelDetailBox: FC<{}> = () => {
                     href={`${deliverable.value}`}
                     target="_blank"
                     rel="noreferrer"
+                    key={deliverable.value}
                   >
                     <p className="text-light-secondary dark:text-dark-secondary text-md">
                       {deliverable.value}
                     </p>
                   </a>
                 ) : (
-                  <p className="text-md text-secondary">
+                  <p className="text-md text-secondary" key={deliverable.value}>
                     {shortenStr(deliverable.value)}
                   </p>
                 )
