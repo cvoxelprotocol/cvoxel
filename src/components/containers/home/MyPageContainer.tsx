@@ -16,7 +16,7 @@ export const MyPageContainer: FC<props> = ({ content, scrollToVisual }) => {
   const { tabState } = useTab();
 
   return (
-    <div className="relative w-full max-w-5xl min-h-screen mx-auto">
+    <div className="relative w-full max-w-5xl min-h-screen lg:min-h-max mx-auto">
       <div className="sm:flex sm:grid-cols-2">
         <div className="sm:hidden w-full">
           <HomeSPHeader />

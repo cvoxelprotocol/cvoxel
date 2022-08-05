@@ -1,4 +1,4 @@
-import { FC, useMemo } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 import {
   CVoxel,
   CVoxelItem as ICVoxelItem,
@@ -25,10 +25,10 @@ import { getExploreLink } from "@/utils/etherscanUtils";
 import { ShareButton } from "@/components/common/button/shareButton/ShareButton";
 import { formatBigNumber } from "@/utils/ethersUtil";
 import { useMyCeramicAcount } from "@/hooks/useCeramicAcount";
+import { getDIDFromAddress } from "@/utils/addressUtil";
 
 type Props = {
   item: ICVoxelItem;
-  did: string;
   offchainItems?: CVoxelMetaDraft[];
   notifyUpdated?: () => void;
   isOwner: boolean;
@@ -36,7 +36,6 @@ type Props = {
 
 export const VoxelDetail: FC<Props> = ({
   item,
-  did,
   offchainItems,
   notifyUpdated,
   isOwner,
@@ -91,17 +90,51 @@ export const VoxelDetail: FC<Props> = ({
     return getExploreLink(detailItem.txHash, detailItem.networkId);
   }, [detailItem?.txHash, detailItem?.networkId]);
 
+  const { did: myDid } = useMyCeramicAcount();
+
+  const [toDid, setToDid] = useState<string>();
+  useEffect(() => {
+    if (toDid == undefined && !!detailItem?.to) {
+      const f = async () => {
+        const did = await getDIDFromAddress(detailItem?.to);
+        setToDid(did);
+      };
+      f();
+    }
+  }, [detailItem?.to]);
+
+  const [fromDid, setFromDid] = useState<string>();
+  useEffect(() => {
+    if (fromDid == undefined && !!detailItem?.from) {
+      const f = async () => {
+        const did = await getDIDFromAddress(detailItem?.from);
+        setFromDid(did);
+      };
+      f();
+    }
+  }, [detailItem?.from]);
+
   // component
   const PcDirection = () => {
     return item.isPayer ? (
       <div className="flex items-center space-x-3">
-        <NamePlate did={did} isMe hasBackgroundColor />
+        <NamePlate
+          did={fromDid}
+          address={detailItem?.from}
+          isMe={fromDid == myDid}
+          hasBackgroundColor
+        />
         <RightArrow />
         <NamePlate address={detailItem?.to ?? ""} />
       </div>
     ) : (
       <div className="flex items-center space-x-3">
-        <NamePlate did={did} isMe hasBackgroundColor />
+        <NamePlate
+          did={toDid}
+          address={detailItem?.to}
+          isMe={toDid == myDid}
+          hasBackgroundColor
+        />
         <LeftArrow />
         <NamePlate address={detailItem?.from ?? ""} />
       </div>
@@ -111,13 +144,25 @@ export const VoxelDetail: FC<Props> = ({
   const SpDirection = () => {
     return item.isPayer ? (
       <div className="flex items-center space-x-3">
-        <NamePlate did={did} isMe hasBackgroundColor withoutIcon />
+        <NamePlate
+          did={fromDid}
+          address={detailItem?.from ?? ""}
+          isMe={fromDid == myDid}
+          hasBackgroundColor
+          withoutIcon
+        />
         <RightArrow />
         <NamePlate address={detailItem?.to ?? ""} withoutIcon />
       </div>
     ) : (
       <div className="flex items-center space-x-3">
-        <NamePlate did={did} isMe hasBackgroundColor withoutIcon />
+        <NamePlate
+          did={toDid}
+          address={detailItem?.to ?? ""}
+          isMe={toDid == myDid}
+          hasBackgroundColor
+          withoutIcon
+        />
         <LeftArrow />
         <NamePlate address={detailItem?.from ?? ""} withoutIcon />
       </div>

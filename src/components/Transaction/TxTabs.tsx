@@ -18,30 +18,34 @@ export const TxTabs: FC = () => {
 
   return (
     <>
-      <div className="w-full text-center border-b border-light-outline dark:border-dark-outline mx-6">
-        <ul
-          className={"w-full flex items-center h-20 space-x-4"}
-          role="txTablist"
-        >
+      <div className="w-full text-center border-b border-light-outline dark:border-dark-outline mx-6 h-20 flex flex-col justify-between items-start">
+        <div className="text-light-on-surface dark:text-dark-on-surface text-2xl font-medium px-2 py-1">
+          Transactions
+        </div>
+        <ul className="w-full flex items-center space-x-4" role="txTablist">
           <li className="">
             <a
               className={clsx(
-                "text-light-on-surface dark:text-dark-on-surface text-xl md:text-3xl leading-normal flex items-center space-x-1",
-                tabState === "received" ? " font-bold " : ""
+                "text-light-on-surface dark:text-dark-on-surface text-xl leading-normal flex items-center px-2",
+                tabState === "received"
+                  ? " font-bold border-b-4 border-light-primary dark:border-dark-primary"
+                  : "pb-[4px]"
               )}
               onClick={receivedTab}
               data-toggle="tab"
               href="#recieved"
               role="txTablist"
             >
-              <span className="ml-2 ">{TX_TAB_NAME["received"]}</span>
+              <span className="">{TX_TAB_NAME["received"]}</span>
             </a>
           </li>
           <li className="">
             <a
               className={clsx(
-                "text-light-on-surface dark:text-dark-on-surface text-xl md:text-3xl leading-normal flex items-center space-x-1",
-                tabState === "sent" ? " font-bold " : ""
+                "text-light-on-surface dark:text-dark-on-surface text-xl leading-normal flex items-center px-2",
+                tabState === "sent"
+                  ? " font-bold border-b-4 border-light-primary dark:border-dark-primary "
+                  : "pb-[4px]"
               )}
               onClick={sentTab}
               data-toggle="tab"

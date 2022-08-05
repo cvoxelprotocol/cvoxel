@@ -18,14 +18,14 @@ export const HomeContainer: FC = () => {
   };
 
   return (
-    <main className="text-black dark:text-white text-center snap-y snap-mandatory h-screen overflow-scroll">
+    <main className="text-center">
       <div
         className="relative snap-start snap-always min-h-screen"
         ref={visualContainerRef}
       >
         <CVoxelsContainer did={did} content={CVoxelsRecords.content}>
           <div className="absolute bottom-0 pb-12">
-            <div className="relative mx-auto w-28 h-16 cursor-pointer">
+            <div className="relative mx-auto cursor-pointer">
               <button onClick={() => scrollToInfo()}>
                 <Arrow size="lg" direction="down" />
               </button>
@@ -33,7 +33,7 @@ export const HomeContainer: FC = () => {
           </div>
         </CVoxelsContainer>
       </div>
-      <div className="snap-start snap-always pt-32" ref={myPageContainerRef}>
+      <div className="snap-start snap-always pt-12" ref={myPageContainerRef}>
         <MyPageContainer scrollToVisual={() => scrollToVisual()} />
       </div>
     </main>

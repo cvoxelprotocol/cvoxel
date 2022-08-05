@@ -13,6 +13,7 @@ import { useRouter } from "next/dist/client/router";
 import { NavBar } from "@/components/CVoxel/NavBar/NavBar";
 import { VoxelDetail } from "@/components/CVoxel/VoxelDetail/VoxelDetail";
 import { SearchData } from "@/components/common/search/Search";
+import { Button } from "@/components/common/button/Button";
 
 export const MyCVoxelContainer: FC = () => {
   const { did, account } = useMyCeramicAcount();
@@ -91,7 +92,6 @@ export const MyCVoxelContainer: FC = () => {
           <div className="mt-6 sm:px-6">
             <VoxelDetail
               item={currentVoxel}
-              did={did}
               offchainItems={offchainMetaList}
               isOwner={true}
               notifyUpdated={forceReload}
@@ -101,14 +101,13 @@ export const MyCVoxelContainer: FC = () => {
           <CVoxelsPresenter>
             {!txLoading && (!sortCVoxels || sortCVoxels.length === 0) && (
               <div className="mx-auto">
-                <NoItemPresenter text="No C-Voxels yet..." />
+                <NoItemPresenter text="No Voxels yet" />
                 {account && (
-                  <button
+                  <Button
+                    text="Create New Voxel"
                     onClick={() => setTabState("transactions")}
-                    className="text-white rounded-full bg-gradient-to-r from-border_l to-border_r py-2 px-5"
-                  >
-                    Create C-Voxel
-                  </button>
+                    color="primary"
+                  />
                 )}
               </div>
             )}

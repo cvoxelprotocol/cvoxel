@@ -1,6 +1,6 @@
 import { FC } from "react";
 import Lottie from "react-lottie-player";
-import loadingJson from "./cvoxel_loading.json";
+import loadingJson from "./VESS_loading.json";
 
 type Props = {
   text?: string;

@@ -9,12 +9,17 @@ import { useRouter } from "next/dist/client/router";
 import { NavBar } from "@/components/CVoxel/NavBar/NavBar";
 import { VoxelDetail } from "@/components/CVoxel/VoxelDetail/VoxelDetail";
 import { SearchData } from "@/components/common/search/Search";
+import { useCVoxelList } from "@/hooks/useCVoxelList";
+import { useStateForceUpdate } from "@/recoilstate";
 
 type UserCVoxelContainerProps = {
-  did: string
-  currentVoxelID?: string
-}
-export const UserCVoxelContainer: FC<UserCVoxelContainerProps> = ({did, currentVoxelID}) => {
+  did: string;
+  currentVoxelID?: string;
+};
+export const UserCVoxelContainer: FC<UserCVoxelContainerProps> = ({
+  did,
+  currentVoxelID,
+}) => {
   const CVoxelsRecords = useCVoxelsRecord(did);
 
   const sortCVoxels = useMemo(() => {
@@ -24,86 +29,60 @@ export const UserCVoxelContainer: FC<UserCVoxelContainerProps> = ({did, currentV
     });
   }, [CVoxelsRecords.content]);
 
-  const router = useRouter();
-  const handleClickNavBackButton = useCallback(() => {
-    router.push(router.asPath.split("?")[0]);
-  }, [router]);
-
-  // search
-  const [keyword, setKeyword] = useState<string>();
-  const handleSearchSubmit = (data: SearchData) => {
-    if (!data.value) return;
-    const keyword = data.value;
-    setKeyword(keyword);
-  };
-
-  const handleSearchClear = () => {
-    setKeyword("");
-  };
-
-  // TODO: improvement search logic
-  const isHitSearch = (voxel: ICVoxelItem) => {
-    if (!keyword) {
-      return false;
-    }
-    if (voxel.summary.toLowerCase().match(keyword.toLowerCase())) {
-      return true;
-    }
-    if (voxel.genre?.toLowerCase().match(keyword.toLowerCase())) {
-      return true;
-    }
-    return false;
-  };
-
   const currentVoxel = useMemo(
     () => sortCVoxels.find((voxel) => voxel.id == currentVoxelID),
     [currentVoxelID, sortCVoxels]
   );
 
+  const { offchainMetaList } = useCVoxelList();
+
+  // TODO: This is temporary solution because of useTileDoc bug
+  const [forceUpdateCVoxelList, setForceUpdateCVoxelList] =
+    useStateForceUpdate();
+  const forceReload = () => {
+    setForceUpdateCVoxelList(true);
+  };
+
   return useMemo(
     () => (
-      <>
-      <NavBar
-          handleClickBackButton={handleClickNavBackButton}
-          currentVoxelID={currentVoxelID}
-          onSubmit={handleSearchSubmit}
-          onClear={handleSearchClear}
-        />
+      <div className="max-w-[820px] mx-auto">
         {!!currentVoxel ? (
           <div className="mt-6 sm:px-6">
             <VoxelDetail
-              did={did}
               item={currentVoxel}
-              isOwner={false}
+              offchainItems={offchainMetaList}
+              isOwner={true}
+              notifyUpdated={forceReload}
             />
+          </div>
+        ) : did == "" ? (
+          <div className="mx-auto">
+            <NoItemPresenter text="Not searched yet" />
           </div>
         ) : (
           <CVoxelsPresenter>
-            {!CVoxelsRecords.isLoading && (!sortCVoxels || sortCVoxels.length === 0) && (
-              <div className="mx-auto">
-                <NoItemPresenter text="No C-Voxels yet..." />
-              </div>
-            )}
             {CVoxelsRecords.isLoading && <CommonLoading />}
             {!CVoxelsRecords.isLoading &&
-              sortCVoxels &&
-              sortCVoxels
-                .filter((voxel) =>
-                  !!keyword && keyword != "" ? isHitSearch(voxel) : true
-                )
-                .map((item) => {
-                  return <VoxelListItem key={item.id} item={item} />;
-                })}
+              CVoxelsRecords.content?.WorkCredentials &&
+              CVoxelsRecords.content.WorkCredentials.map((item) => {
+                return <VoxelListItem key={item.id} item={item} />;
+              })}
+            {!CVoxelsRecords.isLoading && !CVoxelsRecords.content && (
+              <div className="mx-auto">
+                <NoItemPresenter text="No Voxels yet" />
+              </div>
+            )}
           </CVoxelsPresenter>
         )}
-      </>
+      </div>
     ),
     [
+      currentVoxel,
+      offchainMetaList,
       CVoxelsRecords.isLoading,
-      sortCVoxels,
+      CVoxelsRecords.content,
       did,
-      currentVoxelID,
-      keyword,
+      forceUpdateCVoxelList,
     ]
   );
 };

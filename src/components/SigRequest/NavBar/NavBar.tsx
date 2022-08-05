@@ -14,7 +14,7 @@ export const NavBar: FC<Props> = ({ handleClickBackButton, currentTxHash }) => {
           <LeftArrow className="text-light-on-surface-variant dark:text-dark-on-surface-variant " />
         </button>
       )}
-      <div className="text-light-on-surface dark:text-dark-on-surface text-3xl font-medium">
+      <div className="text-light-on-surface dark:text-dark-on-surface text-2xl font-medium">
         Notifications
       </div>
     </div>

@@ -86,7 +86,7 @@ export const MyNotificationContainer: FC = () => {
             />
           </div>
         ) : (
-          <div className="w-full max-w-[820px] text-center mx-auto cursor-pointer h-screen overflow-y-scroll py-6 sm:px-6 space-y-6">
+          <div className="w-full max-w-[820px] lg:h-[calc(100vh-5rem-2.5rem-3rem)] text-center mx-auto cursor-pointer h-screen overflow-y-scroll py-6 sm:px-6 space-y-6">
             {(!sigRequestCVoxels || sigRequestCVoxels.length === 0) && (
               <NoItemPresenter text="No Sig Requests yet..." />
             )}

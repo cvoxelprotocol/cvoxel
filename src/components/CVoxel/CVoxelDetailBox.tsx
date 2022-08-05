@@ -99,7 +99,7 @@ export const CVoxelDetailBox: FC<{}> = () => {
   }, [box]);
 
   return (
-    <div className="relative ">
+    <div className="relative">
       <div
         className={clsx(
           "bg-light-surface-1 dark:bg-dark-surface-1 top-24 right-0 absolute border rounded-l-2xl border-y-light-outline border-l-light-outline dark:border-y-dark-outline dark:border-l-dark-outline z-10 w-72 sm:w-96 max-h-screen overflow-scroll",
