@@ -53,7 +53,7 @@ export default function AccountButton() {
   };
 
   useEffect(() => {
-    if (isConnect && !!account) {
+    if (isConnect && !!account && router.asPath==="/") {
       router.push(`/${account}`);
     }
   }, [isConnect, account]);
