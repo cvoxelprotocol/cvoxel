@@ -39,7 +39,7 @@ export const ProfileContainer: FC<Props> = ({ did }) => {
     visualContainerRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const { account, connectWalletOnly } = useMyCeramicAcount();
+  const { account, connectWalletOnly, did:myDid } = useMyCeramicAcount();
 
   const handleSearch = (data: SearchData) => {
     if (!data.value) return;
@@ -47,21 +47,13 @@ export const ProfileContainer: FC<Props> = ({ did }) => {
     router.push(`/${link}`);
   };
 
-  const [isConnect, setIsConnect] = useState<boolean>(false);
   const connect = async () => {
     try {
       await connectWalletOnly();
-      setIsConnect(true);
     } catch (error) {
       console.log("error:", error);
     }
   };
-
-  useEffect(() => {
-    if (isConnect && !!account) {
-      router.push(`/${account}`);
-    }
-  }, [isConnect, account]);
 
   const sortCVoxels = useMemo(() => {
     if (!CVoxelsRecords.content) return [];
@@ -140,7 +132,7 @@ export const ProfileContainer: FC<Props> = ({ did }) => {
                   {account ? (
                     <Button
                       text="Go To Mypage"
-                      href={`/${did || account}`}
+                      href={`/${myDid || account}`}
                       color="primary"
                     />
                   ) : (

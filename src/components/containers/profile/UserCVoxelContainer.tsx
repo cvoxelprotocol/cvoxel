@@ -51,7 +51,7 @@ export const UserCVoxelContainer: FC<UserCVoxelContainerProps> = ({
             <VoxelDetail
               item={currentVoxel}
               offchainItems={offchainMetaList}
-              isOwner={true}
+              isOwner={false}
               notifyUpdated={forceReload}
             />
           </div>

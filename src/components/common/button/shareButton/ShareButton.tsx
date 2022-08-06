@@ -1,21 +1,21 @@
-import { FC, useCallback, useEffect, useRef, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import LinkIcon from "@/components/common/button/shareButton/link.svg";
 import Twitter from "@/components/common/button/shareButton/twitter.svg";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { ToolTip } from "@/components/common/ToolTip";
 import clsx from "clsx";
-import Link from "next/link";
 import { useRouter } from "next/dist/client/router";
 import Share from "@/components/CVoxel/VoxelDetail/share.svg";
 
 type Props = {
   voxelID: string;
+  isOwner?: boolean;
   valiant?: "button" | "icon";
 };
 
-export const ShareButton: FC<Props> = ({ voxelID, valiant = "button" }) => {
+export const ShareButton: FC<Props> = ({ voxelID, valiant = "button", isOwner = false }) => {
   const [showMenu, setShowMenu] = useState<boolean>(false);
-  const [url, setURL] = useState<string>("");
+  const router = useRouter();
 
   // Handling to close when clicking outside the area
   const ref = useRef<HTMLDivElement>(null);
@@ -50,10 +50,8 @@ export const ShareButton: FC<Props> = ({ voxelID, valiant = "button" }) => {
     setShowToolTip(false);
   };
 
-  const router = useRouter();
-
-  const makeURL = (): string => {
-    if (process.browser) {
+  const shareUrl:string = useMemo(() => {
+    if (typeof window !== 'undefined') {
       const { protocol, hostname, port } = window.location;
       const path = router.asPath;
       const u = new URL(
@@ -67,23 +65,21 @@ export const ShareButton: FC<Props> = ({ voxelID, valiant = "button" }) => {
     }
 
     return "";
-  };
-
-  useEffect(() => {
-    if (url == "") {
-      setURL(makeURL());
-    }
-  }, [makeURL, router.isReady, url]);
+  },[voxelID,router.asPath])
 
   const makeTwitterURL = (): string => {
     const u = new URL("https://twitter.com/intent/tweet");
-    u.searchParams.set("url", url);
+    u.searchParams.set("url", shareUrl);
 
-    u.searchParams.set("text", "I made a new Vess on @vess_id");
+    u.searchParams.set("text", isOwner ? "I made a new work credential on @vess_id !" : "The work credential on @vess_id ");
     u.searchParams.set("hashtags", "Vess,WorkCredential");
 
     return u.toString();
   };
+
+  const shareTwitter = () => {
+    window.open(makeTwitterURL(), "_blank")
+  }
 
   return (
     <div ref={ref} className="relative">
@@ -110,7 +106,7 @@ export const ShareButton: FC<Props> = ({ voxelID, valiant = "button" }) => {
       >
         <div className="flex items-center text-black hover:text-gray-500 relative">
           <LinkIcon className="mr-2 w-5 text-light-on-surface-variant dark:text-dark-on-surface-variant" />
-          <CopyToClipboard text={url} onCopy={handleOnCopy}>
+          <CopyToClipboard text={shareUrl} onCopy={handleOnCopy}>
             <button className="text-light-on-surface-variant dark:text-dark-on-surface-variant">
               Copy link
             </button>
@@ -126,15 +122,12 @@ export const ShareButton: FC<Props> = ({ voxelID, valiant = "button" }) => {
         </div>
         <div className="flex items-center mt-3 text-black hover:text-gray-500">
           <Twitter className="mr-2 w-5 text-light-on-surface-variant dark:text-dark-on-surface-variant" />
-          <Link href={makeTwitterURL()} passHref>
-            <a
-              target="_blank"
-              rel="noreferrer"
+          <button
+              onClick={() => shareTwitter()}
               className="text-light-on-surface-variant dark:text-dark-on-surface-variant"
             >
               Share on Twitter
-            </a>
-          </Link>
+            </button>
         </div>
       </div>
     </div>

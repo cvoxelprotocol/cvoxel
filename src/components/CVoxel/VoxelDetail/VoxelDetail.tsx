@@ -178,7 +178,7 @@ export const VoxelDetail: FC<Props> = ({
           </Canvas>
 
           <div className="absolute right-4 bottom-4">
-            <ShareButton valiant="icon" voxelID={item.id} />
+            <ShareButton valiant="icon" voxelID={item.id} isOwner={isOwner}/>
           </div>
         </div>
 
