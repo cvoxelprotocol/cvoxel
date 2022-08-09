@@ -33,8 +33,8 @@ const converter = {
   },
   fromFirestore(snapshot: QueryDocumentSnapshot): CVoxelMetaDraft {
     let data = snapshot.data();
-    if (data.deliberable) {
-      data.deliberables = DeliverableItemsFromStr(data.deliberable);
+    if (data.deliverable) {
+      data.deliverables = DeliverableItemsFromStr(data.deliverable);
     }
     if (!isValid(data)) {
       console.error(data);
