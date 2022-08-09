@@ -1,4 +1,4 @@
-import { FC, useCallback, useMemo } from "react";
+import { FC, RefObject, useCallback, useMemo } from "react";
 import { HomeTabsHeader } from "./HomeTabsHeader";
 import { useStateShowDrawer } from "@/recoilstate";
 import { Drawer } from "../common/Drawer";
@@ -8,10 +8,15 @@ import { NamePlate } from "@/components/common/NamePlate";
 import { useMyCeramicAcount } from "@/hooks/useCeramicAcount";
 import { useRouter } from "next/router";
 import LeftArrow from "@/components/CVoxel/NavBar/left-arrow.svg";
+import { Arrow } from "@/components/common/arrow/Arrow";
 
-export const HomeSPHeader: FC = () => {
+type Props = {
+  visualContainerRef: RefObject<HTMLDivElement>;
+};
+
+export const HomeSPHeader: FC<Props> = ({ visualContainerRef }) => {
   const [_, setOpen] = useStateShowDrawer();
-  const { tabState, setTabState } = useTab();
+  const { tabState } = useTab();
   const { did } = useMyCeramicAcount();
 
   const title = useMemo(() => {
@@ -39,6 +44,10 @@ export const HomeSPHeader: FC = () => {
     router.push(router.asPath.split("?")[0]);
   }, [router]);
 
+  const scrollToVisual = () => {
+    visualContainerRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
     <ul
       className={
@@ -59,7 +68,11 @@ export const HomeSPHeader: FC = () => {
       <li className="grow w-[60%] text-light-on-primary-container dark:text-dark-on-primary-container text-[1.375rem]">
         {title}
       </li>
-      <li className="w-[20%]"></li>
+      <li className="w-[20%]">
+        <button onClick={scrollToVisual}>
+          <Arrow size="sm" direction="up" />
+        </button>
+      </li>
       <Drawer>
         <div className="w-[250px]">
           <HomeTabsHeader />
