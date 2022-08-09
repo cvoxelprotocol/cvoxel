@@ -170,7 +170,7 @@ export const NamePlate: FC<Props> = ({
         </div>
       )}
       {!withoutIcon && (
-        <div className="mr-2">
+        <div className="md:mr-2">
           {!!displayProfile ? (
             <>
               {displayProfile.avatarSrc ? (

@@ -42,7 +42,7 @@ export const BaseLayout = ({ children }: Props) => {
           <div className="relative snap-y snap-mandatory h-screen overflow-auto">
             <Header />
             <CVoxelDetailBox />
-            <div className="mx-auto -m-[72px] px-4 w-full break-words">
+            <div className="mx-auto -m-[72px] md:px-4 w-full break-words">
               {children}
             </div>
 

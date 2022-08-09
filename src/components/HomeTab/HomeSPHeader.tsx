@@ -41,7 +41,9 @@ export const HomeSPHeader: FC = () => {
 
   return (
     <ul
-      className={"w-full grid items-center justify-around grid-cols-6 py-1"}
+      className={
+        "w-full items-center justify-around grid-cols-6 py-1 bg-light-surface-1 dark:bg-dark-surface-1 px-4 py-2 flex"
+      }
       role="tablist"
     >
       {isVoxelDetail || isSigRequestDetail ? (
@@ -49,15 +51,15 @@ export const HomeSPHeader: FC = () => {
           <LeftArrow className="w-6 h-6 text-light-on-surface-variant dark:text-dark-on-surface-variant" />
         </button>
       ) : (
-        <li className="col-span-1 flex" onClick={() => setOpen(true)}>
-          <NamePlate did={did} isMe iconOnly />
+        <li className="w-[20%] flex" onClick={() => setOpen(true)}>
+          <NamePlate did={did} isMe iconOnly hasBackgroundColor />
         </li>
       )}
 
-      <li className="grow col-span-4 text-primary text-2xl font-bold">
+      <li className="grow w-[60%] text-light-on-primary-container dark:text-dark-on-primary-container text-[1.375rem]">
         {title}
       </li>
-      <li className="col-span-1 "></li>
+      <li className="w-[20%]"></li>
       <Drawer>
         <div className="w-[250px]">
           <HomeTabsHeader />

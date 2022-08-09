@@ -19,7 +19,7 @@ export const TxTabs: FC = () => {
   return (
     <>
       <div className="w-full text-center border-b border-light-outline dark:border-dark-outline mx-6 h-20 flex flex-col justify-between items-start">
-        <div className="text-light-on-surface dark:text-dark-on-surface text-2xl font-medium px-2 py-1">
+        <div className="text-light-on-surface dark:text-dark-on-surface text-2xl font-medium px-2 py-1 hidden sm:block">
           Transactions
         </div>
         <ul className="w-full flex items-center space-x-4" role="txTablist">
