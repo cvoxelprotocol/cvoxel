@@ -153,9 +153,9 @@ export const CVoxelDetailBox: FC<{}> = () => {
         </div>
 
         <div className="px-8 py-6 space-y-3">
-          <div className="text-left w-full space-y-3 py-3 dark:border-b-dark-inverse-primary">
+          <div className="text-left w-full py-3 dark:border-b-dark-inverse-primary">
             {detailItem?.createdAt && (
-              <div className="text-light-on-surface dark:text-dark-on-surface text-sm">
+              <div className="text-light-on-surface dark:text-dark-on-surface text-base">
                 {convertTimestampToDateStr(detailItem.createdAt)}
               </div>
             )}
@@ -166,15 +166,17 @@ export const CVoxelDetailBox: FC<{}> = () => {
               </div>
             )}
 
-            <div className="flex">
+            <div className="flex mt-2">
               {detailItem?.genre ? (
-                <GenreBadge
-                  text={detailItem.genre}
-                  baseColor={
-                    getGenre(detailItem.genre)?.bgColor || "bg-[#b7b7b7]"
-                  }
-                  isSelected={true}
-                />
+                <div className="mr-2">
+                  <GenreBadge
+                    text={detailItem.genre}
+                    baseColor={
+                      getGenre(detailItem.genre)?.bgColor || "bg-[#b7b7b7]"
+                    }
+                    isSelected={true}
+                  />
+                </div>
               ) : (
                 <></>
               )}

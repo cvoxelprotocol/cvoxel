@@ -99,18 +99,20 @@ export const VoxelListItem: FC<Props> = ({ item }) => {
 
           <div className="flex">
             {detailItem?.genre ? (
-              <GenreBadge
-                text={detailItem.genre}
-                baseColor={
-                  getGenre(detailItem.genre)?.bgColor || "bg-[#b7b7b7]"
-                }
-                isSelected={true}
-              />
+              <div className="mr-2">
+                <GenreBadge
+                  text={detailItem.genre}
+                  baseColor={
+                    getGenre(detailItem.genre)?.bgColor || "bg-[#b7b7b7]"
+                  }
+                  isSelected={true}
+                />
+              </div>
             ) : (
               <></>
             )}
             {detailItem?.tags &&
-              detailItem.tags.map((tag) => {
+              detailItem?.tags.map((tag) => {
                 return <TagBadge key={tag} text={tag} />;
               })}
           </div>
@@ -176,6 +178,7 @@ export const VoxelListItem: FC<Props> = ({ item }) => {
 
           <div className="flex">
             {detailItem?.genre ? (
+              <div className="mr-2">
               <GenreBadge
                 text={detailItem.genre}
                 baseColor={
@@ -183,6 +186,7 @@ export const VoxelListItem: FC<Props> = ({ item }) => {
                 }
                 isSelected={true}
               />
+              </div>
             ) : (
               <></>
             )}
