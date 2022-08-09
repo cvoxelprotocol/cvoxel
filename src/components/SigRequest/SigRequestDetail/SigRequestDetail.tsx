@@ -230,7 +230,7 @@ export const SigRequestDetail: FC<Props> = ({
               <div className="text-lg font-medium">
                 {formatBigNumber(
                   offchainItem?.value,
-                  8,
+                  4,
                   offchainItem?.tokenDecimal.toString()
                 )}{" "}
                 {offchainItem.tokenSymbol || offchainItem.networkId}
@@ -254,7 +254,7 @@ export const SigRequestDetail: FC<Props> = ({
               Tx Hash
             </div>
             <div className="bg-light-surface dark:bg-dark-surface px-2 py-1 rounded-lg font-medium">
-              {shortenStr(offchainItem?.txHash, 30)}
+              {shortenStr(offchainItem?.txHash, 8)}
             </div>
           </div>
         )}
