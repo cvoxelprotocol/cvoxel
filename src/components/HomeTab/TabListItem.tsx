@@ -49,7 +49,7 @@ export const TabListItem: FC<TabListItemProps> = ({ type }) => {
     <li className="w-full ">
       <a
         className={clsx(
-          "text-light-on-surface-variant dark:text-dark-on-surface-variant text-base md:text-lg leading-normal flex items-center space-x-1 py-3 px-2",
+          "text-light-on-surface-variant dark:text-dark-on-surface-variant text-base md:text-lg leading-normal flex items-center space-x-1 py-3 my-1 px-2",
           tabState === type &&
             "bg-light-secondary-container dark:bg-dark-secondary-container rounded-full"
         )}
