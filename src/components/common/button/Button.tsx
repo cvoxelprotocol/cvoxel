@@ -47,7 +47,7 @@ export const Button: FC<Props> = ({
   /* Set button variant styles */
   if (variant == "contained") {
     buttonVariant =
-      "text-md text-light-surface dark:text-dark-surface font-sans font-normal rounded-full font-medium hover:opacity-20";
+      "sm:text-md text-light-surface dark:text-dark-surface font-sans font-normal rounded-full font-medium hover:opacity-20";
   }
 
   /* Merge those styles */
@@ -55,7 +55,7 @@ export const Button: FC<Props> = ({
 
   return (
     <button
-      className={clsx("w-fit h-fit px-6 py-3 rounded-full", buttonStyle)}
+      className={clsx("w-fit h-fit px-2 py-1.5 sm:px-6 sm:py-3 rounded-full ", buttonStyle)}
       onClick={onClick}
       type={buttonType}
     >

@@ -56,7 +56,7 @@ export const UserCVoxelContainer: FC<UserCVoxelContainerProps> = ({
             />
           </div>
         ) : did == "" ? (
-          <div className="mx-auto">
+          <div className="mx-auto min-h-screen">
             <NoItemPresenter text="Not searched yet" />
           </div>
         ) : (

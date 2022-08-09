@@ -107,7 +107,7 @@ export const ProfileContainer: FC<Props> = ({ did }) => {
             </div>
 
             <div className="sm:w-[700px] pt-12 mx-auto">
-              <div className="flex w-full space-x-4 pb-3 border-b border-light-outline dark:border-dark-outline">
+              <div className="flex items-center w-full space-x-4 pb-3 border-b border-light-outline dark:border-dark-outline">
                 {!!currentVoxelID && (
                   <button onClick={handleClickNavBackButton}>
                     <LeftArrow className="text-light-on-surface-variant dark:text-dark-on-surface-variant " />
@@ -134,12 +134,14 @@ export const ProfileContainer: FC<Props> = ({ did }) => {
                       text="Go To Mypage"
                       href={`/${myDid || account}`}
                       color="primary"
+                      className="text-xs sm:text-base"
                     />
                   ) : (
                     <Button
                       text="Connect Wallet"
                       onClick={() => connect()}
                       color="primary"
+                      className="text-xs sm:text-base"
                     />
                   )}
                 </div>
