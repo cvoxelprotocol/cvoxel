@@ -56,7 +56,7 @@ export function useDraftCVoxel() {
 
       const selfID = mySelfID || (await connectCeramic());
       if (selfID == null || selfID.did == null) {
-        lancError();
+        await connectCeramic();
         return false;
       }
       if (!cVoxelsRecord.isLoadable) {

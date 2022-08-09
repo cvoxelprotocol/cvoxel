@@ -1,6 +1,6 @@
 import toast from "react-hot-toast";
 
-const defaultErrorMessage = "Something went wrong.";
+const defaultErrorMessage = "Something went wrong. Please try again.";
 
 const displayError = (error?: any) => {
   if (!error) return defaultErrorMessage;
