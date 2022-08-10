@@ -25,16 +25,25 @@ export const HomeContainer: FC = () => {
       >
         <CVoxelsContainer did={did} content={CVoxelsRecords.content}>
           <div className="absolute bottom-0 pb-12">
-            <div className="relative mx-auto cursor-pointer">
+            <div className="relative mx-auto cursor-pointer hidden sm:block">
               <button onClick={() => scrollToInfo()}>
                 <Arrow size="lg" direction="down" />
+              </button>
+            </div>
+
+            <div className="relative mx-auto cursor-pointer sm:hidden">
+              <button onClick={() => scrollToInfo()}>
+                <Arrow size="sm" direction="down" />
               </button>
             </div>
           </div>
         </CVoxelsContainer>
       </div>
       <div className="snap-start snap-always pt-12" ref={myPageContainerRef}>
-        <MyPageContainer scrollToVisual={() => scrollToVisual()} />
+        <MyPageContainer
+          scrollToVisual={() => scrollToVisual()}
+          visualContainerRef={visualContainerRef}
+        />
       </div>
     </main>
   );

@@ -39,7 +39,7 @@ export const ProfileContainer: FC<Props> = ({ did }) => {
     visualContainerRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const { account, connectWalletOnly, did:myDid } = useMyCeramicAcount();
+  const { account, connectWalletOnly, did: myDid } = useMyCeramicAcount();
 
   const handleSearch = (data: SearchData) => {
     if (!data.value) return;
@@ -83,9 +83,15 @@ export const ProfileContainer: FC<Props> = ({ did }) => {
           onClearUser={handleClearUser}
         >
           <div className="absolute bottom-0 pb-12">
-            <div className="relative mx-auto cursor-pointer">
+            <div className="relative mx-auto cursor-pointer hidden sm:block">
               <button onClick={() => scrollToInfo()}>
                 <Arrow size="lg" direction="down" />
+              </button>
+            </div>
+
+            <div className="relative mx-auto cursor-pointer sm:hidden">
+              <button onClick={() => scrollToInfo()}>
+                <Arrow size="sm" direction="down" />
               </button>
             </div>
           </div>

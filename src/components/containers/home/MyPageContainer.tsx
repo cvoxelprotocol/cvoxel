@@ -3,7 +3,7 @@ import { HomeTabsHeader } from "@/components/HomeTab/HomeTabsHeader";
 import { MyCVoxelContainer } from "@/components/containers/home/tabs/MyCVoxelContainer";
 import { useTab } from "@/hooks/useTab";
 import { CVoxels } from "@/interfaces";
-import { FC } from "react";
+import { FC, RefObject } from "react";
 import { MyTxContainer } from "./tabs/MyTxContainer";
 import { MyNotificationContainer } from "./tabs/MyNotificationContainer";
 import { Arrow } from "@/components/common/arrow/Arrow";
@@ -11,15 +11,20 @@ import { Arrow } from "@/components/common/arrow/Arrow";
 type props = {
   content?: CVoxels | null;
   scrollToVisual: () => void;
+  visualContainerRef: RefObject<HTMLDivElement>;
 };
-export const MyPageContainer: FC<props> = ({ content, scrollToVisual }) => {
+export const MyPageContainer: FC<props> = ({
+  content,
+  scrollToVisual,
+  visualContainerRef,
+}) => {
   const { tabState } = useTab();
 
   return (
     <div className="relative w-full max-w-5xl min-h-screen lg:min-h-max mx-auto">
       <div className="sm:flex sm:grid-cols-2">
         <div className="sm:hidden w-full">
-          <HomeSPHeader />
+          <HomeSPHeader visualContainerRef={visualContainerRef} />
         </div>
         <div className="hidden sm:block md:w-[280px] col-span-1">
           <HomeTabsHeader />
