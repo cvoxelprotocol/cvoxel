@@ -17,12 +17,15 @@ export const TxTabs: FC = () => {
   };
 
   return (
-    <>
-      <div className="w-full text-center border-b border-light-outline dark:border-dark-outline mx-6 h-20 flex flex-col justify-between items-start">
-        <div className="text-light-on-surface dark:text-dark-on-surface text-2xl font-medium px-2 py-1">
+    <div className="px-4 sm:px-0">
+      <div className="w-full text-center border-b border-light-outline dark:border-dark-outline sm:mx-6 sm:h-20 flex flex-col justify-between items-start">
+        <div className="text-light-on-surface dark:text-dark-on-surface text-2xl font-medium py-1 hidden sm:block">
           Transactions
         </div>
-        <ul className="w-full flex items-center space-x-4" role="txTablist">
+        <ul
+          className="w-full flex items-center space-x-4 pt-4 sm:pt-0"
+          role="txTablist"
+        >
           <li className="">
             <a
               className={clsx(
@@ -57,6 +60,6 @@ export const TxTabs: FC = () => {
           </li>
         </ul>
       </div>
-    </>
+    </div>
   );
 };
