@@ -114,7 +114,7 @@ export const SigRequestDetail: FC<Props> = ({
           </div>
         </div>
 
-        <div className="text-left w-full space-y-3 mx-3 sm:mx-8 py-3 lg:py-8 lg:border-b-2 border-b-light-inverse-primary dark:border-b-dark-inverse-primary">
+        <div className="text-left w-full mx-3 sm:mx-8 py-3 lg:py-8 lg:border-b-2 border-b-light-inverse-primary dark:border-b-dark-inverse-primary">
           {offchainItem?.createdAt && (
             <div className="text-light-on-surface dark:text-dark-on-surface text-sm">
               {convertTimestampToDateStr(offchainItem.createdAt)}
@@ -127,15 +127,17 @@ export const SigRequestDetail: FC<Props> = ({
             </div>
           )}
 
-          <div className="flex">
+          <div className="flex mt-2">
             {offchainItem?.genre ? (
-              <GenreBadge
-                text={offchainItem.genre}
-                baseColor={
-                  getGenre(offchainItem.genre)?.bgColor || "bg-[#b7b7b7]"
-                }
-                isSelected={true}
-              />
+              <div className="mr-2">
+                <GenreBadge
+                  text={offchainItem.genre}
+                  baseColor={
+                    getGenre(offchainItem.genre)?.bgColor || "bg-[#b7b7b7]"
+                  }
+                  isSelected={true}
+                />
+              </div>
             ) : (
               <></>
             )}
@@ -230,7 +232,7 @@ export const SigRequestDetail: FC<Props> = ({
               <div className="text-lg font-medium">
                 {formatBigNumber(
                   offchainItem?.value,
-                  8,
+                  4,
                   offchainItem?.tokenDecimal.toString()
                 )}{" "}
                 {offchainItem.tokenSymbol || offchainItem.networkId}
@@ -254,7 +256,7 @@ export const SigRequestDetail: FC<Props> = ({
               Tx Hash
             </div>
             <div className="bg-light-surface dark:bg-dark-surface px-2 py-1 rounded-lg font-medium">
-              {shortenStr(offchainItem?.txHash, 30)}
+              {shortenStr(offchainItem?.txHash, 8)}
             </div>
           </div>
         )}

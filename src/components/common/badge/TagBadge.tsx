@@ -5,7 +5,7 @@ type TagBadgeProps = {
 };
 export const TagBadge: FC<TagBadgeProps> = ({ text }) => {
   return (
-    <span className="inline-flex items-center justify-center px-2 py-0.5 my-0.5 mx-[3px] text-xs leading-none rounded-full text-light-on-primary-container dark:text-dark-on-primary-container bg-light-primary-container dark:bg-dark-primary-container font-medium">
+    <span className="inline-flex items-center justify-center px-3 py-1 my-0.5 mx-[4px] text-sm leading-none rounded-full text-light-on-primary-container dark:text-dark-on-primary-container bg-light-primary-container dark:bg-dark-primary-container font-medium">
       {text}
     </span>
   );

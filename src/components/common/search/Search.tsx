@@ -32,11 +32,11 @@ export const Search: FC<SearchProps> = ({
       className="w-full flex justify-center items-center relative"
       onSubmit={handleSubmit(onSubmit)}
     >
-      <button className="items-center absolute top-4 left-4" type="submit">
-        <SearchIcon className="w-4 h-4 ml-2 text-light-on-surface-variant dark:text-dark-on-surface-variant" />
+      <button className="items-center absolute top-3 left-2 sm:top-4 sm:left-4" type="submit">
+        <SearchIcon className="w-4 h-4 sm:ml-2 text-light-on-surface-variant dark:text-dark-on-surface-variant" />
       </button>
       <input
-        className="w-full my-1 py-2 pr-6 sm:pl-12 pl-8 border rounded-full text-sm md:text-sm hover:outline-secondary focus:outline-secondary bg-light-surface-variant dark:bg-dark-surface-variant placeholder:text-light-on-surface-variant dark:placeholder:text-dark-on-surface-variant"
+        className="w-full my-1 py-2 pr-0 sm:pr-6 sm:pl-12 pl-7 border rounded-full text-xs md:text-sm hover:outline-secondary focus:outline-secondary bg-light-surface-variant dark:bg-dark-surface-variant placeholder:text-light-on-surface-variant dark:placeholder:text-dark-on-surface-variant"
         placeholder={placeholder}
         type="search"
         {...register("value", {

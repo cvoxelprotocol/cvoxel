@@ -106,10 +106,10 @@ export const TransactionItem: FC<TransactionItemProps> = ({
             target="_blank"
             rel="noreferrer"
           >
-            <div className="flex px-2 py-0.5">
+            <div className="flex items-center px-2 py-0.5 text-light-on-surface-variant dark:text-dark-on-surface-variant">
               <div>Explorer</div>
               <FontAwesomeIcon
-                className="w-4 h-4 ml-1 text-gray-400 hover:text-gray-300"
+                className="w-4 h-4 ml-1"
                 icon={faExternalLink}
               />
             </div>

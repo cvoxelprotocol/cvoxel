@@ -117,6 +117,7 @@ export const SigRequestListItem: FC<Props> = ({ offchainItem }) => {
 
           <div className="flex">
             {offchainItem?.genre ? (
+              <div className="mr-2">
               <GenreBadge
                 text={offchainItem.genre}
                 baseColor={
@@ -124,6 +125,7 @@ export const SigRequestListItem: FC<Props> = ({ offchainItem }) => {
                 }
                 isSelected={true}
               />
+              </div>
             ) : (
               <></>
             )}
@@ -210,6 +212,7 @@ export const SigRequestListItem: FC<Props> = ({ offchainItem }) => {
 
           <div className="flex">
             {offchainItem?.genre ? (
+              <div className="mr-2">
               <GenreBadge
                 text={offchainItem.genre}
                 baseColor={
@@ -217,6 +220,7 @@ export const SigRequestListItem: FC<Props> = ({ offchainItem }) => {
                 }
                 isSelected={true}
               />
+              </div>
             ) : (
               <></>
             )}

@@ -182,9 +182,9 @@ export const VoxelDetail: FC<Props> = ({
           </div>
         </div>
 
-        <div className="text-left w-full space-y-3 mx-3 sm:mx-8 py-3 lg:py-8 lg:border-b-2 border-b-light-inverse-primary dark:border-b-dark-inverse-primary">
+        <div className="text-left w-full mx-3 sm:mx-8 py-3 lg:py-8 lg:border-b-2 border-b-light-inverse-primary dark:border-b-dark-inverse-primary">
           {detailItem?.createdAt && (
-            <div className="text-light-on-surface dark:text-dark-on-surface text-sm">
+            <div className="text-light-on-surface dark:text-dark-on-surface text-base">
               {convertTimestampToDateStr(detailItem.createdAt)}
             </div>
           )}
@@ -195,20 +195,22 @@ export const VoxelDetail: FC<Props> = ({
             </div>
           )}
 
-          <div className="flex">
+          <div className="flex mt-2">
             {detailItem?.genre ? (
-              <GenreBadge
-                text={detailItem.genre}
-                baseColor={
-                  getGenre(detailItem.genre)?.bgColor || "bg-[#b7b7b7]"
-                }
-                isSelected={true}
-              />
+              <div className="mr-2">
+                <GenreBadge
+                  text={detailItem.genre}
+                  baseColor={
+                    getGenre(detailItem.genre)?.bgColor || "bg-[#b7b7b7]"
+                  }
+                  isSelected={true}
+                />
+              </div>
             ) : (
               <></>
             )}
             {detailItem?.tags &&
-              detailItem.tags.map((tag) => {
+              detailItem?.tags.map((tag) => {
                 return <TagBadge key={tag} text={tag} />;
               })}
           </div>
