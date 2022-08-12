@@ -39,7 +39,7 @@ export const ProfileContainer: FC<Props> = ({ did }) => {
     visualContainerRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const { account, connectWalletOnly, did: myDid } = useMyCeramicAcount();
+  const { account, connectWallet, did: myDid } = useMyCeramicAcount();
 
   const handleSearch = (data: SearchData) => {
     if (!data.value) return;
@@ -49,7 +49,7 @@ export const ProfileContainer: FC<Props> = ({ did }) => {
 
   const connect = async () => {
     try {
-      await connectWalletOnly();
+      await connectWallet();
     } catch (error) {
       console.log("error:", error);
     }

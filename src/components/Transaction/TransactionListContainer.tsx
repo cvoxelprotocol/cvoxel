@@ -29,7 +29,7 @@ export const TransactionListContainer: FC<TransactionListContainerProps> = ({
   offchainMetaList,
 }) => {
   const { connection, did, account } = useMyCeramicAcount();
-  const CVoxelsRecords = useCVoxelsRecord(did);
+  const CVoxelsRecords = useCVoxelsRecord(did || "");
   const [selectedTx, selectTx] = useStateSelectedTx();
   const { setTabState } = useTab();
   const draft = useDraftCVoxel();
@@ -168,7 +168,7 @@ export const TransactionListContainer: FC<TransactionListContainerProps> = ({
                       connectionState={connection}
                       onClaim={publishFromExistedCVoxel}
                       reClaim={reClaimCVoxel}
-                      cvoxels={CVoxelsRecords.content?.WorkCredentials}
+                      cvoxels={CVoxelsRecords.content?.WorkCredentials || []}
                     />
                   ) : (
                     <div key={`${tx.hash}_form_container`} className="mb-4">
@@ -195,7 +195,7 @@ export const TransactionListContainer: FC<TransactionListContainerProps> = ({
       txList,
       account,
       selectedOffchainItem,
-      connection.status,
+      connection,
       selectedTx,
       connection,
       CVoxelsRecords.content?.WorkCredentials,

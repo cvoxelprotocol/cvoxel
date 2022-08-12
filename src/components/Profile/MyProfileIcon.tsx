@@ -10,7 +10,7 @@ type MyProfileCardProps = {
 export const MyProfileIcon: FC<MyProfileCardProps> = ({ handleClick }) => {
   const { connection, did, avator } = useMyCeramicAcount();
 
-  if (connection.status === "connecting") {
+  if (connection?.status === "connecting") {
     return (
       <div className="w-fit h-fit">
         <CommonSpinner />

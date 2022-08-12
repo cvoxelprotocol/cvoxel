@@ -1,4 +1,4 @@
-import { isCAIP10string, isDIDstring } from "@self.id/framework";
+import { isDIDstring } from "@self.id/framework";
 import type { GetServerSideProps } from "next";
 import { isEthereumAddress } from "@/utils/ceramicUtils";
 import { ETH_CHAIN_ID } from "@/constants/common";
@@ -32,29 +32,9 @@ export const getServerSideProps: GetServerSideProps<
   } else if (isEthereumAddress(did)) {
     // If an Ethereum address is provided, redirect to CAIP-10 URL
     return {
-      redirect: { destination: `/${ETH_CHAIN_ID}${did}`, permanent: false },
+      redirect: { destination: `/did:pkh:${ETH_CHAIN_ID}${did}`, permanent: false },
     };
-  } else if (isCAIP10string(did)) {
-    try {
-      const linkedDid = await core.getAccountDID(did);
-      if (linkedDid != null) {
-        return {
-          redirect: { destination: `/${linkedDid}`, permanent: false },
-        };
-      } else {
-        support = "unlinked";
-        return {
-          props: { did, state: await getRequestState(ctx), support },
-        };
-      }
-    } catch (err) {
-      // Ignore error trying to get DID from CAIP-10
-      support = "unlinked";
-      return {
-        props: { did, state: await getRequestState(ctx), support },
-      };
-    }
-  }
+  } 
   return {
     props: { did, state: await getRequestState(ctx), support },
   };
@@ -67,7 +47,7 @@ const ProfilePage: NextPage<CeramicProps> = (props: CeramicProps) => {
     return (
       <>
         {(myDID && myDID === props.did) ||
-        (account && `${account}${ETH_CHAIN_ID}` === props.did) ? (
+        (account && `/did:pkh:${ETH_CHAIN_ID}${account}` === props.did) ? (
           <HomeContainer />
         ) : (
           <ProfileContainer {...props} />

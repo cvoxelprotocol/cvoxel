@@ -15,6 +15,7 @@ import { useViewerRecord } from "@self.id/framework";
 import { extractCVoxel } from "@/utils/cVoxelUtil";
 import { convertDateToTimestampStr } from "@/utils/dateUtil";
 import { useMyCeramicAcount } from "./useCeramicAcount";
+import { useStateMySelfID } from "@/recoilstate/ceramic";
 
 export function useSigRequest() {
   const cVoxelsRecord = useViewerRecord<ModelTypes, "workCredentials">(
@@ -23,14 +24,15 @@ export function useSigRequest() {
   const { showLoading, closeLoading } = useModal();
   const cVoxelService = getCVoxelService();
   const { lancInfo, lancError } = useToast();
-  const { connectCeramic, mySelfID, account } = useMyCeramicAcount();
+  const { connectWallet, account } = useMyCeramicAcount();
+  const [mySelfID, _] = useStateMySelfID();
 
   const verifyWithCeramic = async (tx: CVoxelMetaDraft) => {
     if (!account) {
       lancError();
       return false;
     }
-    const selfID = mySelfID || (await connectCeramic());
+    const selfID = mySelfID || (await connectWallet());
     if (selfID == null || selfID.did == null) {
       lancError("Please retry again");
       return false;

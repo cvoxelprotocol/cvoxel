@@ -18,7 +18,7 @@ import { Button } from "@/components/common/button/Button";
 export const MyCVoxelContainer: FC = () => {
   const { did, account } = useMyCeramicAcount();
   const { offchainMetaList, txLoading } = useCVoxelList();
-  const CVoxelsRecords = useCVoxelsRecord(did);
+  const CVoxelsRecords = useCVoxelsRecord(did || "");
   const { setTabState } = useTab();
 
   // TODO: This is temporary solution because of useTileDoc bug

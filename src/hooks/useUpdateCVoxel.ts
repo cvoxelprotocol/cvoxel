@@ -3,6 +3,7 @@ import {
   CVOXEL_UPDATE_SUCCEED,
 } from "@/constants/toastMessage";
 import { CVoxel } from "@/interfaces";
+import { useStateMySelfID } from "@/recoilstate/ceramic";
 import { convertDateToTimestampStr } from "@/utils/dateUtil";
 import { useMyCeramicAcount } from "./useCeramicAcount";
 import { useCVoxelRecord } from "./useCVoxel";
@@ -13,11 +14,12 @@ export const useUpdateCVoxel = (id: string) => {
   const cVoxelItem = useCVoxelRecord(id);
   const { showLoading, closeLoading } = useModal();
   const { lancInfo, lancError } = useToast();
-  const { connectCeramic, mySelfID } = useMyCeramicAcount();
+  const { connectWallet } = useMyCeramicAcount();
+  const [mySelfID, _] = useStateMySelfID();
 
   const update = async (newItem: CVoxel) => {
     try {
-      const selfID = mySelfID || (await connectCeramic());
+      const selfID = mySelfID || (await connectWallet());
       if (selfID == null) {
         lancError();
         return false;

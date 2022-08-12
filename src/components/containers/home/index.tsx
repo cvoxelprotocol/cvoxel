@@ -7,7 +7,7 @@ import { Arrow } from "@/components/common/arrow/Arrow";
 
 export const HomeContainer: FC = () => {
   const { did } = useMyCeramicAcount();
-  const CVoxelsRecords = useCVoxelsRecord(did);
+  const CVoxelsRecords = useCVoxelsRecord(did || "");
   const myPageContainerRef = useRef<HTMLDivElement>(null);
   const visualContainerRef = useRef<HTMLDivElement>(null);
   const scrollToInfo = () => {
@@ -23,7 +23,7 @@ export const HomeContainer: FC = () => {
         className="relative snap-start snap-always min-h-screen"
         ref={visualContainerRef}
       >
-        <CVoxelsContainer did={did} content={CVoxelsRecords.content}>
+        <CVoxelsContainer did={did || ""} content={CVoxelsRecords.content}>
           <div className="absolute bottom-0 pb-12">
             <div className="relative mx-auto cursor-pointer hidden sm:block">
               <button onClick={() => scrollToInfo()}>

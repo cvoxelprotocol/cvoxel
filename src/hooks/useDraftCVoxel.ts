@@ -23,9 +23,11 @@ import { useMyCeramicAcount } from "./useCeramicAcount";
 import { useStateIssueStatus } from "@/recoilstate/cvoxel";
 import { useCVoxelToast } from "@/hooks/useCVoxelToast";
 import { useVoxStyler } from "@/hooks/useVoxStyler";
+import { useStateMySelfID } from "@/recoilstate/ceramic";
 
 export function useDraftCVoxel() {
-  const { connectCeramic, mySelfID } = useMyCeramicAcount();
+  const { connectWallet } = useMyCeramicAcount();
+  const [mySelfID, _] = useStateMySelfID();
   const cVoxelsRecord = useViewerRecord<ModelTypes, "workCredentials">(
     "workCredentials"
   );
@@ -54,9 +56,9 @@ export function useDraftCVoxel() {
         return false;
       }
 
-      const selfID = mySelfID || (await connectCeramic());
+      const selfID = mySelfID || (await connectWallet());
       if (selfID == null || selfID.did == null) {
-        await connectCeramic();
+        await connectWallet();
         return false;
       }
       if (!cVoxelsRecord.isLoadable) {
@@ -154,7 +156,7 @@ export function useDraftCVoxel() {
     },
     [
       mySelfID,
-      connectCeramic,
+      connectWallet,
       cVoxelsRecord,
       isLoading,
       cVoxelsRecord.isLoadable,
@@ -177,7 +179,7 @@ export function useDraftCVoxel() {
         return false;
       }
 
-      const selfID = mySelfID || (await connectCeramic());
+      const selfID = mySelfID || (await connectWallet());
       if (selfID == null || selfID.did == null) {
         lancError();
         return false;
@@ -241,7 +243,7 @@ export function useDraftCVoxel() {
     },
     [
       mySelfID,
-      connectCeramic,
+      connectWallet,
       cVoxelsRecord,
       isLoading,
       cVoxelsRecord.isLoadable,
