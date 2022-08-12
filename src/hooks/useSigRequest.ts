@@ -14,8 +14,10 @@ import { useToast } from "./useToast";
 import { useViewerRecord } from "@self.id/framework";
 import { extractCVoxel } from "@/utils/cVoxelUtil";
 import { convertDateToTimestampStr } from "@/utils/dateUtil";
-import { useMyCeramicAcount } from "./useCeramicAcount";
 import { useStateMySelfID } from "@/recoilstate/ceramic";
+import { useContext } from "react";
+import { DIDContext } from "@/context/DIDContext";
+import { useWalletAccount } from "./useWalletAccount";
 
 export function useSigRequest() {
   const cVoxelsRecord = useViewerRecord<ModelTypes, "workCredentials">(
@@ -24,7 +26,8 @@ export function useSigRequest() {
   const { showLoading, closeLoading } = useModal();
   const cVoxelService = getCVoxelService();
   const { lancInfo, lancError } = useToast();
-  const { connectWallet, account } = useMyCeramicAcount();
+  const { connectWallet } = useWalletAccount();
+  const { account } = useContext(DIDContext);
   const [mySelfID, _] = useStateMySelfID();
 
   const verifyWithCeramic = async (tx: CVoxelMetaDraft) => {
@@ -32,8 +35,8 @@ export function useSigRequest() {
       lancError();
       return false;
     }
-    const selfID = mySelfID || (await connectWallet());
-    if (selfID == null || selfID.did == null) {
+    if (mySelfID == null || mySelfID.did == null) {
+      await connectWallet();
       lancError("Please retry again");
       return false;
     }
@@ -48,9 +51,12 @@ export function useSigRequest() {
       const meta = await verifyCVoxel(tx, account);
       console.log({ meta });
       if (meta) {
-        const doc = await selfID.client.dataModel.createTile("WorkCredential", {
-          ...meta,
-        });
+        const doc = await mySelfID.client.dataModel.createTile(
+          "WorkCredential",
+          {
+            ...meta,
+          }
+        );
         const cVoxels = cVoxelsRecord.content?.WorkCredentials ?? [];
         const docUrl = doc.id.toUrl();
         await cVoxelsRecord.set({

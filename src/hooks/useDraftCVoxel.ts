@@ -19,14 +19,14 @@ import {
 import { extractCVoxel } from "@/utils/cVoxelUtil";
 import { getNetworkSymbol } from "@/utils/networkUtil";
 import { convertDateToTimestampStr } from "@/utils/dateUtil";
-import { useMyCeramicAcount } from "./useCeramicAcount";
 import { useStateIssueStatus } from "@/recoilstate/cvoxel";
 import { useCVoxelToast } from "@/hooks/useCVoxelToast";
 import { useVoxStyler } from "@/hooks/useVoxStyler";
 import { useStateMySelfID } from "@/recoilstate/ceramic";
+import { useWalletAccount } from "./useWalletAccount";
 
 export function useDraftCVoxel() {
-  const { connectWallet } = useMyCeramicAcount();
+  const { connectWallet } = useWalletAccount();
   const [mySelfID, _] = useStateMySelfID();
   const cVoxelsRecord = useViewerRecord<ModelTypes, "workCredentials">(
     "workCredentials"
@@ -56,8 +56,7 @@ export function useDraftCVoxel() {
         return false;
       }
 
-      const selfID = mySelfID || (await connectWallet());
-      if (selfID == null || selfID.did == null) {
+      if (mySelfID == null || mySelfID.did == null) {
         await connectWallet();
         return false;
       }
@@ -107,9 +106,12 @@ export function useDraftCVoxel() {
           fiatSymbol: "USD",
         };
 
-        const doc = await selfID.client.dataModel.createTile("WorkCredential", {
-          ...metaWithFiat,
-        });
+        const doc = await mySelfID.client.dataModel.createTile(
+          "WorkCredential",
+          {
+            ...metaWithFiat,
+          }
+        );
         const cVoxels = cVoxelsRecord.content?.WorkCredentials ?? [];
         const docUrl = doc.id.toUrl();
         await cVoxelsRecord.set({
@@ -179,8 +181,8 @@ export function useDraftCVoxel() {
         return false;
       }
 
-      const selfID = mySelfID || (await connectWallet());
-      if (selfID == null || selfID.did == null) {
+      if (mySelfID == null || mySelfID.did == null) {
+        await connectWallet();
         lancError();
         return false;
       }
@@ -208,9 +210,12 @@ export function useDraftCVoxel() {
 
         await createDraftWighVerify(address.toLowerCase(), draft);
 
-        const doc = await selfID.client.dataModel.createTile("WorkCredential", {
-          ...meta,
-        });
+        const doc = await mySelfID.client.dataModel.createTile(
+          "WorkCredential",
+          {
+            ...meta,
+          }
+        );
         const cVoxels = cVoxelsRecord.content?.WorkCredentials ?? [];
         const docUrl = doc.id.toUrl();
         await cVoxelsRecord.set({

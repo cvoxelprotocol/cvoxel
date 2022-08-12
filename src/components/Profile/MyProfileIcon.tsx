@@ -1,14 +1,16 @@
-import { FC } from "react";
+import { FC, useContext } from "react";
 import { AvatarPlaceholder } from "@/components/common/avatar/AvatarPlaceholder";
 import { useMyCeramicAcount } from "@/hooks/useCeramicAcount";
 import { CommonSpinner } from "../common/CommonSpinner";
 import { IconAvatar } from "../common/IconAvatar";
+import { DIDContext } from "@/context/DIDContext";
 
 type MyProfileCardProps = {
   handleClick?: () => void;
 };
 export const MyProfileIcon: FC<MyProfileCardProps> = ({ handleClick }) => {
-  const { connection, did, avator } = useMyCeramicAcount();
+  const { avator } = useMyCeramicAcount();
+  const {did, connection} = useContext(DIDContext)
 
   if (connection?.status === "connecting") {
     return (

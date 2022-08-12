@@ -1,8 +1,7 @@
 import { useTab } from "@/hooks/useTab";
-import { FC, useCallback, useMemo } from "react";
+import { FC, useCallback, useContext, useMemo } from "react";
 import { NoItemPresenter } from "../../../common/NoItemPresenter";
 import type { CVoxelMetaDraft } from "@/interfaces";
-import { useMyCeramicAcount } from "@/hooks/useCeramicAcount";
 import { useCVoxelList } from "@/hooks/useCVoxelList";
 import { useSigRequest } from "@/hooks/useSigRequest";
 import { SigRequestListItem } from "@/components/SigRequest/SigRequestListItem/SigRequestListItem";
@@ -10,9 +9,10 @@ import { useRouter } from "next/router";
 import { NavBar } from "@/components/SigRequest/NavBar/NavBar";
 import { SigRequestDetail } from "@/components/SigRequest/SigRequestDetail/SigRequestDetail";
 import { useStateForceUpdate } from "@/recoilstate";
+import { DIDContext } from "@/context/DIDContext";
 
 export const MyNotificationContainer: FC = () => {
-  const { did, account } = useMyCeramicAcount();
+  const {did, account} = useContext(DIDContext)
   const { offchainMetaList } = useCVoxelList();
   const { setTabState } = useTab();
   const { verifyWithCeramic, verifyWithoutCeramic } = useSigRequest();

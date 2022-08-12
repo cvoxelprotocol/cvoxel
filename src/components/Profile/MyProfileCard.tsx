@@ -1,13 +1,15 @@
-import { FC, useMemo } from "react";
+import { FC, useContext, useMemo } from "react";
 import { DisplayAvatar } from "../common/DisplayAvatar";
 import { formatDID } from "@self.id/framework";
 import { useMyCeramicAcount } from "@/hooks/useCeramicAcount";
+import { DIDContext } from "@/context/DIDContext";
 
 type MyProfileCardProps = {
   handleClick?: () => void;
 };
 export const MyProfileCard: FC<MyProfileCardProps> = ({ handleClick }) => {
-  const { connection, account, did, name, avator } = useMyCeramicAcount();
+  const { name, avator } = useMyCeramicAcount();
+  const {did, account, connection} = useContext(DIDContext)
   const getLabel = useMemo(() => {
     if (name && name !== "") return name;
     if (did) return formatDID(did, 12);

@@ -5,11 +5,11 @@ import { ETH_CHAIN_ID } from "@/constants/common";
 import { getRequestState } from "@/lib/ceramic/server";
 import { CeramicProps, CeramicSupport } from "@/interfaces/ceramic";
 import { NextPage } from "next";
-import { useMyCeramicAcount } from "@/hooks/useCeramicAcount";
 import { HomeContainer } from "@/components/containers/home";
 import { ProfileContainer } from "@/components/containers/profile/ProfileContainer";
 import { NoProfileContainer } from "@/components/containers/profile/NoProfileContainer";
-import { core } from "@/lib/ceramic/server";
+import { useContext } from "react";
+import { DIDContext } from "@/context/DIDContext";
 
 export const getServerSideProps: GetServerSideProps<
   CeramicProps,
@@ -41,7 +41,7 @@ export const getServerSideProps: GetServerSideProps<
 };
 
 const ProfilePage: NextPage<CeramicProps> = (props: CeramicProps) => {
-  const { did: myDID, account } = useMyCeramicAcount();
+  const {did: myDID, account} = useContext(DIDContext)
 
   if (props.support === "supported") {
     return (

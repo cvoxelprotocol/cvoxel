@@ -77,23 +77,6 @@ export const getCVoxelSignature = async (
   return { signature, hash };
 };
 
-export const _validateContractSignature = async (
-  signedData: string,
-  hashMessage: string,
-  provider: Web3Provider,
-  address: string
-) => {
-  try {
-    const contractABI = [
-      "function isValidSignature(bytes32 _message, bytes _signature) public view returns (bool)",
-    ];
-    const wallet = new ethers.Contract(address, contractABI, provider);
-    return await wallet.isValidSignature(hashMessage, signedData);
-  } catch (error) {
-    console.error("_validateContractSignature", error);
-  }
-};
-
 export const getMessageForSignature = (
   txHash: string,
   txAddress: string,

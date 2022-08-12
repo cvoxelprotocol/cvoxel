@@ -8,8 +8,8 @@ import type {
   CVoxels,
 } from "@/interfaces/cVoxelType";
 import { TileDoc, useTileDoc } from "./useTileDoc";
-import { useMyCeramicAcount } from "./useCeramicAcount";
 import { useStateMySelfID } from "@/recoilstate/ceramic";
+import { useWalletAccount } from "./useWalletAccount";
 
 export function useCVoxelsRecord(did: string): PublicRecord<CVoxels | null> {
   return usePublicRecord<ModelTypes, "workCredentials">("workCredentials", did);
@@ -20,7 +20,7 @@ export function useCVoxelRecord(id?: string): TileDoc<CVoxel> {
 }
 
 export function useCVoxel(did: string, id: string) {
-  const { connectWallet } = useMyCeramicAcount();
+  const { connectWallet } = useWalletAccount();
   const [mySelfID, _] = useStateMySelfID();
   const cVoxelsRecord = useCVoxelsRecord(did);
   const cVoxelDoc = useTileDoc<CVoxel>(id);
@@ -65,8 +65,7 @@ export function useCVoxel(did: string, id: string) {
     setEditionState({ status: "loading" });
 
     try {
-      const selfID = mySelfID || (await connectWallet());
-      if (selfID == null) {
+      if (mySelfID == null) {
         setEditionState({ status: "pending" });
         return false;
       }

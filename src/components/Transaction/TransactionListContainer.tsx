@@ -1,4 +1,4 @@
-import { FC, useCallback, useMemo } from "react";
+import { FC, useCallback, useContext, useMemo } from "react";
 import { CommonLoading } from "../common/CommonLoading";
 import { NoItemPresenter } from "../common/NoItemPresenter";
 import { TransactionDetail } from "./TransactionDetail";
@@ -12,11 +12,11 @@ import type {
   WorkCredentialForm,
 } from "@/interfaces";
 import { useCVoxelsRecord } from "@/hooks/useCVoxel";
-import { useMyCeramicAcount } from "@/hooks/useCeramicAcount";
 import { useDraftCVoxel } from "@/hooks/useDraftCVoxel";
 import { useFileUpload } from "@/hooks/useFileUpload";
 import { useStateForceUpdate, useStateSelectedTx } from "@/recoilstate";
 import { useThemeMode } from "@/hooks/useThemeMode";
+import { DIDContext } from "@/context/DIDContext";
 
 type TransactionListContainerProps = {
   txList: TransactionLogWithChainId[];
@@ -28,7 +28,7 @@ export const TransactionListContainer: FC<TransactionListContainerProps> = ({
   offchainLoading,
   offchainMetaList,
 }) => {
-  const { connection, did, account } = useMyCeramicAcount();
+  const {did, account, connection} = useContext(DIDContext)
   const CVoxelsRecords = useCVoxelsRecord(did || "");
   const [selectedTx, selectTx] = useStateSelectedTx();
   const { setTabState } = useTab();
@@ -127,6 +127,7 @@ export const TransactionListContainer: FC<TransactionListContainerProps> = ({
     if (result) {
       selectTx(null);
       setTabState("cvoxels");
+      setForceUpdateCVoxelList(true);
     }
   };
 

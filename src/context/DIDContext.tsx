@@ -1,8 +1,6 @@
-;import { EthereumAuthProvider, SelfID, useViewerConnection, useViewerID, ViewerConnectionState } from "@self.id/framework";
-import { useEffect, useCallback, useMemo, createContext, useState, ReactNode, FC } from "react";
-
+;import { EthereumAuthProvider, useViewerConnection, ViewerConnectionState } from "@self.id/framework";
+import { useEffect, createContext, useState } from "react";
 import { ModelTypes } from "@/interfaces";
-import { Web3Provider } from "@ethersproject/providers";
 import { useWalletAccount } from "@/hooks/useWalletAccount";
 import { useStateMySelfID } from "@/recoilstate/ceramic";
 import { useDID } from "@/recoilstate";
@@ -12,13 +10,15 @@ export interface UserContextState {
     connection: ViewerConnectionState<ModelTypes> | undefined
     account: string | undefined;
     did: string | undefined
+    chainId: number | undefined
   }
   
   const startingState: UserContextState = {
     loggedIn: false,
     connection: undefined,
     account: undefined,
-    did: undefined
+    did: undefined,
+    chainId: undefined
   };
 
 export const DIDContext = createContext(startingState);
@@ -29,15 +29,12 @@ export const DIDContextProvider = ({ children }: { children: any }) => {
     const [mySelfID, setMySelfID] = useStateMySelfID();
     const [did, setDid] = useDID();
   
-    // Use onboard to control the current provider/wallets
-    const { disconnectWallet, account, library } = useWalletAccount();
+    const { disconnectWallet, account, library, chainId } = useWalletAccount();
     const [address, setAddress] = useState<string>();
-    const [signer, setSigner] = useState<Web3Provider | undefined>();
   
     // clear all state
     const clearState = (): void => {
       setAddress(undefined);
-      setSigner(undefined);
       setMySelfID(null);
       setDid(undefined)
       disconnect()
@@ -68,7 +65,6 @@ export const DIDContextProvider = ({ children }: { children: any }) => {
     useEffect((): void => {
       switch (connection.status) {
         case "failed": {
-          // user refused to connect to ceramic -- disconnect them
           disconnectWallet()
           console.log("failed to connect self id :(");
           break;
@@ -83,7 +79,8 @@ export const DIDContextProvider = ({ children }: { children: any }) => {
       loggedIn,
       connection,
       account: address,
-      did: did
+      did: did,
+      chainId
     };
   
     return (

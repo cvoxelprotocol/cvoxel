@@ -1,9 +1,4 @@
 import { FC, useMemo, MouseEvent } from "react";
-import { useMyCeramicAcount } from "@/hooks/useCeramicAcount";
-import { IconAvatar } from "@/components/common/IconAvatar";
-import { AvatarPlaceholder } from "@/components/common/avatar/AvatarPlaceholder";
-import LeftArrow from "@/components/CVoxel/VoxelListItem/left-arrow.svg";
-import RightArrow from "@/components/CVoxel/VoxelListItem/right-arrow.svg";
 import { GenreBadge } from "@/components/common/badge/GenreBadge";
 import { getGenre } from "@/utils/genreUtil";
 import { TagBadge } from "@/components/common/badge/TagBadge";

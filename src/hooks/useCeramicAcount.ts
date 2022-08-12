@@ -5,7 +5,6 @@ import {
 } from "@self.id/framework";
 import { useMemo, useContext } from "react";
 import { getProfileInfo } from "@/utils/ceramicUtils";
-import { useWalletAccount } from "./useWalletAccount";
 import { DIDContext } from "@/context/DIDContext";
 
 export function useProfile(
@@ -15,8 +14,7 @@ export function useProfile(
 }
 
 export const useMyCeramicAcount = () => {
-  const { connectWallet, disconnectWallet } = useWalletAccount();
-  const { loggedIn, connection, account, did } = useContext(DIDContext);
+  const { did } = useContext(DIDContext);
   const profileRecord = useProfile(did || "");
 
   const displayProfile = useMemo(() => {
@@ -25,15 +23,9 @@ export const useMyCeramicAcount = () => {
   }, [profileRecord.content, did]);
 
   return {
-    did,
-    account,
     name: displayProfile?.displayName,
     avator: displayProfile?.avatarSrc,
     description: displayProfile?.bio,
-    connectWallet,
-    disconnectWallet,
-    loggedIn,
-    connection,
   };
 };
 

@@ -1,13 +1,12 @@
-import { FC, useCallback } from "react";
+import { FC, useCallback, useContext } from "react";
 import { TabListItem } from "@/components/HomeTab/TabListItem";
-import Link from "next/link";
 import { NamePlate } from "@/components/common/NamePlate";
-import { useMyCeramicAcount } from "@/hooks/useCeramicAcount";
 import { Button } from "@/components/common/button/Button";
 import { useTab } from "@/hooks/useTab";
+import { DIDContext } from "@/context/DIDContext";
 
 export const HomeTabsHeader: FC = () => {
-  const { did } = useMyCeramicAcount();
+  const {did} = useContext(DIDContext)
   const { setTabState } = useTab();
 
   const handleCreateNewVoxel = useCallback(() => {

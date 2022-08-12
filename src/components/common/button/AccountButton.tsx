@@ -2,12 +2,14 @@ import { useMyCeramicAcount } from "@/hooks/useCeramicAcount";
 import { formatDID } from "@self.id/framework";
 import { AvatarPlaceholder } from "@/components/common/avatar/AvatarPlaceholder";
 import { DropButton } from "grommet";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { DisplayAvatar } from "../DisplayAvatar";
 import { IconAvatar } from "../IconAvatar";
 import { NamePlate } from "@/components/common/NamePlate";
 import { Button } from "@/components/common/button/Button";
 import { useRouter } from "next/router";
+import { useWalletAccount } from "@/hooks/useWalletAccount";
+import { DIDContext } from "@/context/DIDContext";
 
 type MenuButtonProps = {
   label: string;
@@ -26,15 +28,11 @@ function MenuButton({ label, ...props }: MenuButtonProps) {
 
 export default function AccountButton() {
   const {
-    account,
-    connectWallet,
-    disconnectWallet,
-    did,
     name,
     avator,
-    loggedIn,
-    connection
   } = useMyCeramicAcount();
+  const {did, account, connection,loggedIn} = useContext(DIDContext)
+  const { connectWallet, disconnectWallet } = useWalletAccount();
   const [isMenuOpen, setMenuOpen] = useState(false);
   const router = useRouter();
 
