@@ -1,76 +1,79 @@
+import { FC, useCallback, useContext } from "react";
+import { TabListItem } from "@/components/HomeTab/TabListItem";
+import { NamePlate } from "@/components/common/NamePlate";
+import { Button } from "@/components/common/button/Button";
 import { useTab } from "@/hooks/useTab";
-import { FC } from "react";
+import { DIDContext } from "@/context/DIDContext";
 
 export const HomeTabsHeader: FC = () => {
-  const { tabState, setTabState } = useTab();
+  const {did} = useContext(DIDContext)
+  const { setTabState } = useTab();
+
+  const handleCreateNewVoxel = useCallback(() => {
+    // TODO: open first tx
+    setTabState("transactions");
+  }, [setTabState]);
 
   return (
     <>
-      <div className="flex w-full px-4 text-center">
-        <ul
-          className={
-            "flex mb-0 list-none flex-wrap pt-3 pb-4 flex-row w-full items-center justify-center md:px-10"
-          }
-          role="tablist"
-        >
-          <li className="-mb-px last:mr-0 flex-1 text-center">
-            <a
-              className={
-                "text-xs md:text-sm font-bold px-2 py-1 md:px-5 md:py-3 leading-normal " +
-                (tabState === "cvoxels" ? " text-primary " : " text-secondary ")
-              }
-              onClick={(e) => {
-                e.preventDefault();
-                setTabState("cvoxels");
-              }}
-              data-toggle="tab"
-              href="#cvoxels"
-              role="tablist"
-            >
-              CVoxels
-            </a>
+      <div className="w-full h-[calc(100vh-3rem)] text-center bg-light-surface-1 dark:bg-dark-surface-1 rounded-r-2xl">
+        <ul className={"w-full text-left p-4"} role="tablist">
+          <li className="sm:hidden md:block text-center pt-8 pb-4 mb-4">
+            <NamePlate did={did} size="lg" isMe hasBackgroundColor />
           </li>
-          <li className="-mb-px flex-1 text-center">
-            <a
-              className={
-                "text-xs md:text-sm font-bold px-2 py-1 md:px-5 md:py-3 leading-normal " +
-                (tabState === "transactions"
-                  ? " text-primary "
-                  : " text-secondary ")
-              }
-              onClick={(e) => {
-                e.preventDefault();
-                setTabState("transactions");
-              }}
-              data-toggle="tab"
-              href="#transactions"
-              role="tablist"
-            >
-              Tx Histories
-            </a>
+          <li className="hidden sm:flex md:hidden justify-center pt-8 pb-4">
+            <NamePlate did={did} isMe iconOnly hasBackgroundColor />
           </li>
-          <li className="-mb-px flex-1 text-center">
-            <a
-              className={
-                "text-xs md:text-sm font-bold px-2 py-1 md:px-5 md:py-3 leading-normal " +
-                (tabState === "signatures"
-                  ? " text-primary "
-                  : " text-secondary ")
-              }
-              onClick={(e) => {
-                e.preventDefault();
-                setTabState("signatures");
-              }}
-              data-toggle="tab"
-              href="#signatures"
-              role="tablist"
-            >
-              Sig Requests
-            </a>
-          </li>
+
+          <TabListItem type="cvoxels" />
+          <TabListItem type="transactions" />
+          <TabListItem type="notifications" />
         </ul>
+
+        <div className="hidden md:block">
+          <Button
+            text="Create New Voxel"
+            color="primary"
+            onClick={handleCreateNewVoxel}
+          />
+        </div>
+
+        <div className="h-[2px] w-10/12 bg-light-primary mx-auto md:mt-12 opacity-10" />
+
+        {/*<ul className="w-full text-left py-4 px-5">*/}
+        {/*  <li className="py-3">*/}
+        {/*    <Link href="/intro" passHref>*/}
+        {/*      <a*/}
+        {/*        className="text-base md:text-2xl text-light-on-surface-variant dark:text-dark-on-surface-variant"*/}
+        {/*        target="_blank"*/}
+        {/*        rel="noreferrer"*/}
+        {/*      >*/}
+        {/*        About*/}
+        {/*      </a>*/}
+        {/*    </Link>*/}
+        {/*  </li>*/}
+        {/*  <li className="py-3">*/}
+        {/*    <a*/}
+        {/*      className="text-base md:text-2xl text-light-on-surface-variant dark:text-dark-on-surface-variant"*/}
+        {/*      href="https://docs.cvoxel.xyz/"*/}
+        {/*      target="_blank"*/}
+        {/*      rel="noreferrer"*/}
+        {/*    >*/}
+        {/*      Doc*/}
+        {/*    </a>*/}
+        {/*  </li>*/}
+        {/*  <li className="py-3">*/}
+        {/*    <a*/}
+        {/*      className="text-base md:text-2xl text-light-on-surface-variant dark:text-dark-on-surface-variant"*/}
+        {/*      href="https://discord.gg/TBJFmJv6uZ"*/}
+        {/*      target="_blank"*/}
+        {/*      rel="noreferrer"*/}
+        {/*    >*/}
+        {/*      Discord*/}
+        {/*    </a>*/}
+        {/*  </li>*/}
+        {/*</ul>*/}
       </div>
-      <div className="relative flex flex-1 w-full max-w-[1056px] h-[1px] border-t border-secondary overflow-scroll"></div>
     </>
   );
 };

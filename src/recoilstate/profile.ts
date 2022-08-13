@@ -9,9 +9,9 @@ export const selectedItem = atom<CVoxelWithId | null>({
 
 export const useStateSelectedItem = () => useRecoilState(selectedItem);
 
-export const did = atom<string>({
+export const did = atom<string | undefined>({
   key: "did",
-  default: "",
+  default: undefined,
 });
 
 export const useDID = () => useRecoilState(did);

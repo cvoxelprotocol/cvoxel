@@ -1,5 +1,9 @@
 import { useState } from "react";
-import { CVoxel, CVoxelThree, CVoxelVisType } from "@/interfaces/cVoxelType";
+import {
+  CVoxelThree,
+  CVoxelVisType,
+  CVoxelWithId,
+} from "@/interfaces/cVoxelType";
 import * as THREE from "three";
 import { useCallback } from "react";
 import { getGenreColor } from "@/utils/genreUtil";
@@ -10,34 +14,38 @@ type RoomType = {
   priority?: number;
 }[][];
 
+export type CVoxelThreeWithId = CVoxelThree & { id: string };
+type CVoxelVisTypeWithId = CVoxelVisType & { id: string };
+
 const sigmoid_a: number = 1;
 
-export const useVoxStyler = (cVoxels: CVoxel[]) => {
+export const useVoxStyler = () => {
   const [cvoxelsForDisplay, setCvoxelsForDisplay] = useState<
-    (CVoxelThree | undefined)[]
+    (CVoxelThreeWithId | undefined)[]
   >([]);
 
-  const convertCVoxelsForDisplay = useCallback(() => {
-    const styledVoxel: CVoxelVisType[] = [];
-    let stackedVoxels: (CVoxelThree | undefined)[] = [];
+  const convertCVoxelsForDisplay = useCallback((cVoxels: CVoxelWithId[]) => {
+    const styledVoxel: CVoxelVisTypeWithId[] = [];
+    let stackedVoxels: (CVoxelThreeWithId | undefined)[] = [];
     if (cVoxels.length != 0) {
       cVoxels.forEach((voxel, i) => {
-        let voxelTemp: CVoxelVisType = {
+        let voxelTemp: CVoxelVisTypeWithId = {
+          id: voxel.id,
           color: "",
-          opacity: 0.8,
+          opacity: 0.6,
           lattice: false,
           scale: 1.0,
         };
-        const { value, deliverable, toSig, fromSig, genre, fiatValue } = voxel;
+        const { value, deliverables, toSig, fromSig, genre, fiatValue } = voxel;
         let hue, lightness, saturation: number;
 
         /* Set opacity from sigs */
         if (toSig != "" && fromSig != "") {
-          voxelTemp["opacity"] = 1;
+          voxelTemp["opacity"] = 0.8;
         }
 
         /* Set lattice from deliverable */
-        if (deliverable !== "") {
+        if (deliverables && deliverables.length > 0) {
           voxelTemp["lattice"] = true;
         }
 
@@ -186,7 +194,7 @@ export const useVoxStyler = (cVoxels: CVoxel[]) => {
       stackedVoxels = [...newStackedVoxels];
     }
     setCvoxelsForDisplay(stackedVoxels);
-  }, [cVoxels]);
+  }, []);
 
   return { cvoxelsForDisplay, convertCVoxelsForDisplay };
 };

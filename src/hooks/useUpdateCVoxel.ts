@@ -2,24 +2,25 @@ import {
   CVOXEL_UPDATE_FAILED,
   CVOXEL_UPDATE_SUCCEED,
 } from "@/constants/toastMessage";
-import { CVoxel, CVoxelItem, ModelTypes } from "@/interfaces";
+import { CVoxel } from "@/interfaces";
+import { useStateMySelfID } from "@/recoilstate/ceramic";
 import { convertDateToTimestampStr } from "@/utils/dateUtil";
-import { useConnection } from "@self.id/framework";
-import { useViewerRecord } from "@self.id/react";
 import { useCVoxelRecord } from "./useCVoxel";
 import { useModal } from "./useModal";
 import { useToast } from "./useToast";
+import { useWalletAccount } from "./useWalletAccount";
 
 export const useUpdateCVoxel = (id: string) => {
-  const connect = useConnection<ModelTypes>()[1];
   const cVoxelItem = useCVoxelRecord(id);
   const { showLoading, closeLoading } = useModal();
   const { lancInfo, lancError } = useToast();
+  const { connectWallet } = useWalletAccount();
+  const [mySelfID, _] = useStateMySelfID();
 
   const update = async (newItem: CVoxel) => {
     try {
-      const selfID = await connect();
-      if (selfID == null) {
+      if (mySelfID == null) {
+        await connectWallet();
         lancError();
         return false;
       }
@@ -27,7 +28,7 @@ export const useUpdateCVoxel = (id: string) => {
       showLoading();
 
       const nowTimestamp = convertDateToTimestampStr(new Date());
-      await selfID.client.tileLoader.update(id, {
+      await mySelfID.client.tileLoader.update(id, {
         ...newItem,
         updatedAt: nowTimestamp,
       });

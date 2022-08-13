@@ -5,7 +5,7 @@ export const Footer: FC = () => {
     <>
       <footer
         className={
-          "bottom-0 right-0 left-0 block py-4 bg-white dark:bg-darkgray transition-spacing duration-500 ease-in-out md:ml-0"
+          "block py-4 bg-light-background dark:bg-dark-background transition-spacing duration-500 ease-in-out md:ml-0"
         }
       >
         <div className="container mx-auto px-4">

@@ -1,4 +1,4 @@
-import { useConnection, usePublicRecord } from "@self.id/framework";
+import { usePublicRecord } from "@self.id/framework";
 import type { PublicRecord } from "@self.id/framework";
 import { useCallback, useState } from "react";
 import type {
@@ -8,17 +8,20 @@ import type {
   CVoxels,
 } from "@/interfaces/cVoxelType";
 import { TileDoc, useTileDoc } from "./useTileDoc";
+import { useStateMySelfID } from "@/recoilstate/ceramic";
+import { useWalletAccount } from "./useWalletAccount";
 
 export function useCVoxelsRecord(did: string): PublicRecord<CVoxels | null> {
-  return usePublicRecord<ModelTypes, "cVoxels">("cVoxels", did);
+  return usePublicRecord<ModelTypes, "workCredentials">("workCredentials", did);
 }
 
-export function useCVoxelRecord(id: string): TileDoc<CVoxel> {
+export function useCVoxelRecord(id?: string): TileDoc<CVoxel> {
   return useTileDoc<CVoxel>(id);
 }
 
 export function useCVoxel(did: string, id: string) {
-  const connect = useConnection<ModelTypes>()[1];
+  const { connectWallet } = useWalletAccount();
+  const [mySelfID, _] = useStateMySelfID();
   const cVoxelsRecord = useCVoxelsRecord(did);
   const cVoxelDoc = useTileDoc<CVoxel>(id);
   const [cVoxel, setCVoxel] = useState<CVoxel | null>(null);
@@ -26,7 +29,7 @@ export function useCVoxel(did: string, id: string) {
 
   const isValid = !!cVoxel?.summary;
 
-  const cVoxelItem = cVoxelsRecord.content?.cVoxels.find(
+  const cVoxelItem = cVoxelsRecord.content?.WorkCredentials.find(
     (item) => item.id === `ceramic://${id}`
   );
   const content =
@@ -62,8 +65,7 @@ export function useCVoxel(did: string, id: string) {
     setEditionState({ status: "loading" });
 
     try {
-      const selfID = await connect();
-      if (selfID == null) {
+      if (mySelfID == null) {
         setEditionState({ status: "pending" });
         return false;
       }
@@ -78,7 +80,15 @@ export function useCVoxel(did: string, id: string) {
     } catch (error) {
       setEditionState({ status: "failed", error });
     }
-  }, [connect, editionState, isValid, cVoxel, cVoxelDoc, setEditionState]);
+  }, [
+    editionState,
+    isValid,
+    cVoxel,
+    cVoxelDoc,
+    setEditionState,
+    mySelfID,
+    connectWallet,
+  ]);
 
   return {
     isEditable,

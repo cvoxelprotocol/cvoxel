@@ -1,11 +1,12 @@
-import { CVoxel } from "@/interfaces";
+import { CVoxelWithId } from "@/interfaces";
 
-export const initCVoxel: CVoxel[] = [
+export const initCVoxel: CVoxelWithId[] = [
   {
+    id: "1",
     to: "", // payee address
     from: "", // payer address
     summary: "", // work summary
-    deliverable: "",
+    deliverables: [],
     isPayer: false,
     value: "2", // reward value
     tokenSymbol: "eth", // eth, usdc, etc
@@ -25,10 +26,11 @@ export const initCVoxel: CVoxel[] = [
     relatedAddresses: [],
   },
   {
+    id: "2",
     to: "", // payee address
     from: "", // payer address
     summary: "", // work summary
-    deliverable: "",
+    deliverables: [],
     isPayer: false,
     value: "2", // reward value
     tokenSymbol: "eth", // eth, usdc, etc
@@ -48,10 +50,11 @@ export const initCVoxel: CVoxel[] = [
     relatedAddresses: [],
   },
   {
+    id: "3",
     to: "", // payee address
     from: "", // payer address
     summary: "", // work summary
-    deliverable: "aaaa",
+    deliverables: [{ format: "cid", value: "aaaa" }],
     isPayer: false,
     value: "1", // reward value
     tokenSymbol: "eth", // eth, usdc, etc
@@ -71,10 +74,11 @@ export const initCVoxel: CVoxel[] = [
     relatedAddresses: [],
   },
   {
+    id: "4",
     to: "", // payee address
     from: "", // payer address
     summary: "", // work summary
-    deliverable: "",
+    deliverables: [],
     isPayer: false,
     value: "2", // reward value
     tokenSymbol: "eth", // eth, usdc, etc
@@ -94,10 +98,11 @@ export const initCVoxel: CVoxel[] = [
     relatedAddresses: [],
   },
   {
+    id: "5",
     to: "", // payee address
     from: "", // payer address
     summary: "", // work summary
-    deliverable: "",
+    deliverables: [],
     isPayer: false,
     value: "3", // reward value
     tokenSymbol: "eth", // eth, usdc, etc
@@ -117,10 +122,11 @@ export const initCVoxel: CVoxel[] = [
     relatedAddresses: [],
   },
   {
+    id: "6",
     to: "", // payee address
     from: "", // payer address
     summary: "", // work summary
-    deliverable: "aaaa",
+    deliverables: [{ format: "cid", value: "aaaa" }],
     isPayer: false,
     value: "2", // reward value
     tokenSymbol: "eth", // eth, usdc, etc
@@ -140,10 +146,11 @@ export const initCVoxel: CVoxel[] = [
     relatedAddresses: [],
   },
   {
+    id: "7",
     to: "", // payee address
     from: "", // payer address
     summary: "", // work summary
-    deliverable: "",
+    deliverables: [],
     isPayer: false,
     value: "1", // reward value
     tokenSymbol: "eth", // eth, usdc, etc
@@ -163,10 +170,11 @@ export const initCVoxel: CVoxel[] = [
     relatedAddresses: [],
   },
   {
+    id: "8",
     to: "", // payee address
     from: "", // payer address
     summary: "", // work summary
-    deliverable: "",
+    deliverables: [],
     isPayer: false,
     value: "1.5", // reward value
     tokenSymbol: "eth", // eth, usdc, etc
@@ -186,10 +194,11 @@ export const initCVoxel: CVoxel[] = [
     relatedAddresses: [],
   },
   {
+    id: "9",
     to: "", // payee address
     from: "", // payer address
     summary: "", // work summary
-    deliverable: "",
+    deliverables: [],
     isPayer: false,
     value: "2", // reward value
     tokenSymbol: "eth", // eth, usdc, etc
@@ -209,10 +218,11 @@ export const initCVoxel: CVoxel[] = [
     relatedAddresses: [],
   },
   {
+    id: "10",
     to: "", // payee address
     from: "", // payer address
     summary: "", // work summary
-    deliverable: "",
+    deliverables: [],
     isPayer: false,
     value: "1.5", // reward value
     tokenSymbol: "eth", // eth, usdc, etc
@@ -232,10 +242,11 @@ export const initCVoxel: CVoxel[] = [
     relatedAddresses: [],
   },
   {
+    id: "11",
     to: "", // payee address
     from: "", // payer address
     summary: "", // work summary
-    deliverable: "",
+    deliverables: [],
     isPayer: false,
     value: "2", // reward value
     tokenSymbol: "eth", // eth, usdc, etc
@@ -255,10 +266,11 @@ export const initCVoxel: CVoxel[] = [
     relatedAddresses: [],
   },
   {
+    id: "12",
     to: "", // payee address
     from: "", // payer address
     summary: "", // work summary
-    deliverable: "",
+    deliverables: [],
     isPayer: false,
     value: "3", // reward value
     tokenSymbol: "eth", // eth, usdc, etc
@@ -278,10 +290,11 @@ export const initCVoxel: CVoxel[] = [
     relatedAddresses: [],
   },
   {
+    id: "13",
     to: "", // payee address
     from: "", // payer address
     summary: "", // work summary
-    deliverable: "",
+    deliverables: [],
     isPayer: false,
     value: "3", // reward value
     tokenSymbol: "eth", // eth, usdc, etc
@@ -301,10 +314,11 @@ export const initCVoxel: CVoxel[] = [
     relatedAddresses: [],
   },
   {
+    id: "14",
     to: "", // payee address
     from: "", // payer address
     summary: "", // work summary
-    deliverable: "",
+    deliverables: [],
     isPayer: false,
     value: "1.6", // reward value
     tokenSymbol: "eth", // eth, usdc, etc
@@ -324,10 +338,11 @@ export const initCVoxel: CVoxel[] = [
     relatedAddresses: [],
   },
   {
+    id: "15",
     to: "", // payee address
     from: "", // payer address
     summary: "", // work summary
-    deliverable: "aaaa",
+    deliverables: [{ format: "cid", value: "aaaa" }],
     isPayer: false,
     value: "2", // reward value
     tokenSymbol: "eth", // eth, usdc, etc
@@ -347,10 +362,11 @@ export const initCVoxel: CVoxel[] = [
     relatedAddresses: [],
   },
   {
+    id: "16",
     to: "", // payee address
     from: "", // payer address
     summary: "", // work summary
-    deliverable: "",
+    deliverables: [],
     isPayer: false,
     value: "1.5", // reward value
     tokenSymbol: "eth", // eth, usdc, etc
@@ -370,10 +386,11 @@ export const initCVoxel: CVoxel[] = [
     relatedAddresses: [],
   },
   {
+    id: "17",
     to: "", // payee address
     from: "", // payer address
     summary: "", // work summary
-    deliverable: "",
+    deliverables: [],
     isPayer: false,
     value: "2", // reward value
     tokenSymbol: "eth", // eth, usdc, etc
@@ -393,10 +410,11 @@ export const initCVoxel: CVoxel[] = [
     relatedAddresses: [],
   },
   {
+    id: "18",
     to: "", // payee address
     from: "", // payer address
     summary: "", // work summary
-    deliverable: "",
+    deliverables: [],
     isPayer: false,
     value: "1.9", // reward value
     tokenSymbol: "eth", // eth, usdc, etc
@@ -417,10 +435,11 @@ export const initCVoxel: CVoxel[] = [
   },
 
   {
+    id: "19",
     to: "", // payee address
     from: "", // payer address
     summary: "", // work summary
-    deliverable: "",
+    deliverables: [],
     isPayer: false,
     value: "0.9", // reward value
     tokenSymbol: "eth", // eth, usdc, etc
@@ -440,10 +459,11 @@ export const initCVoxel: CVoxel[] = [
     relatedAddresses: [],
   },
   {
+    id: "20",
     to: "", // payee address
     from: "", // payer address
     summary: "", // work summary
-    deliverable: "",
+    deliverables: [],
     isPayer: false,
     value: "1.5", // reward value
     tokenSymbol: "eth", // eth, usdc, etc
@@ -463,10 +483,11 @@ export const initCVoxel: CVoxel[] = [
     relatedAddresses: [],
   },
   {
+    id: "21",
     to: "", // payee address
     from: "", // payer address
     summary: "", // work summary
-    deliverable: "aaaa",
+    deliverables: [{ format: "cid", value: "aaaa" }],
     isPayer: false,
     value: "2", // reward value
     tokenSymbol: "eth", // eth, usdc, etc
@@ -486,10 +507,11 @@ export const initCVoxel: CVoxel[] = [
     relatedAddresses: [],
   },
   {
+    id: "22",
     to: "", // payee address
     from: "", // payer address
     summary: "", // work summary
-    deliverable: "",
+    deliverables: [],
     isPayer: false,
     value: "1.8", // reward value
     tokenSymbol: "eth", // eth, usdc, etc
@@ -509,10 +531,11 @@ export const initCVoxel: CVoxel[] = [
     relatedAddresses: [],
   },
   {
+    id: "23",
     to: "", // payee address
     from: "", // payer address
     summary: "", // work summary
-    deliverable: "aaaa",
+    deliverables: [{ format: "cid", value: "aaaa" }],
     isPayer: false,
     value: "3", // reward value
     tokenSymbol: "eth", // eth, usdc, etc
@@ -532,10 +555,11 @@ export const initCVoxel: CVoxel[] = [
     relatedAddresses: [],
   },
   {
+    id: "24",
     to: "", // payee address
     from: "", // payer address
     summary: "", // work summary
-    deliverable: "",
+    deliverables: [],
     isPayer: false,
     value: "1.5", // reward value
     tokenSymbol: "eth", // eth, usdc, etc
@@ -555,10 +579,11 @@ export const initCVoxel: CVoxel[] = [
     relatedAddresses: [],
   },
   {
+    id: "25",
     to: "", // payee address
     from: "", // payer address
     summary: "", // work summary
-    deliverable: "",
+    deliverables: [],
     isPayer: false,
     value: "5", // reward value
     tokenSymbol: "eth", // eth, usdc, etc
@@ -578,10 +603,11 @@ export const initCVoxel: CVoxel[] = [
     relatedAddresses: [],
   },
   {
+    id: "26",
     to: "", // payee address
     from: "", // payer address
     summary: "", // work summary
-    deliverable: "",
+    deliverables: [],
     isPayer: false,
     value: "15", // reward value
     tokenSymbol: "eth", // eth, usdc, etc
@@ -601,10 +627,11 @@ export const initCVoxel: CVoxel[] = [
     relatedAddresses: [],
   },
   {
+    id: "27",
     to: "", // payee address
     from: "", // payer address
     summary: "", // work summary
-    deliverable: "",
+    deliverables: [],
     isPayer: false,
     value: "30", // reward value
     tokenSymbol: "eth", // eth, usdc, etc

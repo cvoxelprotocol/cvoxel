@@ -1,5 +1,6 @@
 import { FC } from "react";
 import Link from "next/link";
+import clsx from "clsx";
 
 type Props = {
   text: string;
@@ -25,27 +26,36 @@ export const Button: FC<Props> = ({
 
   /* Set button color styles */
   if (color == "grad-red") {
-    buttonColor += " bg-gradient-to-tr from-[#A66497] to-[#D88F80] ";
+    buttonColor = clsx(
+      "bg-gradient-to-tr from-[#A66497] to-[#D88F80]",
+      buttonColor
+    );
   } else if (color == "grad-blue") {
-    buttonColor += "bg-gradient-to-tr from-accent_l to-accent_r ";
+    buttonColor = clsx(
+      "bg-gradient-to-tr from-accent_l to-accent_r",
+      buttonColor
+    );
   } else if (color == "primary") {
-    buttonColor += "bg-primary ";
+    buttonColor = clsx("bg-light-primary dark:bg-dark-primary", buttonColor);
   } else if (color == "secondary") {
-    buttonColor += "bg-secondary ";
+    buttonColor = clsx(
+      "bg-light-secondary dark:bg-dark-secondary",
+      buttonColor
+    );
   }
 
   /* Set button variant styles */
   if (variant == "contained") {
     buttonVariant =
-      " text-lg text-text-white font-sans font-normal rounded-full  ";
+      "sm:text-md text-light-surface dark:text-dark-surface font-sans font-normal rounded-full font-medium hover:opacity-20";
   }
 
   /* Merge those styles */
-  const buttonStyle = buttonVariant + buttonColor + className;
+  const buttonStyle = clsx(buttonVariant, buttonColor, className);
 
   return (
     <button
-      className={"w-fit h-fit px-4 py-2 rounded-full " + buttonStyle}
+      className={clsx("w-fit h-fit px-2 py-1.5 sm:px-6 sm:py-3 rounded-full ", buttonStyle)}
       onClick={onClick}
       type={buttonType}
     >

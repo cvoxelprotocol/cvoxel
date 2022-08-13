@@ -1,7 +1,7 @@
 import Head from "next/head";
 import { FC } from "react";
 
-const OGP_IMAGE = "https://testnet.cvoxel.xyz/ogp_cvoxel.jpg";
+const OGP_IMAGE = "https://app.vess.id/ogp.png";
 
 interface MetaData {
   pageTitle?: string;
@@ -20,8 +20,9 @@ export const Meta: FC<MetaData> = ({
   pageImgWidth,
   pageImgHeight,
 }) => {
-  const defaultTitle = "C-Voxel";
-  const defaultDescription = "C-Voxel - Stack Your Own Career on Web3.0";
+  const defaultTitle = "VESS | Shape Your Work Identity";
+  const defaultDescription =
+    "VESS is a decentralized self-sovereign work credentials protocol that everyone can stack their work credentials and shape their work identities.";
 
   const title = pageTitle ? `${pageTitle} | ${defaultTitle}` : defaultTitle;
   const description = pageDescription ? pageDescription : defaultDescription;

@@ -2,31 +2,55 @@ import * as THREE from "three";
 import { FC, useRef, useState, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
 import { OrbitControls, PerspectiveCamera, Plane } from "@react-three/drei";
-import { CVoxel } from "@/interfaces/cVoxelType";
+import { CVoxel, CVoxelMetaDraft, CVoxelWithId } from "@/interfaces/cVoxelType";
 import CVoxelPresenter from "./CVoxelPresenter";
-import { useVoxStyler } from "@/hooks/useVoxStyler";
+import { CVoxelThreeWithId, useVoxStyler } from "@/hooks/useVoxStyler";
 import { initCVoxel } from "@/constants/cVoxel";
 import { core } from "@/lib/ceramic/server";
+import type { CVoxelItem as ICVoxelItem } from "@/interfaces";
+
+type ShowDetailBox = ({
+  item,
+  offchainItems,
+}: {
+  item: ICVoxelItem;
+  offchainItems?: CVoxelMetaDraft[];
+}) => void;
+
+// NOTE: useCVoxelDetailBox cannot be called by VisualPresenter, so it is passed by props.
 type VisualizerPresenterProps = {
   ids?: string[];
+  showDetailBox?: ShowDetailBox;
+  zoom?: number;
+  disableHover?: boolean;
+  voxelsForDisplay?: (CVoxelThreeWithId | undefined)[]; // For direct insertion e.g. draft data
 };
 
-const VisualizerPresenter: FC<VisualizerPresenterProps> = ({ ids }) => {
-  const [cVoxels, setCVoxels] = useState<CVoxel[]>([]);
-  const { cvoxelsForDisplay, convertCVoxelsForDisplay } = useVoxStyler(cVoxels);
+const VisualizerPresenter: FC<VisualizerPresenterProps> = ({
+  ids,
+  showDetailBox,
+  zoom = 2,
+  disableHover = false,
+  voxelsForDisplay,
+}) => {
+  const [cVoxels, setCVoxels] = useState<CVoxelWithId[]>([]);
+  const [isInitVoxels, setIsInitVoxels] = useState<boolean>(true);
+  const [cVoxelsMap, setCVoxelsMap] = useState<{ [id: string]: ICVoxelItem }>(
+    {}
+  );
+  const { cvoxelsForDisplay, convertCVoxelsForDisplay } = useVoxStyler();
 
   const cCollectionRef = useRef<THREE.Group>(new THREE.Group());
-  const offset = new THREE.Vector3(0, 0, 0);
 
   useEffect(() => {
     let isMounted = true;
 
     const loadVoxels = async () => {
       if (!ids) return;
-      const voxelsTemp: CVoxel[] = [];
+      const voxelsTemp: CVoxelWithId[] = [];
       for (let i = 0; i < ids!.length; i++) {
         const voxel = await core.tileLoader.load<CVoxel>(ids[i]);
-        voxelsTemp.push(voxel.content);
+        voxelsTemp.push({ ...voxel.content, id: ids[i] });
       }
       setCVoxels(voxelsTemp);
     };
@@ -36,6 +60,7 @@ const VisualizerPresenter: FC<VisualizerPresenterProps> = ({ ids }) => {
         setCVoxels(initCVoxel);
       } else {
         loadVoxels();
+        setIsInitVoxels(false);
       }
     }
 
@@ -46,7 +71,12 @@ const VisualizerPresenter: FC<VisualizerPresenterProps> = ({ ids }) => {
 
   useEffect(() => {
     let isMounted = true;
-    convertCVoxelsForDisplay();
+    convertCVoxelsForDisplay(cVoxels);
+    const m: { [id: string]: ICVoxelItem } = {};
+    cVoxels.forEach((vox) => {
+      m[vox.id] = vox;
+    });
+    setCVoxelsMap(m);
     return () => {
       isMounted = false;
     };
@@ -55,6 +85,12 @@ const VisualizerPresenter: FC<VisualizerPresenterProps> = ({ ids }) => {
   useFrame(() => {
     cCollectionRef.current.rotation.y += 0.005;
   });
+
+  const handleClickVox = (id: string) => {
+    if (cVoxelsMap[id] != undefined) {
+      showDetailBox?.({ item: cVoxelsMap[id] });
+    }
+  };
 
   return (
     <>
@@ -73,7 +109,7 @@ const VisualizerPresenter: FC<VisualizerPresenterProps> = ({ ids }) => {
       />
       {/* <pointLight position={[10, 10, 10]} /> */}
 
-      <OrbitControls enablePan={false} enableZoom={true} enableRotate={false} />
+      <OrbitControls enablePan={false} enableZoom={true} enableRotate={true} />
       <Plane
         receiveShadow
         rotation-x={-Math.PI / 2}
@@ -90,12 +126,47 @@ const VisualizerPresenter: FC<VisualizerPresenterProps> = ({ ids }) => {
       >
         <meshBasicMaterial color={"white"} opacity={0.5} />
       </Plane> */}
+
       <group ref={cCollectionRef} position={[0, 0, 0]}>
-        {cvoxelsForDisplay.map(
-          (voxel, i) => voxel && <CVoxelPresenter {...voxel} key={i} />
+        {!!voxelsForDisplay ? (
+          <>
+            (
+            {voxelsForDisplay.map(
+              (voxel, i) =>
+                voxel && (
+                  <CVoxelPresenter
+                    {...voxel}
+                    key={i}
+                    handleClick={
+                      isInitVoxels ? undefined : () => handleClickVox(voxel.id)
+                    }
+                    disableHover={isInitVoxels ? true : disableHover}
+                  />
+                )
+            )}
+            )
+          </>
+        ) : (
+          <>
+            (
+            {cvoxelsForDisplay.map(
+              (voxel, i) =>
+                voxel && (
+                  <CVoxelPresenter
+                    {...voxel}
+                    key={i}
+                    handleClick={
+                      isInitVoxels ? undefined : () => handleClickVox(voxel.id)
+                    }
+                    disableHover={isInitVoxels ? true : disableHover}
+                  />
+                )
+            )}
+            )
+          </>
         )}
       </group>
-      <PerspectiveCamera makeDefault position={[10, 6, 10]} zoom={2} />
+      <PerspectiveCamera makeDefault position={[10, 6, 10]} zoom={zoom} />
     </>
   );
 };

@@ -1,10 +1,15 @@
 import { useMyCeramicAcount } from "@/hooks/useCeramicAcount";
-import { AvatarPlaceholder, formatDID } from "@self.id/framework";
+import { formatDID } from "@self.id/framework";
+import { AvatarPlaceholder } from "@/components/common/avatar/AvatarPlaceholder";
 import { DropButton } from "grommet";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { DisplayAvatar } from "../DisplayAvatar";
-import Router from "next/router";
 import { IconAvatar } from "../IconAvatar";
+import { NamePlate } from "@/components/common/NamePlate";
+import { Button } from "@/components/common/button/Button";
+import { useRouter } from "next/router";
+import { useWalletAccount } from "@/hooks/useWalletAccount";
+import { DIDContext } from "@/context/DIDContext";
 
 type MenuButtonProps = {
   label: string;
@@ -23,34 +28,48 @@ function MenuButton({ label, ...props }: MenuButtonProps) {
 
 export default function AccountButton() {
   const {
-    connection,
-    disconnectCeramic,
-    account,
-    connectWalletOnly,
-    did,
     name,
     avator,
   } = useMyCeramicAcount();
+  const {did, account, connection,loggedIn} = useContext(DIDContext)
+  const { connectWallet, disconnectWallet } = useWalletAccount();
   const [isMenuOpen, setMenuOpen] = useState(false);
+  const router = useRouter();
 
   const goToMypage = () => {
     if (!did && !account) return;
-    Router.push(`/${did ? did : account}`);
+    router.push(`/${did ? did : account}`);
   };
+
+  const [isConnect, setIsConnect] = useState<boolean>(false);
+  const connect = async () => {
+    try {
+      await connectWallet();
+      setIsConnect(true);
+    } catch (error) {
+      console.log("error:", error);
+    }
+  };
+
+  // useEffect(() => {
+  //   if (isConnect && !!account && router.asPath==="/") {
+  //     router.push(`/${account}`);
+  //   }
+  // }, [isConnect, account]);
 
   if (account) {
     const buttons =
-      connection.status === "connected" ? (
+      loggedIn ? (
         <>
           <MenuButton label="My Page" onClick={() => goToMypage()} />
-          <MenuButton label="Disconnect" onClick={() => disconnectCeramic()} />
+          <MenuButton label="Disconnect" onClick={() => disconnectWallet()} />
         </>
       ) : (
         <>
           <MenuButton label="My Page" onClick={() => goToMypage()} />
           <MenuButton
             label="Disconnect Wallet"
-            onClick={() => disconnectCeramic()}
+            onClick={() => disconnectWallet()}
           />
         </>
       );
@@ -86,28 +105,19 @@ export default function AccountButton() {
         }}
         open={isMenuOpen}
       >
-        <DisplayAvatar
-          did={did}
-          label={
-            name ? name : did ? formatDID(did, 12) : formatDID(account, 12)
-          }
-          loading={connection.status === "connecting"}
-          src={avator}
-          hiddenLabelOnSp={true}
-        />
+        <div className="hidden md:block">
+          <NamePlate did={did} isMe size="lg" />
+        </div>
+        <div className="block md:hidden">
+          <NamePlate did={did} isMe iconOnly />
+        </div>
       </DropButton>
     );
   }
 
-  return connection.status === "connecting" ? (
+  return connection?.status === "connecting" ? (
     <DisplayAvatar label="Connecting..." loading hiddenLabelOnSp={true} />
   ) : (
-    <button
-      className="rounded-full px-2 py-1.5 text-xs sm:px-4 sm:text-base  text-white bg-gradient-to-r from-border_l to-border_r"
-      onClick={() => connectWalletOnly()}
-    >
-      {" "}
-      Connect Wallet
-    </button>
+    <Button text="Connect Wallet" onClick={() => connect()} color="primary" />
   );
 }

@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { Canvas } from "@react-three/fiber";
-import { AvatarPlaceholder } from "@self.id/ui";
+import { AvatarPlaceholder } from "@/components/common/avatar/AvatarPlaceholder";
 import VisualizerPresenter from "@/components/CVoxel/visualizerPresenter";
 import CVoxelsPresenter from "@/components/CVoxel/CVoxelsPresenter";
 import { NoItemPresenter } from "@/components/common/NoItemPresenter";
@@ -26,7 +26,7 @@ export const NoProfileContainer: FC = () => {
         </div>
         <CVoxelsPresenter>
           <div className="mx-auto">
-            <NoItemPresenter text="No C-Voxels yet..." />
+            <NoItemPresenter text="No Voxels yet" />
           </div>
         </CVoxelsPresenter>
       </div>

@@ -1,6 +1,5 @@
 import type { ModelTypesToAliases } from "@glazed/types";
 import { Provider as SelfIDProvider } from "@self.id/framework";
-import { Provider as JotaiProvider } from "jotai";
 import type { AppProps } from "next/app";
 import { CERAMIC_NETWORK, CERAMIC_URL } from "@/constants/common";
 import { cVoxelModel } from "@/lib/ceramic/dataModel";
@@ -16,8 +15,9 @@ import { ThemeProvider } from "next-themes";
 import { useEffect } from "react";
 import Router from "next/router";
 import { LoadingModal } from "@/components/common/LoadingModal";
+import { DIDContextProvider } from "@/context/DIDContext";
 
-const model: ModelTypesToAliases<ModelTypes> = cVoxelModel;
+const aliases: ModelTypesToAliases<ModelTypes> = cVoxelModel;
 
 function getLibrary(provider: any): Web3Provider {
   const library = new Web3Provider(provider);
@@ -67,19 +67,20 @@ export default function App({ Component, pageProps }: AppProps) {
               client={{
                 ceramic: CERAMIC_URL,
                 connectNetwork: CERAMIC_NETWORK,
-                model,
+                aliases,
+                session: true
               }}
               state={state}
-              ui={{ full: true, style: { display: "flex" } }}
+              session={true}
             >
-              <JotaiProvider>
                 <ThemeProvider attribute="class" defaultTheme={"light"}>
-                  <BaseLayout>
-                    <Component {...props} />
-                  </BaseLayout>
+                  <DIDContextProvider >
+                    <BaseLayout>
+                      <Component {...props} />
+                    </BaseLayout>
+                  </DIDContextProvider>
                   {isLoading && <LoadingModal />}
                 </ThemeProvider>
-              </JotaiProvider>
             </SelfIDProvider>
           </Hydrate>
         </QueryClientProvider>

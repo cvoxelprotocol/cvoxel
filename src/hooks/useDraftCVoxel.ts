@@ -1,13 +1,14 @@
 import { TransactionLogWithChainId } from "@/interfaces/explore";
 import { createDraftWighVerify } from "@/lib/firebase/functions/verify";
 import { getCVoxelService } from "@/services/CVoxel/CVoxelService";
-import { useConnection, useViewerRecord } from "@self.id/framework";
+import { useViewerRecord } from "@self.id/framework";
 import { useCallback } from "react";
 import type {
   CVoxel,
   CVoxelDraftAndMeta,
   CVoxelMetaDraft,
   ModelTypes,
+  DeliverableItem,
 } from "@/interfaces/cVoxelType";
 import { useModal } from "./useModal";
 import { useToast } from "./useToast";
@@ -18,13 +19,26 @@ import {
 import { extractCVoxel } from "@/utils/cVoxelUtil";
 import { getNetworkSymbol } from "@/utils/networkUtil";
 import { convertDateToTimestampStr } from "@/utils/dateUtil";
+import { useStateIssueStatus } from "@/recoilstate/cvoxel";
+import { useCVoxelToast } from "@/hooks/useCVoxelToast";
+import { useVoxStyler } from "@/hooks/useVoxStyler";
+import { useStateMySelfID } from "@/recoilstate/ceramic";
+import { useWalletAccount } from "./useWalletAccount";
 
 export function useDraftCVoxel() {
-  const connect = useConnection<ModelTypes>()[1];
-  const cVoxelsRecord = useViewerRecord<ModelTypes, "cVoxels">("cVoxels");
+  const { connectWallet } = useWalletAccount();
+  const [mySelfID, _] = useStateMySelfID();
+  const cVoxelsRecord = useViewerRecord<ModelTypes, "workCredentials">(
+    "workCredentials"
+  );
   const { isLoading, showLoading, closeLoading } = useModal();
   const cVoxelService = getCVoxelService();
   const { lancInfo, lancError } = useToast();
+  const [issueStatus, setIssueStatus] = useStateIssueStatus();
+
+  const { showToast } = useCVoxelToast();
+
+  const { cvoxelsForDisplay, convertCVoxelsForDisplay } = useVoxStyler();
 
   const publish = useCallback(
     async (
@@ -32,7 +46,7 @@ export function useDraftCVoxel() {
       selectedTx: TransactionLogWithChainId,
       summary: string,
       detail?: string,
-      deliverable?: string,
+      deliverables?: DeliverableItem[],
       relatedAddresses?: string[],
       genre?: string,
       tags?: string[],
@@ -42,9 +56,8 @@ export function useDraftCVoxel() {
         return false;
       }
 
-      const selfID = await connect();
-      if (selfID == null || selfID.did == null) {
-        lancError();
+      if (mySelfID == null || mySelfID.did == null) {
+        await connectWallet();
         return false;
       }
       if (!cVoxelsRecord.isLoadable) {
@@ -58,6 +71,7 @@ export function useDraftCVoxel() {
       }
 
       showLoading();
+      setIssueStatus("issuing");
 
       try {
         const isPayer = selectedTx.from.toLowerCase() === address.toLowerCase();
@@ -67,7 +81,7 @@ export function useDraftCVoxel() {
           selectedTx,
           summary,
           detail,
-          deliverable,
+          deliverables,
           relatedAddresses,
           genre,
           tags,
@@ -80,6 +94,7 @@ export function useDraftCVoxel() {
         );
         if (status !== "ok") {
           closeLoading();
+          setIssueStatus("failed");
           lancError(CVOXEL_CREATION_FAILED);
           return false;
         }
@@ -91,37 +106,63 @@ export function useDraftCVoxel() {
           fiatSymbol: "USD",
         };
 
-        const doc = await selfID.client.dataModel.createTile("CVoxel", {
-          ...metaWithFiat,
-        });
-        const cVoxels = cVoxelsRecord.content?.cVoxels ?? [];
+        const doc = await mySelfID.client.dataModel.createTile(
+          "WorkCredential",
+          {
+            ...metaWithFiat,
+          }
+        );
+        const cVoxels = cVoxelsRecord.content?.WorkCredentials ?? [];
         const docUrl = doc.id.toUrl();
         await cVoxelsRecord.set({
-          cVoxels: [
+          WorkCredentials: [
             ...cVoxels,
             {
               id: docUrl,
               summary: metaWithFiat.summary,
               isPayer: isPayer,
-              txHash: metaWithFiat.txHash,
-              deliverable: metaWithFiat.deliverable,
-              fiatValue: metaWithFiat.fiatValue,
-              genre: metaWithFiat.genre,
+              txHash: metaWithFiat.txHash || "",
+              deliverables: metaWithFiat.deliverables || [],
+              fiatValue: metaWithFiat.fiatValue || "",
+              genre: metaWithFiat.genre || "",
+              isVerified: false,
               issuedTimestamp: metaWithFiat.issuedTimestamp,
             },
           ],
         });
+
         closeLoading();
-        lancInfo(CVOXEL_CREATION_SUCCEED);
+        convertCVoxelsForDisplay([{ ...meta, id: "0" }]);
+        if (
+          !!cvoxelsForDisplay &&
+          cvoxelsForDisplay.length > 0 &&
+          !!cvoxelsForDisplay[0]
+        ) {
+          await showToast({
+            message: "Created!",
+            voxel: cvoxelsForDisplay[0],
+            duration: 3,
+          });
+        } else {
+          lancInfo(CVOXEL_CREATION_SUCCEED);
+        }
+        setIssueStatus("completed");
         return true;
       } catch (error) {
         console.log("error", error);
+        setIssueStatus("failed");
         closeLoading();
         lancError(CVOXEL_CREATION_FAILED);
         return false;
       }
     },
-    [connect, cVoxelsRecord, isLoading, cVoxelsRecord.isLoadable]
+    [
+      mySelfID,
+      connectWallet,
+      cVoxelsRecord,
+      isLoading,
+      cVoxelsRecord.isLoadable,
+    ]
   );
 
   const reClaim = useCallback(
@@ -130,7 +171,7 @@ export function useDraftCVoxel() {
       selectedTx: TransactionLogWithChainId,
       summary: string,
       detail?: string,
-      deliverable?: string,
+      deliverables?: DeliverableItem[],
       relatedAddresses?: string[],
       genre?: string,
       tags?: string[],
@@ -140,8 +181,8 @@ export function useDraftCVoxel() {
         return false;
       }
 
-      const selfID = await connect();
-      if (selfID == null || selfID.did == null) {
+      if (mySelfID == null || mySelfID.did == null) {
+        await connectWallet();
         lancError();
         return false;
       }
@@ -151,16 +192,16 @@ export function useDraftCVoxel() {
       }
 
       showLoading();
+      setIssueStatus("issuing");
 
       try {
         const isPayer = selectedTx.from.toLowerCase() === address.toLowerCase();
-
         const { meta, draft } = await createDraftObjectWithSig(
           address,
           selectedTx,
           summary,
           detail,
-          deliverable,
+          deliverables,
           relatedAddresses,
           genre,
           tags,
@@ -169,37 +210,49 @@ export function useDraftCVoxel() {
 
         await createDraftWighVerify(address.toLowerCase(), draft);
 
-        const doc = await selfID.client.dataModel.createTile("CVoxel", {
-          ...meta,
-        });
-        const cVoxels = cVoxelsRecord.content?.cVoxels ?? [];
+        const doc = await mySelfID.client.dataModel.createTile(
+          "WorkCredential",
+          {
+            ...meta,
+          }
+        );
+        const cVoxels = cVoxelsRecord.content?.WorkCredentials ?? [];
         const docUrl = doc.id.toUrl();
         await cVoxelsRecord.set({
-          cVoxels: [
+          WorkCredentials: [
             ...cVoxels,
             {
               id: docUrl,
               summary: meta.summary,
               isPayer: isPayer,
-              txHash: meta.txHash,
-              deliverable: meta.deliverable,
-              fiatValue: meta.fiatValue,
-              genre: meta.genre,
+              txHash: meta.txHash || "",
+              deliverables: meta.deliverables || [],
+              fiatValue: meta.fiatValue || "",
+              genre: meta.genre || "",
+              isVerified: !!meta.toSig && !!meta.fromSig,
               issuedTimestamp: meta.issuedTimestamp,
             },
           ],
         });
         closeLoading();
+        setIssueStatus("completed");
         lancInfo(CVOXEL_CREATION_SUCCEED);
         return true;
       } catch (error) {
         console.log("error", error);
+        setIssueStatus("failed");
         closeLoading();
         lancError(CVOXEL_CREATION_FAILED);
         return false;
       }
     },
-    [connect, cVoxelsRecord, isLoading, cVoxelsRecord.isLoadable]
+    [
+      mySelfID,
+      connectWallet,
+      cVoxelsRecord,
+      isLoading,
+      cVoxelsRecord.isLoadable,
+    ]
   );
 
   const createDraftObjectWithSig = async (
@@ -207,7 +260,7 @@ export function useDraftCVoxel() {
     selectedTx: TransactionLogWithChainId,
     summary: string,
     detail?: string,
-    deliverable?: string,
+    deliverables?: DeliverableItem[],
     relatedAddresses?: string[],
     genre?: string,
     tags?: string[],
@@ -220,6 +273,9 @@ export function useDraftCVoxel() {
     const isPayer = from === usr;
 
     //get hash
+    const deliverable = deliverables
+      ? deliverables.map((d) => d.value).join(",")
+      : undefined;
     const { signature, hash } = await getMessageHash(
       selectedTx.hash,
       usr,
@@ -258,7 +314,7 @@ export function useDraftCVoxel() {
       meta = {
         summary: summary,
         detail: detail || "",
-        deliverable: deliverable || "",
+        deliverables: deliverables || [],
         jobType: "OneTime",
         from: from,
         to: to,
@@ -272,7 +328,7 @@ export function useDraftCVoxel() {
         issuedTimestamp: selectedTx.timeStamp,
         txHash: selectedTx.hash,
         relatedTxHashes: [selectedTx.hash],
-        genre: genre,
+        genre: genre || "",
         tags: tags || [],
         toSig: !isPayer ? signature.toString() : "",
         fromSig: isPayer ? signature.toString() : "",
@@ -308,5 +364,5 @@ export function useDraftCVoxel() {
     return { signature, hash };
   };
 
-  return { publish, reClaim };
+  return { publish, reClaim, issueStatus };
 }
