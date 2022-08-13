@@ -46,10 +46,30 @@ export const DIDContextProvider = ({ children }: { children: any }) => {
         const authProvider = new EthereumAuthProvider(library.provider, account);
         const selfID = await connect(authProvider);
         setMySelfID(selfID);
-        console.log("selfID", selfID);
         setDid(selfID?.id)
       }
     };
+
+    //TODO: Store session to local storage as a sample below
+    // const loadSession = async (
+    //   authProvider: EthereumAuthProvider
+    // ): Promise<DIDSession> => {
+    //   const sessionStr = localStorage.getItem("didsession");
+    //   let session;
+  
+    //   if (sessionStr) {
+    //     session = await DIDSession.fromSession(sessionStr);
+    //   }
+  
+    //   if (!session || (session.hasSession && session.isExpired)) {
+    //     session = await DIDSession.authorize(authProvider, {
+    //       resources: [`ceramic://*`],
+    //     });
+    //     localStorage.setItem("didsession", session.serialize());
+    //   }
+  
+    //   return session;
+    // };
   
     // Update on wallet connect
     useEffect((): void => {
