@@ -126,7 +126,6 @@ const VisualizerPresenter: FC<VisualizerPresenterProps> = ({
       >
         <meshBasicMaterial color={"white"} opacity={0.5} />
       </Plane> */}
-
       <group ref={cCollectionRef} position={[0, 0, 0]}>
         {!!voxelsForDisplay ? (
           <>
@@ -140,7 +139,7 @@ const VisualizerPresenter: FC<VisualizerPresenterProps> = ({
                     handleClick={
                       isInitVoxels ? undefined : () => handleClickVox(voxel.id)
                     }
-                    disableHover={isInitVoxels ? true : disableHover}
+                    disableHover={isInitVoxels || disableHover}
                   />
                 )
             )}
@@ -158,7 +157,7 @@ const VisualizerPresenter: FC<VisualizerPresenterProps> = ({
                     handleClick={
                       isInitVoxels ? undefined : () => handleClickVox(voxel.id)
                     }
-                    disableHover={isInitVoxels ? true : disableHover}
+                    disableHover={isInitVoxels || disableHover}
                   />
                 )
             )}

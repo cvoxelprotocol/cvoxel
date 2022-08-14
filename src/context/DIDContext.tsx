@@ -30,13 +30,12 @@ export const DIDContextProvider = ({ children }: { children: any }) => {
     const [did, setDid] = useDID();
   
     const { disconnectWallet, account, library, chainId } = useWalletAccount();
-    const [address, setAddress] = useState<string>();
   
     // clear all state
     const clearState = (): void => {
-      setAddress(undefined);
       setMySelfID(null);
       setDid(undefined)
+      setLoggedIn(false)
       disconnect()
     };
   
@@ -76,7 +75,6 @@ export const DIDContextProvider = ({ children }: { children: any }) => {
       if (!account) {
         clearState();
       } else {
-        setAddress(account);
         // Login to Ceramic
         connectDID();
       }
@@ -98,7 +96,7 @@ export const DIDContextProvider = ({ children }: { children: any }) => {
     const providerProps:UserContextState = {
       loggedIn,
       connection,
-      account: address,
+      account: account || undefined,
       did: did,
       chainId
     };
