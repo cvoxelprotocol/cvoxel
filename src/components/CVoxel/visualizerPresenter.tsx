@@ -109,7 +109,7 @@ const VisualizerPresenter: FC<VisualizerPresenterProps> = ({
       />
       {/* <pointLight position={[10, 10, 10]} /> */}
 
-      <OrbitControls enablePan={false} enableZoom={true} enableRotate={true} />
+      <OrbitControls enablePan={false} enableZoom={true} enableRotate={true} maxDistance={20} minDistance={12} />
       <Plane
         receiveShadow
         rotation-x={-Math.PI / 2}
@@ -165,7 +165,7 @@ const VisualizerPresenter: FC<VisualizerPresenterProps> = ({
           </>
         )}
       </group>
-      <PerspectiveCamera makeDefault position={[10, 6, 10]} zoom={zoom} />
+      <PerspectiveCamera makeDefault position={[10, 6, 10]} zoom={zoom}/>
     </>
   );
 };
