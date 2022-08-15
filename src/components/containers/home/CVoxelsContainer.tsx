@@ -7,20 +7,26 @@ import { NamePlate } from "@/components/common/NamePlate";
 import Router from "next/router";
 import { SearchData } from "@/components/common/search/Search";
 import { UserSearch } from "@/components/common/search/UserSearch";
+import { NoCRDLItem } from "./NoCRDLItem";
+import { Button } from "@/components/common/button/Button";
 
 type props = {
+  did: string;
   content?: CVoxels | null;
   children?: ReactNode;
   mode?: "nameplate" | "search";
-  did: string;
+  isMe?: boolean
   onClearUser?: () => void;
+  moveToCreateSection?: () => void
 };
 export const CVoxelsContainer: FC<props> = ({
+  did,
   content,
   children,
   mode = "nameplate",
-  did,
+  isMe = false,
   onClearUser,
+  moveToCreateSection
 }) => {
   // NOTE: Cannot be called by VisualPresenter, so call it here
   const { showDetailBox } = useCVoxelDetailBox();
@@ -51,7 +57,20 @@ export const CVoxelsContainer: FC<props> = ({
   return (
     <div className="flex flex-col items-center justify-center w-full h-screen md:pb-12">
       <div className="flex w-full items-center justify-center h-[300px] sm:h-[450px] relative max-w-[720px]">
-        {VisualizerPresenterMemo}
+        {isMe && (!content || content?.WorkCredentials.length===0) ? (
+          <div className="w-full">
+            <NoCRDLItem />
+              <Button
+                text="Create New Voxel"
+                color="primary"
+                onClick={moveToCreateSection}
+              />
+          </div>
+        ): (
+          <>
+            {VisualizerPresenterMemo}
+          </>
+        )}
       </div>
       {mode == "nameplate" && (
         <div className="flex-none mt-12 w-full max-w-[720px]">
