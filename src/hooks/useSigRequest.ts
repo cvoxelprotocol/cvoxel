@@ -49,7 +49,6 @@ export function useSigRequest() {
     try {
       const isPayer = tx.from.toLowerCase() === account.toLowerCase();
       const meta = await verifyCVoxel(tx, account);
-      console.log({ meta });
       if (meta) {
         const doc = await mySelfID.client.dataModel.createTile(
           "WorkCredential",

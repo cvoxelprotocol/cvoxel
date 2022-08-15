@@ -22,8 +22,6 @@ export const useFileUpload = () => {
     try {
       const res = await fetch("/api/web3StorageUploader", options);
       const data = await res.json();
-      console.log({ data });
-      console.log("cid", data.cid);
       if (data.cid) {
         setCID(data.cid);
         setStatus("completed");
