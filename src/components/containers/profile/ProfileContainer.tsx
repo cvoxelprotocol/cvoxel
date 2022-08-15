@@ -10,6 +10,7 @@ import { UserSearch } from "@/components/common/search/UserSearch";
 import { UserCVoxelContainer } from "@/components/containers/profile/UserCVoxelContainer";
 import { useWalletAccount } from "@/hooks/useWalletAccount";
 import { DIDContext } from "@/context/DIDContext";
+import Image from "next/image";
 
 type Props = {
   did: string;
@@ -18,6 +19,10 @@ type Props = {
 export const ProfileContainer: FC<Props> = ({ did }) => {
   const CVoxelsRecords = useCVoxelsRecord(did);
   const router = useRouter();
+
+  const isTopPage = useMemo(() => {
+    return router.asPath==="/"
+  },[router.asPath])
 
   const currentVoxelID = useMemo(() => {
     if (typeof router.query["voxel"] == "string") {
@@ -78,6 +83,13 @@ export const ProfileContainer: FC<Props> = ({ did }) => {
         className="relative snap-start snap-always min-h-screen"
         ref={visualContainerRef}
       >
+        {isTopPage && (
+          <div className="z-50 absolute w-full max-w-[720px] h-[300px] sm:h-[450px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-2/3 flex items-center justify-center bg-white bg-opacity-50">
+            <div className="w-[240px] sm:w-[320px] h-[64px] sm:h-[120px] relative mx-auto">
+                <Image src={"/vess_logo_full.png"} alt="no item" objectFit="contain"  layout="fill" />
+            </div>
+          </div>
+        )}
         <CVoxelsContainer
           mode="search"
           content={{ ...CVoxelsRecords.content, WorkCredentials: sortCVoxels }}
