@@ -10,7 +10,7 @@ import { Toast } from "@/components/common/toast/Toast";
 import { CVoxelDetailBox } from "@/components/CVoxel/CVoxelDetailBox";
 import { useIsClient } from "@/hooks/useIsClient";
 import { useThemeMode } from "@/hooks/useThemeMode";
-// import { ThemeModeSelector } from "@/components/common/mode/ThemeSelector";
+import { ThemeModeSelector } from "@/components/common/mode/ThemeSelector";
 
 config.autoAddCss = false;
 
@@ -46,9 +46,9 @@ export const BaseLayout = ({ children }: Props) => {
               {children}
             </div>
 
-            {/*<div className="absolute top-0 bottom-0 left-4 items-center hidden lg:flex">*/}
-            {/*  <ThemeModeSelector />*/}
-            {/*</div>*/}
+            <div className="absolute top-0 bottom-0 left-4 items-center hidden lg:flex">
+             <ThemeModeSelector />
+            </div>
           </div>
         )}
       </div>
