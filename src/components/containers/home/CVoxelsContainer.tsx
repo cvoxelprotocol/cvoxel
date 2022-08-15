@@ -40,7 +40,7 @@ export const CVoxelsContainer: FC<props> = ({
         />
       </Canvas>
     ),
-    [content]
+    [content?.WorkCredentials]
   );
 
   const handleClickNamePlate = () => {
