@@ -109,7 +109,7 @@ const VisualizerPresenter: FC<VisualizerPresenterProps> = ({
       />
       {/* <pointLight position={[10, 10, 10]} /> */}
 
-      <OrbitControls enablePan={false} enableZoom={true} enableRotate={true} />
+      <OrbitControls enablePan={false} enableZoom={true} enableRotate={true} maxDistance={20} minDistance={12} />
       <Plane
         receiveShadow
         rotation-x={-Math.PI / 2}
@@ -126,7 +126,6 @@ const VisualizerPresenter: FC<VisualizerPresenterProps> = ({
       >
         <meshBasicMaterial color={"white"} opacity={0.5} />
       </Plane> */}
-
       <group ref={cCollectionRef} position={[0, 0, 0]}>
         {!!voxelsForDisplay ? (
           <>
@@ -140,7 +139,7 @@ const VisualizerPresenter: FC<VisualizerPresenterProps> = ({
                     handleClick={
                       isInitVoxels ? undefined : () => handleClickVox(voxel.id)
                     }
-                    disableHover={isInitVoxels ? true : disableHover}
+                    disableHover={isInitVoxels || disableHover}
                   />
                 )
             )}
@@ -158,7 +157,7 @@ const VisualizerPresenter: FC<VisualizerPresenterProps> = ({
                     handleClick={
                       isInitVoxels ? undefined : () => handleClickVox(voxel.id)
                     }
-                    disableHover={isInitVoxels ? true : disableHover}
+                    disableHover={isInitVoxels || disableHover}
                   />
                 )
             )}
@@ -166,7 +165,7 @@ const VisualizerPresenter: FC<VisualizerPresenterProps> = ({
           </>
         )}
       </group>
-      <PerspectiveCamera makeDefault position={[10, 6, 10]} zoom={zoom} />
+      <PerspectiveCamera makeDefault position={[10, 6, 10]} zoom={zoom}/>
     </>
   );
 };

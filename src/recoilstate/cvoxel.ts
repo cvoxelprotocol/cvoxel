@@ -1,4 +1,3 @@
-import { WorkCredentialForm } from "@/interfaces";
 import { atom, useRecoilState } from "recoil";
 
 export const issueStatus = atom<"completed" | "issuing" | "failed" | undefined>(

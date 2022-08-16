@@ -10,6 +10,7 @@ type Props = {
   href?: string;
   className?: string;
   buttonType?: "button" | "submit" | "reset";
+  disabled?: boolean
 };
 
 export const Button: FC<Props> = ({
@@ -20,6 +21,7 @@ export const Button: FC<Props> = ({
   href,
   className,
   buttonType = "button",
+  disabled = false
 }) => {
   let buttonColor = "text-white ";
   let buttonVariant = "";
@@ -55,9 +57,10 @@ export const Button: FC<Props> = ({
 
   return (
     <button
-      className={clsx("w-fit h-fit px-2 py-1.5 sm:px-6 sm:py-3 rounded-full ", buttonStyle)}
+      className={clsx("w-fit h-fit px-2 py-1.5 sm:px-6 sm:py-3 rounded-full ", (disabled ? "bg-gray-400" : ""),  buttonStyle)}
       onClick={onClick}
       type={buttonType}
+      disabled={disabled}
     >
       {!href ? text : <Link href={href}>{text}</Link>}
     </button>

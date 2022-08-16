@@ -2,7 +2,7 @@ import { useMyCeramicAcount } from "@/hooks/useCeramicAcount";
 import { formatDID } from "@self.id/framework";
 import { AvatarPlaceholder } from "@/components/common/avatar/AvatarPlaceholder";
 import { DropButton } from "grommet";
-import { useContext, useState } from "react";
+import { useContext, useState,useEffect } from "react";
 import { DisplayAvatar } from "../DisplayAvatar";
 import { IconAvatar } from "../IconAvatar";
 import { NamePlate } from "@/components/common/NamePlate";
@@ -51,11 +51,11 @@ export default function AccountButton() {
     }
   };
 
-  // useEffect(() => {
-  //   if (isConnect && !!account && router.asPath==="/") {
-  //     router.push(`/${account}`);
-  //   }
-  // }, [isConnect, account]);
+  useEffect(() => {
+    if (isConnect && !!account && router.asPath==="/") {
+      router.push(`/${account}`);
+    }
+  }, [isConnect, account]);
 
   if (account) {
     const buttons =

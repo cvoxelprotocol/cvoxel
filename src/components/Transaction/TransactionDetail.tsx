@@ -45,8 +45,6 @@ export const TransactionDetail: FC<TransactionDetailProps> = ({
   const [newTags, setNewTags] = useState<string[]>([]);
   const [noGenreError, setNoGenreError] = useState<string>();
 
-  console.log(cvoxels)
-
   const genre = useMemo(() => {
     return getGenre(offchainItem.genre);
   }, [offchainItem.genre]);

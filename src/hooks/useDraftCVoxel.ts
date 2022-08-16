@@ -58,6 +58,7 @@ export function useDraftCVoxel() {
 
       if (mySelfID == null || mySelfID.did == null) {
         await connectWallet();
+        lancError("Please try again");
         return false;
       }
       if (!cVoxelsRecord.isLoadable) {
