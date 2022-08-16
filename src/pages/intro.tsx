@@ -86,7 +86,7 @@ const Intro: NextPage = () => {
             </a>
             <a
               className="mx-4"
-              href="https://docs.cvoxel.xyz/"
+              href="https://doc.vess.id/"
               target="_blank"
               rel="noreferrer"
             >
