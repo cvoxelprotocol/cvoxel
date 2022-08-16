@@ -24,7 +24,7 @@ export const MyNotificationContainer: FC = () => {
       if (did) {
         const result = await verifyWithCeramic(tx);
         if (result) {
-          setForceUpdateCVoxelList(true);
+          setForceUpdateCVoxelList(v => !v);
           setTabState("cvoxels");
         }
       } else {

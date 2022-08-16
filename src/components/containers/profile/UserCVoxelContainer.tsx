@@ -40,7 +40,7 @@ export const UserCVoxelContainer: FC<UserCVoxelContainerProps> = ({
   const [forceUpdateCVoxelList, setForceUpdateCVoxelList] =
     useStateForceUpdate();
   const forceReload = () => {
-    setForceUpdateCVoxelList(true);
+    setForceUpdateCVoxelList(v => !v);
   };
 
   return useMemo(

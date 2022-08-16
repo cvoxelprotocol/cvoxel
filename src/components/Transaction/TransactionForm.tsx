@@ -24,7 +24,7 @@ export const TransactionForm: FC<TransactionFormProps> = ({
   onSubmit,
 }) => {
   const { internalTxs, internalTxLoading } = useInternalTransactions(tx);
-  const { cid, status } = useFileUpload();
+  const { cid, status:fileUploadStatus } = useFileUpload();
   const { issueStatus } = useDraftCVoxel();
 
   const {
@@ -63,10 +63,10 @@ export const TransactionForm: FC<TransactionFormProps> = ({
   }, [relatedAddress, tx]);
 
   useEffect(() => {
-    if (status === "completed" && cid) {
+    if (fileUploadStatus === "completed" && cid) {
       setValue("deliverableCID", cid);
     }
-  }, [cid, status]);
+  }, [cid, fileUploadStatus]);
 
   return (
     <form className="w-full" onSubmit={handleSubmit(onClickSubmit)}>
@@ -180,6 +180,7 @@ export const TransactionForm: FC<TransactionFormProps> = ({
           color={
             connectionState?.status === "connected" ? "primary" : "secondary"
           }
+          disabled={fileUploadStatus==="uploading"}
         />
       </div>
       <InternalTransactionContainer

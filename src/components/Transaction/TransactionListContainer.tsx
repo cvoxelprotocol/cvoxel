@@ -75,8 +75,8 @@ export const TransactionListContainer: FC<TransactionListContainerProps> = ({
       if (result) {
         selectTx(null);
         resetUploadStatus();
+        setForceUpdateCVoxelList(v => !v);
         setTabState("cvoxels");
-        setForceUpdateCVoxelList(true);
       }
     },
     [draft]
@@ -103,6 +103,7 @@ export const TransactionListContainer: FC<TransactionListContainerProps> = ({
     if (result) {
       selectTx(null);
       setTabState("cvoxels");
+      setForceUpdateCVoxelList(v => !v);
     }
   };
 
@@ -127,7 +128,7 @@ export const TransactionListContainer: FC<TransactionListContainerProps> = ({
     if (result) {
       selectTx(null);
       setTabState("cvoxels");
-      setForceUpdateCVoxelList(true);
+      setForceUpdateCVoxelList(v => !v);
     }
   };
 

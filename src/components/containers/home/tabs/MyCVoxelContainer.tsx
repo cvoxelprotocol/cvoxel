@@ -26,7 +26,7 @@ export const MyCVoxelContainer: FC = () => {
     useStateForceUpdate();
 
   const forceReload = () => {
-    setForceUpdateCVoxelList(true);
+    setForceUpdateCVoxelList(v => !v);
   };
 
   const sortCVoxels = useMemo(() => {
@@ -34,7 +34,7 @@ export const MyCVoxelContainer: FC = () => {
     return CVoxelsRecords.content.WorkCredentials.sort((a, b) => {
       return Number(a.issuedTimestamp) > Number(b.issuedTimestamp) ? -1 : 1;
     });
-  }, [CVoxelsRecords.content]);
+  }, [CVoxelsRecords.content, CVoxelsRecords.content?.WorkCredentials]);
 
   const router = useRouter();
   const handleClickNavBackButton = useCallback(() => {
