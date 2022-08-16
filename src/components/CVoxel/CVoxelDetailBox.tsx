@@ -195,23 +195,17 @@ export const CVoxelDetailBox: FC<{}> = () => {
               </p>
 
               {detailItem?.deliverables.map((deliverable) =>
-                deliverable.value.startsWith("http") ? (
-                  <a
-                    className="flex items-center flex-wrap"
-                    href={`${deliverable.value}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    key={deliverable.value}
-                  >
-                    <p className="text-light-secondary dark:text-dark-secondary text-md">
-                      {deliverable.value}
-                    </p>
-                  </a>
-                ) : (
-                  <p className="text-md text-secondary" key={deliverable.value}>
-                    {shortenStr(deliverable.value)}
+                <a
+                  className="flex items-center flex-wrap"
+                  href={`${deliverable.format==="url" ? deliverable.value : `https://dweb.link/ipfs/${deliverable.value}`}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  key={deliverable.value}
+                >
+                  <p className="text-light-secondary dark:text-dark-secondary text-md">
+                    {deliverable.format==="url" ? deliverable.value : shortenStr(deliverable.value)}
                   </p>
-                )
+                </a>
               )}
             </div>
           )}

@@ -89,22 +89,17 @@ export const SigRequestListItem: FC<Props> = ({ offchainItem }) => {
             {offchainItem?.deliverables &&
               offchainItem.deliverables.length > 0 &&
               offchainItem?.deliverables.map((deliverable) =>
-                deliverable.value.startsWith("http") ? (
-                  <a
-                    className="flex items-center flex-wrap"
-                    href={`${deliverable.value}`}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    <p className="text-light-secondary dark:text-dark-secondary text-md">
-                      {deliverable.value}
-                    </p>
-                  </a>
-                ) : (
-                  <p className="text-md text-secondary">
-                    {shortenStr(deliverable.value)}
+                <a
+                  className="flex items-center flex-wrap"
+                  href={`${deliverable.format==="url" ? deliverable.value : `https://dweb.link/ipfs/${deliverable.value}`}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  key={deliverable.value}
+                >
+                  <p className="text-light-secondary dark:text-dark-secondary text-md text-left">
+                    {deliverable.format==="url" ? deliverable.value : shortenStr(deliverable.value)}
                   </p>
-                )
+                </a>
               )}
           </div>
 
@@ -185,22 +180,17 @@ export const SigRequestListItem: FC<Props> = ({ offchainItem }) => {
           {offchainItem?.deliverables &&
             offchainItem.deliverables.length > 0 &&
             offchainItem?.deliverables.map((deliverable) =>
-              deliverable.value.startsWith("http") ? (
-                <a
-                  className="flex items-center flex-wrap"
-                  href={`${deliverable.value}`}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <p className="text-light-secondary dark:text-dark-secondary text-md">
-                    {deliverable.value}
-                  </p>
-                </a>
-              ) : (
-                <p className="text-md text-secondary">
-                  {shortenStr(deliverable.value)}
+              <a
+                className="flex items-center flex-wrap"
+                href={`${deliverable.format==="url" ? deliverable.value : `https://dweb.link/ipfs/${deliverable.value}`}`}
+                target="_blank"
+                rel="noreferrer"
+                key={deliverable.value}
+              >
+                <p className="text-light-secondary dark:text-dark-secondary text-md">
+                  {deliverable.format==="url" ? deliverable.value : shortenStr(deliverable.value)}
                 </p>
-              )
+              </a>
             )}
 
           <div className="flex">
