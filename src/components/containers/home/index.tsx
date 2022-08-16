@@ -1,15 +1,17 @@
 import { useCVoxelsRecord } from "@/hooks/useCVoxel";
-import { FC, useContext, useRef } from "react";
+import { FC, useCallback, useContext, useRef } from "react";
 import { CVoxelsContainer } from "./CVoxelsContainer";
 import { MyPageContainer } from "./MyPageContainer";
 import { Arrow } from "@/components/common/arrow/Arrow";
 import { DIDContext } from "@/context/DIDContext";
+import { useTab } from "@/hooks/useTab";
 
 export const HomeContainer: FC = () => {
   const {did} = useContext(DIDContext)
   const CVoxelsRecords = useCVoxelsRecord(did || "");
   const myPageContainerRef = useRef<HTMLDivElement>(null);
   const visualContainerRef = useRef<HTMLDivElement>(null);
+  const { setTabState } = useTab();
   const scrollToInfo = () => {
     myPageContainerRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -17,13 +19,18 @@ export const HomeContainer: FC = () => {
     visualContainerRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+  const handleCreateNewVoxel = useCallback(() => {
+    scrollToInfo()
+    setTabState("transactions");
+  }, [setTabState]);
+
   return (
     <main className="text-center">
       <div
         className="relative snap-start snap-always min-h-screen"
         ref={visualContainerRef}
       >
-        <CVoxelsContainer did={did || ""} content={CVoxelsRecords.content}>
+        <CVoxelsContainer did={did || ""} content={CVoxelsRecords.content} isMe moveToCreateSection={handleCreateNewVoxel}>
           <div className="absolute bottom-0 pb-12">
             <div className="relative mx-auto cursor-pointer hidden sm:block">
               <button onClick={() => scrollToInfo()}>

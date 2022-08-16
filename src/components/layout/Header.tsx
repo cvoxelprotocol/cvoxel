@@ -18,7 +18,7 @@ export const Header = () => {
             <div className="text-center flex">
               <Image
                 src="/vess-logo.png"
-                alt="LanC"
+                alt="VESS"
                 objectFit="cover"
                 width="55px"
                 height="50px"

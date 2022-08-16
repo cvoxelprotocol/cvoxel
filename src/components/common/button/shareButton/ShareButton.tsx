@@ -8,12 +8,13 @@ import { useRouter } from "next/dist/client/router";
 import Share from "@/components/CVoxel/VoxelDetail/share.svg";
 
 type Props = {
-  voxelID: string;
+  voxelID?: string;
   isOwner?: boolean;
   valiant?: "button" | "icon";
+  displayAt?: "bottom" | "right"
 };
 
-export const ShareButton: FC<Props> = ({ voxelID, valiant = "button", isOwner = false }) => {
+export const ShareButton: FC<Props> = ({ voxelID, valiant = "button", isOwner = false, displayAt = "bottom" }) => {
   const [showMenu, setShowMenu] = useState<boolean>(false);
   const router = useRouter();
 
@@ -59,7 +60,9 @@ export const ShareButton: FC<Props> = ({ voxelID, valiant = "button", isOwner = 
       );
 
       // NOTE: When using voxel IDs
-      u.searchParams.set("voxel", voxelID);
+      if(voxelID){
+        u.searchParams.set("voxel", voxelID);
+      }
 
       return u.toString();
     }
@@ -71,8 +74,8 @@ export const ShareButton: FC<Props> = ({ voxelID, valiant = "button", isOwner = 
     const u = new URL("https://twitter.com/intent/tweet");
     u.searchParams.set("url", shareUrl);
 
-    u.searchParams.set("text", isOwner ? "I made a new work credential on @vess_id !" : "The work credential on @vess_id ");
-    u.searchParams.set("hashtags", "Vess,WorkCredential");
+    u.searchParams.set("text", isOwner ? "Check out my web3.0 resume at VESS, the web3 work credential protocol.\n" : "Check out VESS | @vess_id , the web3 work credential protocol for your web3 resume! Take a look:\n");
+    u.searchParams.set("hashtags", "WorkCredential");
 
     return u.toString();
   };
@@ -100,8 +103,9 @@ export const ShareButton: FC<Props> = ({ voxelID, valiant = "button", isOwner = 
 
       <div
         className={clsx(
-          "absolute bg-light-background dark:bg-dark-background dark:border-dark-outline dark:border shadow-lg rounded-lg right-0 p-4 min-w-max z-10",
-          showMenu ? undefined : "opacity-0 pointer-events-none" // To control the animation of tooltips
+          "absolute bg-light-background dark:bg-dark-background dark:border-dark-outline dark:border shadow-lg rounded-lg p-4 min-w-max z-10",
+          showMenu ? undefined : "opacity-0 pointer-events-none", // To control the animation of tooltips
+          displayAt==="bottom" ? "right-0" : "left-0"
         )}
       >
         <div className="flex items-center text-black hover:text-gray-500 relative">
