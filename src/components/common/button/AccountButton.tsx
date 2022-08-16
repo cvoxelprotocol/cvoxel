@@ -2,12 +2,14 @@ import { useMyCeramicAcount } from "@/hooks/useCeramicAcount";
 import { formatDID } from "@self.id/framework";
 import { AvatarPlaceholder } from "@/components/common/avatar/AvatarPlaceholder";
 import { DropButton } from "grommet";
-import { useEffect, useState } from "react";
+import { useContext, useState,useEffect } from "react";
 import { DisplayAvatar } from "../DisplayAvatar";
 import { IconAvatar } from "../IconAvatar";
 import { NamePlate } from "@/components/common/NamePlate";
 import { Button } from "@/components/common/button/Button";
 import { useRouter } from "next/router";
+import { useWalletAccount } from "@/hooks/useWalletAccount";
+import { DIDContext } from "@/context/DIDContext";
 
 type MenuButtonProps = {
   label: string;
@@ -26,14 +28,11 @@ function MenuButton({ label, ...props }: MenuButtonProps) {
 
 export default function AccountButton() {
   const {
-    connection,
-    disconnectCeramic,
-    account,
-    connectWalletOnly,
-    did,
     name,
     avator,
   } = useMyCeramicAcount();
+  const {did, account, connection,loggedIn} = useContext(DIDContext)
+  const { connectWallet, disconnectWallet } = useWalletAccount();
   const [isMenuOpen, setMenuOpen] = useState(false);
   const router = useRouter();
 
@@ -45,7 +44,7 @@ export default function AccountButton() {
   const [isConnect, setIsConnect] = useState<boolean>(false);
   const connect = async () => {
     try {
-      await connectWalletOnly();
+      await connectWallet();
       setIsConnect(true);
     } catch (error) {
       console.log("error:", error);
@@ -60,17 +59,17 @@ export default function AccountButton() {
 
   if (account) {
     const buttons =
-      connection.status === "connected" ? (
+      loggedIn ? (
         <>
           <MenuButton label="My Page" onClick={() => goToMypage()} />
-          <MenuButton label="Disconnect" onClick={() => disconnectCeramic()} />
+          <MenuButton label="Disconnect" onClick={() => disconnectWallet()} />
         </>
       ) : (
         <>
           <MenuButton label="My Page" onClick={() => goToMypage()} />
           <MenuButton
             label="Disconnect Wallet"
-            onClick={() => disconnectCeramic()}
+            onClick={() => disconnectWallet()}
           />
         </>
       );
@@ -116,7 +115,7 @@ export default function AccountButton() {
     );
   }
 
-  return connection.status === "connecting" ? (
+  return connection?.status === "connecting" ? (
     <DisplayAvatar label="Connecting..." loading hiddenLabelOnSp={true} />
   ) : (
     <Button text="Connect Wallet" onClick={() => connect()} color="primary" />

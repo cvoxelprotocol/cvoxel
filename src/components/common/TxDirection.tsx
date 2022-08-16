@@ -5,7 +5,6 @@ import RightArrow from "@/components/CVoxel/VoxelListItem/right-arrow.svg";
 import { CommonSpinner } from "@/components/common/CommonSpinner";
 import LeftArrow from "@/components/CVoxel/VoxelListItem/left-arrow.svg";
 import { useENS } from "@/hooks/useENS";
-import { useMyCeramicAcount } from "@/hooks/useCeramicAcount";
 import { getDIDFromAddress } from "@/utils/addressUtil";
 import { getProfileInfo } from "@/utils/ceramicUtils";
 

@@ -108,9 +108,9 @@ export const CVoxelDetailBox: FC<{}> = () => {
     <div className="relative">
       <div
         className={clsx(
-          "bg-light-surface-1 dark:bg-dark-surface-1 top-24 right-0 absolute border rounded-l-2xl border-y-light-outline border-l-light-outline dark:border-y-dark-outline dark:border-l-dark-outline z-10 w-72 sm:w-96 max-h-screen overflow-scroll",
+          "bg-light-surface-1 dark:bg-dark-surface-1 top-6 sm:top-24 right-0 absolute border rounded-l-2xl border-y-light-outline border-l-light-outline dark:border-y-dark-outline dark:border-l-dark-outline z-10 w-72 sm:w-96 max-h-screen overflow-scroll",
           !isMount && "hidden",
-          isShow ? "animate-slide-from-right" : "animate-slide-to-right"
+          isShow ? "animate-slide-from-right" : "animate-slide-to-right hidden sm:block"
         )}
         ref={boxRef}
       >
@@ -121,7 +121,7 @@ export const CVoxelDetailBox: FC<{}> = () => {
           </div>
 
           <div className="absolute top-4 left-4">
-            <button className="sm:opacity-0" onClick={handleClose}>
+            <button  onClick={handleClose}>
               <FontAwesomeIcon
                 className="w-6 h-6 text-light-on-surface-variant dark:text-dark-on-surface-variant"
                 icon={faClose}

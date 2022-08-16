@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect, useMemo } from "react";
+import { FC, useCallback, useContext, useEffect, useMemo } from "react";
 import { CVoxelMetaDraft } from "@/interfaces";
 import { Canvas } from "@react-three/fiber";
 import VisualizerPresenter from "@/components/CVoxel/visualizerPresenter";
@@ -18,8 +18,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faExternalLink } from "@fortawesome/free-solid-svg-icons";
 import { getExploreLink } from "@/utils/etherscanUtils";
 import { formatBigNumber } from "@/utils/ethersUtil";
-import { useMyCeramicAcount } from "@/hooks/useCeramicAcount";
 import { useVoxStyler } from "@/hooks/useVoxStyler";
+import { DIDContext } from "@/context/DIDContext";
 
 type Props = {
   offchainItem: CVoxelMetaDraft;
@@ -41,7 +41,7 @@ export const SigRequestDetail: FC<Props> = ({
     return getExploreLink(offchainItem.txHash, offchainItem.networkId);
   }, [offchainItem?.txHash, offchainItem?.networkId]);
 
-  const { did: did } = useMyCeramicAcount();
+  const {did} = useContext(DIDContext)
 
   // convert display
   const { cvoxelsForDisplay, convertCVoxelsForDisplay } = useVoxStyler();

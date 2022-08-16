@@ -1,12 +1,11 @@
 import { useTab } from "@/hooks/useTab";
-import { FC, useCallback, useEffect, useMemo, useState } from "react";
+import { FC, useCallback, useContext, useMemo, useState } from "react";
 import { NoItemPresenter } from "../../../common/NoItemPresenter";
 import CVoxelsPresenter from "../../../CVoxel/CVoxelsPresenter";
 import type { CVoxelItem as ICVoxelItem } from "@/interfaces";
 import { useStateForceUpdate } from "@/recoilstate";
 import { useCVoxelsRecord } from "@/hooks/useCVoxel";
 import { CommonLoading } from "../../../common/CommonLoading";
-import { useMyCeramicAcount } from "@/hooks/useCeramicAcount";
 import { useCVoxelList } from "@/hooks/useCVoxelList";
 import { VoxelListItem } from "@/components/CVoxel/VoxelListItem/VoxelListItem";
 import { useRouter } from "next/dist/client/router";
@@ -14,11 +13,12 @@ import { NavBar } from "@/components/CVoxel/NavBar/NavBar";
 import { VoxelDetail } from "@/components/CVoxel/VoxelDetail/VoxelDetail";
 import { SearchData } from "@/components/common/search/Search";
 import { Button } from "@/components/common/button/Button";
+import { DIDContext } from "@/context/DIDContext";
 
 export const MyCVoxelContainer: FC = () => {
-  const { did, account } = useMyCeramicAcount();
+  const {did, account} = useContext(DIDContext)
   const { offchainMetaList, txLoading } = useCVoxelList();
-  const CVoxelsRecords = useCVoxelsRecord(did);
+  const CVoxelsRecords = useCVoxelsRecord(did || "");
   const { setTabState } = useTab();
 
   // TODO: This is temporary solution because of useTileDoc bug

@@ -1,4 +1,4 @@
-import { FC, useEffect, useMemo, useState } from "react";
+import { FC, useContext, useEffect, useMemo, useState } from "react";
 import {
   CVoxel,
   CVoxelItem as ICVoxelItem,
@@ -24,8 +24,8 @@ import { faExternalLink } from "@fortawesome/free-solid-svg-icons";
 import { getExploreLink } from "@/utils/etherscanUtils";
 import { ShareButton } from "@/components/common/button/shareButton/ShareButton";
 import { formatBigNumber } from "@/utils/ethersUtil";
-import { useMyCeramicAcount } from "@/hooks/useCeramicAcount";
 import { getDIDFromAddress } from "@/utils/addressUtil";
+import { DIDContext } from "@/context/DIDContext";
 
 type Props = {
   item: ICVoxelItem;
@@ -90,7 +90,7 @@ export const VoxelDetail: FC<Props> = ({
     return getExploreLink(detailItem.txHash, detailItem.networkId);
   }, [detailItem?.txHash, detailItem?.networkId]);
 
-  const { did: myDid } = useMyCeramicAcount();
+  const {did: myDid} = useContext(DIDContext)
 
   const [toDid, setToDid] = useState<string>();
   useEffect(() => {

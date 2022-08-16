@@ -1,4 +1,4 @@
-import { FC, useCallback, useMemo } from "react";
+import { FC, useCallback, useContext, useMemo } from "react";
 import { CommonLoading } from "../common/CommonLoading";
 import { NoItemPresenter } from "../common/NoItemPresenter";
 import { TransactionDetail } from "./TransactionDetail";
@@ -12,11 +12,11 @@ import type {
   WorkCredentialForm,
 } from "@/interfaces";
 import { useCVoxelsRecord } from "@/hooks/useCVoxel";
-import { useMyCeramicAcount } from "@/hooks/useCeramicAcount";
 import { useDraftCVoxel } from "@/hooks/useDraftCVoxel";
 import { useFileUpload } from "@/hooks/useFileUpload";
 import { useStateForceUpdate, useStateSelectedTx } from "@/recoilstate";
 import { useThemeMode } from "@/hooks/useThemeMode";
+import { DIDContext } from "@/context/DIDContext";
 
 type TransactionListContainerProps = {
   txList: TransactionLogWithChainId[];
@@ -28,8 +28,8 @@ export const TransactionListContainer: FC<TransactionListContainerProps> = ({
   offchainLoading,
   offchainMetaList,
 }) => {
-  const { connection, did, account } = useMyCeramicAcount();
-  const CVoxelsRecords = useCVoxelsRecord(did);
+  const {did, account, connection} = useContext(DIDContext)
+  const CVoxelsRecords = useCVoxelsRecord(did || "");
   const [selectedTx, selectTx] = useStateSelectedTx();
   const { setTabState } = useTab();
   const draft = useDraftCVoxel();
@@ -127,6 +127,7 @@ export const TransactionListContainer: FC<TransactionListContainerProps> = ({
     if (result) {
       selectTx(null);
       setTabState("cvoxels");
+      setForceUpdateCVoxelList(true);
     }
   };
 
@@ -168,7 +169,7 @@ export const TransactionListContainer: FC<TransactionListContainerProps> = ({
                       connectionState={connection}
                       onClaim={publishFromExistedCVoxel}
                       reClaim={reClaimCVoxel}
-                      cvoxels={CVoxelsRecords.content?.WorkCredentials}
+                      cvoxels={CVoxelsRecords.content?.WorkCredentials || []}
                     />
                   ) : (
                     <div key={`${tx.hash}_form_container`} className="mb-4">
@@ -195,7 +196,7 @@ export const TransactionListContainer: FC<TransactionListContainerProps> = ({
       txList,
       account,
       selectedOffchainItem,
-      connection.status,
+      connection,
       selectedTx,
       connection,
       CVoxelsRecords.content?.WorkCredentials,

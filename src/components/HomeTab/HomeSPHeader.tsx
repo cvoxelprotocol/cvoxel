@@ -1,14 +1,14 @@
-import { FC, RefObject, useCallback, useMemo } from "react";
+import { FC, RefObject, useCallback, useContext, useMemo } from "react";
 import { HomeTabsHeader } from "./HomeTabsHeader";
 import { useStateShowDrawer } from "@/recoilstate";
 import { Drawer } from "../common/Drawer";
 import { useTab } from "@/hooks/useTab";
 import { TAB_NAME } from "@/interfaces";
 import { NamePlate } from "@/components/common/NamePlate";
-import { useMyCeramicAcount } from "@/hooks/useCeramicAcount";
 import { useRouter } from "next/router";
 import LeftArrow from "@/components/CVoxel/NavBar/left-arrow.svg";
 import { Arrow } from "@/components/common/arrow/Arrow";
+import { DIDContext } from "@/context/DIDContext";
 
 type Props = {
   visualContainerRef: RefObject<HTMLDivElement>;
@@ -17,7 +17,7 @@ type Props = {
 export const HomeSPHeader: FC<Props> = ({ visualContainerRef }) => {
   const [_, setOpen] = useStateShowDrawer();
   const { tabState } = useTab();
-  const { did } = useMyCeramicAcount();
+  const {did} = useContext(DIDContext)
 
   const title = useMemo(() => {
     return TAB_NAME[tabState];

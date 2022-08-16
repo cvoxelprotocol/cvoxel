@@ -14,7 +14,7 @@ import { TagForm } from "./TagForm";
 
 type TransactionFormProps = {
   tx: TransactionLogWithChainId;
-  connectionState: ViewerConnectionState;
+  connectionState?: ViewerConnectionState;
   onSubmit: (data: any) => void;
 };
 
@@ -167,18 +167,18 @@ export const TransactionForm: FC<TransactionFormProps> = ({
         </div>
       </div>
       <div className="text-right py-4 space-x-4 flex justify-end items-center">
-        {connectionState.status === "connecting" && <CommonSpinner />}
+        {connectionState?.status === "connecting" && <CommonSpinner />}
         <Button
           text={
-            connectionState.status === "connected"
+            connectionState?.status === "connected"
               ? "Create"
-              : connectionState.status === "connecting"
+              : connectionState?.status === "connecting"
               ? "Connecitng..."
               : "Connect DID for Create"
           }
           buttonType={"submit"}
           color={
-            connectionState.status === "connected" ? "primary" : "secondary"
+            connectionState?.status === "connected" ? "primary" : "secondary"
           }
         />
       </div>

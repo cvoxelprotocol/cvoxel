@@ -15,6 +15,7 @@ import { ThemeProvider } from "next-themes";
 import { useEffect } from "react";
 import Router from "next/router";
 import { LoadingModal } from "@/components/common/LoadingModal";
+import { DIDContextProvider } from "@/context/DIDContext";
 
 const aliases: ModelTypesToAliases<ModelTypes> = cVoxelModel;
 
@@ -67,15 +68,19 @@ export default function App({ Component, pageProps }: AppProps) {
                 ceramic: CERAMIC_URL,
                 connectNetwork: CERAMIC_NETWORK,
                 aliases,
+                session: true
               }}
               state={state}
+              session={true}
             >
-              <ThemeProvider attribute="class" defaultTheme={"light"}>
-                <BaseLayout>
-                  <Component {...props} />
-                </BaseLayout>
-                {isLoading && <LoadingModal />}
-              </ThemeProvider>
+                <ThemeProvider attribute="class" defaultTheme={"light"}>
+                  <DIDContextProvider >
+                    <BaseLayout>
+                      <Component {...props} />
+                    </BaseLayout>
+                  </DIDContextProvider>
+                  {isLoading && <LoadingModal />}
+                </ThemeProvider>
             </SelfIDProvider>
           </Hydrate>
         </QueryClientProvider>

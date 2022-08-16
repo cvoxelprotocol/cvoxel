@@ -19,13 +19,15 @@ import {
 import { extractCVoxel } from "@/utils/cVoxelUtil";
 import { getNetworkSymbol } from "@/utils/networkUtil";
 import { convertDateToTimestampStr } from "@/utils/dateUtil";
-import { useMyCeramicAcount } from "./useCeramicAcount";
 import { useStateIssueStatus } from "@/recoilstate/cvoxel";
 import { useCVoxelToast } from "@/hooks/useCVoxelToast";
 import { useVoxStyler } from "@/hooks/useVoxStyler";
+import { useStateMySelfID } from "@/recoilstate/ceramic";
+import { useWalletAccount } from "./useWalletAccount";
 
 export function useDraftCVoxel() {
-  const { connectCeramic, mySelfID } = useMyCeramicAcount();
+  const { connectWallet } = useWalletAccount();
+  const [mySelfID, _] = useStateMySelfID();
   const cVoxelsRecord = useViewerRecord<ModelTypes, "workCredentials">(
     "workCredentials"
   );
@@ -54,9 +56,8 @@ export function useDraftCVoxel() {
         return false;
       }
 
-      const selfID = mySelfID || (await connectCeramic());
-      if (selfID == null || selfID.did == null) {
-        await connectCeramic();
+      if (mySelfID == null || mySelfID.did == null) {
+        await connectWallet();
         return false;
       }
       if (!cVoxelsRecord.isLoadable) {
@@ -105,9 +106,12 @@ export function useDraftCVoxel() {
           fiatSymbol: "USD",
         };
 
-        const doc = await selfID.client.dataModel.createTile("WorkCredential", {
-          ...metaWithFiat,
-        });
+        const doc = await mySelfID.client.dataModel.createTile(
+          "WorkCredential",
+          {
+            ...metaWithFiat,
+          }
+        );
         const cVoxels = cVoxelsRecord.content?.WorkCredentials ?? [];
         const docUrl = doc.id.toUrl();
         await cVoxelsRecord.set({
@@ -117,10 +121,10 @@ export function useDraftCVoxel() {
               id: docUrl,
               summary: metaWithFiat.summary,
               isPayer: isPayer,
-              txHash: metaWithFiat.txHash,
-              deliverables: metaWithFiat.deliverables,
-              fiatValue: metaWithFiat.fiatValue,
-              genre: metaWithFiat.genre,
+              txHash: metaWithFiat.txHash || "",
+              deliverables: metaWithFiat.deliverables || [],
+              fiatValue: metaWithFiat.fiatValue || "",
+              genre: metaWithFiat.genre || "",
               isVerified: false,
               issuedTimestamp: metaWithFiat.issuedTimestamp,
             },
@@ -154,7 +158,7 @@ export function useDraftCVoxel() {
     },
     [
       mySelfID,
-      connectCeramic,
+      connectWallet,
       cVoxelsRecord,
       isLoading,
       cVoxelsRecord.isLoadable,
@@ -177,8 +181,8 @@ export function useDraftCVoxel() {
         return false;
       }
 
-      const selfID = mySelfID || (await connectCeramic());
-      if (selfID == null || selfID.did == null) {
+      if (mySelfID == null || mySelfID.did == null) {
+        await connectWallet();
         lancError();
         return false;
       }
@@ -206,9 +210,12 @@ export function useDraftCVoxel() {
 
         await createDraftWighVerify(address.toLowerCase(), draft);
 
-        const doc = await selfID.client.dataModel.createTile("WorkCredential", {
-          ...meta,
-        });
+        const doc = await mySelfID.client.dataModel.createTile(
+          "WorkCredential",
+          {
+            ...meta,
+          }
+        );
         const cVoxels = cVoxelsRecord.content?.WorkCredentials ?? [];
         const docUrl = doc.id.toUrl();
         await cVoxelsRecord.set({
@@ -218,10 +225,10 @@ export function useDraftCVoxel() {
               id: docUrl,
               summary: meta.summary,
               isPayer: isPayer,
-              txHash: meta.txHash,
-              deliverables: meta.deliverables,
-              fiatValue: meta.fiatValue,
-              genre: meta.genre,
+              txHash: meta.txHash || "",
+              deliverables: meta.deliverables || [],
+              fiatValue: meta.fiatValue || "",
+              genre: meta.genre || "",
               isVerified: !!meta.toSig && !!meta.fromSig,
               issuedTimestamp: meta.issuedTimestamp,
             },
@@ -241,7 +248,7 @@ export function useDraftCVoxel() {
     },
     [
       mySelfID,
-      connectCeramic,
+      connectWallet,
       cVoxelsRecord,
       isLoading,
       cVoxelsRecord.isLoadable,
@@ -321,7 +328,7 @@ export function useDraftCVoxel() {
         issuedTimestamp: selectedTx.timeStamp,
         txHash: selectedTx.hash,
         relatedTxHashes: [selectedTx.hash],
-        genre: genre,
+        genre: genre || "",
         tags: tags || [],
         toSig: !isPayer ? signature.toString() : "",
         fromSig: isPayer ? signature.toString() : "",

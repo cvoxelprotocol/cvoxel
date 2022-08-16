@@ -1,14 +1,15 @@
-import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { FC, useCallback, useContext, useEffect, useMemo, useRef } from "react";
 import { useCVoxelsRecord } from "@/hooks/useCVoxel";
 import { CVoxelsContainer } from "@/components/containers/home/CVoxelsContainer";
 import { Arrow } from "@/components/common/arrow/Arrow";
 import { SearchData } from "@/components/common/search/Search";
 import { Button } from "@/components/common/button/Button";
-import { useMyCeramicAcount } from "@/hooks/useCeramicAcount";
 import { useRouter } from "next/router";
 import LeftArrow from "@/components/CVoxel/NavBar/left-arrow.svg";
 import { UserSearch } from "@/components/common/search/UserSearch";
 import { UserCVoxelContainer } from "@/components/containers/profile/UserCVoxelContainer";
+import { useWalletAccount } from "@/hooks/useWalletAccount";
+import { DIDContext } from "@/context/DIDContext";
 
 type Props = {
   did: string;
@@ -39,7 +40,8 @@ export const ProfileContainer: FC<Props> = ({ did }) => {
     visualContainerRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const { account, connectWalletOnly, did: myDid } = useMyCeramicAcount();
+  const {did:myDid, account} = useContext(DIDContext)
+  const { connectWallet } = useWalletAccount();
 
   const handleSearch = (data: SearchData) => {
     if (!data.value) return;
@@ -49,7 +51,7 @@ export const ProfileContainer: FC<Props> = ({ did }) => {
 
   const connect = async () => {
     try {
-      await connectWalletOnly();
+      await connectWallet();
     } catch (error) {
       console.log("error:", error);
     }

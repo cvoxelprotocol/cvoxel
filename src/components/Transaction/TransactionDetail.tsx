@@ -19,7 +19,7 @@ import { ViewerConnectionState } from "@self.id/react";
 type TransactionDetailProps = {
   tx: TransactionLogWithChainId;
   offchainItem: CVoxelMetaDraft;
-  connectionState: ViewerConnectionState;
+  connectionState?: ViewerConnectionState;
   onClaim: (
     tx: TransactionLogWithChainId,
     offchainItem: CVoxelMetaDraft
@@ -44,6 +44,8 @@ export const TransactionDetail: FC<TransactionDetailProps> = ({
   const [selectedGenre, selectGenre] = useStateSelectedGenre();
   const [newTags, setNewTags] = useState<string[]>([]);
   const [noGenreError, setNoGenreError] = useState<string>();
+
+  console.log(cvoxels)
 
   const genre = useMemo(() => {
     return getGenre(offchainItem.genre);
@@ -195,38 +197,38 @@ export const TransactionDetail: FC<TransactionDetailProps> = ({
       </div>
       {claimable && (
         <div className="text-right py-4 space-x-4 flex justify-end items-center">
-          {connectionState.status === "connecting" && <CommonSpinner />}
+          {connectionState?.status === "connecting" && <CommonSpinner />}
           <Button
             text={
-              connectionState.status === "connected"
+              connectionState?.status === "connected"
                 ? "Create"
-                : connectionState.status === "connecting"
+                : connectionState?.status === "connecting"
                 ? "Connecitng..."
                 : "Connect DID for Create"
             }
             buttonType={"button"}
             onClick={() => onClaim(tx, offchainItem)}
             color={
-              connectionState.status === "connected" ? "primary" : "secondary"
+              connectionState?.status === "connected" ? "primary" : "secondary"
             }
           />
         </div>
       )}
       {!claimable && reclaimable && (
         <div className="text-right py-4 space-x-4 flex justify-end items-center">
-          {connectionState.status === "connecting" && <CommonSpinner />}
+          {connectionState?.status === "connecting" && <CommonSpinner />}
           <Button
             text={
-              connectionState.status === "connected"
+              connectionState?.status === "connected"
                 ? "Re-Create"
-                : connectionState.status === "connecting"
+                : connectionState?.status === "connecting"
                 ? "Connecitng..."
                 : "Connect DID for Re-Create"
             }
             buttonType={"button"}
             onClick={() => handleReclaim()}
             color={
-              connectionState.status === "connected" ? "primary" : "secondary"
+              connectionState?.status === "connected" ? "primary" : "secondary"
             }
           />
         </div>
