@@ -46,6 +46,7 @@ export const SigRequestContainer: FC<Props> = ({ txId }) => {
                     <SigRequestDetail
                       offchainItem={offchainitem}
                       onVerify={handleVerify}
+                      isVeriftSinglePage={true}
                     />
                   </div>
                 ): (

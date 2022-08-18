@@ -191,6 +191,10 @@ export const VoxelListItem: FC<Props> = ({ item }) => {
     );
   };
 
+  if(!detailItem) return (
+    <></>
+  )
+
   return (
     <Link href={`${router.asPath.split("?")[0]}?voxel=${item.id}`}>
       <a className="w-full">

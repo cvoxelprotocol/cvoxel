@@ -12,15 +12,7 @@ export const HomeContainer: FC = () => {
   const myPageContainerRef = useRef<HTMLDivElement>(null);
   const visualContainerRef = useRef<HTMLDivElement>(null);
   const { setTabState } = useTab();
-  const {screenState,setScreenState} = useMyPageScreen()
-
-  const handleScreenState = (state: "visual" | "info") => {
-    if(screenState==="visual" && state==="info"){
-      setScreenState("info")
-    } else if(screenState==="info" && state==="visual"){
-      setScreenState("visual")
-    }
-  }
+  const {screenState, setScreenState} = useMyPageScreen()
 
   const scrollToInfo = () => {
     myPageContainerRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -30,10 +22,9 @@ export const HomeContainer: FC = () => {
   };
 
   useEffect(() => {
-    if(screenState==="info"){
-      scrollToInfo()
-    } else {
+    if(screenState==="visual"){
       scrollToVisual()
+      setScreenState("info")
     }
   },[screenState])
 
@@ -51,13 +42,13 @@ export const HomeContainer: FC = () => {
         <CVoxelsContainer did={did || ""} content={CVoxelsRecords.content} isMe moveToCreateSection={handleCreateNewVoxel}>
           <div className="absolute bottom-0 pb-12">
             <div className="relative mx-auto cursor-pointer hidden sm:block">
-              <button onClick={() => handleScreenState("info")}>
+              <button onClick={() => scrollToInfo()}>
                 <Arrow size="lg" direction="down" />
               </button>
             </div>
 
             <div className="relative mx-auto cursor-pointer sm:hidden">
-              <button onClick={() => handleScreenState("info")}>
+              <button onClick={() => scrollToInfo()}>
                 <Arrow size="sm" direction="down" />
               </button>
             </div>
@@ -66,7 +57,7 @@ export const HomeContainer: FC = () => {
       </div>
       <div className="snap-start snap-always pt-12" ref={myPageContainerRef}>
         <MyPageContainer
-          scrollToVisual={() => handleScreenState("visual")}
+          scrollToVisual={() => scrollToVisual()}
           visualContainerRef={visualContainerRef}
         />
       </div>

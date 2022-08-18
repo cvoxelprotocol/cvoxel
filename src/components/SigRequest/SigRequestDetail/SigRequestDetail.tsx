@@ -25,11 +25,13 @@ import { useWalletAccount } from "@/hooks/useWalletAccount";
 type Props = {
   offchainItem: CVoxelMetaDraft;
   onVerify: (tx: CVoxelMetaDraft) => void;
+  isVeriftSinglePage?: boolean
 };
 
 export const SigRequestDetail: FC<Props> = ({
   offchainItem,
   onVerify,
+  isVeriftSinglePage = false
 }) => {
   const {did, account} = useContext(DIDContext)
   const { connectWallet } = useWalletAccount();
@@ -221,32 +223,43 @@ export const SigRequestDetail: FC<Props> = ({
           </div>
         )}
         <div className="text-right">
-        {!account ? (
+          {isVeriftSinglePage ? (
+            <>
+              {!account ? (
+                <Button
+                  text="Connect Wallet"
+                  color="primary"
+                  buttonType="button"
+                  onClick={connect}
+                />
+            ): (
+              <>
+                {isEligibleToVerify ? (
+                  <Button
+                    text="Verify"
+                    color="primary"
+                    buttonType="button"
+                    onClick={handleVerify}
+                  />
+                ): (
+                  <Button
+                    text="Not Eligible"
+                    color="gray"
+                    buttonType="button"
+                    disabled={true}
+                  />
+                )}
+              </>
+            )}
+            </>
+          ): (
             <Button
-              text="Connect Wallet"
+              text="Verify"
               color="primary"
               buttonType="button"
-              onClick={connect}
+              onClick={handleVerify}
             />
-        ): (
-          <>
-            {isEligibleToVerify ? (
-              <Button
-                text="Verify"
-                color="primary"
-                buttonType="button"
-                onClick={handleVerify}
-              />
-            ): (
-              <Button
-                text="Not Eligible"
-                color="gray"
-                buttonType="button"
-                disabled={true}
-              />
-            )}
-          </>
-        )}
+          )}
         </div>
       </div>
 
