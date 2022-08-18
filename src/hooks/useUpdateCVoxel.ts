@@ -5,19 +5,17 @@ import {
 import { CVoxel } from "@/interfaces";
 import { useStateMySelfID } from "@/recoilstate/ceramic";
 import { convertDateToTimestampStr } from "@/utils/dateUtil";
-import { useCVoxelRecord } from "./useCVoxel";
 import { useModal } from "./useModal";
 import { useToast } from "./useToast";
 import { useWalletAccount } from "./useWalletAccount";
 
-export const useUpdateCVoxel = (id: string) => {
-  const cVoxelItem = useCVoxelRecord(id);
+export const useUpdateWorkCRDL = () => {
   const { showLoading, closeLoading } = useModal();
   const { lancInfo, lancError } = useToast();
   const { connectWallet } = useWalletAccount();
   const [mySelfID, _] = useStateMySelfID();
 
-  const update = async (newItem: CVoxel) => {
+  const update = async (id: string, newItem: CVoxel) => {
     try {
       if (mySelfID == null) {
         await connectWallet();
@@ -43,9 +41,28 @@ export const useUpdateCVoxel = (id: string) => {
       return false;
     }
   };
+  const updateWithoutNotify = async (id: string, newItem: CVoxel) => {
+    try {
+      if (mySelfID == null) {
+        await connectWallet();
+        lancError();
+        return false;
+      }
+
+      const nowTimestamp = convertDateToTimestampStr(new Date());
+      await mySelfID.client.tileLoader.update(id, {
+        ...newItem,
+        updatedAt: nowTimestamp,
+      });
+      return true;
+    } catch (error) {
+      console.log("error", error);
+      return false;
+    }
+  };
   return {
-    cVoxelItem,
     update,
+    updateWithoutNotify,
   };
 };
 

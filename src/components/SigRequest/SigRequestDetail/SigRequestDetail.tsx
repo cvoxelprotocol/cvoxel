@@ -20,28 +20,46 @@ import { getExploreLink } from "@/utils/etherscanUtils";
 import { formatBigNumber } from "@/utils/ethersUtil";
 import { useVoxStyler } from "@/hooks/useVoxStyler";
 import { DIDContext } from "@/context/DIDContext";
+import { useWalletAccount } from "@/hooks/useWalletAccount";
 
 type Props = {
   offchainItem: CVoxelMetaDraft;
   onVerify: (tx: CVoxelMetaDraft) => void;
-  account?: string | null;
 };
 
 export const SigRequestDetail: FC<Props> = ({
   offchainItem,
   onVerify,
-  account,
 }) => {
+  const {did, account} = useContext(DIDContext)
+  const { connectWallet } = useWalletAccount();
   const isPayer = useMemo(() => {
     return account?.toLowerCase() === offchainItem.from.toLowerCase();
   }, [account, offchainItem]);
+
+  const isEligibleToVerify = useMemo(() => {
+    if(!(account)) return false
+    return (!offchainItem.toSig && offchainItem.to.toLowerCase()===account.toLowerCase()) || (!offchainItem.from && offchainItem.from.toLowerCase()===account.toLowerCase())
+  },[account, offchainItem])
+
+  const isMe = useCallback((address: string) => {
+    if(!account) return false
+    return address.toLowerCase() === account.toLowerCase()
+  },[account])
 
   const exploreLink = useMemo(() => {
     if (!offchainItem || !offchainItem.txHash) return;
     return getExploreLink(offchainItem.txHash, offchainItem.networkId);
   }, [offchainItem?.txHash, offchainItem?.networkId]);
 
-  const {did} = useContext(DIDContext)
+  const connect = async () => {
+    try {
+      await connectWallet();
+    } catch (error) {
+      console.log("error:", error);
+    }
+  };
+
 
   // convert display
   const { cvoxelsForDisplay, convertCVoxelsForDisplay } = useVoxStyler();
@@ -63,13 +81,13 @@ export const SigRequestDetail: FC<Props> = ({
   const PcDirection = () => {
     return isPayer ? (
       <div className="flex items-center space-x-3">
-        <NamePlate did={did} isMe hasBackgroundColor />
+        <NamePlate address={offchainItem?.from ?? ""} isMe={isMe(offchainItem.from)} hasBackgroundColor />
         <RightArrow />
         <NamePlate address={offchainItem?.to ?? ""} />
       </div>
     ) : (
       <div className="flex items-center space-x-3">
-        <NamePlate did={did} isMe hasBackgroundColor />
+        <NamePlate address={offchainItem?.to ?? ""} isMe={isMe(offchainItem.to)} hasBackgroundColor />
         <LeftArrow />
         <NamePlate address={offchainItem?.from ?? ""} />
       </div>
@@ -202,14 +220,33 @@ export const SigRequestDetail: FC<Props> = ({
             </div>
           </div>
         )}
-
         <div className="text-right">
-          <Button
-            text="Verify"
-            color="primary"
-            buttonType="button"
-            onClick={handleVerify}
-          />
+        {!account ? (
+            <Button
+              text="Connect Wallet"
+              color="primary"
+              buttonType="button"
+              onClick={connect}
+            />
+        ): (
+          <>
+            {isEligibleToVerify ? (
+              <Button
+                text="Verify"
+                color="primary"
+                buttonType="button"
+                onClick={handleVerify}
+              />
+            ): (
+              <Button
+                text="Not Eligible"
+                color="gray"
+                buttonType="button"
+                disabled={true}
+              />
+            )}
+          </>
+        )}
         </div>
       </div>
 

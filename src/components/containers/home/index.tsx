@@ -1,10 +1,10 @@
 import { useCVoxelsRecord } from "@/hooks/useCVoxel";
-import { FC, useCallback, useContext, useRef } from "react";
+import { FC, useCallback, useContext, useEffect, useRef } from "react";
 import { CVoxelsContainer } from "./CVoxelsContainer";
 import { MyPageContainer } from "./MyPageContainer";
 import { Arrow } from "@/components/common/arrow/Arrow";
 import { DIDContext } from "@/context/DIDContext";
-import { useTab } from "@/hooks/useTab";
+import { useMyPageScreen, useTab } from "@/hooks/useTab";
 
 export const HomeContainer: FC = () => {
   const {did} = useContext(DIDContext)
@@ -12,12 +12,30 @@ export const HomeContainer: FC = () => {
   const myPageContainerRef = useRef<HTMLDivElement>(null);
   const visualContainerRef = useRef<HTMLDivElement>(null);
   const { setTabState } = useTab();
+  const {screenState,setScreenState} = useMyPageScreen()
+
+  const handleScreenState = (state: "visual" | "info") => {
+    if(screenState==="visual" && state==="info"){
+      setScreenState("info")
+    } else if(screenState==="info" && state==="visual"){
+      setScreenState("visual")
+    }
+  }
+
   const scrollToInfo = () => {
     myPageContainerRef.current?.scrollIntoView({ behavior: "smooth" });
   };
   const scrollToVisual = () => {
     visualContainerRef.current?.scrollIntoView({ behavior: "smooth" });
   };
+
+  useEffect(() => {
+    if(screenState==="info"){
+      scrollToInfo()
+    } else {
+      scrollToVisual()
+    }
+  },[screenState])
 
   const handleCreateNewVoxel = useCallback(() => {
     scrollToInfo()
@@ -33,13 +51,13 @@ export const HomeContainer: FC = () => {
         <CVoxelsContainer did={did || ""} content={CVoxelsRecords.content} isMe moveToCreateSection={handleCreateNewVoxel}>
           <div className="absolute bottom-0 pb-12">
             <div className="relative mx-auto cursor-pointer hidden sm:block">
-              <button onClick={() => scrollToInfo()}>
+              <button onClick={() => handleScreenState("info")}>
                 <Arrow size="lg" direction="down" />
               </button>
             </div>
 
             <div className="relative mx-auto cursor-pointer sm:hidden">
-              <button onClick={() => scrollToInfo()}>
+              <button onClick={() => handleScreenState("info")}>
                 <Arrow size="sm" direction="down" />
               </button>
             </div>
@@ -48,7 +66,7 @@ export const HomeContainer: FC = () => {
       </div>
       <div className="snap-start snap-always pt-12" ref={myPageContainerRef}>
         <MyPageContainer
-          scrollToVisual={() => scrollToVisual()}
+          scrollToVisual={() => handleScreenState("visual")}
           visualContainerRef={visualContainerRef}
         />
       </div>

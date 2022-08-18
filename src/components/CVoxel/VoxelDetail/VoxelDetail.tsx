@@ -18,14 +18,16 @@ import LeftArrow from "@/components/CVoxel/VoxelListItem/left-arrow.svg";
 import RightArrow from "@/components/CVoxel/VoxelListItem/right-arrow.svg";
 import { shortenStr } from "@/utils/objectUtil";
 import { Button } from "@/components/common/button/Button";
-import { useUpdateCVoxel } from "@/hooks/useUpdateCVoxel";
+import { useUpdateWorkCRDL } from "@/hooks/useUpdateCVoxel";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faExternalLink } from "@fortawesome/free-solid-svg-icons";
 import { getExploreLink } from "@/utils/etherscanUtils";
 import { ShareButton } from "@/components/common/button/shareButton/ShareButton";
 import { formatBigNumber } from "@/utils/ethersUtil";
-import { getDIDFromAddress } from "@/utils/addressUtil";
+import { getPkhDIDFromAddress } from "@/utils/addressUtil";
 import { DIDContext } from "@/context/DIDContext";
+import { CopyRequestURLButton } from "./CopyRequestURLButton";
+import { useCVoxelRecord } from "@/hooks/useCVoxel";
 
 type Props = {
   item: ICVoxelItem;
@@ -41,7 +43,8 @@ export const VoxelDetail: FC<Props> = ({
   isOwner,
 }) => {
   // item detail
-  const { cVoxelItem, update } = useUpdateCVoxel(item.id);
+  const cVoxelItem = useCVoxelRecord(item.id);
+  const { update } = useUpdateWorkCRDL();
   const detailItem = useMemo(() => {
     return cVoxelItem.content || null;
   }, [cVoxelItem.content, cVoxelItem]);
@@ -50,19 +53,22 @@ export const VoxelDetail: FC<Props> = ({
   const updatable = useMemo(() => {
     if (!detailItem) return false;
     if (detailItem && detailItem.toSig && detailItem.fromSig) return false;
-    const item = offchainItems?.find(
-      (item) => item.txHash?.toLowerCase() === detailItem.txHash?.toLowerCase()
-    );
-    if (!item) return false;
+    if (!offchainItem) return false;
     return (
-      (detailItem.isPayer && !detailItem.toSig && item.toSig) ||
-      (!detailItem.isPayer && !detailItem.fromSig && item.fromSig)
+      (detailItem.isPayer && !detailItem.toSig && offchainItem.toSig) ||
+      (!detailItem.isPayer && !detailItem.fromSig && offchainItem.fromSig)
     );
   }, [offchainItems, detailItem]);
 
   const offchainItem = useMemo(() => {
     return offchainItems?.find((offchain) => offchain.txHash === item.txHash);
   }, [offchainItems, item]);
+
+  // user is the owner but offchainItem doesn't have sigs of both payer and payee
+  const isSemiCRDL = useMemo(() => {
+    if(!offchainItem) return false
+    return isOwner && !(offchainItem?.toSig && offchainItem.fromSig)
+  },[offchainItem, detailItem])
 
   const handleUpdate = async () => {
     if (!(offchainItem && detailItem)) return false;
@@ -78,7 +84,7 @@ export const VoxelDetail: FC<Props> = ({
             fromSig: offchainItem.fromSig,
             fromSigner: offchainItem.fromSigner,
           };
-      await update(newCVoxel);
+      await update(item.id, newCVoxel);
       if (notifyUpdated) {
         notifyUpdated();
       }
@@ -96,7 +102,7 @@ export const VoxelDetail: FC<Props> = ({
   useEffect(() => {
     if (toDid == undefined && !!detailItem?.to) {
       const f = async () => {
-        const did = await getDIDFromAddress(detailItem?.to);
+        const did = await getPkhDIDFromAddress(detailItem?.to);
         setToDid(did);
       };
       f();
@@ -107,7 +113,7 @@ export const VoxelDetail: FC<Props> = ({
   useEffect(() => {
     if (fromDid == undefined && !!detailItem?.from) {
       const f = async () => {
-        const did = await getDIDFromAddress(detailItem?.from);
+        const did = await getPkhDIDFromAddress(detailItem?.from);
         setFromDid(did);
       };
       f();
@@ -268,6 +274,11 @@ export const VoxelDetail: FC<Props> = ({
             <div className="text-light-on-surface dark:text-dark-on-surface font-medium">
               {detailItem?.detail}
             </div>
+          </div>
+        )}
+        {(isSemiCRDL && offchainItem && offchainItem.id) && (
+          <div className="text-left">
+            <CopyRequestURLButton id={offchainItem.id} />
           </div>
         )}
 
