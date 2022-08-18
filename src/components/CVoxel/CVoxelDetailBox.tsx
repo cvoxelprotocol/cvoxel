@@ -130,7 +130,6 @@ export const CVoxelDetailBox: FC<{}> = () => {
             </button>
           </div>
 
-          {/*c-voxel*/}
           <div className="h-52">
             {box && box.item.id && (
               <Canvas>

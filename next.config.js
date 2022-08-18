@@ -7,6 +7,15 @@ module.exports = {
   images: {
     domains: ["joeschmoe.io", "ipfs.io", "ipfs.infura.io"],
   },
+  async redirects() {
+    return [
+      {
+        source: '/intro',
+        destination: 'https://vess.id/',
+        permanent: true,
+      },
+    ]
+  },
   webpack: (config) => {
     config.module.rules.push({
       test: /\.svg$/i,
