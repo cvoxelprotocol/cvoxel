@@ -61,7 +61,7 @@ export const VoxelListItem: FC<Props> = ({ item }) => {
             />
             {detailItem?.createdAt && (
               <div className="text-light-on-surface dark:text-dark-on-surface text-sm">
-                {convertTimestampToDateStr(detailItem.createdAt)}
+                {convertTimestampToDateStr(detailItem.issuedTimestamp)}
               </div>
             )}
           </div>

@@ -115,7 +115,7 @@ export function useSigRequest() {
     );
     if (!metaDraft) return null;
 
-    const meta = extractCVoxel(metaDraft);
+    const meta = extractCVoxel(metaDraft, isPayer);
 
     try {
       const sig = isPayer ? meta.fromSig : meta.toSig;

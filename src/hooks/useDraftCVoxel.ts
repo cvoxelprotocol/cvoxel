@@ -19,7 +19,7 @@ import {
 import { extractCVoxel } from "@/utils/cVoxelUtil";
 import { getNetworkSymbol } from "@/utils/networkUtil";
 import { convertDateToTimestampStr } from "@/utils/dateUtil";
-import { useStateIssueStatus } from "@/recoilstate/cvoxel";
+import { useStateIssueStatus } from "@/recoilstate/workCredential";
 import { useCVoxelToast } from "@/hooks/useCVoxelToast";
 import { useVoxStyler } from "@/hooks/useVoxStyler";
 import { useStateMySelfID } from "@/recoilstate/ceramic";
@@ -53,22 +53,22 @@ export function useDraftCVoxel() {
       existedItem?: CVoxelMetaDraft
     ) => {
       if (isLoading || !summary) {
-        return false;
+        return null;
       }
 
       if (mySelfID == null || mySelfID.did == null) {
         await connectWallet();
         lancError("Please try again");
-        return false;
+        return null;
       }
       if (!cVoxelsRecord.isLoadable) {
         lancError();
-        return false;
+        return null;
       }
 
       if (!genre) {
         lancError();
-        return false;
+        return null;
       }
 
       showLoading();
@@ -97,7 +97,7 @@ export function useDraftCVoxel() {
           closeLoading();
           setIssueStatus("failed");
           lancError(CVOXEL_CREATION_FAILED);
-          return false;
+          return null;
         }
 
         // add fiat val
@@ -148,13 +148,13 @@ export function useDraftCVoxel() {
           lancInfo(CVOXEL_CREATION_SUCCEED);
         }
         setIssueStatus("completed");
-        return true;
+        return docUrl;
       } catch (error) {
         console.log("error", error);
         setIssueStatus("failed");
         closeLoading();
         lancError(CVOXEL_CREATION_FAILED);
-        return false;
+        return null;
       }
     },
     [
@@ -179,17 +179,17 @@ export function useDraftCVoxel() {
       existedItem?: CVoxelMetaDraft
     ) => {
       if (isLoading || !summary) {
-        return false;
+        return null;
       }
 
       if (mySelfID == null || mySelfID.did == null) {
         await connectWallet();
         lancError();
-        return false;
+        return null;
       }
       if (!cVoxelsRecord.isLoadable) {
         lancError();
-        return false;
+        return null;
       }
 
       showLoading();
@@ -238,13 +238,13 @@ export function useDraftCVoxel() {
         closeLoading();
         setIssueStatus("completed");
         lancInfo(CVOXEL_CREATION_SUCCEED);
-        return true;
+        return docUrl;
       } catch (error) {
         console.log("error", error);
         setIssueStatus("failed");
         closeLoading();
         lancError(CVOXEL_CREATION_FAILED);
-        return false;
+        return null;
       }
     },
     [
@@ -290,7 +290,7 @@ export function useDraftCVoxel() {
 
     if (existedItem) {
       meta = {
-        ...extractCVoxel(existedItem),
+        ...extractCVoxel(existedItem, isPayer),
         updatedAt: nowTimestamp,
       };
       if (!meta.createdAt) {

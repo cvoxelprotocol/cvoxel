@@ -46,7 +46,7 @@ export const getOffchainData = (id?: string): Promise<CVoxelMetaDraft> =>
     getDoc(doc(firestore, "cvoxels", id).withConverter(converter))
       .then((result) => {
         const d = result.data() as CVoxelMetaDraft;
-        resolve(d);
+        resolve({ ...d, id: result.id });
       })
       .catch((error) => {
         reject(error);
