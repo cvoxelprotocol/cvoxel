@@ -46,10 +46,10 @@ export const UserCVoxelContainer: FC<UserCVoxelContainerProps> = ({
   return useMemo(
     () => (
       <div className="max-w-[820px] mx-auto">
-        {!!currentVoxel ? (
+        {!!currentVoxelID ? (
           <div className="mt-6 sm:px-6">
             <VoxelDetail
-              item={currentVoxel}
+              itemId={currentVoxelID}
               offchainItems={offchainMetaList}
               isOwner={false}
               notifyUpdated={forceReload}
@@ -63,8 +63,8 @@ export const UserCVoxelContainer: FC<UserCVoxelContainerProps> = ({
           <CVoxelsPresenter>
             {CVoxelsRecords.isLoading && <CommonLoading />}
             {!CVoxelsRecords.isLoading &&
-              CVoxelsRecords.content?.WorkCredentials &&
-              CVoxelsRecords.content.WorkCredentials.map((item) => {
+              sortCVoxels &&
+              sortCVoxels.map((item) => {
                 return <VoxelListItem key={item.id} item={item} />;
               })}
             {!CVoxelsRecords.isLoading && !CVoxelsRecords.content && (

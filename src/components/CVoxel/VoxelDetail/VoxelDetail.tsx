@@ -1,7 +1,6 @@
 import { FC, useContext, useEffect, useMemo, useState } from "react";
 import {
   CVoxel,
-  CVoxelItem as ICVoxelItem,
   CVoxelMetaDraft,
 } from "@/interfaces";
 import { Canvas } from "@react-three/fiber";
@@ -28,26 +27,46 @@ import { getPkhDIDFromAddress } from "@/utils/addressUtil";
 import { DIDContext } from "@/context/DIDContext";
 import { CopyRequestURLButton } from "./CopyRequestURLButton";
 import { useCVoxelRecord } from "@/hooks/useCVoxel";
+import { useOffchainItem } from "@/hooks/useOffchainItem";
 
 type Props = {
-  item: ICVoxelItem;
+  itemId: string;
   offchainItems?: CVoxelMetaDraft[];
   notifyUpdated?: () => void;
   isOwner: boolean;
 };
 
 export const VoxelDetail: FC<Props> = ({
-  item,
+  itemId,
   offchainItems,
   notifyUpdated,
   isOwner,
 }) => {
   // item detail
-  const cVoxelItem = useCVoxelRecord(item.id);
+  const cVoxelItem = useCVoxelRecord(itemId);
   const { update } = useUpdateWorkCRDL();
   const detailItem = useMemo(() => {
     return cVoxelItem.content || null;
   }, [cVoxelItem.content, cVoxelItem]);
+
+  const {getOffchainItem} = useOffchainItem()
+
+  const [offchainItem, setOffchainItem] = useState<CVoxelMetaDraft | null>(null)
+
+  useEffect(() => {
+    const fetch = async(id:string) => {
+      const existed = offchainItems?.find((offchain) => offchain.txHash === detailItem?.txHash)
+      if(existed){
+        setOffchainItem(existed)
+        return
+      }
+      const offchain = await getOffchainItem(id)
+      setOffchainItem(offchain)
+    }
+    if(!offchainItem && detailItem){
+      fetch(`${detailItem?.networkId}_${detailItem?.txHash}`)
+    }
+  },[detailItem])
 
   // update
   const updatable = useMemo(() => {
@@ -58,17 +77,14 @@ export const VoxelDetail: FC<Props> = ({
       (detailItem.isPayer && !detailItem.toSig && offchainItem.toSig) ||
       (!detailItem.isPayer && !detailItem.fromSig && offchainItem.fromSig)
     );
-  }, [offchainItems, detailItem]);
+  }, [offchainItem, detailItem]);
 
-  const offchainItem = useMemo(() => {
-    return offchainItems?.find((offchain) => offchain.txHash === item.txHash);
-  }, [offchainItems, item]);
 
   // user is the owner but offchainItem doesn't have sigs of both payer and payee
   const isSemiCRDL = useMemo(() => {
     if(!offchainItem) return false
-    return isOwner && !(offchainItem?.toSig && offchainItem.fromSig)
-  },[offchainItem, detailItem])
+    return isOwner && !(offchainItem.toSig && offchainItem.fromSig)
+  },[offchainItem])
 
   const handleUpdate = async () => {
     if (!(offchainItem && detailItem)) return false;
@@ -84,7 +100,7 @@ export const VoxelDetail: FC<Props> = ({
             fromSig: offchainItem.fromSig,
             fromSigner: offchainItem.fromSigner,
           };
-      await update(item.id, newCVoxel);
+      await update(itemId, newCVoxel);
       if (notifyUpdated) {
         notifyUpdated();
       }
@@ -122,7 +138,7 @@ export const VoxelDetail: FC<Props> = ({
 
   // component
   const PcDirection = () => {
-    return item.isPayer ? (
+    return detailItem?.isPayer ? (
       <div className="flex items-center space-x-3">
         <NamePlate
           did={fromDid}
@@ -148,7 +164,7 @@ export const VoxelDetail: FC<Props> = ({
   };
 
   const SpDirection = () => {
-    return item.isPayer ? (
+    return detailItem?.isPayer ? (
       <div className="flex items-center space-x-3">
         <NamePlate
           did={fromDid}
@@ -180,11 +196,11 @@ export const VoxelDetail: FC<Props> = ({
       <div className="lg:flex w-full">
         <div className="flex-initial w-full lg:w-52 h-52 relative bg-light-surface dark:bg-dark-surface rounded-br-2xl rounded-bl-2xl lg:rounded-bl-none">
           <Canvas>
-            <VisualizerPresenter ids={[item.id]} zoom={6} disableHover />
+            <VisualizerPresenter ids={[itemId]} zoom={6} disableHover />
           </Canvas>
 
           <div className="absolute right-4 bottom-4">
-            <ShareButton valiant="icon" voxelID={item.id} isOwner={isOwner}/>
+            <ShareButton valiant="icon" voxelID={itemId} isOwner={isOwner}/>
           </div>
         </div>
 
@@ -276,22 +292,23 @@ export const VoxelDetail: FC<Props> = ({
             </div>
           </div>
         )}
-        {(isSemiCRDL && offchainItem && offchainItem.id) && (
-          <div className="text-left">
-            <CopyRequestURLButton id={offchainItem.id} />
-          </div>
-        )}
-
-        {updatable && isOwner && (
-          <div className="text-right">
-            <Button
-              text="Update"
-              color="primary"
-              buttonType="button"
-              onClick={handleUpdate}
-            />
-          </div>
-        )}
+        <div className="w-full flex items-center justify-end space-x-1 pt-7">
+          {(isSemiCRDL && offchainItem && offchainItem.id) && (
+            <div className="text-right">
+              <CopyRequestURLButton id={offchainItem.id} />
+            </div>
+          )}
+          {updatable && isOwner && (
+            <div className="text-right">
+              <Button
+                text="Update"
+                color="primary"
+                buttonType="button"
+                onClick={handleUpdate}
+              />
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="bg-light-outline dark:bg-dark-outline h-[1px] w-full" />

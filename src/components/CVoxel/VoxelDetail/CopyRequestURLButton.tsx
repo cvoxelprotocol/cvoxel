@@ -1,7 +1,7 @@
 import { Button } from "@/components/common/button/Button";
 import { ToolTip } from "@/components/common/ToolTip";
 import clsx from "clsx";
-import { FC, useMemo, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 import CopyToClipboard from "react-copy-to-clipboard";
 
 type Props = {
@@ -10,7 +10,8 @@ type Props = {
 export const CopyRequestURLButton:FC<Props> = ({id}) => {
 
     const [showToolTip, setShowToolTip] = useState<boolean>(false);
-    const toolTipDuration = 1500;
+
+    const toolTipDuration = 1000;
     const handleOnCopy = async () => {
         setShowToolTip(true);
         await new Promise((resolve) => setTimeout(resolve, toolTipDuration));
@@ -33,7 +34,7 @@ export const CopyRequestURLButton:FC<Props> = ({id}) => {
             <div
                 className={clsx(
                 "absolute left-0 right-0 top-6",
-                showToolTip ? "animate-fade-in-fast" : "animate-fade-out-fast"
+                showToolTip ? "animate-fade-in-fast" : "animate-fade-out-fast hidden"
                 )}
                 >
                 <ToolTip text="Copied Request URL" bgColor={"bg-light-primary dark:bg-dark-primary"}/>

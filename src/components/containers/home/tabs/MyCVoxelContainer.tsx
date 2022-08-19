@@ -34,7 +34,7 @@ export const MyCVoxelContainer: FC = () => {
     return CVoxelsRecords.content.WorkCredentials.sort((a, b) => {
       return Number(a.issuedTimestamp) > Number(b.issuedTimestamp) ? -1 : 1;
     });
-  }, [CVoxelsRecords.content, CVoxelsRecords.content?.WorkCredentials]);
+  }, [CVoxelsRecords.content,forceUpdateCVoxelList,CVoxelsRecords.content?.WorkCredentials]);
 
   const router = useRouter();
   const handleClickNavBackButton = useCallback(() => {
@@ -73,11 +73,6 @@ export const MyCVoxelContainer: FC = () => {
     }
   }, [router.query]);
 
-  const currentVoxel = useMemo(
-    () => sortCVoxels.find((voxel) => voxel.id == currentVoxelID),
-    [currentVoxelID, sortCVoxels]
-  );
-
   return useMemo(
     () => (
       <>
@@ -88,10 +83,10 @@ export const MyCVoxelContainer: FC = () => {
           onClear={handleSearchClear}
         />
 
-        {!!currentVoxel ? (
+        {!!currentVoxelID ? (
           <div className="mt-6 sm:px-6">
             <VoxelDetail
-              item={currentVoxel}
+              itemId={currentVoxelID}
               offchainItems={offchainMetaList}
               isOwner={true}
               notifyUpdated={forceReload}

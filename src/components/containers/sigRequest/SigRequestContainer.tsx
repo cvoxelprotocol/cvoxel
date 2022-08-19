@@ -44,7 +44,7 @@ export const SigRequestContainer: FC<Props> = ({ txId }) => {
                 {offchainItem ? (
                   <div className="mt-6 sm:px-6">
                     <div className="w-full mt-3 mb-7">
-                      <h2 className="text-center font-bold text-2xl text-light-primary dark:text-dark-primary">{`You have received a work credential signature request. Please connect a wallet and sign it.`}</h2>
+                      <h2 className="text-center font-bold text-xl text-light-primary dark:text-dark-primary">{`You have received a work credential signature request. Please connect a wallet and sign it.`}</h2>
                     </div>
                     <SigRequestDetail
                       offchainItem={offchainItem}

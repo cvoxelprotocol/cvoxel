@@ -4,7 +4,7 @@ import { NoItemPresenter } from "../common/NoItemPresenter";
 import { TransactionDetail } from "./TransactionDetail";
 import { TransactionForm } from "./TransactionForm";
 import { TransactionItem } from "./TransactionItem";
-import { useTab } from "@/hooks/useTab";
+import { useMyPageScreen, useTab } from "@/hooks/useTab";
 import type {
   CVoxelMetaDraft,
   TransactionLogWithChainId,
@@ -17,6 +17,7 @@ import { useFileUpload } from "@/hooks/useFileUpload";
 import { useStateForceUpdate, useStateSelectedTx } from "@/recoilstate";
 import { useThemeMode } from "@/hooks/useThemeMode";
 import { DIDContext } from "@/context/DIDContext";
+import { useRouter } from "next/router";
 
 type TransactionListContainerProps = {
   txList: TransactionLogWithChainId[];
@@ -36,6 +37,8 @@ export const TransactionListContainer: FC<TransactionListContainerProps> = ({
   const { resetUploadStatus } = useFileUpload();
   // TODO: This is temporary solution because of useTileDoc bug
   const [_, setForceUpdateCVoxelList] = useStateForceUpdate();
+  const router = useRouter();
+  const {setScreenState} = useMyPageScreen()
 
   const onPublish = (data: any) => {
     publish(data);
@@ -75,8 +78,10 @@ export const TransactionListContainer: FC<TransactionListContainerProps> = ({
       if (result) {
         selectTx(null);
         resetUploadStatus();
-        setForceUpdateCVoxelList(v => !v);
         setTabState("cvoxels");
+        setScreenState("info")
+        setForceUpdateCVoxelList(v => !v);
+        router.push(`/${did}/?voxel=${result}`)
       }
     },
     [draft]
@@ -103,7 +108,9 @@ export const TransactionListContainer: FC<TransactionListContainerProps> = ({
     if (result) {
       selectTx(null);
       setTabState("cvoxels");
+      setScreenState("info")
       setForceUpdateCVoxelList(v => !v);
+      router.push(`/${did}/?voxel=${result}`)
     }
   };
 
@@ -128,7 +135,9 @@ export const TransactionListContainer: FC<TransactionListContainerProps> = ({
     if (result) {
       selectTx(null);
       setTabState("cvoxels");
+      setScreenState("info")
       setForceUpdateCVoxelList(v => !v);
+      router.push(`/${did}/?voxel=${result}`)
     }
   };
 
