@@ -10,7 +10,7 @@ type Props = {
 export const CopyRequestURLButton:FC<Props> = ({id}) => {
 
     const [showToolTip, setShowToolTip] = useState<boolean>(false);
-    const toolTipDuration = 1000;
+    const toolTipDuration = 1500;
     const handleOnCopy = async () => {
         setShowToolTip(true);
         await new Promise((resolve) => setTimeout(resolve, toolTipDuration));
@@ -29,22 +29,20 @@ export const CopyRequestURLButton:FC<Props> = ({id}) => {
     },[id])
 
     return (
-        <>
-            <CopyToClipboard text={requestUrl} onCopy={handleOnCopy}>
-                <Button
-                    text="Copy Request URL"
-                    color="secondary"
-                    buttonType="button"
-                />
-            </CopyToClipboard>
+        <div className="relative w-fit">
             <div
                 className={clsx(
-                "absolute left-0 right-0",
+                "absolute left-0 right-0 top-6",
                 showToolTip ? "animate-fade-in-fast" : "animate-fade-out-fast"
                 )}
-            >
-            <ToolTip text="Copied!" />
-        </div>
-      </>
+                >
+                <ToolTip text="Copied Request URL" bgColor={"bg-light-primary dark:bg-dark-primary"}/>
+            </div>
+            <CopyToClipboard text={requestUrl} onCopy={handleOnCopy}>
+                <button className="text-light-primary dark:text-dark-primary text-sm px-6 py-3">
+                    Ask for signature
+                </button>
+            </CopyToClipboard>
+      </div>
     )
 }

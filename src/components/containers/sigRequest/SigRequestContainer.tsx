@@ -16,7 +16,7 @@ type Props = {
 
 export const SigRequestContainer: FC<Props> = ({ txId }) => {
   const {did, account} = useContext(DIDContext)
-  const {isLoading, offchainitem} = useOffchainItem(txId)
+  const {isLoading, offchainItem} = useOffchainItem(txId)
   const {verifyWithCeramic} = useSigRequest()
   const [_, setForceUpdateCVoxelList] = useStateForceUpdate();
   const router = useRouter()
@@ -41,10 +41,13 @@ export const SigRequestContainer: FC<Props> = ({ txId }) => {
         <div className="max-w-[820px] mx-auto mt-20 px-4">
             {isLoading ? (<CommonLoading />): (
               <>
-                {offchainitem ? (
+                {offchainItem ? (
                   <div className="mt-6 sm:px-6">
+                    <div className="w-full mt-3 mb-7">
+                      <h2 className="text-center font-bold text-2xl text-light-primary dark:text-dark-primary">{`You have received a work credential signature request. Please connect a wallet and sign it.`}</h2>
+                    </div>
                     <SigRequestDetail
-                      offchainItem={offchainitem}
+                      offchainItem={offchainItem}
                       onVerify={handleVerify}
                       isVeriftSinglePage={true}
                     />
