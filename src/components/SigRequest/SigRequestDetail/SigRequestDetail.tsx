@@ -25,13 +25,13 @@ import { useWalletAccount } from "@/hooks/useWalletAccount";
 type Props = {
   offchainItem: CVoxelMetaDraft;
   onVerify: (tx: CVoxelMetaDraft) => void;
-  isVeriftSinglePage?: boolean
+  isSinglePageForVerify?: boolean
 };
 
 export const SigRequestDetail: FC<Props> = ({
   offchainItem,
   onVerify,
-  isVeriftSinglePage = false
+  isSinglePageForVerify = false
 }) => {
   const {did, account} = useContext(DIDContext)
   const { connectWallet } = useWalletAccount();
@@ -223,7 +223,7 @@ export const SigRequestDetail: FC<Props> = ({
           </div>
         )}
         <div className="text-right">
-          {isVeriftSinglePage ? (
+          {isSinglePageForVerify ? (
             <>
               {!account ? (
                 <Button
