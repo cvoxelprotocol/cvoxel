@@ -24,7 +24,7 @@ export const HomeContainer: FC = () => {
   useEffect(() => {
     if(screenState==="visual"){
       scrollToVisual()
-      setScreenState("info")
+      setScreenState("visual")
     }
   },[screenState])
 
