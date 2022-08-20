@@ -1,5 +1,5 @@
 import { TransactionLogWithChainId } from "@/interfaces/explore";
-import { createDraftWighVerify } from "@/lib/firebase/functions/verify";
+import { uploadDraft } from "@/lib/firebase/functions/verify";
 import { getCVoxelService } from "@/services/CVoxel/CVoxelService";
 import { useViewerRecord } from "@self.id/framework";
 import { useCallback } from "react";
@@ -24,6 +24,7 @@ import { useCVoxelToast } from "@/hooks/useCVoxelToast";
 import { useVoxStyler } from "@/hooks/useVoxStyler";
 import { useStateMySelfID } from "@/recoilstate/ceramic";
 import { useWalletAccount } from "./useWalletAccount";
+import { getFiat } from "@/lib/firebase/functions/fiat";
 
 export function useDraftCVoxel() {
   const { connectWallet } = useWalletAccount();
@@ -77,7 +78,7 @@ export function useDraftCVoxel() {
       try {
         const isPayer = selectedTx.from.toLowerCase() === address.toLowerCase();
 
-        const { meta, draft } = await createDraftObjectWithSig(
+        const sigResultPromise = createDraftObjectWithSig(
           address,
           selectedTx,
           summary,
@@ -89,16 +90,21 @@ export function useDraftCVoxel() {
           existedItem
         );
 
-        const { status, fiat } = await createDraftWighVerify(
-          address.toLowerCase(),
-          draft
+        const fiatPromise = getFiat(
+          selectedTx.value,
+          selectedTx.tokenSymbol || getNetworkSymbol(selectedTx.chainId),
+          selectedTx.tokenDecimal || "18",
+          selectedTx.timeStamp
         );
-        if (status !== "ok") {
-          closeLoading();
-          setIssueStatus("failed");
-          lancError(CVOXEL_CREATION_FAILED);
-          return null;
-        }
+        const res = await Promise.all([sigResultPromise, fiatPromise]);
+        const { meta, draft } = res[0];
+        const fiat = res[1];
+
+        const metaDraft: CVoxelMetaDraft = {
+          ...draft,
+          fiatValue: fiat || "",
+          fiatSymbol: "USD",
+        };
 
         // add fiat val
         const metaWithFiat: CVoxel = {
@@ -107,47 +113,32 @@ export function useDraftCVoxel() {
           fiatSymbol: "USD",
         };
 
-        const doc = await mySelfID.client.dataModel.createTile(
-          "WorkCredential",
-          {
-            ...metaWithFiat,
-          }
+        const uploadDraftPromise = uploadDraft(metaDraft);
+        const workCRDLPromise = storeWorkCredential(
+          metaWithFiat,
+          isPayer,
+          false
         );
-        const cVoxels = cVoxelsRecord.content?.WorkCredentials ?? [];
-        const docUrl = doc.id.toUrl();
-        await cVoxelsRecord.set({
-          WorkCredentials: [
-            ...cVoxels,
-            {
-              id: docUrl,
-              summary: metaWithFiat.summary,
-              isPayer: isPayer,
-              txHash: metaWithFiat.txHash || "",
-              deliverables: metaWithFiat.deliverables || [],
-              fiatValue: metaWithFiat.fiatValue || "",
-              genre: metaWithFiat.genre || "",
-              isVerified: false,
-              issuedTimestamp: metaWithFiat.issuedTimestamp,
-            },
-          ],
-        });
+
+        const storingResult = await Promise.all([
+          uploadDraftPromise,
+          workCRDLPromise,
+        ]);
+        const { status } = storingResult[0];
+        const docUrl = storingResult[1];
+
+        if (!(docUrl && status === "ok")) {
+          closeLoading();
+          setIssueStatus("failed");
+          lancError(CVOXEL_CREATION_FAILED);
+          return null;
+        }
 
         closeLoading();
         convertCVoxelsForDisplay([{ ...meta, id: "0" }]);
-        if (
-          !!cvoxelsForDisplay &&
-          cvoxelsForDisplay.length > 0 &&
-          !!cvoxelsForDisplay[0]
-        ) {
-          await showToast({
-            message: "Created!",
-            voxel: cvoxelsForDisplay[0],
-            duration: 3,
-          });
-        } else {
-          lancInfo(CVOXEL_CREATION_SUCCEED);
-        }
+        lancInfo(CVOXEL_CREATION_SUCCEED);
         setIssueStatus("completed");
+
         return docUrl;
       } catch (error) {
         console.log("error", error);
@@ -209,32 +200,22 @@ export function useDraftCVoxel() {
           existedItem
         );
 
-        await createDraftWighVerify(address.toLowerCase(), draft);
-
-        const doc = await mySelfID.client.dataModel.createTile(
-          "WorkCredential",
-          {
-            ...meta,
-          }
+        const uploadDraftPromise = uploadDraft(draft);
+        const workCRDLPromise = storeWorkCredential(
+          meta,
+          isPayer,
+          !!meta.toSig && !!meta.fromSig
         );
-        const cVoxels = cVoxelsRecord.content?.WorkCredentials ?? [];
-        const docUrl = doc.id.toUrl();
-        await cVoxelsRecord.set({
-          WorkCredentials: [
-            ...cVoxels,
-            {
-              id: docUrl,
-              summary: meta.summary,
-              isPayer: isPayer,
-              txHash: meta.txHash || "",
-              deliverables: meta.deliverables || [],
-              fiatValue: meta.fiatValue || "",
-              genre: meta.genre || "",
-              isVerified: !!meta.toSig && !!meta.fromSig,
-              issuedTimestamp: meta.issuedTimestamp,
-            },
-          ],
-        });
+
+        const res = await Promise.all([uploadDraftPromise, workCRDLPromise]);
+        const { status } = res[0];
+        const docUrl = res[1];
+
+        if (!(docUrl && status === "ok")) {
+          lancError();
+          return null;
+        }
+
         closeLoading();
         setIssueStatus("completed");
         lancInfo(CVOXEL_CREATION_SUCCEED);
@@ -255,6 +236,36 @@ export function useDraftCVoxel() {
       cVoxelsRecord.isLoadable,
     ]
   );
+
+  const storeWorkCredential = async (
+    draft: CVoxel,
+    isPayer: boolean,
+    isVerified: boolean
+  ): Promise<string | null> => {
+    if (!(mySelfID && cVoxelsRecord.isLoadable)) return null;
+    const doc = await mySelfID.client.dataModel.createTile("WorkCredential", {
+      ...draft,
+    });
+    const cVoxels = cVoxelsRecord.content?.WorkCredentials ?? [];
+    const docUrl = doc.id.toUrl();
+    await cVoxelsRecord.set({
+      WorkCredentials: [
+        ...cVoxels,
+        {
+          id: docUrl,
+          summary: draft.summary,
+          isPayer: isPayer,
+          txHash: draft.txHash || "",
+          deliverables: draft.deliverables || [],
+          fiatValue: draft.fiatValue || "",
+          genre: draft.genre || "",
+          isVerified: isVerified,
+          issuedTimestamp: draft.issuedTimestamp,
+        },
+      ],
+    });
+    return docUrl;
+  };
 
   const createDraftObjectWithSig = async (
     address: string,
