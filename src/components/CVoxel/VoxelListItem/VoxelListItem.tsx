@@ -91,7 +91,7 @@ export const VoxelListItem: FC<Props> = ({ item }) => {
           </div>
 
           <div className="flex">
-            {detailItem?.genre ? (
+            {detailItem?.genre && (
               <div className="mr-2">
                 <GenreBadge
                   text={detailItem.genre}
@@ -101,8 +101,6 @@ export const VoxelListItem: FC<Props> = ({ item }) => {
                   isSelected={true}
                 />
               </div>
-            ) : (
-              <></>
             )}
             {detailItem?.tags &&
               detailItem?.tags.map((tag) => {
@@ -167,8 +165,8 @@ export const VoxelListItem: FC<Props> = ({ item }) => {
               </a>
             )}
 
-          <div className="flex">
-            {detailItem?.genre ? (
+          <div className="flex  overflow-x-scroll ">
+            {detailItem?.genre && (
               <div className="mr-2">
               <GenreBadge
                 text={detailItem.genre}
@@ -178,8 +176,6 @@ export const VoxelListItem: FC<Props> = ({ item }) => {
                 isSelected={true}
               />
               </div>
-            ) : (
-              <></>
             )}
             {detailItem?.tags &&
               detailItem.tags.map((tag) => {

@@ -217,7 +217,7 @@ export const VoxelDetail: FC<Props> = ({
             </div>
           )}
 
-          <div className="flex mt-2">
+          <div className="flex mt-2 flex-wrap">
             {detailItem?.genre ? (
               <div className="mr-2">
                 <GenreBadge

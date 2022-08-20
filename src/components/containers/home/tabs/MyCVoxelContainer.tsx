@@ -84,7 +84,7 @@ export const MyCVoxelContainer: FC = () => {
         />
 
         {!!currentVoxelID ? (
-          <div className="mt-6 sm:px-6">
+          <div className="mt-6 px-2 sm:px-6">
             <VoxelDetail
               itemId={currentVoxelID}
               offchainItems={offchainMetaList}
