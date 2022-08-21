@@ -41,12 +41,12 @@ export const SigRequestDetail: FC<Props> = ({
 
   const isEligibleToVerify = useMemo(() => {
     if(!(account)) return false
-    return (!offchainItem.toSig && offchainItem.to.toLowerCase()===account.toLowerCase()) || (!offchainItem.from && offchainItem.from.toLowerCase()===account.toLowerCase())
+    return (!offchainItem.toSig && offchainItem.to.toLowerCase()===account.toLowerCase()) || (!offchainItem.fromSig && offchainItem.from.toLowerCase()===account.toLowerCase())
   },[account, offchainItem])
 
   const isYourRequest = useMemo(() => {
     if(!(account)) return false
-    return (offchainItem.toSig && offchainItem.to.toLowerCase()===account.toLowerCase()) || (offchainItem.from && offchainItem.from.toLowerCase()===account.toLowerCase())
+    return (offchainItem.toSig && offchainItem.to.toLowerCase()===account.toLowerCase()) || (offchainItem.fromSig && offchainItem.from.toLowerCase()===account.toLowerCase())
   },[account, offchainItem])
 
   const isMe = useCallback((address: string) => {
