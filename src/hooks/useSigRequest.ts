@@ -80,6 +80,7 @@ export function useSigRequest() {
                 deliverables: meta.deliverables,
                 fiatValue: meta.fiatValue,
                 genre: meta.genre,
+                isVerified: !!meta.toSig && !!meta.fromSig,
                 issuedTimestamp: meta.issuedTimestamp,
               },
             ],

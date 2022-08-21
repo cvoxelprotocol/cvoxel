@@ -1,7 +1,7 @@
 import { FC, useCallback, useContext, useEffect, useMemo } from "react";
 import { CVoxelMetaDraft } from "@/interfaces";
 import { Canvas } from "@react-three/fiber";
-import VisualizerPresenter from "@/components/CVoxel/visualizerPresenter";
+import { OneVoxelVisualizerPresenter } from "@/components/CVoxel/OneVoxelVisualizerPresenter";
 import {
   convertTimestampToDateStr,
   convertTimestampToDateStrLocaleUS,
@@ -69,11 +69,11 @@ export const SigRequestDetail: FC<Props> = ({
 
 
   // convert display
-  const { cvoxelsForDisplay, convertCVoxelsForDisplay } = useVoxStyler();
+  const { displayVoxel, setVoxelForDisplay } = useVoxStyler();
 
   useEffect(() => {
     let isMounted = true;
-    convertCVoxelsForDisplay([{ ...offchainItem, id: "0" }]);
+    setVoxelForDisplay({ ...offchainItem, id: "0" });
     return () => {
       isMounted = false;
     };
@@ -122,10 +122,10 @@ export const SigRequestDetail: FC<Props> = ({
       <div className="lg:flex w-full">
         <div className="flex-initial w-full lg:w-52 h-52 relative bg-light-surface dark:bg-dark-surface rounded-br-2xl rounded-bl-2xl lg:rounded-bl-none">
           <Canvas>
-            <VisualizerPresenter
-              voxelsForDisplay={cvoxelsForDisplay}
+            <OneVoxelVisualizerPresenter
               zoom={6}
               disableHover
+              voxelForDisplay={displayVoxel}
             />
           </Canvas>
 

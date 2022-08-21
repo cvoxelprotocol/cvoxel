@@ -35,7 +35,7 @@ export const CVoxelsContainer: FC<props> = ({
     () => (
       <Canvas shadows>
         <VisualizerPresenter
-          ids={content?.WorkCredentials.map((vox) => vox.id)}
+          workCredentials={content?.WorkCredentials}
           showDetailBox={showDetailBox}
         />
       </Canvas>

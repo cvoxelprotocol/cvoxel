@@ -39,7 +39,7 @@ export function useDraftCVoxel() {
 
   const { showToast } = useCVoxelToast();
 
-  const { cvoxelsForDisplay, convertCVoxelsForDisplay } = useVoxStyler();
+  const { setCvoxelsForDisplay } = useVoxStyler();
 
   const publish = useCallback(
     async (
@@ -135,7 +135,7 @@ export function useDraftCVoxel() {
         }
 
         closeLoading();
-        convertCVoxelsForDisplay([{ ...meta, id: "0" }]);
+        setCvoxelsForDisplay([{ ...meta, id: "0" }]);
         lancInfo(CVOXEL_CREATION_SUCCEED);
         setIssueStatus("completed");
 

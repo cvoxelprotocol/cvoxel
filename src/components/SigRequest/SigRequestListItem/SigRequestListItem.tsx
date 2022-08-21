@@ -5,7 +5,7 @@ import { TagBadge } from "@/components/common/badge/TagBadge";
 import { CVoxelMetaDraft } from "@/interfaces";
 import { shortenStr } from "@/utils/objectUtil";
 import { Canvas } from "@react-three/fiber";
-import VisualizerPresenter from "@/components/CVoxel/visualizerPresenter";
+import { OneVoxelVisualizerPresenter } from "@/components/CVoxel/OneVoxelVisualizerPresenter";
 import { convertTimestampToDateStr } from "@/utils/dateUtil";
 import clsx from "clsx";
 import Link from "next/link";
@@ -21,11 +21,11 @@ export const SigRequestListItem: FC<Props> = ({ offchainItem }) => {
   const router = useRouter();
 
   // convert display
-  const { cvoxelsForDisplay, convertCVoxelsForDisplay } = useVoxStyler();
+  const { setVoxelForDisplay, displayVoxel } = useVoxStyler();
 
   useEffect(() => {
     let isMounted = true;
-    convertCVoxelsForDisplay([{ ...offchainItem, id: "0" }]);
+    setVoxelForDisplay({ ...offchainItem, id: "0" });
     return () => {
       isMounted = false;
     };
@@ -42,10 +42,10 @@ export const SigRequestListItem: FC<Props> = ({ offchainItem }) => {
           )}
         >
           <Canvas>
-            <VisualizerPresenter
-              zoom={6}
-              disableHover
-              voxelsForDisplay={cvoxelsForDisplay}
+            <OneVoxelVisualizerPresenter
+                zoom={6}
+                disableHover
+                voxelForDisplay={displayVoxel}
             />
           </Canvas>
 
@@ -132,10 +132,10 @@ export const SigRequestListItem: FC<Props> = ({ offchainItem }) => {
       <div className="w-full">
         <div className="w-full h-32 relative bg-light-surface dark:bg-dark-surface rounded-b-lg">
           <Canvas>
-            <VisualizerPresenter
-              voxelsForDisplay={cvoxelsForDisplay}
+            <OneVoxelVisualizerPresenter
               zoom={6}
               disableHover
+              voxelForDisplay={displayVoxel}
             />
           </Canvas>
 
