@@ -23,7 +23,7 @@ export const UserCVoxelContainer: FC<UserCVoxelContainerProps> = ({
   const CVoxelsRecords = useCVoxelsRecord(did);
 
   const sortCVoxels = useMemo(() => {
-    if (!CVoxelsRecords.content) return [];
+    if (!(CVoxelsRecords.content && CVoxelsRecords.content.WorkCredentials)) return [];
     return CVoxelsRecords.content.WorkCredentials.sort((a, b) => {
       return Number(a.issuedTimestamp) > Number(b.issuedTimestamp) ? -1 : 1;
     });
