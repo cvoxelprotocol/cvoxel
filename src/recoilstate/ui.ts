@@ -48,6 +48,14 @@ export const rManageTxTab = atom<TxTabKey>({
 
 export const useStateManageTxTab = () => useRecoilState(rManageTxTab);
 
+//my page screen
+export const rMyPageScreen = atom<"visual" | "info">({
+  key: "rMyPageScreen",
+  default: "visual",
+});
+
+export const useStateManageScreen = () => useRecoilState(rMyPageScreen);
+
 // force update
 const rForceUpdate = atom<boolean>({
   key: "rForceUpdate",

@@ -110,7 +110,7 @@ export const CVoxelDetailBox: FC<{}> = () => {
         className={clsx(
           "bg-light-surface-1 dark:bg-dark-surface-1 top-6 sm:top-24 right-0 absolute border rounded-l-2xl border-y-light-outline border-l-light-outline dark:border-y-dark-outline dark:border-l-dark-outline z-10 w-72 sm:w-96 max-h-screen overflow-scroll",
           !isMount && "hidden",
-          isShow ? "animate-slide-from-right" : "animate-slide-to-right hidden sm:block"
+          isShow ? "animate-slide-from-right" : "animate-slide-to-right hidden"
         )}
         ref={boxRef}
       >

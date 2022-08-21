@@ -67,6 +67,7 @@ export type CVoxelMetaDraft = CVoxel & {
   potencialPayer?: string[]; // in case of multisig wallet
   potencialPayee?: string[]; // in case of multisig wallet
   completed?: boolean; // whether or not work is completed (only in case of LanC., it might be false)
+  id?: string;
 };
 
 export type CVoxelDraftAndMeta = {
