@@ -2,7 +2,7 @@ import { TransactionLogWithChainId } from "@/interfaces/explore";
 import { offchainCVoxelMetaFetcher } from "@/services/fetcher/CVoxelMetaFetcher";
 import { etherscanTxListFetcher } from "@/services/fetcher/EtherscanFetcher";
 import { CVoxelMetaDraft } from "@/interfaces";
-import { useMemo, useContext } from "react";
+import { useMemo, useContext, useCallback } from "react";
 import { useQuery } from "react-query";
 import { uniqueList } from "@/utils/etherscanUtils";
 import { DIDContext } from "@/context/DIDContext";
@@ -17,13 +17,25 @@ export const useCVoxelList = () => {
     staleTime: Infinity,
     cacheTime: 3000000,
   });
-  const { data: offchainMetaList, isLoading: offchainLoading } = useQuery<
-    CVoxelMetaDraft[]
-  >(["offchainCVoxelMeta", account], () => offchainCVoxelMetaFetcher(account), {
-    enabled: !!account,
-    staleTime: Infinity,
-    cacheTime: 3000000,
-  });
+  const {
+    data: offchainMetaList,
+    isLoading: offchainLoading,
+    refetch: refetchMeta,
+  } = useQuery<CVoxelMetaDraft[]>(
+    ["offchainCVoxelMeta", account],
+    () => offchainCVoxelMetaFetcher(account),
+    {
+      enabled: !!account,
+      staleTime: Infinity,
+      cacheTime: 3000000,
+    }
+  );
+
+  const updateMetaList = useCallback(() => {
+    if (!offchainLoading && offchainMetaList) {
+      refetchMeta();
+    }
+  }, [refetchMeta, offchainLoading, offchainMetaList]);
 
   const sentTXList = useMemo(() => {
     if (!txes || txes.length === 0) return [];
@@ -41,5 +53,6 @@ export const useCVoxelList = () => {
     sentTXList,
     recievedTXList,
     offchainMetaList,
+    updateMetaList,
   };
 };

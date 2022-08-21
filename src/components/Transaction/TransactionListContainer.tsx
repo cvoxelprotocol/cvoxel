@@ -36,7 +36,7 @@ export const TransactionListContainer: FC<TransactionListContainerProps> = ({
   const draft = useDraftCVoxel();
   const { resetUploadStatus } = useFileUpload();
   // TODO: This is temporary solution because of useTileDoc bug
-  const [_, setForceUpdateCVoxelList] = useStateForceUpdate();
+  const [forceUpdateCVoxelList, setForceUpdateCVoxelList] = useStateForceUpdate();
   const router = useRouter();
   const {setScreenState} = useMyPageScreen()
 
@@ -166,7 +166,6 @@ export const TransactionListContainer: FC<TransactionListContainerProps> = ({
                 account={account}
                 onClickTx={handleClickTx}
                 selectedTx={selectedTx}
-                cVoxels={CVoxelsRecords.content?.WorkCredentials}
               />
               {selectedTx && selectedTx?.hash === tx.hash && (
                 <>
