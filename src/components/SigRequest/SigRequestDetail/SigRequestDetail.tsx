@@ -44,6 +44,11 @@ export const SigRequestDetail: FC<Props> = ({
     return (!offchainItem.toSig && offchainItem.to.toLowerCase()===account.toLowerCase()) || (!offchainItem.from && offchainItem.from.toLowerCase()===account.toLowerCase())
   },[account, offchainItem])
 
+  const isYourRequest = useMemo(() => {
+    if(!(account)) return false
+    return (offchainItem.toSig && offchainItem.to.toLowerCase()===account.toLowerCase()) || (offchainItem.from && offchainItem.from.toLowerCase()===account.toLowerCase())
+  },[account, offchainItem])
+
   const isMe = useCallback((address: string) => {
     if(!account) return false
     return address.toLowerCase() === account.toLowerCase()
@@ -243,7 +248,7 @@ export const SigRequestDetail: FC<Props> = ({
                   />
                 ): (
                   <Button
-                    text="Not Eligible"
+                    text={isYourRequest ? "Your Request" : "Not Eligible"}
                     color="gray"
                     buttonType="button"
                     disabled={true}
