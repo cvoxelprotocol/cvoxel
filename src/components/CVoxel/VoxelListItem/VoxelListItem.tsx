@@ -28,7 +28,7 @@ export const VoxelListItem: FC<Props> = ({ item }) => {
 
   const PcContent = () => {
     return (
-      <div className="flex h-48">
+      <div className="flex h-48 overflow-y-scroll">
         {/* NOTE: if voxel state exist, add padding bottom*/}
         <div
           className={clsx(
@@ -87,7 +87,7 @@ export const VoxelListItem: FC<Props> = ({ item }) => {
               )}
           </div>
 
-          <div className="flex">
+          <div className="flex flex-wrap">
             {detailItem?.genre && (
               <div className="mr-2">
                 <GenreBadge
@@ -164,7 +164,7 @@ export const VoxelListItem: FC<Props> = ({ item }) => {
               </a>
             )}
 
-          <div className="flex  overflow-x-scroll ">
+          <div className="flex overflow-x-scroll">
             {detailItem?.genre && (
               <div className="mr-2">
               <GenreBadge
