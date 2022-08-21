@@ -28,7 +28,6 @@ const VisualizerPresenter: FC<VisualizerPresenterProps> = ({
   showDetailBox,
   zoom = 2,
   disableHover = false,
-  voxelsForDisplay,
   workCredentials
 }) => {
   const [isInitVoxels, setIsInitVoxels] = useState<boolean>(true);
@@ -39,8 +38,13 @@ const VisualizerPresenter: FC<VisualizerPresenterProps> = ({
 
   useEffect(() => {
     let isMounted = true;
-    setIsInitVoxels(!workCredentials || workCredentials.length===0)
-    setCvoxelsForDisplay(workCredentials || initCVoxel)
+    if(workCredentials && workCredentials.length>0){
+      setIsInitVoxels(false)
+      setCvoxelsForDisplay(workCredentials)
+    } else {
+      setIsInitVoxels(true)
+      setCvoxelsForDisplay(initCVoxel)
+    }
     return () => {
       isMounted = false;
     };

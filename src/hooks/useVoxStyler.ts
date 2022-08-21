@@ -51,7 +51,7 @@ export const useVoxStyler = () => {
     const styledVoxel: CVoxelThreeWithId = {
       id: voxelForDisplay.id,
       color: `hsl(${hue}, ${saturation.toFixed()}%, ${lightness.toFixed()}%)`,
-      opacity: toSig && toSig !== "" && fromSig && fromSig !== "" ? 0.8 : 0.6,
+      opacity: toSig && toSig !== "" && fromSig && fromSig !== "" ? 0.75 : 0.45,
       lattice: !!deliverables && deliverables.length > 0,
       scale: 1.0,
       position: initPosition,
@@ -70,7 +70,7 @@ export const useVoxStyler = () => {
         let voxelTemp: CVoxelVisTypeWithId = {
           id: voxel.id,
           color: "",
-          opacity: 0.6,
+          opacity: 0.45,
           lattice: false,
           scale: 1.0,
         };
@@ -79,7 +79,7 @@ export const useVoxStyler = () => {
 
         /* Set opacity from sigs */
         if (isVerified) {
-          voxelTemp["opacity"] = 0.8;
+          voxelTemp["opacity"] = 0.75;
         }
 
         /* Set lattice from deliverable */
