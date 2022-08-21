@@ -1,11 +1,11 @@
-import { FC, useMemo, MouseEvent } from "react";
+import { FC, useMemo } from "react";
 import { GenreBadge } from "@/components/common/badge/GenreBadge";
 import { getGenre } from "@/utils/genreUtil";
 import { TagBadge } from "@/components/common/badge/TagBadge";
 import { CVoxelItem as ICVoxelItem } from "@/interfaces";
 import { shortenStr } from "@/utils/objectUtil";
 import { Canvas } from "@react-three/fiber";
-import VisualizerPresenter from "@/components/CVoxel/visualizerPresenter";
+import { OneVoxelVisualizerPresenter } from "../OneVoxelVisualizerPresenter";
 import { convertTimestampToDateStr } from "@/utils/dateUtil";
 import { useCVoxelRecord } from "@/hooks/useCVoxel";
 import clsx from "clsx";
@@ -24,16 +24,11 @@ export const VoxelListItem: FC<Props> = ({ item }) => {
     return cVoxelItem.content || null;
   }, [cVoxelItem.content, cVoxelItem]);
 
-  const goToDeliverable = (e: MouseEvent<HTMLButtonElement>, link: string) => {
-    e.preventDefault();
-    window.open(link, "_blank");
-  };
-
   const router = useRouter();
 
   const PcContent = () => {
     return (
-      <div className="flex h-48">
+      <div className="flex h-48 overflow-y-scroll">
         {/* NOTE: if voxel state exist, add padding bottom*/}
         <div
           className={clsx(
@@ -41,9 +36,11 @@ export const VoxelListItem: FC<Props> = ({ item }) => {
             false && "pb-6"
           )}
         >
-          <Canvas>
-            <VisualizerPresenter ids={[item.id]} zoom={6} disableHover />
-          </Canvas>
+         {detailItem && (
+            <Canvas>
+              <OneVoxelVisualizerPresenter zoom={6} disableHover workCredential={{...detailItem, id:item.id}} />
+            </Canvas>
+          )}
 
           {/* TODO: show voxel state */}
           {/*<div className="absolute bottom-2 left-0 right-0">*/}
@@ -59,7 +56,7 @@ export const VoxelListItem: FC<Props> = ({ item }) => {
               to={detailItem?.to}
               isPayer={item.isPayer}
             />
-            {detailItem?.createdAt && (
+            {detailItem?.issuedTimestamp && (
               <div className="text-light-on-surface dark:text-dark-on-surface text-sm">
                 {convertTimestampToDateStr(detailItem.issuedTimestamp)}
               </div>
@@ -73,8 +70,8 @@ export const VoxelListItem: FC<Props> = ({ item }) => {
               </div>
             )}
 
-            {detailItem?.deliverables &&
-              detailItem.deliverables.length > 0 &&
+            {(detailItem?.deliverables &&
+              detailItem.deliverables.length > 0) &&
               detailItem?.deliverables.map((deliverable) =>
               <a
                 className="flex items-center flex-wrap"
@@ -83,14 +80,14 @@ export const VoxelListItem: FC<Props> = ({ item }) => {
                 rel="noreferrer"
                 key={deliverable.value}
               >
-                <p className="text-light-secondary dark:text-dark-secondary text-md text-left">
+                <span className="text-light-secondary dark:text-dark-secondary text-md text-left">
                   {deliverable.format==="url" ? deliverable.value : shortenStr(deliverable.value)}
-                </p>
+                </span>
               </a>
               )}
           </div>
 
-          <div className="flex">
+          <div className="flex flex-wrap">
             {detailItem?.genre && (
               <div className="mr-2">
                 <GenreBadge
@@ -116,9 +113,11 @@ export const VoxelListItem: FC<Props> = ({ item }) => {
     return (
       <div className="w-full">
         <div className="w-full h-32 relative bg-light-surface dark:bg-dark-surface rounded-b-lg">
-          <Canvas>
-            <VisualizerPresenter ids={[item.id]} zoom={6} disableHover />
-          </Canvas>
+        {detailItem && (
+            <Canvas>
+              <OneVoxelVisualizerPresenter zoom={6} disableHover workCredential={{...detailItem, id:item.id}} />
+            </Canvas>
+          )}
 
           {/* TODO: show voxel state */}
           {/*<div className="absolute top-2 left-2">*/}
@@ -165,7 +164,7 @@ export const VoxelListItem: FC<Props> = ({ item }) => {
               </a>
             )}
 
-          <div className="flex  overflow-x-scroll ">
+          <div className="flex overflow-x-scroll">
             {detailItem?.genre && (
               <div className="mr-2">
               <GenreBadge
@@ -193,7 +192,7 @@ export const VoxelListItem: FC<Props> = ({ item }) => {
 
   return (
     <Link href={`${router.asPath.split("?")[0]}?voxel=${item.id}`}>
-      <a className="w-full">
+      <div className="w-full">
         <div className="w-full border border-light-on-primary-container dark:border-dark-on-primary-container rounded-lg overflow-hidden bg-light-surface-1 dark:bg-dark-surface-1">
           <div className="hidden lg:block w-full">
             <PcContent />
@@ -202,7 +201,7 @@ export const VoxelListItem: FC<Props> = ({ item }) => {
             <SpContent />
           </div>
         </div>
-      </a>
+      </div>
     </Link>
   );
 };

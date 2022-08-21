@@ -57,7 +57,7 @@ const CVoxelPresenter: FC<Props> = ({
           opacity={opacity}
         />
       </mesh>
-      {lattice ? (
+      {lattice && (
         <mesh
         receiveShadow
         castShadow
@@ -70,7 +70,7 @@ const CVoxelPresenter: FC<Props> = ({
           opacity={1}
         />
       </mesh>
-      ) : null}
+      )}
     </group>
   );
 };

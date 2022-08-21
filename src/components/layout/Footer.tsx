@@ -14,7 +14,7 @@ export const Footer: FC = () => {
               <div className="text-sm text-gray-600 font-semibold py-1 text-center md:text-left">
                 Copyright © {new Date().getFullYear()}{" "}
                 <a className="text-gray-600 hover:text-gray-800 text-sm font-semibold py-1">
-                  C-Voxel.
+                  VESS.
                 </a>
               </div>
             </div>

@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
+  CVoxelItem,
   CVoxelThree,
   CVoxelVisType,
   CVoxelWithId,
 } from "@/interfaces/cVoxelType";
 import * as THREE from "three";
-import { useCallback } from "react";
 import { getGenreColor } from "@/utils/genreUtil";
 import chroma from "chroma-js";
 
@@ -21,27 +21,65 @@ const sigmoid_a: number = 1;
 
 export const useVoxStyler = () => {
   const [cvoxelsForDisplay, setCvoxelsForDisplay] = useState<
-    (CVoxelThreeWithId | undefined)[]
-  >([]);
+    CVoxelItem[] | undefined
+  >();
+  const [voxelForDisplay, setVoxelForDisplay] = useState<
+    CVoxelWithId | undefined
+  >();
 
-  const convertCVoxelsForDisplay = useCallback((cVoxels: CVoxelWithId[]) => {
+  const displayVoxel = useMemo(() => {
+    if (!(voxelForDisplay && voxelForDisplay.id)) return;
+    const initPosition = new THREE.Vector3(0, 0, 0);
+    const { deliverables, toSig, fromSig, genre } = voxelForDisplay;
+    let hue, lightness, saturation: number;
+    // masked value effects temporarily
+    /* Set vividness from value based on ETH currently */
+    // const sigmoidValue =
+    //   1.0 /
+    //   (1.0 +
+    //     Math.exp(-sigmoid_a * Math.log10(parseFloat(fiatValue || value))));
+    // lightness = 100 - sigmoidValue * 50;
+    // saturation = sigmoidValue * 70;
+    lightness = 50;
+    saturation = 70;
+
+    /* Set hue from hoge (unassinged yet) */
+    const hexColor = getGenreColor(genre);
+    const genreHue = hexColor ? chroma(hexColor).hsl()[0] : 330;
+    hue = genreHue || 330;
+
+    const styledVoxel: CVoxelThreeWithId = {
+      id: voxelForDisplay.id,
+      color: `hsl(${hue}, ${saturation.toFixed()}%, ${lightness.toFixed()}%)`,
+      opacity: toSig && toSig !== "" && fromSig && fromSig !== "" ? 0.75 : 0.45,
+      lattice: !!deliverables && deliverables.length > 0,
+      scale: 1.0,
+      position: initPosition,
+      offset: initPosition,
+    };
+
+    return styledVoxel;
+  }, [voxelForDisplay]);
+
+  const displayVoxels = useMemo(() => {
     const styledVoxel: CVoxelVisTypeWithId[] = [];
-    let stackedVoxels: (CVoxelThreeWithId | undefined)[] = [];
-    if (cVoxels.length != 0) {
-      cVoxels.forEach((voxel, i) => {
+    let stackedVoxels: CVoxelThreeWithId[] = [];
+    if (cvoxelsForDisplay && cvoxelsForDisplay.length > 0) {
+      cvoxelsForDisplay.forEach((voxel, i) => {
+        if (!voxel.id) return;
         let voxelTemp: CVoxelVisTypeWithId = {
           id: voxel.id,
           color: "",
-          opacity: 0.6,
+          opacity: 0.45,
           lattice: false,
           scale: 1.0,
         };
-        const { value, deliverables, toSig, fromSig, genre, fiatValue } = voxel;
+        const { deliverables, isVerified, genre } = voxel;
         let hue, lightness, saturation: number;
 
         /* Set opacity from sigs */
-        if (toSig != "" && fromSig != "") {
-          voxelTemp["opacity"] = 0.8;
+        if (isVerified) {
+          voxelTemp["opacity"] = 0.75;
         }
 
         /* Set lattice from deliverable */
@@ -49,13 +87,16 @@ export const useVoxStyler = () => {
           voxelTemp["lattice"] = true;
         }
 
+        // masked value effects temporarily
         /* Set vividness from value based on ETH currently */
-        const sigmoidValue =
-          1.0 /
-          (1.0 +
-            Math.exp(-sigmoid_a * Math.log10(parseFloat(fiatValue || value))));
-        lightness = 100 - sigmoidValue * 50;
-        saturation = sigmoidValue * 70;
+        // const sigmoidValue =
+        //   1.0 /
+        //   (1.0 +
+        //     Math.exp(-sigmoid_a * Math.log10(parseFloat(fiatValue || value))));
+        // lightness = 100 - sigmoidValue * 50;
+        // saturation = sigmoidValue * 70;
+        lightness = 50;
+        saturation = 70;
 
         /* Set hue from hoge (unassinged yet) */
         const hexColor = getGenreColor(genre);
@@ -73,7 +114,7 @@ export const useVoxStyler = () => {
     const sitList: THREE.Vector3[] = [];
     const voxelNum = styledVoxel.length;
     let rangeNum = 0;
-    /* Measure the range of C-Voxel Collection */
+    /* Measure the range of Voxel Collection */
     for (let i = 0; ; i++) {
       room.push([]);
       if ((2 * i + 1) ** 3 > voxelNum) {
@@ -83,31 +124,32 @@ export const useVoxStyler = () => {
       }
     }
 
-    /* Set origin C-Voxel position */
+    /* Set origin Voxel position */
     room[0].push({
       position: new THREE.Vector3(0, 0, 0),
       priority: 0,
     });
 
-    /* Stack C-Voxels if one or more C-Voxels exist */
+    /* Stack Voxels if one or more Voxels exist */
     if (rangeNum) {
       /* Start Stacking Iteration */
+      const initPosition = new THREE.Vector3(0, 0, 0);
       const newStackedVoxels = styledVoxel
         .sort((a, b) => {
           if (!a || !b) return 1;
           return a?.color < b?.color ? -1 : 1;
         })
         .map((mVoxel) => {
-          let tempVoxel;
-          /* Set position of C-Voxels */
+          let tempVoxel: CVoxelThreeWithId = Object.assign(mVoxel, {
+            position: initPosition,
+            offset: initPosition,
+          });
+          /* Set position of Voxels */
           for (let i = 0; i <= rangeNum; i++) {
-            if (room[i].length != 0) {
+            if (room[i].length > 0) {
               const seat = room[i].shift();
               sitList.push(seat!.position);
-              tempVoxel = Object.assign(mVoxel, {
-                position: seat!.position,
-                offset: new THREE.Vector3(0, 0, 0),
-              });
+              tempVoxel.position = seat!.position;
 
               /* Prepare new seat */
               for (let x = 0; x < 2; x++) {
@@ -188,13 +230,17 @@ export const useVoxStyler = () => {
               break;
             }
           }
-
           return tempVoxel;
         });
       stackedVoxels = [...newStackedVoxels];
     }
-    setCvoxelsForDisplay(stackedVoxels);
-  }, []);
+    return stackedVoxels;
+  }, [cvoxelsForDisplay]);
 
-  return { cvoxelsForDisplay, convertCVoxelsForDisplay };
+  return {
+    displayVoxels,
+    setCvoxelsForDisplay,
+    displayVoxel,
+    setVoxelForDisplay,
+  };
 };

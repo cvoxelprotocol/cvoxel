@@ -20,6 +20,7 @@ import { TxDirection } from "@/components/common/TxDirection";
 // import RightArrow from "@/components/CVoxel/VoxelListItem/right-arrow.svg";
 // import LeftArrow from "@/components/CVoxel/VoxelListItem/left-arrow.svg";
 import { useWalletAccount } from "@/hooks/useWalletAccount";
+import { OneVoxelVisualizerPresenter } from "./OneVoxelVisualizerPresenter";
 
 export const CVoxelDetailBox: FC<{}> = () => {
   const [box] = useStateCVoxelDetailBox();
@@ -130,12 +131,11 @@ export const CVoxelDetailBox: FC<{}> = () => {
             </button>
           </div>
 
-          {/*c-voxel*/}
           <div className="h-52">
-            {box && box.item.id && (
+            {(box && box.item.id && detailItem) &&  (
               <Canvas>
-                <VisualizerPresenter
-                  ids={box ? [box.item.id] : undefined}
+                <OneVoxelVisualizerPresenter
+                  workCredential={{...detailItem, id:box.item.id}}
                   zoom={5}
                   disableHover
                 />

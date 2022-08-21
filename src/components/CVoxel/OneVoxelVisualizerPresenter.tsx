@@ -1,66 +1,43 @@
 import * as THREE from "three";
-import { FC, useRef, useState, useEffect } from "react";
+import { FC, useRef, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
 import { OrbitControls, PerspectiveCamera, Plane } from "@react-three/drei";
-import { CVoxelItem, CVoxelMetaDraft } from "@/interfaces/cVoxelType";
+import { CVoxelWithId } from "@/interfaces/cVoxelType";
 import CVoxelPresenter from "./CVoxelPresenter";
 import { CVoxelThreeWithId, useVoxStyler } from "@/hooks/useVoxStyler";
-import { initCVoxel } from "@/constants/cVoxel";
-
-type ShowDetailBox = ({
-  item,
-  offchainItems,
-}: {
-  item: CVoxelItem;
-  offchainItems?: CVoxelMetaDraft[];
-}) => void;
 
 // NOTE: useCVoxelDetailBox cannot be called by VisualPresenter, so it is passed by props.
-type VisualizerPresenterProps = {
-  workCredentials?: CVoxelItem[]
-  showDetailBox?: ShowDetailBox;
+type OneVoxelVisualizerPresenterProps = {
+  workCredential?: CVoxelWithId
   zoom?: number;
   disableHover?: boolean;
-  voxelsForDisplay?: (CVoxelThreeWithId | undefined)[]; // For direct insertion e.g. draft data
+  voxelForDisplay?: CVoxelThreeWithId // For direct insertion e.g. draft data
 };
 
-const VisualizerPresenter: FC<VisualizerPresenterProps> = ({
-  showDetailBox,
+export const OneVoxelVisualizerPresenter: FC<OneVoxelVisualizerPresenterProps> = ({
   zoom = 2,
   disableHover = false,
-  workCredentials
+  workCredential,
+  voxelForDisplay
 }) => {
-  const [isInitVoxels, setIsInitVoxels] = useState<boolean>(true);
-  const { displayVoxels, setCvoxelsForDisplay } = useVoxStyler();
-
+  const { setVoxelForDisplay, displayVoxel } = useVoxStyler();
   const cCollectionRef = useRef<THREE.Group>(new THREE.Group());
-
 
   useEffect(() => {
     let isMounted = true;
-    if(workCredentials && workCredentials.length>0){
-      setIsInitVoxels(false)
-      setCvoxelsForDisplay(workCredentials)
-    } else {
-      setIsInitVoxels(true)
-      setCvoxelsForDisplay(initCVoxel)
+    if(!voxelForDisplay) {
+      setVoxelForDisplay(workCredential)
     }
     return () => {
       isMounted = false;
     };
-  }, [workCredentials]);
+  }, [workCredential,voxelForDisplay]);
 
   useFrame(() => {
     cCollectionRef.current.rotation.y += 0.005;
   });
 
-  const handleClickVox = (id: string) => {
-    if(!(workCredentials && workCredentials.length>0)) return
-    const selectedVoxel = workCredentials.find(wc => wc.id === id)
-    if (selectedVoxel) {
-      showDetailBox?.({ item: selectedVoxel });
-    }
-  };
+  if(!displayVoxel && !voxelForDisplay) return <></>
 
   return (
     <>
@@ -97,23 +74,20 @@ const VisualizerPresenter: FC<VisualizerPresenterProps> = ({
         <meshBasicMaterial color={"white"} opacity={0.5} />
       </Plane> */}
       <group ref={cCollectionRef} position={[0, 0, 0]}>
-        {displayVoxels.map(
-          (voxel, i) =>
-            voxel && (
-              <CVoxelPresenter
-                {...voxel}
-                key={i}
-                handleClick={
-                  isInitVoxels ? undefined : () => handleClickVox(voxel.id)
-                }
-                disableHover={isInitVoxels || disableHover}
-              />
-            )
+        {!!voxelForDisplay && (
+          <CVoxelPresenter
+          {...voxelForDisplay}
+          disableHover={disableHover}
+        />
+        )}
+        {!!displayVoxel && (
+            <CVoxelPresenter
+            {...displayVoxel}
+            disableHover={disableHover}
+          />
         )}
       </group>
       <PerspectiveCamera makeDefault position={[10, 6, 10]} zoom={zoom}/>
     </>
   );
 };
-
-export default VisualizerPresenter;

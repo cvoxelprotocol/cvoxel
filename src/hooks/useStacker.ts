@@ -18,7 +18,7 @@ const useStacker = (
     const voxelNum = messedVoxels.length;
     let rangeNum = 0;
     stackedVoxels.current = [];
-    /* Measure the range of C-Voxel Collection */
+    /* Measure the range of voxel Collection */
     for (let i = 0; ; i++) {
       room.push([]);
       if ((2 * i + 1) ** 3 > voxelNum) {
@@ -28,19 +28,19 @@ const useStacker = (
       }
     }
 
-    /* Set origin C-Voxel position */
+    /* Set origin Voxel position */
     room[0].push({
       position: new THREE.Vector3(0, 0, 0),
       priority: 0,
     });
 
-    /* Stack C-Voxels if one or more C-Voxels exist */
+    /* Stack Voxels if one or more Voxels exist */
     if (rangeNum && stackedVoxels.current !== undefined) {
       /* Start Stacking Iteration */
       stackedVoxels.current = messedVoxels.map((mVoxel, i) => {
         let tempVoxel;
 
-        /* Set position of C-Voxels */
+        /* Set position of Voxels */
         for (let i = 0; i <= rangeNum; i++) {
           if (room[i].length != 0) {
             const seat = room[i].shift();

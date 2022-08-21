@@ -4,7 +4,7 @@ import {
   CVoxelMetaDraft,
 } from "@/interfaces";
 import { Canvas } from "@react-three/fiber";
-import VisualizerPresenter from "@/components/CVoxel/visualizerPresenter";
+import { OneVoxelVisualizerPresenter } from "../OneVoxelVisualizerPresenter";
 import {
   convertTimestampToDateStr,
   convertTimestampToDateStrLocaleUS,
@@ -195,9 +195,11 @@ export const VoxelDetail: FC<Props> = ({
     <div className="w-full border border-light-on-primary-container dark:border-dark-on-primary-container rounded-2xl overflow-hidden bg-light-surface-1 dark:bg-dark-surface-1">
       <div className="lg:flex w-full">
         <div className="flex-initial w-full lg:w-52 h-52 relative bg-light-surface dark:bg-dark-surface rounded-br-2xl rounded-bl-2xl lg:rounded-bl-none">
-          <Canvas>
-            <VisualizerPresenter ids={[itemId]} zoom={6} disableHover />
-          </Canvas>
+          {detailItem && (
+            <Canvas>
+              <OneVoxelVisualizerPresenter zoom={6} disableHover workCredential={{...detailItem, id:itemId}} />
+            </Canvas>
+          )}
 
           <div className="absolute right-4 bottom-4">
             <ShareButton valiant="icon" voxelID={itemId} isOwner={isOwner}/>
