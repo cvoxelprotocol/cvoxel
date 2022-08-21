@@ -3,15 +3,16 @@ import clsx from "clsx";
 
 type Props = {
   text: string;
+  bgColor?: string
 };
 
-export const ToolTip: FC<Props> = ({ text }) => {
+export const ToolTip: FC<Props> = ({ text,bgColor = "bg-black" }) => {
   return (
     <span
       className={clsx(
         "whitespace-nowrap",
         "rounded",
-        "bg-black",
+        bgColor,
         "px-2",
         "py-1",
         "text-white",

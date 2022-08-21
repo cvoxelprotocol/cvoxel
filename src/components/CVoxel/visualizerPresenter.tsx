@@ -49,8 +49,12 @@ const VisualizerPresenter: FC<VisualizerPresenterProps> = ({
       if (!ids) return;
       const voxelsTemp: CVoxelWithId[] = [];
       for (let i = 0; i < ids!.length; i++) {
-        const voxel = await core.tileLoader.load<CVoxel>(ids[i]);
-        voxelsTemp.push({ ...voxel.content, id: ids[i] });
+        try {
+          const voxel = await core.tileLoader.load<CVoxel>(ids[i]);
+          voxelsTemp.push({ ...voxel.content, id: ids[i] });
+        } catch (error) {
+          console.log(error)
+        }
       }
       setCVoxels(voxelsTemp);
     };

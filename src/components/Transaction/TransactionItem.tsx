@@ -15,14 +15,12 @@ type TransactionItemProps = {
   tx: TransactionLogWithChainId;
   selectedTx: TransactionLogWithChainId | null;
   account?: string | null;
-  cVoxels?: CVoxelItem[];
   onClickTx: (tx: TransactionLogWithChainId | null) => void;
 };
 
 export const TransactionItem: FC<TransactionItemProps> = ({
   tx,
   account,
-  cVoxels,
   onClickTx,
   selectedTx,
 }) => {

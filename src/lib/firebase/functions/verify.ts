@@ -27,6 +27,28 @@ export const createDraftWighVerify = (
       });
   });
 
+export const uploadDraft = (
+  draft: CVoxelMetaDraft
+): Promise<{ [x: string]: string }> =>
+  new Promise((resolve, reject) => {
+    const uploadDraftFunc = httpsCallable<
+      { [x: string]: CVoxelMetaDraft },
+      { [x: string]: string }
+    >(functions, "uploadDraft");
+    uploadDraftFunc({
+      draft: draft,
+    })
+      .then((result) => {
+        console.log({ result });
+        const { status } = result.data;
+        resolve({ status: status });
+      })
+      .catch((error) => {
+        console.log({ error });
+        reject(error);
+      });
+  });
+
 export const updateDraftWighVerify = (
   signature: string,
   hash: string,

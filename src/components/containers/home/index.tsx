@@ -1,10 +1,10 @@
 import { useCVoxelsRecord } from "@/hooks/useCVoxel";
-import { FC, useCallback, useContext, useRef } from "react";
+import { FC, useCallback, useContext, useEffect, useRef } from "react";
 import { CVoxelsContainer } from "./CVoxelsContainer";
 import { MyPageContainer } from "./MyPageContainer";
 import { Arrow } from "@/components/common/arrow/Arrow";
 import { DIDContext } from "@/context/DIDContext";
-import { useTab } from "@/hooks/useTab";
+import { useMyPageScreen, useTab } from "@/hooks/useTab";
 
 export const HomeContainer: FC = () => {
   const {did} = useContext(DIDContext)
@@ -12,12 +12,21 @@ export const HomeContainer: FC = () => {
   const myPageContainerRef = useRef<HTMLDivElement>(null);
   const visualContainerRef = useRef<HTMLDivElement>(null);
   const { setTabState } = useTab();
+  const {screenState, setScreenState} = useMyPageScreen()
+
   const scrollToInfo = () => {
     myPageContainerRef.current?.scrollIntoView({ behavior: "smooth" });
   };
   const scrollToVisual = () => {
     visualContainerRef.current?.scrollIntoView({ behavior: "smooth" });
   };
+
+  useEffect(() => {
+    if(screenState==="visual"){
+      scrollToVisual()
+      setScreenState("visual")
+    }
+  },[screenState])
 
   const handleCreateNewVoxel = useCallback(() => {
     scrollToInfo()

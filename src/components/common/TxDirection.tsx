@@ -5,7 +5,7 @@ import RightArrow from "@/components/CVoxel/VoxelListItem/right-arrow.svg";
 import { CommonSpinner } from "@/components/common/CommonSpinner";
 import LeftArrow from "@/components/CVoxel/VoxelListItem/left-arrow.svg";
 import { useENS } from "@/hooks/useENS";
-import { getDIDFromAddress } from "@/utils/addressUtil";
+import { getPkhDIDFromAddress } from "@/utils/addressUtil";
 import { getProfileInfo } from "@/utils/ceramicUtils";
 
 type Props = {
@@ -22,7 +22,7 @@ export const TxDirection: FC<Props> = ({ from, to, isPayer }) => {
   useEffect(() => {
     if (toDid == undefined && !!to) {
       const f = async () => {
-        const did = await getDIDFromAddress(to);
+        const did = await getPkhDIDFromAddress(to);
         setToDid(did);
       };
       f();
@@ -33,7 +33,7 @@ export const TxDirection: FC<Props> = ({ from, to, isPayer }) => {
   useEffect(() => {
     if (fromDid == undefined && !!from) {
       const f = async () => {
-        const did = await getDIDFromAddress(from);
+        const did = await getPkhDIDFromAddress(from);
         setFromDid(did);
       };
       f();

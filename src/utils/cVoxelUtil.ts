@@ -1,6 +1,9 @@
 import { CVoxel, CVoxelMetaDraft, DeliverableItem } from "@/interfaces";
 
-export const extractCVoxel = (tx: CVoxelMetaDraft): CVoxel => {
+export const extractCVoxel = (
+  tx: CVoxelMetaDraft,
+  isPayer: boolean
+): CVoxel => {
   const {
     summary,
     detail,
@@ -8,7 +11,6 @@ export const extractCVoxel = (tx: CVoxelMetaDraft): CVoxel => {
     jobType,
     from,
     to,
-    isPayer,
     value,
     tokenSymbol,
     tokenDecimal,

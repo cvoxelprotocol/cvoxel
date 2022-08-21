@@ -1,10 +1,20 @@
 import { firestore } from "../app";
-import { collection, getDocs, query, where } from "firebase/firestore/lite";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  updateDoc,
+  where,
+} from "firebase/firestore/lite";
 import { DocumentData, QueryDocumentSnapshot } from "firebase/firestore/lite";
 import { CVoxelMetaDraft } from "@/interfaces/cVoxelType";
 import { DeliverableItemsFromStr } from "@/utils/cVoxelUtil";
 
-export const getCVoxelList = (address?: string): Promise<CVoxelMetaDraft[]> =>
+export const getOffchainDataList = (
+  address?: string
+): Promise<CVoxelMetaDraft[]> =>
   new Promise((resolve, reject) => {
     const q = address
       ? query(
@@ -18,9 +28,54 @@ export const getCVoxelList = (address?: string): Promise<CVoxelMetaDraft[]> =>
           ? []
           : result.docs.map((doc) => {
               const d = doc.data();
-              return { ...doc.data() } as CVoxelMetaDraft;
+              return { ...doc.data(), id: doc.id } as CVoxelMetaDraft;
             });
         resolve(docs);
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+
+export const getOffchainData = (id?: string): Promise<CVoxelMetaDraft> =>
+  new Promise((resolve, reject) => {
+    if (!id) {
+      reject("No Id");
+      return;
+    }
+    getDoc(doc(firestore, "cvoxels", id).withConverter(converter))
+      .then((result) => {
+        const d = result.data() as CVoxelMetaDraft;
+        resolve({ ...d, id: result.id });
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+
+export const updateSignature = (
+  id: string | undefined,
+  isPayer: boolean,
+  signer: string,
+  sig: string
+): Promise<void> =>
+  new Promise((resolve, reject) => {
+    if (!id) {
+      reject("No Id");
+      return;
+    }
+    const sigObj = isPayer
+      ? {
+          fromSig: sig,
+          fromSigner: signer,
+        }
+      : {
+          toSig: sig,
+          toSigner: signer,
+        };
+    updateDoc(doc(firestore, "cvoxels", id).withConverter(converter), sigObj)
+      .then(() => {
+        resolve();
       })
       .catch((error) => {
         reject(error);

@@ -1,4 +1,4 @@
-import { useTab } from "@/hooks/useTab";
+import { useMyPageScreen, useTab } from "@/hooks/useTab";
 import { FC, useCallback, useContext, useMemo } from "react";
 import { NoItemPresenter } from "../../../common/NoItemPresenter";
 import type { CVoxelMetaDraft } from "@/interfaces";
@@ -14,24 +14,21 @@ import { DIDContext } from "@/context/DIDContext";
 export const MyNotificationContainer: FC = () => {
   const {did, account} = useContext(DIDContext)
   const { offchainMetaList } = useCVoxelList();
-  const { setTabState } = useTab();
-  const { verifyWithCeramic, verifyWithoutCeramic } = useSigRequest();
+  const {setScreenState} = useMyPageScreen()
+  const { verifyWithCeramic } = useSigRequest();
   // TODO: This is temporary solution because of useTileDoc bug
   const [_, setForceUpdateCVoxelList] = useStateForceUpdate();
 
   const handleVerify = useCallback(
     async (tx: CVoxelMetaDraft) => {
-      if (did) {
-        const result = await verifyWithCeramic(tx);
+      const result = await verifyWithCeramic(tx);
         if (result) {
           setForceUpdateCVoxelList(v => !v);
-          setTabState("cvoxels");
+          setScreenState("info")
+          router.push(`/${did}/?voxel=${result}`)
         }
-      } else {
-        await verifyWithoutCeramic(tx);
-      }
     },
-    [did, verifyWithCeramic, verifyWithoutCeramic]
+    [did, verifyWithCeramic]
   );
 
   const sigRequestCVoxels = useMemo(() => {
@@ -81,7 +78,6 @@ export const MyNotificationContainer: FC = () => {
           <div className="mt-6 sm:px-6">
             <SigRequestDetail
               offchainItem={currentTx}
-              account={account}
               onVerify={handleVerify}
             />
           </div>

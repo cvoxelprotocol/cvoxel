@@ -1,4 +1,8 @@
-import { useStateManageTab, useStateManageTxTab } from "@/recoilstate";
+import {
+  useStateManageScreen,
+  useStateManageTab,
+  useStateManageTxTab,
+} from "@/recoilstate";
 
 export const useTab = () => {
   const [tabState, setTabState] = useStateManageTab();
@@ -15,5 +19,13 @@ export const useTxTab = () => {
   return {
     tabState,
     setTabState,
+  };
+};
+
+export const useMyPageScreen = () => {
+  const [screenState, setScreenState] = useStateManageScreen();
+  return {
+    screenState,
+    setScreenState,
   };
 };

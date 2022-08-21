@@ -1,4 +1,4 @@
-import { getCVoxelList } from "@/lib/firebase/store/meta";
+import { getOffchainDataList } from "@/lib/firebase/store/meta";
 import { CVoxelMetaDraft } from "@/interfaces/cVoxelType";
 
 export const getOffchainCVoxelMeta = async (
@@ -6,7 +6,7 @@ export const getOffchainCVoxelMeta = async (
 ): Promise<CVoxelMetaDraft[]> =>
   new Promise(async (resolve, reject) => {
     try {
-      const list = await getCVoxelList(address);
+      const list = await getOffchainDataList(address);
       resolve(list);
     } catch (error) {
       console.log(error);
