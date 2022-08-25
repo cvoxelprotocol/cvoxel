@@ -56,7 +56,7 @@ export const OneVoxelVisualizerPresenter: FC<OneVoxelVisualizerPresenterProps> =
       />
       {/* <pointLight position={[10, 10, 10]} /> */}
 
-      <OrbitControls enablePan={false} enableZoom={true} enableRotate={true} maxDistance={20} minDistance={12} />
+      <OrbitControls enablePan={false} enableZoom={false} enableRotate={false} maxDistance={20} minDistance={12} />
       <Plane
         receiveShadow
         rotation-x={-Math.PI / 2}

@@ -196,7 +196,7 @@ export const VoxelDetail: FC<Props> = ({
       <div className="lg:flex w-full">
         <div className="flex-initial w-full lg:w-52 h-52 relative bg-light-surface dark:bg-dark-surface rounded-br-2xl rounded-bl-2xl lg:rounded-bl-none">
           {detailItem && (
-            <Canvas>
+            <Canvas className="!touch-auto">
               <OneVoxelVisualizerPresenter zoom={6} disableHover workCredential={{...detailItem, id:itemId}} />
             </Canvas>
           )}

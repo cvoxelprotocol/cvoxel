@@ -114,7 +114,7 @@ export const VoxelListItem: FC<Props> = ({ item }) => {
       <div className="w-full">
         <div className="w-full h-32 relative bg-light-surface dark:bg-dark-surface rounded-b-lg">
         {detailItem && (
-            <Canvas>
+            <Canvas className="!touch-auto">
               <OneVoxelVisualizerPresenter zoom={6} disableHover workCredential={{...detailItem, id:item.id}} />
             </Canvas>
           )}

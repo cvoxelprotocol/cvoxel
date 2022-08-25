@@ -133,7 +133,7 @@ export const CVoxelDetailBox: FC<{}> = () => {
 
           <div className="h-52">
             {(box && box.item.id && detailItem) &&  (
-              <Canvas>
+              <Canvas className="!touch-auto">
                 <OneVoxelVisualizerPresenter
                   workCredential={{...detailItem, id:box.item.id}}
                   zoom={5}
