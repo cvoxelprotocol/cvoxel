@@ -4,6 +4,7 @@ import { ModelTypes } from "@/interfaces";
 import { useWalletAccount } from "@/hooks/useWalletAccount";
 import { useStateMySelfID } from "@/recoilstate/ceramic";
 import { useDID } from "@/recoilstate";
+import { getCeramicService } from "@/services/Ceramic/CeramicService";
 
 export interface UserContextState {
     loggedIn: boolean;
@@ -28,6 +29,7 @@ export const DIDContextProvider = ({ children }: { children: any }) => {
     const [connection, connect, disconnect] = useViewerConnection<ModelTypes>();
     const [mySelfID, setMySelfID] = useStateMySelfID();
     const [did, setDid] = useDID();
+    const ceramicService = getCeramicService()
   
     const { disconnectWallet, account, library, chainId } = useWalletAccount();
   
@@ -46,6 +48,7 @@ export const DIDContextProvider = ({ children }: { children: any }) => {
         const selfID = await connect(authProvider);
         setMySelfID(selfID);
         setDid(selfID?.id)
+        ceramicService.setSelfID(selfID || undefined)
       }
     };
 

@@ -25,6 +25,7 @@ import { useVoxStyler } from "@/hooks/useVoxStyler";
 import { useStateMySelfID } from "@/recoilstate/ceramic";
 import { useWalletAccount } from "./useWalletAccount";
 import { getFiat } from "@/lib/firebase/functions/fiat";
+import { getCeramicService } from "@/services/Ceramic/CeramicService";
 
 export function useDraftCVoxel() {
   const { connectWallet } = useWalletAccount();
@@ -36,6 +37,7 @@ export function useDraftCVoxel() {
   const cVoxelService = getCVoxelService();
   const { lancInfo, lancError } = useToast();
   const [issueStatus, setIssueStatus] = useStateIssueStatus();
+  const ceramicService = getCeramicService();
 
   const { showToast } = useCVoxelToast();
 
@@ -243,11 +245,11 @@ export function useDraftCVoxel() {
     isVerified: boolean
   ): Promise<string | null> => {
     if (!(mySelfID && cVoxelsRecord.isLoadable)) return null;
-    const doc = await mySelfID.client.dataModel.createTile("WorkCredential", {
-      ...draft,
-    });
+    const docUrl = await ceramicService.setWorkCredential(draft);
+    if (!docUrl) {
+      return null;
+    }
     const cVoxels = cVoxelsRecord.content?.WorkCredentials ?? [];
-    const docUrl = doc.id.toUrl();
     await cVoxelsRecord.set({
       WorkCredentials: [
         ...cVoxels,
