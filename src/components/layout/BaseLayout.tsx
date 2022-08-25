@@ -39,7 +39,7 @@ export const BaseLayout = ({ children }: Props) => {
         {router.pathname.startsWith("/intro") ? (
           <div className="bg-white">{children}</div>
         ) : (
-          <div className="relative snap-y snap-mandatory h-screen overflow-auto">
+          <div className="relative snap-y snap-mandatory h-screen overflow-y-auto overflow-x-hidden">
             <Header />
             <CVoxelDetailBox />
             <div className="mx-auto -m-[72px] md:px-4 w-full break-words">
