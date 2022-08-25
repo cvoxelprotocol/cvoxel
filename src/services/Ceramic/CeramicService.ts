@@ -28,8 +28,6 @@ export class CeramicService {
       content,
       WorkCredentialSchema
     );
-    console.log({ doc });
-
     return doc?.id.toUrl();
   }
 
