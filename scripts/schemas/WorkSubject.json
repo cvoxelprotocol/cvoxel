@@ -1,0 +1,92 @@
+{
+  "type": "object",
+  "title": "subject",
+  "properties": {
+    "id": {
+      "type": "string",
+      "maxLength": 240
+    },
+    "value": {
+      "type": "string",
+      "title": "value",
+      "description": "paid value"
+    },
+    "tax": {
+      "type": "string",
+      "title": "value",
+      "description": "paid value"
+    },
+    "summary": {
+      "type": "string",
+      "title": "summary",
+      "description": "work summary"
+    },
+    "detail": {
+      "type": "string",
+      "title": "detail",
+      "description": "work detail"
+    },
+    "genre": {
+      "type": "string",
+      "title": "genre",
+      "description": "work genre e.g, Dev, Design etc"
+    },
+    "tags": {
+      "type": "array",
+      "title": "tags",
+      "description": "work tags",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "jobType": {
+      "type": "string",
+      "title": "jobType",
+      "description": "currently support fulltime, parttime, and onetime"
+    },
+    "startTimestamp": {
+      "type": "string",
+      "title": "startTimestamp",
+      "description": "Time stamp of work started"
+    },
+    "endTimestamp": {
+      "type": "string",
+      "title": "endTimestamp",
+      "description": "Time stamp of work ended"
+    },
+    "client": {
+      "type": "object",
+      "title": "client",
+      "properties": {
+        "format": {
+          "type": "string",
+          "title": "format",
+          "description": "name or DID"
+        },
+        "value": {
+          "type": "string",
+          "title": "value",
+          "description": "Client Info"
+        }
+      }
+    },
+    "platform": {
+      "type": "string",
+      "title": "platform",
+      "description": "a transaction platform if exists e.g, gitcoin"
+    },
+    "deliverableHash": {
+      "type": "string",
+      "title": "deliverableHash",
+      "description": "hash value of all work descriptions(summary, detail, deliverables)"
+    },
+    "issuedAt": {
+      "type": "string",
+      "title": "issuedAt",
+      "description": "CRDL issue date"
+    }
+  },
+  "required": ["id", "summary", "issuedAt"],
+  "additionalProperties":true
+}
