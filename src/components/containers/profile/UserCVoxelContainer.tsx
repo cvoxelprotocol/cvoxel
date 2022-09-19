@@ -52,139 +52,78 @@ export const UserCVoxelContainer: FC<UserCVoxelContainerProps> = ({
     estimateSize: () => ((isTabletOrMobile ? 15 : 13) + 1) * 16, // NOTE: (item + margin) * rem
   });
 
-  return (
-    <div className="max-w-[820px] mx-auto">
-      {!!currentVoxelID ? (
-        <div className="mt-6 px-2 sm:px-6">
-          <VoxelDetail
-            itemId={currentVoxelID}
-            offchainItems={offchainMetaList}
-            isOwner={false}
-            notifyUpdated={forceReload}
-          />
-        </div>
-      ) : did == "" ? (
-        <div className="mx-auto min-h-screen">
-          <NoItemPresenter text="Not searched yet" />
-        </div>
-      ) : (
-        <CVoxelsPresenter>
-          {!CVoxelsRecords.isLoading && !CVoxelsRecords.content && (
-            <div className="mx-auto">
-              <NoItemPresenter text="No Voxels yet" />
-            </div>
-          )}
-
-          {CVoxelsRecords.isLoading && <CommonLoading />}
-
-          {!CVoxelsRecords.isLoading && sortCVoxels && (
-            <div ref={parentRef} className={"overflow-auto h-full w-full"}>
-              <div
-                style={{
-                  height: `${rowVirtualizer.getTotalSize() / 16}rem`,
-                  width: "100%",
-                  position: "relative",
-                }}
-              >
-                {rowVirtualizer.getVirtualItems().map((virtualItem, index) => (
-                  <div
-                    key={virtualItem.index}
-                    style={{
-                      position: "absolute",
-                      top: 0,
-                      left: 0,
-                      width: "100%",
-                      height: `${virtualItem.size / 16}rem`,
-                      transform: `translateY(${virtualItem.start / 16}rem)`,
-                    }}
-                  >
-                    <VoxelListItem
-                      key={sortCVoxels[virtualItem.index].id}
-                      item={sortCVoxels[virtualItem.index]}
-                    />
-                  </div>
-                ))}
+  return useMemo(
+    () => (
+      <div className="max-w-[820px] mx-auto">
+        {!!currentVoxelID ? (
+          <div className="mt-6 px-2 sm:px-6">
+            <VoxelDetail
+              itemId={currentVoxelID}
+              offchainItems={offchainMetaList}
+              isOwner={false}
+              notifyUpdated={forceReload}
+            />
+          </div>
+        ) : did == "" ? (
+          <div className="mx-auto min-h-screen">
+            <NoItemPresenter text="Not searched yet" />
+          </div>
+        ) : (
+          <CVoxelsPresenter>
+            {!CVoxelsRecords.isLoading && !CVoxelsRecords.content && (
+              <div className="mx-auto">
+                <NoItemPresenter text="No Voxels yet" />
               </div>
-            </div>
-          )}
-        </CVoxelsPresenter>
-      )}
-    </div>
-  );
+            )}
 
-  // return useMemo(
-  //   () => (
-  //     <div className="max-w-[820px] mx-auto">
-  //       {!!currentVoxelID ? (
-  //         <div className="mt-6 px-2 sm:px-6">
-  //           <VoxelDetail
-  //             itemId={currentVoxelID}
-  //             offchainItems={offchainMetaList}
-  //             isOwner={false}
-  //             notifyUpdated={forceReload}
-  //           />
-  //         </div>
-  //       ) : did == "" ? (
-  //         <div className="mx-auto min-h-screen">
-  //           <NoItemPresenter text="Not searched yet" />
-  //         </div>
-  //       ) : (
-  //         <CVoxelsPresenter>
-  //           {!CVoxelsRecords.isLoading && !CVoxelsRecords.content && (
-  //             <div className="mx-auto">
-  //               <NoItemPresenter text="No Voxels yet" />
-  //             </div>
-  //           )}
-  //
-  //           {CVoxelsRecords.isLoading && <CommonLoading />}
-  //
-  //           {!CVoxelsRecords.isLoading && sortCVoxels && (
-  //             <div ref={parentRef} className={"overflow-auto h-full w-full"}>
-  //               <div
-  //                 style={{
-  //                   height: `${rowVirtualizer.getTotalSize() / 16}rem`,
-  //                   width: "100%",
-  //                   position: "relative",
-  //                 }}
-  //               >
-  //                 {rowVirtualizer
-  //                   .getVirtualItems()
-  //                   .map((virtualItem, index) => (
-  //                     <div
-  //                       key={virtualItem.index}
-  //                       style={{
-  //                         position: "absolute",
-  //                         top: 0,
-  //                         left: 0,
-  //                         width: "100%",
-  //                         height: `${virtualItem.size / 16}rem`,
-  //                         transform: `translateY(${virtualItem.start / 16}rem)`,
-  //                       }}
-  //                     >
-  //                       {/*<div className="h-40">{virtualItem.index}</div>*/}
-  //                       <VoxelListItem
-  //                         key={sortCVoxels[virtualItem.index].id}
-  //                         item={sortCVoxels[virtualItem.index]}
-  //                       />
-  //                     </div>
-  //                   ))}
-  //               </div>
-  //             </div>
-  //           )}
-  //         </CVoxelsPresenter>
-  //       )}
-  //     </div>
-  //   ),
-  //   [
-  //     currentVoxel,
-  //     offchainMetaList,
-  //     CVoxelsRecords.isLoading,
-  //     CVoxelsRecords.content,
-  //     did,
-  //     forceUpdateCVoxelList,
-  //     sortCVoxels,
-  //     rowVirtualizer,
-  //     isTabletOrMobile,
-  //   ]
-  // );
+            {CVoxelsRecords.isLoading && <CommonLoading />}
+
+            {!CVoxelsRecords.isLoading && sortCVoxels && (
+              <div ref={parentRef} className={"overflow-auto h-full w-full"}>
+                <div
+                  style={{
+                    height: `${rowVirtualizer.getTotalSize() / 16}rem`,
+                    width: "100%",
+                    position: "relative",
+                  }}
+                >
+                  {rowVirtualizer
+                    .getVirtualItems()
+                    .map((virtualItem, index) => (
+                      <div
+                        key={virtualItem.index}
+                        style={{
+                          position: "absolute",
+                          top: 0,
+                          left: 0,
+                          width: "100%",
+                          height: `${virtualItem.size / 16}rem`,
+                          transform: `translateY(${virtualItem.start / 16}rem)`,
+                        }}
+                      >
+                        {/*<div className="h-40">{virtualItem.index}</div>*/}
+                        <VoxelListItem
+                          key={sortCVoxels[virtualItem.index].id}
+                          item={sortCVoxels[virtualItem.index]}
+                        />
+                      </div>
+                    ))}
+                </div>
+              </div>
+            )}
+          </CVoxelsPresenter>
+        )}
+      </div>
+    ),
+    [
+      currentVoxelID,
+      offchainMetaList,
+      forceReload,
+      did,
+      CVoxelsRecords.isLoading,
+      CVoxelsRecords.content,
+      sortCVoxels,
+      rowVirtualizer,
+    ]
+  );
 };
