@@ -3,7 +3,7 @@ import { Provider as SelfIDProvider } from "@self.id/framework";
 import type { AppProps } from "next/app";
 import { CERAMIC_NETWORK, CERAMIC_URL } from "@/constants/common";
 import { cVoxelModel } from "@/lib/ceramic/dataModel";
-import type { ModelTypes } from "../interfaces/cVoxelType";
+import type { ModelTypes } from "../interfaces";
 import "tailwindcss/tailwind.css";
 import { RecoilRoot } from "recoil";
 import { Hydrate, QueryClient, QueryClientProvider } from "react-query";

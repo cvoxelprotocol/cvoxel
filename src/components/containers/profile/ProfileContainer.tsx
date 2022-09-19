@@ -1,5 +1,4 @@
 import { FC, useCallback, useContext, useEffect, useMemo, useRef } from "react";
-import { useCVoxelsRecord } from "@/hooks/useCVoxel";
 import { CVoxelsContainer } from "@/components/containers/home/CVoxelsContainer";
 import { Arrow } from "@/components/common/arrow/Arrow";
 import { SearchData } from "@/components/common/search/Search";
@@ -11,13 +10,14 @@ import { UserCVoxelContainer } from "@/components/containers/profile/UserCVoxelC
 import { useWalletAccount } from "@/hooks/useWalletAccount";
 import { DIDContext } from "@/context/DIDContext";
 import Image from "next/image";
+import { useWorkCredentials } from "@/hooks/useWorkCredential";
 
 type Props = {
   did: string;
 };
 
 export const ProfileContainer: FC<Props> = ({ did }) => {
-  const CVoxelsRecords = useCVoxelsRecord(did);
+  const {workCredentials} = useWorkCredentials(did)
   const router = useRouter();
 
   const isTopPage = useMemo(() => {
@@ -61,14 +61,6 @@ export const ProfileContainer: FC<Props> = ({ did }) => {
       console.log("error:", error);
     }
   };
-
-  const sortCVoxels = useMemo(() => {
-    if (!(CVoxelsRecords.content && CVoxelsRecords.content.WorkCredentials)) return [];
-    return CVoxelsRecords.content.WorkCredentials.sort((a, b) => {
-      return Number(a.issuedTimestamp) > Number(b.issuedTimestamp) ? -1 : 1;
-    });
-  }, [CVoxelsRecords.content]);
-
   const handleClickNavBackButton = useCallback(() => {
     router.push(router.asPath.split("?")[0]);
   }, [router]);
@@ -92,7 +84,7 @@ export const ProfileContainer: FC<Props> = ({ did }) => {
         )}
         <CVoxelsContainer
           mode="search"
-          content={{ ...CVoxelsRecords.content, WorkCredentials: sortCVoxels }}
+          content={workCredentials}
           did={did}
           onClearUser={handleClearUser}
         >

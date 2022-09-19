@@ -1,16 +1,12 @@
-import { FC, useCallback, useMemo, useState } from "react";
+import { FC, useMemo } from "react";
 import { NoItemPresenter } from "../../common/NoItemPresenter";
 import CVoxelsPresenter from "../../CVoxel/CVoxelsPresenter";
-import type { CVoxelItem as ICVoxelItem } from "@/interfaces";
-import { useCVoxelsRecord } from "@/hooks/useCVoxel";
 import { CommonLoading } from "../../common/CommonLoading";
 import { VoxelListItem } from "@/components/CVoxel/VoxelListItem/VoxelListItem";
-import { useRouter } from "next/dist/client/router";
-import { NavBar } from "@/components/CVoxel/NavBar/NavBar";
 import { VoxelDetail } from "@/components/CVoxel/VoxelDetail/VoxelDetail";
-import { SearchData } from "@/components/common/search/Search";
-import { useCVoxelList } from "@/hooks/useCVoxelList";
+import { useOffchainList } from "@/hooks/useOffchainList";
 import { useStateForceUpdate } from "@/recoilstate";
+import { useWorkCredentials } from "@/hooks/useWorkCredential";
 
 type UserCVoxelContainerProps = {
   did: string;
@@ -20,21 +16,21 @@ export const UserCVoxelContainer: FC<UserCVoxelContainerProps> = ({
   did,
   currentVoxelID,
 }) => {
-  const CVoxelsRecords = useCVoxelsRecord(did);
+  const {workCredentials, isLoading} = useWorkCredentials(did)
 
-  const sortCVoxels = useMemo(() => {
-    if (!(CVoxelsRecords.content && CVoxelsRecords.content.WorkCredentials)) return [];
-    return CVoxelsRecords.content.WorkCredentials.sort((a, b) => {
-      return Number(a.issuedTimestamp) > Number(b.issuedTimestamp) ? -1 : 1;
+  const sortCredentials = useMemo(() => {
+    if (!workCredentials) return [];
+    return workCredentials.sort((a, b) => {
+      return Number(a.updatedAt) > Number(b.updatedAt) ? -1 : 1;
     });
-  }, [CVoxelsRecords.content]);
+  }, [workCredentials]);
 
   const currentVoxel = useMemo(
-    () => sortCVoxels.find((voxel) => voxel.id == currentVoxelID),
-    [currentVoxelID, sortCVoxels]
+    () => sortCredentials.find((crdl) => crdl.backupId == currentVoxelID),
+    [currentVoxelID, sortCredentials]
   );
 
-  const { offchainMetaList } = useCVoxelList();
+  const { offchainMetaList } = useOffchainList();
 
   // TODO: This is temporary solution because of useTileDoc bug
   const [forceUpdateCVoxelList, setForceUpdateCVoxelList] =
@@ -61,13 +57,13 @@ export const UserCVoxelContainer: FC<UserCVoxelContainerProps> = ({
           </div>
         ) : (
           <CVoxelsPresenter>
-            {CVoxelsRecords.isLoading && <CommonLoading />}
-            {!CVoxelsRecords.isLoading &&
-              sortCVoxels &&
-              sortCVoxels.map((item) => {
-                return <VoxelListItem key={item.id} item={item} />;
+            {isLoading && <CommonLoading />}
+            {!isLoading &&
+              sortCredentials &&
+              sortCredentials.map((item) => {
+                return <VoxelListItem key={item.backupId} workCredential={item} />;
               })}
-            {!CVoxelsRecords.isLoading && !CVoxelsRecords.content && (
+            {!isLoading && !sortCredentials && (
               <div className="mx-auto">
                 <NoItemPresenter text="No Voxels yet" />
               </div>
@@ -79,8 +75,8 @@ export const UserCVoxelContainer: FC<UserCVoxelContainerProps> = ({
     [
       currentVoxel,
       offchainMetaList,
-      CVoxelsRecords.isLoading,
-      CVoxelsRecords.content,
+      isLoading,
+      sortCredentials,
       did,
       forceUpdateCVoxelList,
     ]

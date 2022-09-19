@@ -2,13 +2,13 @@ import * as THREE from "three";
 import { FC, useRef, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
 import { OrbitControls, PerspectiveCamera, Plane } from "@react-three/drei";
-import { CVoxelWithId } from "@/interfaces/cVoxelType";
 import CVoxelPresenter from "./CVoxelPresenter";
 import { CVoxelThreeWithId, useVoxStyler } from "@/hooks/useVoxStyler";
+import { WorkCredentialWithId } from "@/interfaces";
 
 // NOTE: useCVoxelDetailBox cannot be called by VisualPresenter, so it is passed by props.
 type OneVoxelVisualizerPresenterProps = {
-  workCredential?: CVoxelWithId
+  workCredential?: WorkCredentialWithId
   zoom?: number;
   disableHover?: boolean;
   voxelForDisplay?: CVoxelThreeWithId // For direct insertion e.g. draft data
@@ -65,14 +65,6 @@ export const OneVoxelVisualizerPresenter: FC<OneVoxelVisualizerPresenterProps> =
       >
         <shadowMaterial attach="material" opacity={0.1} />
       </Plane>
-      {/* <Plane
-        receiveShadow
-        position={[0, -1, 0]}
-        rotation-x={-Math.PI / 2}
-        args={[20, 20, 4, 4]}
-      >
-        <meshBasicMaterial color={"white"} opacity={0.5} />
-      </Plane> */}
       <group ref={cCollectionRef} position={[0, 0, 0]}>
         {!!voxelForDisplay && (
           <CVoxelPresenter

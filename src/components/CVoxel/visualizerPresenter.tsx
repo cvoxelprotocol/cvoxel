@@ -2,22 +2,22 @@ import * as THREE from "three";
 import { FC, useRef, useState, useEffect } from "react";
 import { useFrame } from "@react-three/fiber";
 import { OrbitControls, PerspectiveCamera, Plane } from "@react-three/drei";
-import { CVoxelItem, CVoxelMetaDraft } from "@/interfaces/cVoxelType";
 import CVoxelPresenter from "./CVoxelPresenter";
 import { CVoxelThreeWithId, useVoxStyler } from "@/hooks/useVoxStyler";
 import { initCVoxel } from "@/constants/cVoxel";
+import {  WorkCredentialWithId } from "@/interfaces";
 
 type ShowDetailBox = ({
   item,
   offchainItems,
 }: {
-  item: CVoxelItem;
-  offchainItems?: CVoxelMetaDraft[];
+  item: WorkCredentialWithId;
+  offchainItems?: WorkCredentialWithId[];
 }) => void;
 
 // NOTE: useCVoxelDetailBox cannot be called by VisualPresenter, so it is passed by props.
 type VisualizerPresenterProps = {
-  workCredentials?: CVoxelItem[]
+  workCredentials?: WorkCredentialWithId[] | null
   showDetailBox?: ShowDetailBox;
   zoom?: number;
   disableHover?: boolean;
@@ -48,7 +48,7 @@ const VisualizerPresenter: FC<VisualizerPresenterProps> = ({
     return () => {
       isMounted = false;
     };
-  }, [workCredentials]);
+  }, [workCredentials,setCvoxelsForDisplay]);
 
   useFrame(() => {
     cCollectionRef.current.rotation.y += 0.005;
@@ -56,7 +56,7 @@ const VisualizerPresenter: FC<VisualizerPresenterProps> = ({
 
   const handleClickVox = (id: string) => {
     if(!(workCredentials && workCredentials.length>0)) return
-    const selectedVoxel = workCredentials.find(wc => wc.id === id)
+    const selectedVoxel = workCredentials.find(wc => wc.backupId === id)
     if (selectedVoxel) {
       showDetailBox?.({ item: selectedVoxel });
     }

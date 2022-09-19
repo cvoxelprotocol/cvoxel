@@ -1,4 +1,4 @@
-import { FC, useCallback, useContext, useMemo } from "react";
+import { FC, useContext, useMemo } from "react";
 import { CommonLoading } from "../common/CommonLoading";
 import { NoItemPresenter } from "../common/NoItemPresenter";
 import { TransactionDetail } from "./TransactionDetail";
@@ -6,23 +6,22 @@ import { TransactionForm } from "./TransactionForm";
 import { TransactionItem } from "./TransactionItem";
 import { useMyPageScreen, useTab } from "@/hooks/useTab";
 import type {
-  CVoxelMetaDraft,
   TransactionLogWithChainId,
-  DeliverableItem,
   WorkCredentialForm,
+  WorkCredentialWithId,
 } from "@/interfaces";
-import { useCVoxelsRecord } from "@/hooks/useCVoxel";
-import { useDraftCVoxel } from "@/hooks/useDraftCVoxel";
 import { useFileUpload } from "@/hooks/useFileUpload";
 import { useStateForceUpdate, useStateSelectedTx } from "@/recoilstate";
 import { useThemeMode } from "@/hooks/useThemeMode";
 import { DIDContext } from "@/context/DIDContext";
 import { useRouter } from "next/router";
+import { useWorkCredential, useWorkCredentials } from "@/hooks/useWorkCredential";
+import { DeliverableItem } from "@/__generated__/types/WorkCredential";
 
 type TransactionListContainerProps = {
   txList: TransactionLogWithChainId[];
   offchainLoading: boolean;
-  offchainMetaList?: CVoxelMetaDraft[];
+  offchainMetaList?: WorkCredentialWithId[];
 };
 export const TransactionListContainer: FC<TransactionListContainerProps> = ({
   txList,
@@ -30,27 +29,18 @@ export const TransactionListContainer: FC<TransactionListContainerProps> = ({
   offchainMetaList,
 }) => {
   const {did, account, connection} = useContext(DIDContext)
-  const CVoxelsRecords = useCVoxelsRecord(did || "");
+  const {workCredentials, refetch} = useWorkCredentials(did)
   const [selectedTx, selectTx] = useStateSelectedTx();
   const { setTabState } = useTab();
-  const draft = useDraftCVoxel();
+  const {publish} = useWorkCredential();
   const { resetUploadStatus } = useFileUpload();
   // TODO: This is temporary solution because of useTileDoc bug
-  const [forceUpdateCVoxelList, setForceUpdateCVoxelList] = useStateForceUpdate();
+  const [_, setForceUpdateCVoxelList] = useStateForceUpdate();
   const router = useRouter();
   const {setScreenState} = useMyPageScreen()
 
-  const onPublish = (data: any) => {
-    publish(data);
-  };
-
-  const handleClickTx = (tx: TransactionLogWithChainId | null) => {
-    selectTx(tx);
-  };
-
-  const publish = useCallback(
-    async (data: WorkCredentialForm) => {
-      if (!(selectedTx && account)) return;
+  const onPublish = async (data: WorkCredentialForm) => {
+    if (!(selectedTx && account)) return;
       const {
         summary,
         detail,
@@ -65,7 +55,7 @@ export const TransactionListContainer: FC<TransactionListContainerProps> = ({
         deliverables.push({ format: "url", value: deliverableLink });
       if (deliverableCID)
         deliverables.push({ format: "cid", value: deliverableCID });
-      const result = await draft.publish(
+      const result = await publish(
         account,
         selectedTx,
         summary,
@@ -81,26 +71,30 @@ export const TransactionListContainer: FC<TransactionListContainerProps> = ({
         setTabState("cvoxels");
         setScreenState("info")
         setForceUpdateCVoxelList(v => !v);
+        refetch()
         router.push(`/${did}/?voxel=${result}`)
       }
-    },
-    [draft]
-  );
+  };
+
+  const handleClickTx = (tx: TransactionLogWithChainId | null) => {
+    selectTx(tx);
+  };
 
   const publishFromExistedCVoxel = async (
     tx: TransactionLogWithChainId,
-    offchainItem: CVoxelMetaDraft
+    offchainItem: WorkCredentialWithId
   ) => {
     if (!(tx && account && offchainItem)) return;
-    const { summary, detail, deliverables, relatedAddresses, genre, tags } =
-      offchainItem;
-    const result = await draft.publish(
+    const { work, deliverables } = offchainItem.subject;
+    if(!work) return
+    const { summary, detail, genre, tags } = work;
+    const result = await publish(
       account,
       tx,
       summary,
       detail,
       deliverables,
-      relatedAddresses,
+      offchainItem.subject.tx?.relatedAddresses,
       genre,
       tags,
       offchainItem
@@ -110,24 +104,26 @@ export const TransactionListContainer: FC<TransactionListContainerProps> = ({
       setTabState("cvoxels");
       setScreenState("info")
       setForceUpdateCVoxelList(v => !v);
+      refetch()
       router.push(`/${did}/?voxel=${result}`)
     }
   };
 
   const reClaimCVoxel = async (
     tx: TransactionLogWithChainId,
-    offchainItem: CVoxelMetaDraft
+    offchainItem: WorkCredentialWithId
   ) => {
     if (!(tx && account && offchainItem)) return;
-    const { summary, detail, deliverables, relatedAddresses, genre, tags } =
-      offchainItem;
-    const result = await draft.reClaim(
+    const { work, deliverables } = offchainItem.subject;
+    if(!work) return
+    const { summary, detail, genre, tags } = work;
+    const result = await publish(
       account,
       tx,
       summary,
       detail,
       deliverables,
-      relatedAddresses,
+      offchainItem.subject.tx?.relatedAddresses,
       genre,
       tags,
       offchainItem
@@ -137,13 +133,14 @@ export const TransactionListContainer: FC<TransactionListContainerProps> = ({
       setTabState("cvoxels");
       setScreenState("info")
       setForceUpdateCVoxelList(v => !v);
+      refetch()
       router.push(`/${did}/?voxel=${result}`)
     }
   };
 
   const selectedOffchainItem = useMemo(() => {
     if (!selectedTx) return null;
-    return offchainMetaList?.find((meta) => meta.txHash === selectedTx.hash);
+    return offchainMetaList?.find((meta) => meta.subject.tx?.txHash === selectedTx.hash);
   }, [selectedTx, offchainMetaList]);
 
   const { themeMode } = useThemeMode();
@@ -172,13 +169,13 @@ export const TransactionListContainer: FC<TransactionListContainerProps> = ({
                   {selectedOffchainItem ? (
                     <TransactionDetail
                       key={`${tx.hash}_detail`}
-                      account={account?.toLowerCase()}
+                      account={account}
                       tx={tx}
                       offchainItem={selectedOffchainItem}
                       connectionState={connection}
                       onClaim={publishFromExistedCVoxel}
                       reClaim={reClaimCVoxel}
-                      cvoxels={CVoxelsRecords.content?.WorkCredentials || []}
+                      credentials={workCredentials || []}
                     />
                   ) : (
                     <div key={`${tx.hash}_form_container`} className="mb-4">
@@ -208,7 +205,7 @@ export const TransactionListContainer: FC<TransactionListContainerProps> = ({
       connection,
       selectedTx,
       connection,
-      CVoxelsRecords.content?.WorkCredentials,
+      workCredentials,
       themeMode,
     ]
   );

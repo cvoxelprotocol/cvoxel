@@ -1,8 +1,4 @@
 import { FC, useContext, useEffect, useMemo, useState } from "react";
-import {
-  CVoxel,
-  CVoxelMetaDraft,
-} from "@/interfaces";
 import { Canvas } from "@react-three/fiber";
 import { OneVoxelVisualizerPresenter } from "../OneVoxelVisualizerPresenter";
 import {
@@ -17,21 +13,22 @@ import LeftArrow from "@/components/CVoxel/VoxelListItem/left-arrow.svg";
 import RightArrow from "@/components/CVoxel/VoxelListItem/right-arrow.svg";
 import { shortenStr } from "@/utils/objectUtil";
 import { Button } from "@/components/common/button/Button";
-import { useUpdateWorkCRDL } from "@/hooks/useUpdateCVoxel";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faExternalLink } from "@fortawesome/free-solid-svg-icons";
 import { getExploreLink } from "@/utils/etherscanUtils";
 import { ShareButton } from "@/components/common/button/shareButton/ShareButton";
 import { formatBigNumber } from "@/utils/ethersUtil";
-import { getPkhDIDFromAddress } from "@/utils/addressUtil";
+import { getAddressFromPkhDID } from "@/utils/ceramicUtils";
 import { DIDContext } from "@/context/DIDContext";
 import { CopyRequestURLButton } from "./CopyRequestURLButton";
-import { useCVoxelRecord } from "@/hooks/useCVoxel";
 import { useOffchainItem } from "@/hooks/useOffchainItem";
+import { useWorkCredential, useWorkCredentialRecord } from "@/hooks/useWorkCredential";
+import { WorkCredentialWithId } from "@/interfaces";
+import { WorkCredential } from "@/__generated__/types/WorkCredential";
 
 type Props = {
   itemId: string;
-  offchainItems?: CVoxelMetaDraft[];
+  offchainItems?: WorkCredentialWithId[];
   notifyUpdated?: () => void;
   isOwner: boolean;
 };
@@ -43,19 +40,20 @@ export const VoxelDetail: FC<Props> = ({
   isOwner,
 }) => {
   // item detail
-  const cVoxelItem = useCVoxelRecord(itemId);
-  const { update } = useUpdateWorkCRDL();
+  const item = useWorkCredentialRecord(itemId);
+  const { update } = useWorkCredential();
+  
   const detailItem = useMemo(() => {
-    return cVoxelItem.content || null;
-  }, [cVoxelItem.content, cVoxelItem]);
+    return item.content || null;
+  }, [item.content, item]);
 
   const {getOffchainItem} = useOffchainItem()
 
-  const [offchainItem, setOffchainItem] = useState<CVoxelMetaDraft | null>(null)
+  const [offchainItem, setOffchainItem] = useState<WorkCredentialWithId | null>(null)
 
   useEffect(() => {
     const fetch = async(id:string) => {
-      const existed = offchainItems?.find((offchain) => offchain.txHash === detailItem?.txHash)
+      const existed = offchainItems?.find((offchain) => offchain.subject.tx?.txHash === detailItem?.subject.tx?.txHash)
       if(existed){
         setOffchainItem(existed)
         return
@@ -64,43 +62,37 @@ export const VoxelDetail: FC<Props> = ({
       setOffchainItem(offchain)
     }
     if(!offchainItem && detailItem){
-      fetch(`${detailItem?.networkId}_${detailItem?.txHash}`)
+      fetch(itemId)
     }
   },[detailItem])
 
   // update
   const updatable = useMemo(() => {
-    if (!detailItem) return false;
-    if (detailItem && detailItem.toSig && detailItem.fromSig) return false;
-    if (!offchainItem) return false;
-    return (
-      (detailItem.isPayer && !detailItem.toSig && offchainItem.toSig) ||
-      (!detailItem.isPayer && !detailItem.fromSig && offchainItem.fromSig)
-    );
+    if (!(detailItem && offchainItem)) return false;
+    const {signature} = detailItem
+    return !signature?.partnerSig && !signature?.agentSig && (!!offchainItem.signature?.partnerSig || !!offchainItem.signature?.agentSig)
   }, [offchainItem, detailItem]);
 
 
   // user is the owner but offchainItem doesn't have sigs of both payer and payee
   const isSemiCRDL = useMemo(() => {
     if(!offchainItem) return false
-    return isOwner && !(offchainItem.toSig && offchainItem.fromSig)
+    const {signature} = offchainItem
+    return signature?.holderSig && !signature?.partnerSig
   },[offchainItem])
 
   const handleUpdate = async () => {
     if (!(offchainItem && detailItem)) return false;
     if (updatable) {
-      const newCVoxel: CVoxel = detailItem.isPayer
-        ? {
-            ...detailItem,
-            toSig: offchainItem.toSig,
-            toSigner: offchainItem.toSigner,
-          }
-        : {
-            ...detailItem,
-            fromSig: offchainItem.fromSig,
-            fromSigner: offchainItem.fromSigner,
-          };
-      await update(itemId, newCVoxel);
+      let newItem: WorkCredential = {...detailItem}
+      if(offchainItem.signature?.partnerSigner && offchainItem.signature?.partnerSig){
+        newItem.signature = {...detailItem.signature, partnerSigner: offchainItem.signature?.partnerSigner,partnerSig: offchainItem.signature?.partnerSig }
+      }
+      if(offchainItem.signature?.agentSigner && offchainItem.signature?.agentSig){
+        newItem.signature = {...detailItem.signature, agentSigner: offchainItem.signature?.agentSigner,agentSig: offchainItem.signature?.agentSig }
+      }
+
+      await update(itemId, newItem);
       if (notifyUpdated) {
         notifyUpdated();
       }
@@ -108,87 +100,58 @@ export const VoxelDetail: FC<Props> = ({
   };
 
   const exploreLink = useMemo(() => {
-    if (!detailItem || !detailItem.txHash) return;
-    return getExploreLink(detailItem.txHash, detailItem.networkId);
-  }, [detailItem?.txHash, detailItem?.networkId]);
+    if (!detailItem || !detailItem.subject.tx?.txHash) return;
+    return getExploreLink(detailItem.subject.tx?.txHash, detailItem.subject.tx?.networkId);
+  }, [detailItem?.subject.tx?.txHash, detailItem?.subject.tx?.networkId]);
 
   const {did: myDid} = useContext(DIDContext)
 
-  const [toDid, setToDid] = useState<string>();
-  useEffect(() => {
-    if (toDid == undefined && !!detailItem?.to) {
-      const f = async () => {
-        const did = await getPkhDIDFromAddress(detailItem?.to);
-        setToDid(did);
-      };
-      f();
-    }
-  }, [detailItem?.to]);
+  const holderDID = useMemo(() => {
+    if(!detailItem) return ""
+    return detailItem?.subject.work?.id
+  },[detailItem])
 
-  const [fromDid, setFromDid] = useState<string>();
-  useEffect(() => {
-    if (fromDid == undefined && !!detailItem?.from) {
-      const f = async () => {
-        const did = await getPkhDIDFromAddress(detailItem?.from);
-        setFromDid(did);
-      };
-      f();
-    }
-  }, [detailItem?.from]);
+  const partnerDID = useMemo(() => {
+    if(!detailItem) return ""
+    return detailItem.subject.client?.value
+  },[detailItem])
+
+  const isPayer = useMemo(() => {
+    return detailItem?.subject.tx ? detailItem?.subject.tx?.isPayer : false
+  },[detailItem?.subject.tx])
 
   // component
   const PcDirection = () => {
-    return detailItem?.isPayer ? (
-      <div className="flex items-center space-x-3">
-        <NamePlate
-          did={fromDid}
-          address={detailItem?.from}
-          isMe={fromDid == myDid}
-          hasBackgroundColor
-        />
+    return <div className="flex items-center space-x-3">
+      <NamePlate
+        did={holderDID}
+        isMe={holderDID == myDid}
+        hasBackgroundColor
+      />
+      {isPayer ? (
         <RightArrow />
-        <NamePlate address={detailItem?.to ?? ""} />
-      </div>
-    ) : (
-      <div className="flex items-center space-x-3">
-        <NamePlate
-          did={toDid}
-          address={detailItem?.to}
-          isMe={toDid == myDid}
-          hasBackgroundColor
-        />
+      ): (
         <LeftArrow />
-        <NamePlate address={detailItem?.from ?? ""} />
-      </div>
-    );
+      )}
+      <NamePlate did={partnerDID} address={partnerDID ? getAddressFromPkhDID(partnerDID) : ""}/>
+  </div>
   };
 
   const SpDirection = () => {
-    return detailItem?.isPayer ? (
-      <div className="flex items-center space-x-3">
+    return <div className="flex items-center space-x-3">
         <NamePlate
-          did={fromDid}
-          address={detailItem?.from ?? ""}
-          isMe={fromDid == myDid}
+          did={holderDID}
+          isMe={holderDID == myDid}
           hasBackgroundColor
           withoutIcon
         />
-        <RightArrow />
-        <NamePlate address={detailItem?.to ?? ""} withoutIcon />
-      </div>
-    ) : (
-      <div className="flex items-center space-x-3">
-        <NamePlate
-          did={toDid}
-          address={detailItem?.to ?? ""}
-          isMe={toDid == myDid}
-          hasBackgroundColor
-          withoutIcon
-        />
-        <LeftArrow />
-        <NamePlate address={detailItem?.from ?? ""} withoutIcon />
-      </div>
-    );
+        {isPayer ? (
+          <RightArrow />
+        ): (
+          <LeftArrow />
+        )}
+        <NamePlate did={partnerDID} address={partnerDID ? getAddressFromPkhDID(partnerDID) : ""} withoutIcon />
+    </div>
   };
 
   return (
@@ -197,7 +160,7 @@ export const VoxelDetail: FC<Props> = ({
         <div className="flex-initial w-full lg:w-52 h-52 relative bg-light-surface dark:bg-dark-surface rounded-br-2xl rounded-bl-2xl lg:rounded-bl-none">
           {detailItem && (
             <Canvas>
-              <OneVoxelVisualizerPresenter zoom={6} disableHover workCredential={{...detailItem, id:itemId}} />
+              <OneVoxelVisualizerPresenter zoom={6} disableHover workCredential={{...detailItem, backupId:itemId}} />
             </Canvas>
           )}
 
@@ -213,19 +176,19 @@ export const VoxelDetail: FC<Props> = ({
             </div>
           )}
 
-          {detailItem?.summary && (
+          {detailItem?.subject.work?.summary && (
             <div className="text-light-on-primary-container dark:text-dark-on-error-container text-2xl font-medium line-clamp-3">
-              {detailItem?.summary}
+              {detailItem?.subject.work?.summary}
             </div>
           )}
 
           <div className="flex mt-2 flex-wrap">
-            {detailItem?.genre ? (
+            {detailItem?.subject.work?.genre ? (
               <div className="mr-2">
                 <GenreBadge
-                  text={detailItem.genre}
+                  text={detailItem.subject.work?.genre || "Other"}
                   baseColor={
-                    getGenre(detailItem.genre)?.bgColor || "bg-[#b7b7b7]"
+                    getGenre(detailItem.subject.work?.genre)?.bgColor || "bg-[#b7b7b7]"
                   }
                   isSelected={true}
                 />
@@ -233,8 +196,8 @@ export const VoxelDetail: FC<Props> = ({
             ) : (
               <></>
             )}
-            {detailItem?.tags &&
-              detailItem?.tags.map((tag) => {
+            {detailItem?.subject.work?.tags &&
+              detailItem?.subject.work?.tags.map((tag) => {
                 return <TagBadge key={tag} text={tag} />;
               })}
           </div>
@@ -261,13 +224,13 @@ export const VoxelDetail: FC<Props> = ({
         {/*  </p>*/}
         {/*</div>*/}
 
-        {detailItem?.deliverables && detailItem.deliverables.length > 0 && (
+        {detailItem?.subject.deliverables && detailItem.subject.deliverables.length > 0 && (
           <div>
             <p className="mb-2 text-light-on-surface-variant dark:text-light-on-surface-variant font-medium">
               DELIVERABLES
             </p>
 
-            {detailItem?.deliverables.map((deliverable) =>
+            {detailItem?.subject.deliverables.map((deliverable) =>
             <a
               className="flex items-center flex-wrap"
               href={`${deliverable.format==="url" ? deliverable.value : `https://dweb.link/ipfs/${deliverable.value}`}`}
@@ -283,21 +246,21 @@ export const VoxelDetail: FC<Props> = ({
           </div>
         )}
 
-        {detailItem?.detail && (
+        {detailItem?.subject.work?.detail && (
           <div>
             <p className="mb-2 text-light-on-surface-variant dark:text-light-on-surface-variant font-medium">
               DESCRIPTION
             </p>
 
             <div className="text-light-on-surface dark:text-dark-on-surface font-medium">
-              {detailItem?.detail}
+              {detailItem?.subject.work?.detail}
             </div>
           </div>
         )}
         <div className="w-full flex items-center justify-end space-x-1 pt-7">
-          {(isSemiCRDL && offchainItem && offchainItem.id) && (
+          {(isSemiCRDL && offchainItem && offchainItem.backupId) && (
             <div className="text-right">
-              <CopyRequestURLButton id={offchainItem.id} />
+              <CopyRequestURLButton id={offchainItem.backupId} />
             </div>
           )}
           {updatable && isOwner && (
@@ -316,56 +279,56 @@ export const VoxelDetail: FC<Props> = ({
       <div className="bg-light-outline dark:bg-dark-outline h-[1px] w-full" />
 
       <div className="lg:flex w-full px-3 sm:px-8 py-6 space-y-3 lg:space-y-0 lg:space-x-6">
-        {detailItem?.value && (
-          <a
-            className="flex items-center flex-wrap"
-            href={exploreLink}
-            target="_blank"
-            rel="noreferrer"
-          >
-            <div className="flex-initial flex lg:block">
-              <div className="text-lg font-medium">
-                {formatBigNumber(
-                  detailItem?.value,
-                  8,
-                  detailItem?.tokenDecimal.toString()
-                )}{" "}
-                {detailItem.tokenSymbol || detailItem.networkId}
-              </div>
-              <div className="flex items-center justify-center">
-                <div className="ml-2 lg:ml-0 text-xs text-light-on-surface-variant dark:text-dark-on-surface-variant">
-                  Explorer
+          {detailItem?.subject.work?.value && (
+            <a
+              className="flex items-center flex-wrap"
+              href={exploreLink}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <div className="flex-initial flex lg:block">
+                <div className="text-lg font-medium">
+                  {formatBigNumber(
+                    detailItem?.subject.tx?.value || detailItem?.subject.work?.value,
+                    8,
+                    detailItem?.subject.tx?.value ? detailItem?.subject.tx?.tokenDecimal?.toString(): "6"
+                  )}{" "}
+                  {detailItem.subject.tx?.tokenSymbol || detailItem.subject.tx?.networkId}
                 </div>
-                <FontAwesomeIcon
-                  className="w-3 h-3 ml-1 text-light-on-surface-variant dark:text-dark-on-surface-variant"
-                  icon={faExternalLink}
-                />
+                <div className="flex items-center justify-center">
+                  <div className="ml-2 lg:ml-0 text-xs text-light-on-surface-variant dark:text-dark-on-surface-variant">
+                    Explorer
+                  </div>
+                  <FontAwesomeIcon
+                    className="w-3 h-3 ml-1 text-light-on-surface-variant dark:text-dark-on-surface-variant"
+                    icon={faExternalLink}
+                  />
+                </div>
+              </div>
+            </a>
+          )}
+
+          {detailItem?.subject.tx?.txHash && (
+            <div className="flex-auto text-left">
+              <div className="text-sm text-light-on-surface-variant dark:text-dark-on-surface-variant font-medium">
+                Tx Hash
+              </div>
+              <div className="bg-light-surface dark:bg-dark-surface px-2 py-1 rounded-lg font-medium">
+                {shortenStr(detailItem?.subject.tx?.txHash, 30)}
               </div>
             </div>
-          </a>
-        )}
+          )}
 
-        {detailItem?.txHash && (
-          <div className="flex-auto text-left">
-            <div className="text-sm text-light-on-surface-variant dark:text-dark-on-surface-variant font-medium">
-              Tx Hash
+          {detailItem?.subject.tx?.issuedTimestamp && (
+            <div className="flex-auto text-left">
+              <div className="text-sm text-light-on-surface-variant dark:text-dark-on-surface-variant font-medium">
+                Timestamp
+              </div>
+              <div className="bg-light-surface dark:bg-dark-surface px-2 py-1 rounded-lg font-medium">
+                {convertTimestampToDateStrLocaleUS(detailItem?.subject.tx?.issuedTimestamp)}
+              </div>
             </div>
-            <div className="bg-light-surface dark:bg-dark-surface px-2 py-1 rounded-lg font-medium">
-              {shortenStr(detailItem?.txHash, 30)}
-            </div>
-          </div>
-        )}
-
-        {detailItem?.issuedTimestamp && (
-          <div className="flex-auto text-left">
-            <div className="text-sm text-light-on-surface-variant dark:text-dark-on-surface-variant font-medium">
-              Timestamp
-            </div>
-            <div className="bg-light-surface dark:bg-dark-surface px-2 py-1 rounded-lg font-medium">
-              {convertTimestampToDateStrLocaleUS(detailItem?.issuedTimestamp)}
-            </div>
-          </div>
-        )}
+          )}
       </div>
     </div>
   );

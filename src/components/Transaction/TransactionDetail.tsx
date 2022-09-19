@@ -1,8 +1,7 @@
 import { FC, useMemo, useState } from "react";
 import {
-  CVoxelItem,
-  CVoxelMetaDraft,
   TransactionLogWithChainId,
+  WorkCredentialWithId,
 } from "@/interfaces";
 import { Button } from "../common/button/Button";
 import { CommonSpinner } from "../common/CommonSpinner";
@@ -15,28 +14,29 @@ import { useStateSelectedGenre } from "@/recoilstate/genre";
 import { TagBadge } from "../common/badge/TagBadge";
 import { TagForm } from "./TagForm";
 import { ViewerConnectionState } from "@self.id/react";
+import { getPkhDIDFromAddress } from "@/utils/ceramicUtils";
 
 type TransactionDetailProps = {
   tx: TransactionLogWithChainId;
-  offchainItem: CVoxelMetaDraft;
+  offchainItem: WorkCredentialWithId;
   connectionState?: ViewerConnectionState;
   onClaim: (
     tx: TransactionLogWithChainId,
-    offchainItem: CVoxelMetaDraft
+    offchainItem: WorkCredentialWithId
   ) => void;
   reClaim: (
     tx: TransactionLogWithChainId,
-    offchainItem: CVoxelMetaDraft
+    offchainItem: WorkCredentialWithId
   ) => void;
   account?: string;
-  cvoxels?: CVoxelItem[];
+  credentials?: WorkCredentialWithId[];
 };
 export const TransactionDetail: FC<TransactionDetailProps> = ({
   account,
   tx,
   offchainItem,
   connectionState,
-  cvoxels,
+  credentials,
   onClaim,
   reClaim,
 }) => {
@@ -46,46 +46,44 @@ export const TransactionDetail: FC<TransactionDetailProps> = ({
   const [noGenreError, setNoGenreError] = useState<string>();
 
   const genre = useMemo(() => {
-    return getGenre(offchainItem.genre);
-  }, [offchainItem.genre]);
+    return getGenre(offchainItem.subject.work?.genre);
+  }, [offchainItem.subject.work?.genre]);
 
   const claimable = useMemo(() => {
-    if (!account) return false;
-    return (
-      (account === offchainItem.from.toLowerCase() &&
-        (!offchainItem.fromSig || offchainItem.fromSig === "")) ||
-      (account === offchainItem.to.toLowerCase() &&
-        (!offchainItem.toSig || offchainItem.toSig === ""))
-    );
-  }, [account, offchainItem.txHash]);
+    if (!account || !offchainItem.subject.tx) return false;
+    const myDID = getPkhDIDFromAddress(account)
+    return myDID != offchainItem.subject.work?.id && (account === offchainItem.subject.tx.from?.toLowerCase() || account === offchainItem.subject.tx.to?.toLowerCase())
+      
+  }, [account, offchainItem.subject.tx]);
 
   const reclaimable = useMemo(() => {
     if (!account) return false;
     if (
-      cvoxels &&
-      !cvoxels.find(
-        (cv) => cv.txHash?.toLowerCase() === offchainItem.txHash?.toLowerCase()
+      credentials &&
+      !credentials.find(
+        (crdl) => crdl.subject.tx?.txHash?.toLowerCase() === offchainItem.subject.tx?.txHash.toLowerCase()
       )
     )
       return true;
     return false;
-  }, [account, offchainItem.txHash, cvoxels]);
+  }, [account, offchainItem.subject.tx?.txHash, credentials]);
 
   const handleReclaim = () => {
-    if (offchainItem.genre) {
+    if (offchainItem.subject.work?.genre) {
       reClaim(tx, offchainItem);
       return;
     }
-    if (!offchainItem.genre && !selectedGenre) {
+    if (!offchainItem.subject.work?.genre && !selectedGenre) {
       setNoGenreError("Please select genre");
       return;
     }
     setNoGenreError("");
-    const offchainItemWithGenre: CVoxelMetaDraft = {
-      ...offchainItem,
-      genre: selectedGenre?.value,
-      tags: newTags,
-    };
+    let offchainItemWithGenre: WorkCredentialWithId = offchainItem
+    if(!offchainItemWithGenre.subject.work) {
+      return;
+    }
+    offchainItemWithGenre.subject.work.genre = selectedGenre?.value
+    offchainItemWithGenre.subject.work.tags = newTags
     reClaim(tx, offchainItemWithGenre);
   };
 
@@ -96,7 +94,7 @@ export const TransactionDetail: FC<TransactionDetailProps> = ({
       </div>
       <div className="mb-3">
         <p className="w-full my-1 py-1 px-6 border rounded-full text-xs md:text-sm bg-light-surface-variant dark:bg-dark-surface-variant">
-          {offchainItem.summary}
+          {offchainItem.subject.work?.summary}
         </p>
       </div>
 
@@ -109,7 +107,7 @@ export const TransactionDetail: FC<TransactionDetailProps> = ({
           className="w-full my-1 py-2 px-6 border rounded-xl text-xs md:text-sm bg-light-surface-variant dark:bg-dark-surface-variant"
           rows={3}
           readOnly
-          value={offchainItem.detail || "No Description"}
+          value={offchainItem.subject.work?.detail || "No Description"}
         />
       </div>
 
@@ -155,14 +153,14 @@ export const TransactionDetail: FC<TransactionDetailProps> = ({
       )}
 
       {/* tags */}
-      {offchainItem.tags && offchainItem.tags.length > 0 && (
+      {offchainItem.subject.work?.tags && offchainItem.subject.work?.tags.length > 0 && (
         <>
           <div className="flex flex-wrap items-center">
             <p className="font-semibold">Tags</p>
           </div>
           <div className="mb-3 w-full">
             <>
-              {offchainItem.tags.map((tag) => {
+              {offchainItem.subject.work?.tags.map((tag) => {
                 return <TagBadge key={tag} text={tag} />;
               })}
             </>
@@ -174,9 +172,9 @@ export const TransactionDetail: FC<TransactionDetailProps> = ({
         <p className="font-semibold">Deliverable link(optional)</p>
       </div>
       <div className="mb-3">
-        {offchainItem.deliverables &&
-          offchainItem.deliverables?.length > 0 &&
-          offchainItem.deliverables?.map((d) => {
+        {offchainItem.subject.deliverables &&
+          offchainItem.subject.deliverables?.length > 0 &&
+          offchainItem.subject.deliverables?.map((d) => {
             return (
               <p
                 key={d.value}
@@ -186,8 +184,8 @@ export const TransactionDetail: FC<TransactionDetailProps> = ({
               </p>
             );
           })}
-        {!offchainItem.deliverables ||
-          (offchainItem.deliverables.length === 0 && (
+        {!offchainItem.subject.deliverables ||
+          (offchainItem.subject.deliverables.length === 0 && (
             <p className="w-full my-1 py-1 px-6 border rounded-full text-xs md:text-sm">
               No Deliverable
             </p>

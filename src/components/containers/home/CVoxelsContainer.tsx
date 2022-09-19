@@ -1,6 +1,5 @@
 import VisualizerPresenter from "@/components/CVoxel/visualizerPresenter";
-import { useCVoxelDetailBox } from "@/hooks/useCVoxelDetailBox";
-import { CVoxels } from "@/interfaces";
+import { useWorkCredentialDetailBox } from "@/hooks/useCVoxelDetailBox";
 import { Canvas } from "@react-three/fiber";
 import { FC, useMemo, ReactNode } from "react";
 import { NamePlate } from "@/components/common/NamePlate";
@@ -9,10 +8,11 @@ import { SearchData } from "@/components/common/search/Search";
 import { UserSearch } from "@/components/common/search/UserSearch";
 import { NoCRDLItem } from "./NoCRDLItem";
 import { Button } from "@/components/common/button/Button";
+import { WorkCredentialWithId } from "@/interfaces";
 
 type props = {
   did: string;
-  content?: CVoxels | null;
+  content?: WorkCredentialWithId[] | null;
   children?: ReactNode;
   mode?: "nameplate" | "search";
   isMe?: boolean
@@ -29,18 +29,18 @@ export const CVoxelsContainer: FC<props> = ({
   moveToCreateSection
 }) => {
   // NOTE: Cannot be called by VisualPresenter, so call it here
-  const { showDetailBox } = useCVoxelDetailBox();
+  const { showDetailBox } = useWorkCredentialDetailBox();
 
   const VisualizerPresenterMemo = useMemo(
     () => (
       <Canvas shadows>
         <VisualizerPresenter
-          workCredentials={content?.WorkCredentials}
+          workCredentials={content}
           showDetailBox={showDetailBox}
         />
       </Canvas>
     ),
-    [content?.WorkCredentials]
+    [content,showDetailBox]
   );
 
   const handleClickNamePlate = () => {
@@ -57,7 +57,7 @@ export const CVoxelsContainer: FC<props> = ({
   return (
     <div className="flex flex-col items-center justify-center w-full h-screen md:pb-12">
       <div className="flex w-full items-center justify-center h-[300px] sm:h-[450px] relative max-w-[720px]">
-        {isMe && (!content || content?.WorkCredentials.length===0) ? (
+        {isMe && (!content || content.length===0) ? (
           <div className="w-full">
             <NoCRDLItem />
               <Button

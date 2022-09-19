@@ -1,5 +1,5 @@
 import { FC, useCallback, useContext, useEffect, useMemo } from "react";
-import { CVoxelMetaDraft } from "@/interfaces";
+import { WorkCredentialWithId } from "@/interfaces";
 import { Canvas } from "@react-three/fiber";
 import { OneVoxelVisualizerPresenter } from "@/components/CVoxel/OneVoxelVisualizerPresenter";
 import {
@@ -23,8 +23,8 @@ import { DIDContext } from "@/context/DIDContext";
 import { useWalletAccount } from "@/hooks/useWalletAccount";
 
 type Props = {
-  offchainItem: CVoxelMetaDraft;
-  onVerify: (tx: CVoxelMetaDraft) => void;
+  offchainItem: WorkCredentialWithId;
+  onVerify: (tx: WorkCredentialWithId) => void;
   isSinglePageForVerify?: boolean
 };
 
@@ -35,29 +35,33 @@ export const SigRequestDetail: FC<Props> = ({
 }) => {
   const {did, account} = useContext(DIDContext)
   const { connectWallet } = useWalletAccount();
+  const subject = useMemo(() => {
+    return offchainItem.subject
+  },[offchainItem])
+
   const isPayer = useMemo(() => {
-    return account?.toLowerCase() === offchainItem.from.toLowerCase();
-  }, [account, offchainItem]);
+    return account?.toLowerCase() === subject.tx?.from?.toLowerCase();
+  }, [account, subject]);
 
   const isEligibleToVerify = useMemo(() => {
-    if(!(account)) return false
-    return (!offchainItem.toSig && offchainItem.to.toLowerCase()===account.toLowerCase()) || (!offchainItem.fromSig && offchainItem.from.toLowerCase()===account.toLowerCase())
-  },[account, offchainItem])
+    if(!(account && did)) return false
+    if(offchainItem.signature?.agentSig && offchainItem.signature?.partnerSig) return false
+    return (offchainItem.holderDid !== did && offchainItem.potentialSigners?.includes(account.toLowerCase()))
+  },[account, offchainItem, did])
 
   const isYourRequest = useMemo(() => {
-    if(!(account)) return false
-    return (offchainItem.toSig && offchainItem.to.toLowerCase()===account.toLowerCase()) || (offchainItem.fromSig && offchainItem.from.toLowerCase()===account.toLowerCase())
-  },[account, offchainItem])
+    return subject.work?.id===did
+  },[did, subject])
 
-  const isMe = useCallback((address: string) => {
-    if(!account) return false
+  const isMe = useCallback((address?: string) => {
+    if(!account || !address) return false
     return address.toLowerCase() === account.toLowerCase()
   },[account])
 
   const exploreLink = useMemo(() => {
-    if (!offchainItem || !offchainItem.txHash) return;
-    return getExploreLink(offchainItem.txHash, offchainItem.networkId);
-  }, [offchainItem?.txHash, offchainItem?.networkId]);
+    if (!offchainItem || !offchainItem.subject.tx?.txHash) return;
+    return getExploreLink(offchainItem.subject.tx?.txHash, offchainItem.subject.tx?.networkId);
+  }, [offchainItem.subject.tx?.txHash, offchainItem.subject.tx?.networkId]);
 
   const connect = async () => {
     try {
@@ -73,7 +77,7 @@ export const SigRequestDetail: FC<Props> = ({
 
   useEffect(() => {
     let isMounted = true;
-    setVoxelForDisplay({ ...offchainItem, id: "0" });
+    setVoxelForDisplay(offchainItem);
     return () => {
       isMounted = false;
     };
@@ -88,15 +92,15 @@ export const SigRequestDetail: FC<Props> = ({
   const PcDirection = () => {
     return isPayer ? (
       <div className="flex items-center space-x-3">
-        <NamePlate address={offchainItem?.from ?? ""} isMe={isMe(offchainItem.from)} hasBackgroundColor />
+        <NamePlate address={offchainItem.subject.tx?.from ?? ""} isMe={isMe(offchainItem.subject.tx?.from)} hasBackgroundColor />
         <RightArrow />
-        <NamePlate address={offchainItem?.to ?? ""} />
+        <NamePlate address={offchainItem.subject.tx?.to ?? ""} />
       </div>
     ) : (
       <div className="flex items-center space-x-3">
-        <NamePlate address={offchainItem?.to ?? ""} isMe={isMe(offchainItem.to)} hasBackgroundColor />
+        <NamePlate address={offchainItem.subject.tx?.to ?? ""} isMe={isMe(offchainItem.subject.tx?.to)} hasBackgroundColor />
         <LeftArrow />
-        <NamePlate address={offchainItem?.from ?? ""} />
+        <NamePlate address={offchainItem.subject.tx?.from ?? ""} />
       </div>
     );
   };
@@ -106,13 +110,13 @@ export const SigRequestDetail: FC<Props> = ({
       <div className="flex items-center space-x-3">
         <NamePlate did={did} isMe hasBackgroundColor withoutIcon />
         <RightArrow />
-        <NamePlate address={offchainItem?.to ?? ""} withoutIcon />
+        <NamePlate address={offchainItem.subject.tx?.to ?? ""} withoutIcon />
       </div>
     ) : (
       <div className="flex items-center space-x-3">
         <NamePlate did={did} isMe hasBackgroundColor withoutIcon />
         <LeftArrow />
-        <NamePlate address={offchainItem?.from ?? ""} withoutIcon />
+        <NamePlate address={offchainItem.subject.tx?.from ?? ""} withoutIcon />
       </div>
     );
   };
@@ -146,19 +150,19 @@ export const SigRequestDetail: FC<Props> = ({
             </div>
           )}
 
-          {offchainItem?.summary && (
+          {offchainItem.subject.work?.summary && (
             <div className="text-light-on-primary-container dark:text-dark-on-error-container text-2xl font-medium line-clamp-3">
-              {offchainItem?.summary}
+              {offchainItem.subject.work?.summary}
             </div>
           )}
 
           <div className="flex mt-2">
-            {offchainItem?.genre ? (
+            {offchainItem.subject.work?.genre ? (
               <div className="mr-2">
                 <GenreBadge
-                  text={offchainItem.genre}
+                  text={offchainItem.subject.work?.genre || "Other"}
                   baseColor={
-                    getGenre(offchainItem.genre)?.bgColor || "bg-[#b7b7b7]"
+                    getGenre(offchainItem.subject.work?.genre)?.bgColor || "bg-[#b7b7b7]"
                   }
                   isSelected={true}
                 />
@@ -166,8 +170,8 @@ export const SigRequestDetail: FC<Props> = ({
             ) : (
               <></>
             )}
-            {offchainItem?.tags &&
-              offchainItem.tags.map((tag) => {
+            {offchainItem.subject.work?.tags &&
+              offchainItem.subject.work?.tags.map((tag) => {
                 return <TagBadge key={tag} text={tag} />;
               })}
           </div>
@@ -194,13 +198,13 @@ export const SigRequestDetail: FC<Props> = ({
         {/*  </p>*/}
         {/*</div>*/}
 
-        {offchainItem?.deliverables && offchainItem.deliverables.length > 0 && (
+        {offchainItem.subject?.deliverables && offchainItem.subject.deliverables.length > 0 && (
           <div>
             <p className="mb-2 text-light-on-surface-variant dark:text-light-on-surface-variant font-medium">
               DELIVERABLES
             </p>
 
-            {offchainItem?.deliverables.map((deliverable) =>
+            {offchainItem.subject?.deliverables.map((deliverable) =>
               <a
                 className="flex items-center flex-wrap"
                 href={`${deliverable.format==="url" ? deliverable.value : `https://dweb.link/ipfs/${deliverable.value}`}`}
@@ -216,14 +220,14 @@ export const SigRequestDetail: FC<Props> = ({
           </div>
         )}
 
-        {offchainItem?.detail && (
+        {offchainItem.subject.work?.detail && (
           <div>
             <p className="mb-2 text-light-on-surface-variant dark:text-light-on-surface-variant font-medium">
               DESCRIPTION
             </p>
 
             <div className="text-light-on-surface dark:text-dark-on-surface font-medium">
-              {offchainItem?.detail}
+              {offchainItem.subject.work?.detail}
             </div>
           </div>
         )}
@@ -271,7 +275,7 @@ export const SigRequestDetail: FC<Props> = ({
       <div className="bg-light-outline dark:bg-dark-outline h-[1px] w-full" />
 
       <div className="lg:flex w-full px-3 sm:px-8 py-6 space-y-3 lg:space-y-0 lg:space-x-6">
-        {offchainItem?.value && (
+        {offchainItem.subject?.tx && (
           <a
             className="flex items-center flex-wrap"
             href={exploreLink}
@@ -281,11 +285,11 @@ export const SigRequestDetail: FC<Props> = ({
             <div className="flex-initial flex lg:block">
               <div className="text-lg font-medium">
                 {formatBigNumber(
-                  offchainItem?.value,
+                  offchainItem?.subject.tx?.value || offchainItem?.subject.work?.value,
                   4,
-                  offchainItem?.tokenDecimal.toString()
+                  offchainItem.subject.tx?.tokenDecimal?.toString()
                 )}{" "}
-                {offchainItem.tokenSymbol || offchainItem.networkId}
+                {offchainItem.subject.tx?.tokenSymbol || offchainItem.subject.tx?.networkId}
               </div>
               <div className="flex items-center justify-center">
                 <div className="ml-2 lg:ml-0 text-xs text-light-on-surface-variant dark:text-dark-on-surface-variant">
@@ -300,24 +304,24 @@ export const SigRequestDetail: FC<Props> = ({
           </a>
         )}
 
-        {offchainItem?.txHash && (
+        {offchainItem.subject.tx?.txHash && (
           <div className="flex-auto text-left">
             <div className="text-sm text-light-on-surface-variant dark:text-dark-on-surface-variant font-medium">
               Tx Hash
             </div>
             <div className="bg-light-surface dark:bg-dark-surface px-2 py-1 rounded-lg font-medium">
-              {shortenStr(offchainItem?.txHash, 8)}
+              {shortenStr(offchainItem.subject.tx?.txHash, 8)}
             </div>
           </div>
         )}
 
-        {offchainItem?.issuedTimestamp && (
+        {offchainItem.subject.tx?.issuedTimestamp && (
           <div className="flex-auto text-left">
             <div className="text-sm text-light-on-surface-variant dark:text-dark-on-surface-variant font-medium">
               Timestamp
             </div>
             <div className="bg-light-surface dark:bg-dark-surface px-2 py-1 rounded-lg font-medium">
-              {convertTimestampToDateStrLocaleUS(offchainItem?.issuedTimestamp)}
+              {convertTimestampToDateStrLocaleUS(offchainItem.subject.tx?.issuedTimestamp)}
             </div>
           </div>
         )}

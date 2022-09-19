@@ -2,11 +2,9 @@ import { useTab } from "@/hooks/useTab";
 import { FC, useCallback, useContext, useMemo, useState } from "react";
 import { NoItemPresenter } from "../../../common/NoItemPresenter";
 import CVoxelsPresenter from "../../../CVoxel/CVoxelsPresenter";
-import type { CVoxelItem as ICVoxelItem } from "@/interfaces";
-import { useStateForceUpdate } from "@/recoilstate";
-import { useCVoxelsRecord } from "@/hooks/useCVoxel";
+import { useStateForceUpdate } from "@/recoilstate";;
 import { CommonLoading } from "../../../common/CommonLoading";
-import { useCVoxelList } from "@/hooks/useCVoxelList";
+import { useOffchainList } from "@/hooks/useOffchainList";
 import { VoxelListItem } from "@/components/CVoxel/VoxelListItem/VoxelListItem";
 import { useRouter } from "next/dist/client/router";
 import { NavBar } from "@/components/CVoxel/NavBar/NavBar";
@@ -14,11 +12,14 @@ import { VoxelDetail } from "@/components/CVoxel/VoxelDetail/VoxelDetail";
 import { SearchData } from "@/components/common/search/Search";
 import { Button } from "@/components/common/button/Button";
 import { DIDContext } from "@/context/DIDContext";
+import { useWorkCredentials } from "@/hooks/useWorkCredential";
+import Router from "next/router";
+import { WorkCredential } from "@/__generated__/types/WorkCredential";
 
 export const MyCVoxelContainer: FC = () => {
   const {did, account} = useContext(DIDContext)
-  const { offchainMetaList, txLoading } = useCVoxelList();
-  const CVoxelsRecords = useCVoxelsRecord(did || "");
+  const { offchainMetaList, txLoading } = useOffchainList();
+  const {workCredentials} = useWorkCredentials(did)
   const { setTabState } = useTab();
 
   // TODO: This is temporary solution because of useTileDoc bug
@@ -27,14 +28,15 @@ export const MyCVoxelContainer: FC = () => {
 
   const forceReload = () => {
     setForceUpdateCVoxelList(v => !v);
+    if(did) Router.push(`/${did}`)
   };
 
-  const sortCVoxels = useMemo(() => {
-    if (!CVoxelsRecords.content) return [];
-    return CVoxelsRecords.content.WorkCredentials.sort((a, b) => {
-      return Number(a.issuedTimestamp) > Number(b.issuedTimestamp) ? -1 : 1;
+  const sortCredentials = useMemo(() => {
+    if (!workCredentials) return [];
+    return workCredentials.sort((a, b) => {
+      return Number(a.updatedAt) > Number(b.updatedAt) ? -1 : 1;
     });
-  }, [CVoxelsRecords.content,forceUpdateCVoxelList,CVoxelsRecords.content?.WorkCredentials]);
+  }, [workCredentials,forceUpdateCVoxelList]);
 
   const router = useRouter();
   const handleClickNavBackButton = useCallback(() => {
@@ -54,14 +56,14 @@ export const MyCVoxelContainer: FC = () => {
   };
 
   // TODO: improvement search logic
-  const isHitSearch = (voxel: ICVoxelItem) => {
+  const isHitSearch = (voxel: WorkCredential) => {
     if (!keyword) {
       return false;
     }
-    if (voxel.summary.toLowerCase().match(keyword.toLowerCase())) {
+    if (voxel.subject.work?.summary?.toLowerCase().match(keyword.toLowerCase())) {
       return true;
     }
-    if (voxel.genre?.toLowerCase().match(keyword.toLowerCase())) {
+    if (voxel.subject.work?.genre?.toLowerCase().match(keyword.toLowerCase())) {
       return true;
     }
     return false;
@@ -94,7 +96,7 @@ export const MyCVoxelContainer: FC = () => {
           </div>
         ) : (
           <CVoxelsPresenter>
-            {!txLoading && (!sortCVoxels || sortCVoxels.length === 0) && (
+            {!txLoading && (!sortCredentials || sortCredentials.length === 0) && (
               <div className="mx-auto">
                 <NoItemPresenter text="No Voxels yet" />
                 {account && (
@@ -108,13 +110,13 @@ export const MyCVoxelContainer: FC = () => {
             )}
             {txLoading && <CommonLoading />}
             {!txLoading &&
-              sortCVoxels &&
-              sortCVoxels
+              sortCredentials &&
+              sortCredentials
                 .filter((voxel) =>
                   !!keyword && keyword != "" ? isHitSearch(voxel) : true
                 )
                 .map((item) => {
-                  return <VoxelListItem key={item.id} item={item} />;
+                  return <VoxelListItem key={item.backupId} workCredential={item} />;
                 })}
           </CVoxelsPresenter>
         )}
@@ -122,7 +124,7 @@ export const MyCVoxelContainer: FC = () => {
     ),
     [
       txLoading,
-      sortCVoxels,
+      sortCredentials,
       account,
       offchainMetaList,
       did,

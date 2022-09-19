@@ -4,7 +4,7 @@ import type { GetServerSidePropsContext } from "next";
 
 import { CERAMIC_URL } from "@/constants/common";
 import { cVoxelModel } from "@/lib/ceramic/dataModel";
-import type { ModelTypes } from "@/interfaces/cVoxelType";
+import type { ModelTypes } from "@/interfaces";
 import { isSupportedDID } from "../../utils/ceramicUtils";
 import { Core } from "@self.id/framework";
 
@@ -32,7 +32,8 @@ export const getRequestState = async (
 
   if (isDIDstring(did)) {
     if (isSupportedDID(did)) {
-      prefetch.push(requestClient.prefetch("workCredentials", did));
+      prefetch.push(requestClient.prefetch("heldWorkCredentials", did));
+      prefetch.push(requestClient.prefetch("OldWorkCredentials", did));
       prefetch.push(requestClient.prefetch("basicProfile", did));
       await Promise.all(prefetch);
     }

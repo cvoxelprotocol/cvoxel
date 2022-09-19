@@ -3,7 +3,9 @@ import { useEffect, createContext, useState } from "react";
 import { ModelTypes } from "@/interfaces";
 import { useWalletAccount } from "@/hooks/useWalletAccount";
 import { useStateMySelfID } from "@/recoilstate/ceramic";
-import { useDID } from "@/recoilstate";
+import { getEtherService } from "@/services/Ether/EtherService";
+import { getDeworkService } from "@/services/Dework/DeworkService";
+import { getWorkCredentialService } from "@/services/workCredential/WorkCredentialService";
 
 export interface UserContextState {
     loggedIn: boolean;
@@ -27,14 +29,15 @@ export const DIDContextProvider = ({ children }: { children: any }) => {
     const [loggedIn, setLoggedIn] = useState(false);
     const [connection, connect, disconnect] = useViewerConnection<ModelTypes>();
     const [mySelfID, setMySelfID] = useStateMySelfID();
-    const [did, setDid] = useDID();
+    const etherService = getEtherService();
+    const deworkService = getDeworkService();
+    const workCredentialService = getWorkCredentialService()
   
     const { disconnectWallet, account, library, chainId } = useWalletAccount();
   
     // clear all state
     const clearState = (): void => {
       setMySelfID(null);
-      setDid(undefined)
       setLoggedIn(false)
       disconnect()
     };
@@ -45,7 +48,13 @@ export const DIDContextProvider = ({ children }: { children: any }) => {
         const authProvider = new EthereumAuthProvider(library.provider, account);
         const selfID = await connect(authProvider);
         setMySelfID(selfID);
-        setDid(selfID?.id)
+        etherService.setProvider(library);
+        deworkService.setProvider(library);
+        if(selfID){
+          workCredentialService.setProvider(selfID, library)
+          //execute v1 data
+          workCredentialService.executeMigration(account)
+        }
       }
     };
 
@@ -97,7 +106,7 @@ export const DIDContextProvider = ({ children }: { children: any }) => {
       loggedIn,
       connection,
       account: account || undefined,
-      did: did,
+      did: mySelfID?.id,
       chainId
     };
   

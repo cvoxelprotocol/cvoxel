@@ -2,7 +2,7 @@ import { formatDID, getImageURL } from "@self.id/framework";
 import type { BasicProfile } from "@self.id/framework";
 
 import { IPFS_URL } from "@/constants/common";
-import { CryptoAccountLinks } from "@datamodels/identity-accounts-crypto";
+import { ETH_CHAIN_ID } from "@/constants/common";
 import { DisplayProfile } from "@/interfaces";
 
 const ethAddressRegex = /^0x[0-9a-f]{40}$/i;
@@ -26,3 +26,15 @@ export function getProfileInfo(
     bio: profile?.description ?? "",
   };
 }
+
+export const getPkhDIDFromAddress = (address: string): string => {
+  if (isEthereumAddress(address)) {
+    return `did:pkh:${ETH_CHAIN_ID}${address}`;
+  } else {
+    return address;
+  }
+};
+
+export const getAddressFromPkhDID = (did: string): string => {
+  return did.replace(`did:pkh:${ETH_CHAIN_ID}`, "");
+};

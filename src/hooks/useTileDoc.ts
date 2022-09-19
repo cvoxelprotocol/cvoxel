@@ -17,7 +17,9 @@ export type TileDoc<ContentType> = {
   update(content: ContentType): Promise<void>;
 };
 
-export const useTileDoc = <ContentType>(id?: string): TileDoc<ContentType> => {
+export const useTileDoc = <ContentType extends Record<string, any>>(
+  id?: string
+): TileDoc<ContentType> => {
   const queryClient = useQueryClient();
   const viewerID = useViewerID();
 

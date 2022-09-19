@@ -1,13 +1,9 @@
 import { useMemo, useState } from "react";
-import {
-  CVoxelItem,
-  CVoxelThree,
-  CVoxelVisType,
-  CVoxelWithId,
-} from "@/interfaces/cVoxelType";
+import { CVoxelThree, CVoxelVisType } from "@/interfaces/cVoxelType";
 import * as THREE from "three";
 import { getGenreColor } from "@/utils/genreUtil";
 import chroma from "chroma-js";
+import { WorkCredentialWithId } from "@/interfaces";
 
 type RoomType = {
   position: THREE.Vector3;
@@ -21,16 +17,20 @@ const sigmoid_a: number = 1;
 
 export const useVoxStyler = () => {
   const [cvoxelsForDisplay, setCvoxelsForDisplay] = useState<
-    CVoxelItem[] | undefined
+    WorkCredentialWithId[] | undefined
   >();
   const [voxelForDisplay, setVoxelForDisplay] = useState<
-    CVoxelWithId | undefined
+    WorkCredentialWithId | undefined
   >();
 
   const displayVoxel = useMemo(() => {
-    if (!(voxelForDisplay && voxelForDisplay.id)) return;
+    if (!(voxelForDisplay && voxelForDisplay.backupId)) return;
     const initPosition = new THREE.Vector3(0, 0, 0);
-    const { deliverables, toSig, fromSig, genre } = voxelForDisplay;
+    const { signature } = voxelForDisplay;
+    const { work, deliverables } = voxelForDisplay.subject;
+    const holderSig = signature?.holderSig;
+    const partnerSig = signature?.partnerSig;
+    const genre = work?.genre;
     let hue, lightness, saturation: number;
     // masked value effects temporarily
     /* Set vividness from value based on ETH currently */
@@ -49,9 +49,12 @@ export const useVoxStyler = () => {
     hue = genreHue || 330;
 
     const styledVoxel: CVoxelThreeWithId = {
-      id: voxelForDisplay.id,
+      id: voxelForDisplay.backupId,
       color: `hsl(${hue}, ${saturation.toFixed()}%, ${lightness.toFixed()}%)`,
-      opacity: toSig && toSig !== "" && fromSig && fromSig !== "" ? 0.75 : 0.45,
+      opacity:
+        holderSig && holderSig !== "" && partnerSig && partnerSig !== ""
+          ? 0.75
+          : 0.45,
       lattice: !!deliverables && deliverables.length > 0,
       scale: 1.0,
       position: initPosition,
@@ -66,19 +69,24 @@ export const useVoxStyler = () => {
     let stackedVoxels: CVoxelThreeWithId[] = [];
     if (cvoxelsForDisplay && cvoxelsForDisplay.length > 0) {
       cvoxelsForDisplay.forEach((voxel, i) => {
-        if (!voxel.id) return;
+        if (!voxel.backupId) return;
         let voxelTemp: CVoxelVisTypeWithId = {
-          id: voxel.id,
+          id: voxel.backupId,
           color: "",
           opacity: 0.45,
           lattice: false,
           scale: 1.0,
         };
-        const { deliverables, isVerified, genre } = voxel;
+        const { signature } = voxel;
+        const { work, deliverables } = voxel.subject;
+        const holderSig = signature?.holderSig;
+        const partnerSig = signature?.partnerSig;
+        const genre = work?.genre;
+
         let hue, lightness, saturation: number;
 
         /* Set opacity from sigs */
-        if (isVerified) {
+        if (holderSig && partnerSig) {
           voxelTemp["opacity"] = 0.75;
         }
 

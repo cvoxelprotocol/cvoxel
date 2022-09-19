@@ -1,15 +1,4 @@
-export type CCubeType = CVoxelVisType[][][];
-
-import type { ModelTypeAliases } from "@glazed/types";
-import type { BasicProfile } from "@datamodels/identity-profile-basic";
-import { AlsoKnownAs } from "@datamodels/identity-accounts-web";
-import { CryptoAccountLinks } from "@datamodels/identity-accounts-crypto";
-
-export type EditionState =
-  | { status: "pending" }
-  | { status: "loading" }
-  | { status: "failed"; error?: unknown }
-  | { status: "done"; cVoxelPage: string };
+import { DeliverableItem } from "@/__generated__/types/WorkCredential";
 
 export type CVoxel = {
   to: string; // payee address. maybe contract address
@@ -39,28 +28,8 @@ export type CVoxel = {
   relatedTxHashes?: string[]; //tx releated work
   deliverableHash?: string; // hash value of all work descriptions(summary, detail, deliverables)
   platform?: string; // a transaction platform if exists e.g, gitcoin
-  subtasks?: Subtask[];
   createdAt?: string; //timestamp to be created
   updatedAt?: string; //timestamp to be updated
-};
-
-export type WorkCredentialForm = CVoxel & {
-  deliverableLink?: string;
-  deliverableCID?: string;
-};
-
-export type DeliverableItem = {
-  format: string;
-  value: string;
-};
-
-export type Subtask = {
-  detail: string;
-  genre: string;
-};
-
-export type CVoxelWithId = CVoxel & {
-  id: string;
 };
 
 export type CVoxelMetaDraft = CVoxel & {
@@ -68,11 +37,6 @@ export type CVoxelMetaDraft = CVoxel & {
   potencialPayee?: string[]; // in case of multisig wallet
   completed?: boolean; // whether or not work is completed (only in case of LanC., it might be false)
   id?: string;
-};
-
-export type CVoxelDraftAndMeta = {
-  meta: CVoxel;
-  draft: CVoxelMetaDraft;
 };
 
 export type CVoxelItem = {
@@ -93,23 +57,6 @@ export type CVoxels = {
   WorkCredentials: CVoxelItem[];
 };
 
-export type ModelTypes = ModelTypeAliases<
-  {
-    AlsoKnownAs: AlsoKnownAs;
-    BasicProfile: BasicProfile;
-    CryptoAccounts: CryptoAccountLinks;
-    WorkCredential: CVoxel;
-    WorkCredentials: CVoxels;
-  },
-  {
-    alsoKnownAs: "AlsoKnownAs";
-    basicProfile: "BasicProfile";
-    cryptoAccounts: "CryptoAccounts";
-    workCredential: "WorkCredential";
-    workCredentials: "WorkCredentials";
-  }
->;
-
 export type CVoxelVisType = {
   color: string;
   opacity: number;
@@ -121,12 +68,3 @@ export type CVoxelThree = CVoxelVisType & {
   position: THREE.Vector3;
   offset?: THREE.Vector3;
 };
-
-export const cVoxelTest: CVoxelVisType[] = [
-  {
-    color: "hsl(330, 70%, 50%)",
-    opacity: 1,
-    lattice: true,
-    scale: 1,
-  },
-];
