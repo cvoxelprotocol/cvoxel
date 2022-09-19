@@ -1,5 +1,13 @@
 import { useTab } from "@/hooks/useTab";
-import { FC, useCallback, useContext, useMemo, useState } from "react";
+import {
+  FC,
+  LegacyRef,
+  useCallback,
+  useContext,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { NoItemPresenter } from "../../../common/NoItemPresenter";
 import CVoxelsPresenter from "../../../CVoxel/CVoxelsPresenter";
 import type { CVoxelItem as ICVoxelItem } from "@/interfaces";
@@ -14,9 +22,11 @@ import { VoxelDetail } from "@/components/CVoxel/VoxelDetail/VoxelDetail";
 import { SearchData } from "@/components/common/search/Search";
 import { Button } from "@/components/common/button/Button";
 import { DIDContext } from "@/context/DIDContext";
+import { useVirtualizer } from "@tanstack/react-virtual";
+import { useIsTabletOrMobile } from "@/hooks/useIsTabletOrMobile";
 
 export const MyCVoxelContainer: FC = () => {
-  const {did, account} = useContext(DIDContext)
+  const { did, account } = useContext(DIDContext);
   const { offchainMetaList, txLoading } = useCVoxelList();
   const CVoxelsRecords = useCVoxelsRecord(did || "");
   const { setTabState } = useTab();
@@ -26,7 +36,7 @@ export const MyCVoxelContainer: FC = () => {
     useStateForceUpdate();
 
   const forceReload = () => {
-    setForceUpdateCVoxelList(v => !v);
+    setForceUpdateCVoxelList((v) => !v);
   };
 
   const sortCVoxels = useMemo(() => {
@@ -34,7 +44,11 @@ export const MyCVoxelContainer: FC = () => {
     return CVoxelsRecords.content.WorkCredentials.sort((a, b) => {
       return Number(a.issuedTimestamp) > Number(b.issuedTimestamp) ? -1 : 1;
     });
-  }, [CVoxelsRecords.content,forceUpdateCVoxelList,CVoxelsRecords.content?.WorkCredentials]);
+  }, [
+    CVoxelsRecords.content,
+    forceUpdateCVoxelList,
+    CVoxelsRecords.content?.WorkCredentials,
+  ]);
 
   const router = useRouter();
   const handleClickNavBackButton = useCallback(() => {
@@ -73,6 +87,24 @@ export const MyCVoxelContainer: FC = () => {
     }
   }, [router.query]);
 
+  const filteredVoxels = useMemo(
+    () =>
+      sortCVoxels.filter((voxel) =>
+        !!keyword && keyword != "" ? isHitSearch(voxel) : true
+      ),
+    [isHitSearch, keyword, sortCVoxels]
+  );
+
+  const parentRef: LegacyRef<any> = useRef();
+
+  const { isTabletOrMobile } = useIsTabletOrMobile();
+
+  const rowVirtualizer = useVirtualizer({
+    count: filteredVoxels.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => ((isTabletOrMobile ? 15 : 13) + 1) * 16, // NOTE: (item + margin) * rem
+  });
+
   return useMemo(
     () => (
       <>
@@ -106,29 +138,56 @@ export const MyCVoxelContainer: FC = () => {
                 )}
               </div>
             )}
+
             {txLoading && <CommonLoading />}
-            {!txLoading &&
-              sortCVoxels &&
-              sortCVoxels
-                .filter((voxel) =>
-                  !!keyword && keyword != "" ? isHitSearch(voxel) : true
-                )
-                .map((item) => {
-                  return <VoxelListItem key={item.id} item={item} />;
-                })}
+
+            {!txLoading && filteredVoxels && (
+              <div ref={parentRef} className={"overflow-auto h-full w-full"}>
+                <div
+                  style={{
+                    height: `${rowVirtualizer.getTotalSize() / 16}rem`,
+                    width: "100%",
+                    position: "relative",
+                  }}
+                >
+                  {rowVirtualizer
+                    .getVirtualItems()
+                    .map((virtualItem, index) => (
+                      <div
+                        key={virtualItem.index}
+                        style={{
+                          position: "absolute",
+                          top: 0,
+                          left: 0,
+                          width: "100%",
+                          height: `${virtualItem.size / 16}rem`,
+                          transform: `translateY(${virtualItem.start / 16}rem)`,
+                        }}
+                      >
+                        <VoxelListItem
+                          key={filteredVoxels[virtualItem.index].id}
+                          item={filteredVoxels[virtualItem.index]}
+                        />
+                      </div>
+                    ))}
+                </div>
+              </div>
+            )}
           </CVoxelsPresenter>
         )}
       </>
     ),
     [
       txLoading,
-      sortCVoxels,
+      filteredVoxels,
       account,
       offchainMetaList,
       did,
       forceUpdateCVoxelList,
       currentVoxelID,
       keyword,
+      rowVirtualizer,
+      isTabletOrMobile,
     ]
   );
 };
