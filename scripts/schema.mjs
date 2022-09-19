@@ -1,8 +1,44 @@
-import WorkSubject from "./schemas/WorkSubject.json" assert { type: "json" }
-// import Deliverables from "./schemas/Deliverables.json" assert { type: "json" }
-// import Signature from "./schemas/Signature.json" assert { type: "json" }
-// import Transaction from "./schemas/Transaction.json" assert { type: "json" }
-import Evidence from "./schemas/Evidence.json" assert { type: "json" }
+import Work from "./schemas/WorkSubject.json" assert { type: "json" }
+import Client from "./schemas/Client.json" assert { type: "json" }
+import Deliverables from "./schemas/Deliverables.json" assert { type: "json" }
+import SignatureEvidence from "./schemas/Signature.json" assert { type: "json" }
+import Transaction from "./schemas/Transaction.json" assert { type: "json" }
+
+export * as Organization from "./schemas/Organization.json" assert { type: "json" }
+export * as MemberShip from "./schemas/MemberShip.json" assert { type: "json" }
+export * as MembershipSubject from "./schemas/MembershipSubject.json" assert { type: "json" }
+
+
+export const Evidences = {
+  "type": "array",
+  "title": "Evidences",
+  "items": {
+    "type": "object",
+    "title": "Evidence",
+    "properties": {
+      "id": { "type": "string" },
+      "type": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "verifier": { "type": "string" },
+      "evidenceDocument": { "type": "string" },
+      "subjectPresence": { "type": "string" },
+      "documentPresence": { "type": "string" },
+      "item": {
+        "oneOf": [
+          Transaction,
+          Deliverables,
+          SignatureEvidence
+        ]
+      },
+    },
+    "required": ["id", "type"],
+    "additionalProperties": true
+  }
+}
 
 export const WorkCredentialSchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
@@ -13,8 +49,17 @@ export const WorkCredentialSchema = {
         "type": "string",
         "maxLength": 240
       },
-      "subject": WorkSubject,
-      "evidence": Evidence,
+      "subject": {
+        "title": "WorkSubject",
+        "type": "object",
+        "properties": {
+          "work": Work,
+          "tx": Transaction,
+          "deliverables": Deliverables,
+          "client": Client,
+        }
+      },
+      "signature": SignatureEvidence,
       "createdAt": {
         "type": "string",
         "title": "createdAt"
@@ -28,7 +73,7 @@ export const WorkCredentialSchema = {
     "additionalProperties":false
 }
 
-export const WorkVerifiableCredentialSchema = {
+export const VerifiableCredentialSchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
     "title": "VerifiableWorkCredential",
     "type": "object",
@@ -64,9 +109,9 @@ export const WorkVerifiableCredentialSchema = {
             "type": "string",
             "maxLength": 240
           },
-          "required": ["id"],
-          "additionalProperties": true
         },
+        "required": ["id"],
+        "additionalProperties": true
       },
       "credentialSchema": {
         "type": "object",
@@ -117,7 +162,7 @@ export const WorkVerifiableCredentialSchema = {
         },
         "required": ["type"]
       },
-      "evidence": Evidence,
+      "evidence": Evidences,
       "credentialStatus": {
         "type": "object",
         "properties": {

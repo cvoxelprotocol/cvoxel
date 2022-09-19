@@ -9,11 +9,9 @@ import { Ed25519Provider } from 'key-did-provider-ed25519'
 import { getResolver } from 'key-did-resolver'
 import { fromString } from 'uint8arrays'
 import dotenv from 'dotenv'
-import WorkCredentialSchema from "./schema"
-import VerifiableWorkCredentialSchema from "./schema"
+import {WorkCredentialSchema, VerifiableCredentialSchema, Organization, MemberShip, MembershipSubject} from "./schema.mjs"
 import { model as OldWorkCredentialModel } from './models/OldWorkCredentials/dist/index.mjs'
-// import pkg from './models/OldWorkCredentials/dist/index.js';
-// const { model: OldWorkCredentialModel } = pkg;
+import { compile } from 'json-schema-to-typescript'
 
 dotenv.config();
 
@@ -53,107 +51,57 @@ manager.addJSONModel(OldWorkCredentialModel)
 
 // Create the schemas
 const WorkCredentialSchemaID = await manager.createSchema('WorkCredential', WorkCredentialSchema)
-const VerifiableWorkCredentialSchemaID = await manager.createSchema('VerifiableWorkCredential', VerifiableWorkCredentialSchema)
-const HeldWorkCredentialsSchemaID = await manager.createSchema('HeldWorkCredentials', {
+const VerifiableCredentialSchemaID = await manager.createSchema('VerifiableWorkCredential', VerifiableCredentialSchema)
+const HeldVerifiableWorkCredentialsSchema = {
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "HeldVerifiableWorkCredentials",
+  "type": "object",
+  "properties": {
+    "held": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "$comment": `cip88:ref:${manager.getSchemaURL(VerifiableCredentialSchemaID)}`,
+        "pattern": "^ceramic://.+(\\?version=.+)?",
+        "maxLength": 200,
+      },
+      "default": [],
+      "additionalProperties":false,
+    }
+  },
+}
+const HeldWorkCredentialsSchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "HeldWorkCredentials",
   "type": "object",
   "properties": {
-    "VerifiableWorkCredentials": {
+    "held": {
       "type": "array",
-      "title": 'VerifiableWorkCredentials',
       "items": {
         "type": "string",
-        "$comment": `cip88:ref:${manager.getSchemaURL(VerifiableWorkCredentialSchemaID)}`,
+        "$comment": `cip88:ref:${manager.getSchemaURL(WorkCredentialSchemaID)}`,
         "pattern": "^ceramic://.+(\\?version=.+)?",
         "maxLength": 200,
       },
-    },
-    "WorkCredentials": {
-      "type": "array",
-      "title": 'WorkCredentials',
-      "items": {
-        "type": "object",
-        "title": "WorkCredentialItem",
-        "description": "work credential",
-        "properties": {
-          "id": {
-            "$comment": `cip88:ref:${manager.getSchemaURL(WorkCredentialSchemaID)}`,
-            "type": "string",
-            "pattern": "^ceramic://.+(\\?version=.+)?",
-            "maxLength": 200,
-          },
-          "value": {
-            "type": "string",
-            "title": "value",
-            "description": "paid value"
-          },
-          "summary": {
-            "type": "string",
-            "title": "summary",
-            "description": "work summary"
-          },
-          "genre": {
-            "type": "string",
-            "title": "genre",
-            "description": "work genre e.g, Dev, Design etc"
-          },
-          "deliverables": {
-            "type": "array",
-            "title": "deliverables",
-            "description": "work deliverables",
-            "items": {
-              "type": "object",
-              "title": "deliverableItem",
-              "properties": {
-                "format": {
-                  "type": "string",
-                  "title": "format",
-                  "description": "current formats are url or cid"
-                },
-                "value": {
-                  "type": "string",
-                  "title": "value",
-                  "description": "work deliverable value(url/cid)"
-                }
-              },
-            },
-          },
-          "txHash": {
-            "type": "string",
-            "title": "txHash",
-            "description": "hash of the transaction"
-          },
-          "deliverableHash": {
-            "type": "string",
-            "title": "deliverableHash",
-            "description": "hash value of all work descriptions",
-          },
-          "platform": {
-            "type": "string",
-            "title": "platform",
-            "description": "a transaction platform if exists e.g, gitcoin",
-          },
-          "isVerified": {
-            "type": "boolean",
-            "title": "isVerified",
-            "description": "Either both signatures exist or the transaction is via platform",
-          },
-          "issuedAt": {
-            "type": "string",
-            "title": "issuedAt",
-            "description": "CRDL issue date"
-          },
-        },
-      },
-    },
+      "default": [],
+      "additionalProperties":false,
+    }
   },
-  "additionalProperties":false,
-})
+}
+
+const HeldWorkCredentialsSchemaID = await manager.createSchema('HeldWorkCredentials', HeldWorkCredentialsSchema)
+const HeldVerifiableWorkCredentialsSchemaID = await manager.createSchema('HeldVerifiableWorkCredentials', HeldVerifiableWorkCredentialsSchema)
+const OrganizationSchemaID = await manager.createSchema('Organization', Organization)
+const MemberShipSchemaID = await manager.createSchema('MemberShip', MemberShip)
+const MembershipSubjectSchemaID = await manager.createSchema('MembershipSubject', MembershipSubject)
 
 console.log({WorkCredentialSchemaID})
-console.log({VerifiableWorkCredentialSchemaID})
+console.log({VerifiableCredentialSchemaID})
 console.log({HeldWorkCredentialsSchemaID})
+console.log({HeldVerifiableWorkCredentialsSchemaID})
+console.log({OrganizationSchemaID})
+console.log({MemberShipSchemaID})
+console.log({MembershipSubjectSchemaID})
 
 // Create the definition using the created schema ID
 const wc = await manager.createDefinition('workCredential', {
@@ -164,28 +112,71 @@ const wc = await manager.createDefinition('workCredential', {
 const verifiableWc = await manager.createDefinition('verifiableWorkCredential', {
   name: 'verifiableWorkCredential',
   description: 'verifiableWorkCredential',
-  schema: manager.getSchemaURL(VerifiableWorkCredentialSchemaID),
+  schema: manager.getSchemaURL(VerifiableCredentialSchemaID),
 })
 
-const wcs = await manager.createDefinition('heldWorkCredentials', {
-  name: 'workCredentials',
-  description: 'workCredentials',
+const heldWorkCredentials = await manager.createDefinition('heldWorkCredentials', {
+  name: 'heldWorkCredentials',
+  description: 'heldWorkCredentials',
   schema: manager.getSchemaURL(HeldWorkCredentialsSchemaID),
 })
 
+const heldVerifiableWorkCredentials = await manager.createDefinition('heldVerifiableWorkCredentials', {
+  name: 'heldVerifiableWorkCredentials',
+  description: 'heldVerifiableWorkCredentials',
+  schema: manager.getSchemaURL(HeldVerifiableWorkCredentialsSchemaID),
+})
+
+const memberShip = await manager.createDefinition('MemberShip', {
+  name: 'memberShip',
+  description: 'memberShip',
+  schema: manager.getSchemaURL(MemberShipSchemaID),
+})
+
+const organization = await manager.createDefinition('Organization', {
+  name: 'organization',
+  description: 'organization',
+  schema: manager.getSchemaURL(OrganizationSchemaID),
+})
+
+const membershipSubject = await manager.createDefinition('MembershipSubject', {
+  name: 'membershipSubject',
+  description: 'membershipSubject',
+  schema: manager.getSchemaURL(MembershipSubjectSchemaID),
+})
+
+
+
 console.log({wc})
 console.log({verifiableWc})
-console.log({wcs})
-
-// // Create a WorkCredential with text that will be used as placeholder
-// await manager.createTile(
-//   "PlaceHodlerWorkCredential",
-//   { to: "toaddress", from: "from address",
-//   summary: 'This is a summary for the WorkCredential contents',
-// value: "100000000", tokenSymbol: "ETH", networkId:1, issuedTimestamp: "12345678", txHash: "0xhgeohgoehgehgoehgoehoehge" },
-//   { schema: manager.getSchemaURL(WorkCredentialSchemaID) }
-// )
+console.log({heldVerifiableWorkCredentials})
+console.log({heldWorkCredentials})
+console.log({memberShip})
+console.log({organization})
+console.log({membershipSubject})
 
 // Write model to JSON file
 await writeFile(new URL(`${modelJsonName}`, import.meta.url), JSON.stringify(manager.toJSON()))
 console.log(`Encoded model written to ${modelJsonName}`)
+
+// generate type
+const WorkCredentialSchemaTS = await compile(WorkCredentialSchema, 'WorkCredential')
+await writeFile(new URL(`../src/__generated__/types/WorkCredential.d.ts`, import.meta.url), WorkCredentialSchemaTS)
+
+const VerifiableCredentialSchemaTS = await compile(VerifiableCredentialSchema, 'VerifiableWorkCredential')
+await writeFile(new URL(`../src/__generated__/types/VerifiableWorkCredential.d.ts`, import.meta.url), VerifiableCredentialSchemaTS)
+
+const HeldWorkCredentialsSchemaTS = await compile(HeldWorkCredentialsSchema, 'HeldWorkCredentials')
+await writeFile(new URL(`../src/__generated__/types/HeldWorkCredentials.d.ts`, import.meta.url), HeldWorkCredentialsSchemaTS)
+
+const HeldVerifiableWorkCredentialsSchemaTS = await compile(HeldVerifiableWorkCredentialsSchema, 'HeldVerifiableWorkCredentials')
+await writeFile(new URL(`../src/__generated__/types/HeldVerifiableWorkCredentials.d.ts`, import.meta.url), HeldVerifiableWorkCredentialsSchemaTS)
+
+const OrganizationTS = await compile(Organization, 'Organization')
+await writeFile(new URL(`../src/__generated__/types/Organization.d.ts`, import.meta.url), OrganizationTS)
+
+const MemberShipTS = await compile(MemberShip, 'MemberShip')
+await writeFile(new URL(`../src/__generated__/types/MemberShip.d.ts`, import.meta.url), MemberShipTS)
+
+const MembershipSubjectTS = await compile(MembershipSubject, 'MembershipSubject')
+await writeFile(new URL(`../src/__generated__/types/MembershipSubject.d.ts`, import.meta.url), MembershipSubjectTS)

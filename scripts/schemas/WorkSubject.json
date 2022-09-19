@@ -1,6 +1,6 @@
 {
   "type": "object",
-  "title": "subject",
+  "title": "Work",
   "properties": {
     "id": {
       "type": "string",
@@ -54,22 +54,6 @@
       "type": "string",
       "title": "endTimestamp",
       "description": "Time stamp of work ended"
-    },
-    "client": {
-      "type": "object",
-      "title": "client",
-      "properties": {
-        "format": {
-          "type": "string",
-          "title": "format",
-          "description": "name or DID"
-        },
-        "value": {
-          "type": "string",
-          "title": "value",
-          "description": "Client Info"
-        }
-      }
     },
     "platform": {
       "type": "string",

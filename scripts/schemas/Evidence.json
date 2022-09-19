@@ -1,0 +1,23 @@
+{
+  "type": "array",
+  "title": "Evidences",
+  "items": {
+    "type": "object",
+    "title": "Evidence",
+    "properties": {
+      "id": { "type": "string" },
+      "type": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      },
+      "verifier": { "type": "string" },
+      "evidenceDocument": { "type": "string" },
+      "subjectPresence": { "type": "string" },
+      "documentPresence": { "type": "string" }
+    },
+    "required": ["id", "type"],
+    "additionalProperties": true
+  }
+}
