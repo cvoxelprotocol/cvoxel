@@ -1,13 +1,13 @@
 import { FC, useCallback, useContext } from "react";
 import { useRouter } from "next/router";
 import { DIDContext } from "@/context/DIDContext";
-import { useOffchainItem } from "@/hooks/useOffchainItem";
 import { WorkCredentialWithId } from "@/interfaces";
 import { SigRequestDetail } from "@/components/SigRequest/SigRequestDetail/SigRequestDetail";
 import { NoItemPresenter } from "@/components/common/NoItemPresenter";
 import { CommonLoading } from "@/components/common/CommonLoading";
 import { useMyPageScreen } from "@/hooks/useTab";
 import { useWorkCredential } from "@/hooks/useWorkCredential";
+import { useOffchainItem } from "@/hooks/useOffchainList";
 
 type Props = {
   txId?: string;

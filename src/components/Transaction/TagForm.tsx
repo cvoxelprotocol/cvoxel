@@ -4,7 +4,7 @@ import {
   TagOption,
   TagOptions,
 } from "@/constants/tags";
-import {FC, useEffect, useMemo} from "react";
+import {FC, useMemo} from "react";
 import CreatableSelect from "react-select/creatable";
 import { ActionMeta, OnChangeValue } from "react-select";
 import { useThemeMode } from "@/hooks/useThemeMode";

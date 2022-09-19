@@ -21,10 +21,10 @@ import { formatBigNumber } from "@/utils/ethersUtil";
 import { getAddressFromPkhDID } from "@/utils/ceramicUtils";
 import { DIDContext } from "@/context/DIDContext";
 import { CopyRequestURLButton } from "./CopyRequestURLButton";
-import { useOffchainItem } from "@/hooks/useOffchainItem";
 import { useWorkCredential, useWorkCredentialRecord } from "@/hooks/useWorkCredential";
 import { WorkCredentialWithId } from "@/interfaces";
 import { WorkCredential } from "@/__generated__/types/WorkCredential";
+import { useOffchainItem } from "@/hooks/useOffchainList";
 
 type Props = {
   itemId: string;

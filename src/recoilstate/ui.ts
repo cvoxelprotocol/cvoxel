@@ -1,11 +1,10 @@
 import { atom, useRecoilState } from "recoil";
 import {
-  CVoxelItem as ICVoxelItem,
-  CVoxelMetaDraft,
   CVoxelThree,
   TabKey,
   TransactionLogWithChainId,
   TxTabKey,
+  WorkCredentialWithId,
 } from "@/interfaces";
 
 //loading
@@ -73,15 +72,16 @@ export const rShowDrawer = atom<boolean>({
 export const useStateShowDrawer = () => useRecoilState(rShowDrawer);
 
 // CVoxel detail box
-const rCVoxelDetailBox = atom<
+const rCredentialDetailBox = atom<
   | {
-      item: ICVoxelItem;
-      offchainItems?: CVoxelMetaDraft[];
+      item: WorkCredentialWithId;
+      offchainItems?: WorkCredentialWithId[];
     }
   | undefined
->({ key: "rCVoxelDetailBox", default: undefined });
+>({ key: "rCredentialDetailBox", default: undefined });
 
-export const useStateCVoxelDetailBox = () => useRecoilState(rCVoxelDetailBox);
+export const useStateCredentialDetailBox = () =>
+  useRecoilState(rCredentialDetailBox);
 
 export const selectedTx = atom<TransactionLogWithChainId | null>({
   key: "selectedTx",
@@ -96,3 +96,21 @@ export const themeMode = atom<"light" | "dark">({
 });
 
 export const useStateThemeMode = () => useRecoilState(themeMode);
+
+//dework connect
+export const rDeworkConnectModal = atom({
+  key: "rDeworkConnectModal",
+  default: false,
+});
+
+export const useStateDeworkConnectModal = () =>
+  useRecoilState(rDeworkConnectModal);
+
+export const issueStatus = atom<"completed" | "issuing" | "failed" | undefined>(
+  {
+    key: "issueStatus",
+    default: undefined,
+  }
+);
+
+export const useStateIssueStatus = () => useRecoilState(issueStatus);
