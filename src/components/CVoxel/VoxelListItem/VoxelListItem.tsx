@@ -32,13 +32,16 @@ export const VoxelListItem: FC<Props> = ({ item }) => {
         {/* NOTE: if voxel state exist, add padding bottom*/}
         <div
           className={clsx(
-            "rounded-r-lg w-40 relative bg-light-surface dark:bg-dark-surface",
-            false && "pb-6"
+            "rounded-r-lg w-40 relative bg-light-surface dark:bg-dark-surface"
           )}
         >
-         {detailItem && (
+          {detailItem && (
             <Canvas>
-              <OneVoxelVisualizerPresenter zoom={6} disableHover workCredential={{...detailItem, id:item.id}} />
+              <OneVoxelVisualizerPresenter
+                zoom={6}
+                disableHover
+                workCredential={{ ...detailItem, id: item.id }}
+              />
             </Canvas>
           )}
 
@@ -70,21 +73,27 @@ export const VoxelListItem: FC<Props> = ({ item }) => {
               </div>
             )}
 
-            {(detailItem?.deliverables &&
-              detailItem.deliverables.length > 0) &&
-              detailItem?.deliverables.map((deliverable) =>
-              <a
-                className="flex items-center flex-wrap"
-                href={`${deliverable.format==="url" ? deliverable.value : `https://dweb.link/ipfs/${deliverable.value}`}`}
-                target="_blank"
-                rel="noreferrer"
-                key={deliverable.value}
-              >
-                <span className="text-light-secondary dark:text-dark-secondary text-md text-left">
-                  {deliverable.format==="url" ? deliverable.value : shortenStr(deliverable.value)}
-                </span>
-              </a>
-              )}
+            {detailItem?.deliverables &&
+              detailItem.deliverables.length > 0 &&
+              detailItem?.deliverables.map((deliverable) => (
+                <a
+                  className="flex items-center flex-wrap"
+                  href={`${
+                    deliverable.format === "url"
+                      ? deliverable.value
+                      : `https://dweb.link/ipfs/${deliverable.value}`
+                  }`}
+                  target="_blank"
+                  rel="noreferrer"
+                  key={deliverable.value}
+                >
+                  <span className="text-light-secondary dark:text-dark-secondary text-md text-left">
+                    {deliverable.format === "url"
+                      ? deliverable.value
+                      : shortenStr(deliverable.value)}
+                  </span>
+                </a>
+              ))}
           </div>
 
           <div className="flex flex-wrap">
@@ -113,9 +122,13 @@ export const VoxelListItem: FC<Props> = ({ item }) => {
     return (
       <div className="w-full">
         <div className="w-full h-32 relative bg-light-surface dark:bg-dark-surface rounded-b-lg">
-        {detailItem && (
+          {detailItem && (
             <Canvas className="!touch-auto">
-              <OneVoxelVisualizerPresenter zoom={6} disableHover workCredential={{...detailItem, id:item.id}} />
+              <OneVoxelVisualizerPresenter
+                zoom={6}
+                disableHover
+                workCredential={{ ...detailItem, id: item.id }}
+              />
             </Canvas>
           )}
 
@@ -150,30 +163,36 @@ export const VoxelListItem: FC<Props> = ({ item }) => {
 
           {detailItem?.deliverables &&
             detailItem.deliverables.length > 0 &&
-            detailItem?.deliverables.map((deliverable) =>
+            detailItem?.deliverables.map((deliverable) => (
               <a
                 className="flex items-center flex-wrap"
-                href={`${deliverable.format==="url" ? deliverable.value : `https://dweb.link/ipfs/${deliverable.value}`}`}
+                href={`${
+                  deliverable.format === "url"
+                    ? deliverable.value
+                    : `https://dweb.link/ipfs/${deliverable.value}`
+                }`}
                 target="_blank"
                 rel="noreferrer"
                 key={deliverable.value}
               >
                 <p className="text-light-secondary dark:text-dark-secondary text-md text-left">
-                  {deliverable.format==="url" ? deliverable.value : shortenStr(deliverable.value)}
+                  {deliverable.format === "url"
+                    ? deliverable.value
+                    : shortenStr(deliverable.value)}
                 </p>
               </a>
-            )}
+            ))}
 
           <div className="flex overflow-x-scroll">
             {detailItem?.genre && (
               <div className="mr-2">
-              <GenreBadge
-                text={detailItem.genre}
-                baseColor={
-                  getGenre(detailItem.genre)?.bgColor || "bg-[#b7b7b7]"
-                }
-                isSelected={true}
-              />
+                <GenreBadge
+                  text={detailItem.genre}
+                  baseColor={
+                    getGenre(detailItem.genre)?.bgColor || "bg-[#b7b7b7]"
+                  }
+                  isSelected={true}
+                />
               </div>
             )}
             {detailItem?.tags &&
@@ -186,22 +205,25 @@ export const VoxelListItem: FC<Props> = ({ item }) => {
     );
   };
 
-  if(!detailItem) return (
-    <></>
-  )
+  return useMemo(
+    () => {
+      if (!detailItem) return <></>;
 
-  return (
-    <Link href={`${router.asPath.split("?")[0]}?voxel=${item.id}`}>
-      <div className="w-full">
-        <div className="w-full border border-light-on-primary-container dark:border-dark-on-primary-container rounded-lg overflow-hidden bg-light-surface-1 dark:bg-dark-surface-1">
-          <div className="hidden lg:block w-full">
-            <PcContent />
+      return (
+        <Link href={`${router.asPath.split("?")[0]}?voxel=${item.id}`}>
+          <div className="w-full">
+            <div className="w-full border border-light-on-primary-container dark:border-dark-on-primary-container rounded-lg overflow-hidden bg-light-surface-1 dark:bg-dark-surface-1">
+              <div className="hidden lg:block w-full">
+                <PcContent />
+              </div>
+              <div className="lg:hidden">
+                <SpContent />
+              </div>
+            </div>
           </div>
-          <div className="lg:hidden">
-            <SpContent />
-          </div>
-        </div>
-      </div>
-    </Link>
+        </Link>
+      );
+    },
+    [PcContent, SpContent, detailItem, item.id, router.asPath] // NOTE: Do not make it dependent on not rendering when scrolling
   );
 };

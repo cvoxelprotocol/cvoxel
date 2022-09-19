@@ -1,16 +1,14 @@
-import { FC, useCallback, useMemo, useState } from "react";
+import { FC, LegacyRef, useCallback, useMemo, useRef, useState } from "react";
 import { NoItemPresenter } from "../../common/NoItemPresenter";
 import CVoxelsPresenter from "../../CVoxel/CVoxelsPresenter";
-import type { CVoxelItem as ICVoxelItem } from "@/interfaces";
 import { useCVoxelsRecord } from "@/hooks/useCVoxel";
 import { CommonLoading } from "../../common/CommonLoading";
 import { VoxelListItem } from "@/components/CVoxel/VoxelListItem/VoxelListItem";
-import { useRouter } from "next/dist/client/router";
-import { NavBar } from "@/components/CVoxel/NavBar/NavBar";
 import { VoxelDetail } from "@/components/CVoxel/VoxelDetail/VoxelDetail";
-import { SearchData } from "@/components/common/search/Search";
 import { useCVoxelList } from "@/hooks/useCVoxelList";
 import { useStateForceUpdate } from "@/recoilstate";
+import { useIsTabletOrMobile } from "@/hooks/useIsTabletOrMobile";
+import { useVirtualizer } from "@tanstack/react-virtual";
 
 type UserCVoxelContainerProps = {
   did: string;
@@ -23,7 +21,8 @@ export const UserCVoxelContainer: FC<UserCVoxelContainerProps> = ({
   const CVoxelsRecords = useCVoxelsRecord(did);
 
   const sortCVoxels = useMemo(() => {
-    if (!(CVoxelsRecords.content && CVoxelsRecords.content.WorkCredentials)) return [];
+    if (!(CVoxelsRecords.content && CVoxelsRecords.content.WorkCredentials))
+      return [];
     return CVoxelsRecords.content.WorkCredentials.sort((a, b) => {
       return Number(a.issuedTimestamp) > Number(b.issuedTimestamp) ? -1 : 1;
     });
@@ -40,49 +39,152 @@ export const UserCVoxelContainer: FC<UserCVoxelContainerProps> = ({
   const [forceUpdateCVoxelList, setForceUpdateCVoxelList] =
     useStateForceUpdate();
   const forceReload = () => {
-    setForceUpdateCVoxelList(v => !v);
+    setForceUpdateCVoxelList((v) => !v);
   };
 
-  return useMemo(
-    () => (
-      <div className="max-w-[820px] mx-auto">
-        {!!currentVoxelID ? (
-          <div className="mt-6 px-2 sm:px-6">
-            <VoxelDetail
-              itemId={currentVoxelID}
-              offchainItems={offchainMetaList}
-              isOwner={false}
-              notifyUpdated={forceReload}
-            />
-          </div>
-        ) : did == "" ? (
-          <div className="mx-auto min-h-screen">
-            <NoItemPresenter text="Not searched yet" />
-          </div>
-        ) : (
-          <CVoxelsPresenter>
-            {CVoxelsRecords.isLoading && <CommonLoading />}
-            {!CVoxelsRecords.isLoading &&
-              sortCVoxels &&
-              sortCVoxels.map((item) => {
-                return <VoxelListItem key={item.id} item={item} />;
-              })}
-            {!CVoxelsRecords.isLoading && !CVoxelsRecords.content && (
-              <div className="mx-auto">
-                <NoItemPresenter text="No Voxels yet" />
+  const parentRef: LegacyRef<any> = useRef();
+
+  const { isTabletOrMobile } = useIsTabletOrMobile();
+
+  const rowVirtualizer = useVirtualizer({
+    count: sortCVoxels.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => ((isTabletOrMobile ? 15 : 13) + 1) * 16, // NOTE: (item + margin) * rem
+  });
+
+  return (
+    <div className="max-w-[820px] mx-auto">
+      {!!currentVoxelID ? (
+        <div className="mt-6 px-2 sm:px-6">
+          <VoxelDetail
+            itemId={currentVoxelID}
+            offchainItems={offchainMetaList}
+            isOwner={false}
+            notifyUpdated={forceReload}
+          />
+        </div>
+      ) : did == "" ? (
+        <div className="mx-auto min-h-screen">
+          <NoItemPresenter text="Not searched yet" />
+        </div>
+      ) : (
+        <CVoxelsPresenter>
+          {!CVoxelsRecords.isLoading && !CVoxelsRecords.content && (
+            <div className="mx-auto">
+              <NoItemPresenter text="No Voxels yet" />
+            </div>
+          )}
+
+          {CVoxelsRecords.isLoading && <CommonLoading />}
+
+          {!CVoxelsRecords.isLoading && sortCVoxels && (
+            <div ref={parentRef} className={"overflow-auto h-full w-full"}>
+              <div
+                style={{
+                  height: `${rowVirtualizer.getTotalSize() / 16}rem`,
+                  width: "100%",
+                  position: "relative",
+                }}
+              >
+                {rowVirtualizer.getVirtualItems().map((virtualItem, index) => (
+                  <div
+                    key={virtualItem.index}
+                    style={{
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      width: "100%",
+                      height: `${virtualItem.size / 16}rem`,
+                      transform: `translateY(${virtualItem.start / 16}rem)`,
+                    }}
+                  >
+                    <VoxelListItem
+                      key={sortCVoxels[virtualItem.index].id}
+                      item={sortCVoxels[virtualItem.index]}
+                    />
+                  </div>
+                ))}
               </div>
-            )}
-          </CVoxelsPresenter>
-        )}
-      </div>
-    ),
-    [
-      currentVoxel,
-      offchainMetaList,
-      CVoxelsRecords.isLoading,
-      CVoxelsRecords.content,
-      did,
-      forceUpdateCVoxelList,
-    ]
+            </div>
+          )}
+        </CVoxelsPresenter>
+      )}
+    </div>
   );
+
+  // return useMemo(
+  //   () => (
+  //     <div className="max-w-[820px] mx-auto">
+  //       {!!currentVoxelID ? (
+  //         <div className="mt-6 px-2 sm:px-6">
+  //           <VoxelDetail
+  //             itemId={currentVoxelID}
+  //             offchainItems={offchainMetaList}
+  //             isOwner={false}
+  //             notifyUpdated={forceReload}
+  //           />
+  //         </div>
+  //       ) : did == "" ? (
+  //         <div className="mx-auto min-h-screen">
+  //           <NoItemPresenter text="Not searched yet" />
+  //         </div>
+  //       ) : (
+  //         <CVoxelsPresenter>
+  //           {!CVoxelsRecords.isLoading && !CVoxelsRecords.content && (
+  //             <div className="mx-auto">
+  //               <NoItemPresenter text="No Voxels yet" />
+  //             </div>
+  //           )}
+  //
+  //           {CVoxelsRecords.isLoading && <CommonLoading />}
+  //
+  //           {!CVoxelsRecords.isLoading && sortCVoxels && (
+  //             <div ref={parentRef} className={"overflow-auto h-full w-full"}>
+  //               <div
+  //                 style={{
+  //                   height: `${rowVirtualizer.getTotalSize() / 16}rem`,
+  //                   width: "100%",
+  //                   position: "relative",
+  //                 }}
+  //               >
+  //                 {rowVirtualizer
+  //                   .getVirtualItems()
+  //                   .map((virtualItem, index) => (
+  //                     <div
+  //                       key={virtualItem.index}
+  //                       style={{
+  //                         position: "absolute",
+  //                         top: 0,
+  //                         left: 0,
+  //                         width: "100%",
+  //                         height: `${virtualItem.size / 16}rem`,
+  //                         transform: `translateY(${virtualItem.start / 16}rem)`,
+  //                       }}
+  //                     >
+  //                       {/*<div className="h-40">{virtualItem.index}</div>*/}
+  //                       <VoxelListItem
+  //                         key={sortCVoxels[virtualItem.index].id}
+  //                         item={sortCVoxels[virtualItem.index]}
+  //                       />
+  //                     </div>
+  //                   ))}
+  //               </div>
+  //             </div>
+  //           )}
+  //         </CVoxelsPresenter>
+  //       )}
+  //     </div>
+  //   ),
+  //   [
+  //     currentVoxel,
+  //     offchainMetaList,
+  //     CVoxelsRecords.isLoading,
+  //     CVoxelsRecords.content,
+  //     did,
+  //     forceUpdateCVoxelList,
+  //     sortCVoxels,
+  //     rowVirtualizer,
+  //     isTabletOrMobile,
+  //   ]
+  // );
 };
