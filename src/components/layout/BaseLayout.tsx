@@ -11,6 +11,8 @@ import { CVoxelDetailBox } from "@/components/CVoxel/CVoxelDetailBox";
 import { useIsClient } from "@/hooks/useIsClient";
 import { useThemeMode } from "@/hooks/useThemeMode";
 import { ThemeModeSelector } from "@/components/common/mode/ThemeSelector";
+import { useStateDeworkConnectModal } from "@/recoilstate";
+import { ConnectDeworkModal } from "../Dework/ConnectDeworkModal";
 
 config.autoAddCss = false;
 
@@ -27,6 +29,7 @@ export const BaseLayout = ({ children }: Props) => {
 
   const { isClient } = useIsClient();
   const { setThemeMode } = useThemeMode();
+  const [isDeworkConnectOpen, _] = useStateDeworkConnectModal();
 
   useEffect(() => {
     setThemeMode();
@@ -55,6 +58,9 @@ export const BaseLayout = ({ children }: Props) => {
       {isLoading && <LoadingModal />}
       <Toast />
       <Toaster />
+      {isDeworkConnectOpen && (
+          <ConnectDeworkModal />
+        )}
     </div>
   );
 };
