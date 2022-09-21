@@ -1,29 +1,33 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Organization",
     "type": "object",
-    "title": "Organization",
     "properties": {
       "admin": {
+        "title": "admin",
         "type": "string",
         "maxLength": 240
       },
       "name": {
+        "title": "name",
         "type": "string",
         "maxLength": 240
       },
-      "description": {
+      "desc": {
+        "title": "desc",
         "type": "string"
       },
       "icon": {
+        "title": "icon",
         "type": "string"
       },
       "orbisSocialGroupId": {
+        "title": "orbisSocialGroupId",
         "type": "string"
       },
       "createdAt": {
         "type": "string",
-        "title": "issuedAt",
-        "description": "CRDL issue date"
+        "title": "createdAt"
       }
     },
     "required": ["admin", "name"],

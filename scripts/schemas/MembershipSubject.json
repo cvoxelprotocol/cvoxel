@@ -4,14 +4,17 @@
     "title": "MembershipSubject",
     "properties": {
       "id": {
+        "title": "id",
         "type": "string",
         "maxLength": 240
       },
       "organizationId": {
+        "title": "organizationId",
         "type": "string",
         "maxLength": 240
       },
       "membershipId": {
+        "title": "membershipId",
         "type": "string",
         "maxLength": 240
       }

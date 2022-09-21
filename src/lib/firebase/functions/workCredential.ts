@@ -20,7 +20,6 @@ export const uploadCRDL = (
       },
     })
       .then((result) => {
-        console.log({ result });
         const { status } = result.data;
         resolve({ status: status });
       })

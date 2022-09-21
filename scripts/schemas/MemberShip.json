@@ -5,23 +5,26 @@
   "title": "Membership",
   "properties": {
     "organizationId": {
+      "title": "organizationId",
       "type": "string",
       "maxLength": 240
     },
     "name": {
+      "title": "name",
       "type": "string",
       "maxLength": 240
     },
-    "description": {
+    "desc": {
+      "title": "desc",
       "type": "string"
     },
     "icon": {
+      "title": "icon",
       "type": "string"
     },
     "createdAt": {
       "type": "string",
-      "title": "issuedAt",
-      "description": "CRDL issue date"
+      "title": "createdAt"
     }
   },
   "required": ["organizationId", "name"],

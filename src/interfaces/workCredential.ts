@@ -12,7 +12,7 @@ import { VerifiableWorkCredential } from "@/__generated__/types/VerifiableWorkCr
 import { HeldWorkCredentials } from "@/__generated__/types/HeldWorkCredentials";
 import { HeldVerifiableWorkCredentials } from "@/__generated__/types/HeldVerifiableWorkCredentials";
 import { Organization } from "@/__generated__/types/Organization";
-import { MemberShip } from "@/__generated__/types/MemberShip";
+import { Membership } from "@/__generated__/types/MemberShip";
 import { MembershipSubject } from "@/__generated__/types/MembershipSubject";
 
 export type WorkCredentialWithId = WorkCredential & {
@@ -39,7 +39,7 @@ export type ModelTypes = ModelTypeAliases<
     OldWorkCredentials: CVoxels;
     HeldVerifiableWorkCredentials: HeldVerifiableWorkCredentials;
     Organization: Organization;
-    MemberShip: MemberShip;
+    MemberShip: Membership;
     MembershipSubject: MembershipSubject;
   },
   {

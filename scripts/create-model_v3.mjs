@@ -9,9 +9,12 @@ import { Ed25519Provider } from 'key-did-provider-ed25519'
 import { getResolver } from 'key-did-resolver'
 import { fromString } from 'uint8arrays'
 import dotenv from 'dotenv'
-import {WorkCredentialSchema, VerifiableCredentialSchema, Organization, MemberShip, MembershipSubject} from "./schema.mjs"
+import {WorkCredentialSchema, VerifiableCredentialSchema} from "./schema.mjs"
 import { model as OldWorkCredentialModel } from './models/OldWorkCredentials/dist/index.mjs'
 import { compile } from 'json-schema-to-typescript'
+import Organization from "./schemas/Organization.json" assert { type: "json" }
+import MemberShip from "./schemas/MemberShip.json" assert { type: "json" }
+import MembershipSubject from "./schemas/MembershipSubject.json" assert { type: "json" }
 
 dotenv.config();
 

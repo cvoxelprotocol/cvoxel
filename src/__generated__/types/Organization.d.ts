@@ -5,6 +5,19 @@
  * and run json-schema-to-typescript to regenerate this file.
  */
 
+export type Admin = string;
+export type Name = string;
+export type Desc = string;
+export type Icon = string;
+export type OrbisSocialGroupId = string;
+export type CreatedAt = string;
+
 export interface Organization {
+  admin: Admin;
+  name: Name;
+  desc?: Desc;
+  icon?: Icon;
+  orbisSocialGroupId?: OrbisSocialGroupId;
+  createdAt?: CreatedAt;
   [k: string]: unknown;
 }

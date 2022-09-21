@@ -76,7 +76,6 @@ export const getEIP712WorkCredentialSubjectSignature = async (
     address,
     JSON.stringify(credentialTypedData),
   ]);
-  console.log({ signature });
   return signature;
 };
 

@@ -75,7 +75,6 @@ export const useWorkCredentials = (did?: string) => {
       promiseArr.push(loadPromise);
     }
     const res = await Promise.all(promiseArr);
-    console.log({ res });
     return res.map((r) => {
       const crdl: WorkCredentialWithId = {
         ...r.content,

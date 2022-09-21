@@ -84,8 +84,6 @@ export class WorkCredentialService {
       existedItem
     );
 
-    console.log({ metaDraft });
-
     const docUrl = await this.storeWorkCredential(metaDraft);
     return docUrl;
   };
@@ -113,14 +111,8 @@ export class WorkCredentialService {
     contentId: string
   ): Promise<void> => {
     const heldWorkCredentials = await selfID.get("heldWorkCredentials");
-
-    console.log({ heldWorkCredentials });
-    console.log({ contentId });
-
     const workCRDLs = heldWorkCredentials?.held ?? [];
     const updatedCredentails = [...workCRDLs, contentId];
-
-    console.log({ updatedCredentails });
     await selfID.set("heldWorkCredentials", { held: updatedCredentails });
   };
 
@@ -316,14 +308,11 @@ export class WorkCredentialService {
 
   update = async (id: string, newItem: WorkCredential) => {
     if (!this.selfID) return;
-    console.log({ id });
-    console.log({ newItem });
     const nowTimestamp = convertDateToTimestampStr(new Date());
     const doc = await TileDocument.load<WorkCredential>(
       this.selfID.client.ceramic,
       id
     );
-    console.log({ doc });
     if (doc) {
       await doc.update({ ...newItem, updatedAt: nowTimestamp });
       await uploadCRDL({ ...newItem, backupId: id });
