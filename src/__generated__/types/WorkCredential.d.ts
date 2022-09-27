@@ -54,6 +54,10 @@ export type DeliverableHash = string;
  */
 export type IssuedAt = string;
 /**
+ * organization Id if exist
+ */
+export type Organization = string;
+/**
  * hash of the transaction
  */
 export type TxHash = string;
@@ -167,6 +171,7 @@ export interface Work {
   platform?: Platform;
   deliverableHash?: DeliverableHash;
   issuedAt: IssuedAt;
+  organization?: Organization;
   [k: string]: unknown;
 }
 export interface Transaction {

@@ -69,6 +69,11 @@
       "type": "string",
       "title": "issuedAt",
       "description": "CRDL issue date"
+    },
+    "organization": {
+      "type": "string",
+      "title": "organization",
+      "description": "organization Id if exist"
     }
   },
   "required": ["id", "summary", "issuedAt"],
