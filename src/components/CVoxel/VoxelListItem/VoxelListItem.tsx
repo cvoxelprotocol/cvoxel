@@ -9,8 +9,8 @@ import { convertTimestampToDateStr } from "@/utils/dateUtil";
 import clsx from "clsx";
 import Link from "next/link";
 import { useRouter } from "next/dist/client/router";
-import { TxDirection } from "@/components/common/TxDirection";
 import { WorkCredentialWithId } from "@/interfaces";
+import { CredentialDirection } from "@/components/common/CredentialDirection";
 
 type Props = {
   workCredential: WorkCredentialWithId;
@@ -53,10 +53,9 @@ export const VoxelListItem: FC<Props> = ({ workCredential }) => {
         </div>
         <div className=" flex-auto text-left p-4 space-y-3">
           <div className="flex justify-between">
-            <TxDirection
-              from={subject?.tx?.from}
-              to={subject?.tx?.to}
-              isPayer={subject?.tx?.isPayer || false}
+            <CredentialDirection
+              holder={subject.work?.id}
+              client={subject.client}
             />
             {subject?.work?.issuedAt && (
               <div className="text-light-on-surface dark:text-dark-on-surface text-sm">
@@ -129,10 +128,9 @@ export const VoxelListItem: FC<Props> = ({ workCredential }) => {
           {/*</div>*/}
 
           <div className="absolute right-2 top-2">
-            <TxDirection
-              from={subject?.tx?.from}
-              to={subject?.tx?.to}
-              isPayer={subject?.tx?.isPayer || false}
+            <CredentialDirection
+              holder={subject.work?.id}
+              client={subject.client}
             />
           </div>
         </div>

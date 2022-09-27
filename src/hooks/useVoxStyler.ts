@@ -79,8 +79,8 @@ export const useVoxStyler = () => {
         };
         const { signature } = voxel;
         const { work, deliverables } = voxel.subject;
-        const holderSig = signature?.holderSig;
-        const partnerSig = signature?.partnerSig;
+        const holderSig = signature?.holderSig || "";
+        const partnerSig = signature?.partnerSig || "";
         const genre = work?.genre;
 
         let hue, lightness, saturation: number;

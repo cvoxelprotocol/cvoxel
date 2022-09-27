@@ -1,11 +1,11 @@
-import { isDIDstring, RequestClient } from "@self.id/framework";
+import { RequestClient } from "@self.id/framework";
 import { RequestState } from "@self.id/framework";
 import type { GetServerSidePropsContext } from "next";
 
 import { CERAMIC_URL } from "@/constants/common";
 import { cVoxelModel } from "@/lib/ceramic/dataModel";
 import type { ModelTypes } from "@/interfaces";
-import { isSupportedDID } from "../../utils/ceramicUtils";
+import { isDIDstring, isSupportedDID } from "../../utils/ceramicUtils";
 import { Core } from "@self.id/framework";
 
 export const core = new Core({

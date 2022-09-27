@@ -156,6 +156,7 @@ export const WORK_EIP712_TYPE: TypedData[] = [
   { name: "endTimestamp", type: "string" },
   { name: "platform", type: "string" },
   { name: "deliverableHash", type: "string" },
+  { name: "organization", type: "string" },
   { name: "issuedAt", type: "string" },
 ];
 

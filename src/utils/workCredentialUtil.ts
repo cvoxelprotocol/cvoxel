@@ -31,9 +31,9 @@ export const convertV1DataToCRDL = (
     return null;
   }
   const isPayee = address.toLowerCase() === v1.to.toLowerCase();
-  const holderSig = isPayee ? v1.toSig : v1.fromSig;
-  const partnerSig = isPayee ? v1.fromSig : v1.toSig;
-  const partnerSigner = isPayee ? v1.fromSigner : v1.toSigner;
+  const holderSig = isPayee ? v1.toSig || "" : v1.fromSig || "";
+  const partnerSig = isPayee ? v1.fromSig || "" : v1.toSig || "";
+  const partnerSigner = isPayee ? v1.fromSigner || "" : v1.toSigner || "";
 
   const client: Client = {
     format: "DID",
@@ -85,6 +85,8 @@ export const convertV1DataToCRDL = (
     holderSig: holderSig,
     partnerSigner: partnerSigner,
     partnerSig: partnerSig,
+    agentSig: "",
+    agentSigner: "",
   });
   const crdl: WorkCredentialWithId = removeUndefined<WorkCredentialWithId>({
     id: work.id,
@@ -109,9 +111,9 @@ export const convertV1DataToCRDLOnCeramic = (
     return null;
   }
   const isPayee = address.toLowerCase() === v1.to.toLowerCase();
-  const holderSig = isPayee ? v1.toSig : v1.fromSig;
-  const partnerSig = isPayee ? v1.fromSig : v1.toSig;
-  const partnerSigner = isPayee ? v1.fromSigner : v1.toSigner;
+  const holderSig = isPayee ? v1.toSig || "" : v1.fromSig || "";
+  const partnerSig = isPayee ? v1.fromSig || "" : v1.toSig || "";
+  const partnerSigner = isPayee ? v1.fromSigner || "" : v1.toSigner || "";
 
   if (!holderSig) return null;
 
@@ -165,6 +167,8 @@ export const convertV1DataToCRDLOnCeramic = (
     holderSig: holderSig,
     partnerSigner: partnerSigner || "",
     partnerSig: partnerSig || "",
+    agentSig: "",
+    agentSigner: "",
   });
 
   const crdl: WorkCredentialWithId = removeUndefined<WorkCredentialWithId>({

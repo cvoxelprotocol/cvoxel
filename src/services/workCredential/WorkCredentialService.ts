@@ -8,7 +8,6 @@ import {
 } from "@/interfaces";
 import { getFiat } from "@/lib/firebase/functions/fiat";
 import { getNetworkSymbol } from "@/utils/networkUtil";
-import { SelfID } from "@self.id/web";
 import { convertDateToTimestampStr } from "@/utils/dateUtil";
 import { getPkhDIDFromAddress } from "@/utils/ceramicUtils";
 import { createTileDocument, getSchema } from "./CeramicHelper";
@@ -25,6 +24,12 @@ import {
   WorkCredential,
   WorkSubject,
 } from "@/__generated__/types/WorkCredential";
+import { CeramicClient } from "@ceramicnetwork/http-client";
+import { DIDDataStore } from "@glazed/did-datastore";
+import { aliases } from "@/__generated__/aliases";
+import { DID } from "dids";
+import { HeldWorkCredentials } from "@/__generated__/types/HeldWorkCredentials";
+import { Organization } from "@/__generated__/types/Organization";
 
 type MigrateDataType = {
   v1: CVoxelItem;
@@ -32,32 +37,65 @@ type MigrateDataType = {
   succeeded: boolean;
 };
 
-export class WorkCredentialService {
-  selfID = undefined as SelfID<ModelTypes> | undefined | null;
-  provider = undefined as Web3Provider | undefined;
+export type IssueFromTXParam = {
+  address: string;
+  selectedTx: TransactionLogWithChainId;
+  summary: string;
+  detail?: string;
+  deliverables?: DeliverableItem[];
+  relatedAddresses?: string[];
+  genre?: string;
+  tags?: string[];
+  existedItem?: WorkCredentialWithId;
+};
 
-  constructor(selfID?: SelfID<ModelTypes>, provider?: Web3Provider) {
-    this.selfID = selfID;
+export class WorkCredentialService {
+  did = undefined as DID | undefined;
+  provider = undefined as Web3Provider | undefined;
+  client = undefined as CeramicClient | undefined;
+  dataStore = undefined as DIDDataStore<ModelTypes> | undefined;
+
+  constructor(did?: DID, provider?: Web3Provider, client?: CeramicClient) {
+    this.did = did;
     this.provider = provider;
+    this.client = client;
+    if (client && did) {
+      this.dataStore = new DIDDataStore({
+        ceramic: client,
+        model: aliases,
+        id: did.parent,
+      });
+    }
   }
 
-  setProvider(selfID?: SelfID<ModelTypes>, provider?: Web3Provider) {
-    this.selfID = selfID;
+  setProvider(did?: DID, provider?: Web3Provider, client?: CeramicClient) {
+    this.did = did;
     this.provider = provider;
+    this.client = client;
+    if (client && did) {
+      this.dataStore = new DIDDataStore({
+        ceramic: client,
+        model: aliases,
+        id: did.parent,
+      });
+    }
   }
 
   uploadFromTX = async (
-    address: string,
-    selectedTx: TransactionLogWithChainId,
-    summary: string,
-    detail?: string,
-    deliverables?: DeliverableItem[],
-    relatedAddresses?: string[],
-    genre?: string,
-    tags?: string[],
-    existedItem?: WorkCredentialWithId
+    param: IssueFromTXParam
   ): Promise<string | undefined> => {
-    if (!this.selfID) return;
+    if (!this.did) return;
+    const {
+      address,
+      summary,
+      detail,
+      deliverables,
+      relatedAddresses,
+      genre,
+      tags,
+      selectedTx,
+      existedItem,
+    } = param;
 
     const fiat =
       existedItem && existedItem.subject.tx?.fiatValue
@@ -70,7 +108,7 @@ export class WorkCredentialService {
           );
 
     const metaDraft = await this.createWorkCredential(
-      this.selfID.id,
+      this.did.parent,
       address,
       selectedTx,
       summary,
@@ -83,7 +121,6 @@ export class WorkCredentialService {
       "0",
       existedItem
     );
-
     const docUrl = await this.storeWorkCredential(metaDraft);
     return docUrl;
   };
@@ -91,29 +128,48 @@ export class WorkCredentialService {
   storeWorkCredential = async (
     content: WorkCredential
   ): Promise<string | undefined> => {
-    if (!this.selfID) return undefined;
+    if (!this.client || !this.did) return undefined;
     const doc = await createTileDocument<WorkCredential>(
-      this.selfID,
+      this.client,
+      this.did.parent,
       content,
       getSchema("WorkCredential")
     );
     if (!doc) return undefined;
     const docUrl = doc.id.toUrl();
     const crdl: WorkCredentialWithId = { ...content, backupId: docUrl };
-    const setHeldWC = this.setHeldWorkCredentials(this.selfID, docUrl);
+    const setHeldWC = this.setHeldWorkCredential(docUrl);
     const uploadBackup = uploadCRDL(crdl);
     await Promise.all([setHeldWC, uploadBackup]);
     return docUrl;
   };
 
-  setHeldWorkCredentials = async (
-    selfID: SelfID<ModelTypes>,
-    contentId: string
-  ): Promise<void> => {
-    const heldWorkCredentials = await selfID.get("heldWorkCredentials");
+  setHeldWorkCredential = async (contentId: string): Promise<void> => {
+    if (!this.dataStore || !this.did) return undefined;
+    const heldWorkCredentials = await this.dataStore.get<
+      "heldWorkCredentials",
+      HeldWorkCredentials
+    >("heldWorkCredentials", this.did.parent);
     const workCRDLs = heldWorkCredentials?.held ?? [];
     const updatedCredentails = [...workCRDLs, contentId];
-    await selfID.set("heldWorkCredentials", { held: updatedCredentails });
+    await this.dataStore.set("heldWorkCredentials", {
+      held: updatedCredentails,
+    });
+  };
+
+  setMultipleHeldWorkCredentials = async (
+    contentIds: string[]
+  ): Promise<void> => {
+    if (!this.dataStore || !this.did) return undefined;
+    const heldWorkCredentials = await this.dataStore.get<
+      "heldWorkCredentials",
+      HeldWorkCredentials
+    >("heldWorkCredentials", this.did.parent);
+    const workCRDLs = heldWorkCredentials?.held ?? [];
+    const updatedCredentails = [...workCRDLs, ...contentIds];
+    await this.dataStore.set("heldWorkCredentials", {
+      held: updatedCredentails,
+    });
   };
 
   createWorkCredential = async (
@@ -204,6 +260,7 @@ export class WorkCredentialService {
         endTimestamp: "",
         platform: "",
         deliverableHash: "",
+        organization: "",
         issuedAt: nowTimestamp,
       };
 
@@ -235,17 +292,16 @@ export class WorkCredentialService {
   };
 
   executeMigration = async (address: string): Promise<void> => {
-    if (!this.selfID) return;
+    if (!this.dataStore || !this.did) return;
     console.log("executeMigration start");
-    const v1 = await this.selfID.get("OldWorkCredentials");
+    const v1 = await this.dataStore.get("OldWorkCredentials", this.did.parent);
     if (v1?.WorkCredentials && v1.WorkCredentials.length > 0) {
       await this.migrate(v1.WorkCredentials, address);
     }
   };
 
   migrate = async (items: CVoxelItem[], address: string): Promise<void> => {
-    if (!this.selfID) return;
-    if (!this.selfID?.client.ceramic) return;
+    if (!this.dataStore || !this.did) return;
     let migrateExecute: Promise<MigrateDataType>[] = [];
     for (const item of items) {
       const migrateCeramicPromise = this.migrateWorkCredential(item, address);
@@ -263,18 +319,23 @@ export class WorkCredentialService {
       }
     }
 
-    const heldWorkCredentials = await this.selfID.get("heldWorkCredentials");
+    const heldWorkCredentials = await this.dataStore.get(
+      "heldWorkCredentials",
+      this.did.parent
+    );
 
     const workCRDLs = heldWorkCredentials?.held ?? [];
     const updatedCredentails = [...workCRDLs, ...v2Ids];
     // mirgate heldWorkCredentials
-    await this.selfID.set("heldWorkCredentials", { held: updatedCredentails });
+    await this.dataStore.set("heldWorkCredentials", {
+      held: updatedCredentails,
+    });
 
     // delete v1 data
     const remainCRDLs = items.filter((item) =>
       migrateFailureItems.includes(item.id)
     );
-    await this.selfID.set("OldWorkCredentials", {
+    await this.dataStore.set("OldWorkCredentials", {
       WorkCredentials: remainCRDLs,
     });
 
@@ -285,18 +346,14 @@ export class WorkCredentialService {
     v1Data: CVoxelItem,
     address: string
   ): Promise<MigrateDataType> => {
-    if (!this.selfID) return { v1: v1Data, v2: undefined, succeeded: false };
-    if (!this.selfID?.client.ceramic)
-      return { v1: v1Data, v2: undefined, succeeded: false };
-    const v1 = await TileDocument.load<CVoxel>(
-      this.selfID?.client.ceramic,
-      v1Data.id
-    );
+    if (!this.client) return { v1: v1Data, v2: undefined, succeeded: false };
+    const v1 = await TileDocument.load<CVoxel>(this.client, v1Data.id);
     const v2 = convertV1DataToCRDLOnCeramic(v1.content, address);
     if (!v2) return { v1: v1Data, v2: undefined, succeeded: false };
 
     const doc = await createTileDocument<WorkCredential>(
-      this.selfID,
+      this.client,
+      getPkhDIDFromAddress(address),
       v2,
       getSchema("WorkCredential")
     );
@@ -307,12 +364,9 @@ export class WorkCredentialService {
   };
 
   update = async (id: string, newItem: WorkCredential) => {
-    if (!this.selfID) return;
+    if (!this.client) return;
     const nowTimestamp = convertDateToTimestampStr(new Date());
-    const doc = await TileDocument.load<WorkCredential>(
-      this.selfID.client.ceramic,
-      id
-    );
+    const doc = await TileDocument.load<WorkCredential>(this.client, id);
     if (doc) {
       await doc.update({ ...newItem, updatedAt: nowTimestamp });
       await uploadCRDL({ ...newItem, backupId: id });
@@ -341,6 +395,39 @@ export class WorkCredentialService {
     };
     await uploadCRDL({ ...crdl, backupId: id });
     return crdl;
+  };
+
+  fetchWorkCredentials = async (
+    did?: string
+  ): Promise<WorkCredentialWithId[]> => {
+    if (!did) return [];
+    const ceramic = this.client || new CeramicClient();
+    const dataStore = new DIDDataStore({ ceramic, model: aliases });
+    const HeldWorkCredentials = await dataStore.get<
+      "heldWorkCredentials",
+      HeldWorkCredentials
+    >("heldWorkCredentials", did);
+    if (!HeldWorkCredentials?.held) return [];
+    const promiseArr = [];
+    for (const id of HeldWorkCredentials.held) {
+      const loadPromise = TileDocument.load<WorkCredential>(ceramic, id);
+      promiseArr.push(loadPromise);
+    }
+    const res = await Promise.all(promiseArr);
+    return res.map((r) => {
+      const crdl: WorkCredentialWithId = {
+        ...r.content,
+        backupId: r.id.toString(),
+      };
+      return crdl;
+    });
+  };
+
+  fetchOrganization = async (orgId?: string): Promise<Organization | null> => {
+    if (!orgId) return null;
+    const ceramic = this.client || new CeramicClient();
+    const doc = await TileDocument.load<Organization>(ceramic, orgId);
+    return doc.content;
   };
 }
 

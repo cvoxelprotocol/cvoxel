@@ -1,23 +1,24 @@
-import { AliasTypes, ModelTypes } from "@/interfaces";
+import { AliasTypes } from "@/interfaces";
 import { aliases } from "@/__generated__/aliases";
+import { CeramicClient } from "@ceramicnetwork/http-client";
 import { TileDocument } from "@ceramicnetwork/stream-tile";
-import { SelfID } from "@self.id/web";
 
 export const getSchema = (alias: AliasTypes): string => {
   return aliases.schemas[alias];
 };
 
 export const createTileDocument = async <T>(
-  selfID: SelfID<ModelTypes>,
+  client: CeramicClient,
+  did: string,
   content: T,
   schema: string,
   tags: string[] = ["vess", "workCredential"],
   family = "VESS"
 ): Promise<TileDocument<T> | null> => {
   try {
-    let doc = await TileDocument.create(selfID.client.ceramic, content, {
+    let doc = await TileDocument.create(client, content, {
       family: family,
-      controllers: [selfID.id],
+      controllers: [did],
       tags: tags,
       schema: schema,
     });
@@ -29,7 +30,8 @@ export const createTileDocument = async <T>(
 };
 
 export const updateTileDocument = async <T>(
-  selfID: SelfID<ModelTypes>,
+  client: CeramicClient,
+  did: string,
   streamId: string,
   content: T,
   schema: string,
@@ -38,10 +40,10 @@ export const updateTileDocument = async <T>(
 ) => {
   let doc;
   try {
-    doc = await TileDocument.load(selfID.client.ceramic, streamId);
+    doc = await TileDocument.load(client, streamId);
     await doc.update(content, {
       family: family,
-      controllers: [selfID.id],
+      controllers: [did],
       tags: tags,
       schema: schema,
     });

@@ -7,6 +7,7 @@ import {
   Transaction,
   Work,
   WorkCredential,
+  WorkSubject,
 } from "@/__generated__/types/WorkCredential";
 import { VerifiableWorkCredential } from "@/__generated__/types/VerifiableWorkCredential";
 import { HeldWorkCredentials } from "@/__generated__/types/HeldWorkCredentials";
@@ -26,6 +27,11 @@ export type WorkCredentialForm = Work &
     deliverableLink?: string;
     deliverableCID?: string;
   };
+
+export type WorkSubjectFromDework = WorkSubject & {
+  streamId?: string;
+  taskId?: string;
+};
 
 export type ModelTypes = ModelTypeAliases<
   {

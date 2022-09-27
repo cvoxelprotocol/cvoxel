@@ -70,8 +70,6 @@ export const TransactionListContainer: FC<TransactionListContainerProps> = ({
         resetUploadStatus();
         setTabState("cvoxels");
         setScreenState("info")
-        setForceUpdateCVoxelList(v => !v);
-        refetch()
         router.push(`/${did}/?voxel=${result}`)
       }
   };

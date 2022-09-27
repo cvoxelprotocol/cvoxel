@@ -1,7 +1,5 @@
 import type { ModelTypesToAliases } from "@glazed/types";
-import { Provider as SelfIDProvider } from "@self.id/framework";
 import type { AppProps } from "next/app";
-import { CERAMIC_NETWORK, CERAMIC_URL } from "@/constants/common";
 import { cVoxelModel } from "@/lib/ceramic/dataModel";
 import type { ModelTypes } from "../interfaces";
 import "tailwindcss/tailwind.css";
@@ -16,6 +14,7 @@ import { useEffect } from "react";
 import Router from "next/router";
 import { LoadingModal } from "@/components/common/LoadingModal";
 import { DIDContextProvider } from "@/context/DIDContext";
+import type { DehydratedState } from 'react-query';
 
 const aliases: ModelTypesToAliases<ModelTypes> = cVoxelModel;
 
@@ -25,7 +24,7 @@ function getLibrary(provider: any): Web3Provider {
   return library;
 }
 
-export default function App({ Component, pageProps }: AppProps) {
+export default function App({ Component, pageProps }: AppProps<{ dehydratedState: DehydratedState }>) {
   const [queryClient] = useState(
     () =>
       new QueryClient({
@@ -38,7 +37,7 @@ export default function App({ Component, pageProps }: AppProps) {
       })
   );
 
-  const { state, ...props } = pageProps;
+  const { ...props } = pageProps;
   const [isLoading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -63,17 +62,7 @@ export default function App({ Component, pageProps }: AppProps) {
       <Web3ReactProvider getLibrary={getLibrary}>
         <QueryClientProvider client={queryClient}>
           <Hydrate state={pageProps.dehydratedState}>
-            <SelfIDProvider
-              client={{
-                ceramic: CERAMIC_URL,
-                connectNetwork: CERAMIC_NETWORK,
-                aliases,
-                session: true
-              }}
-              state={state}
-              session={true}
-            >
-                <ThemeProvider attribute="class" defaultTheme={"light"}>
+          <ThemeProvider attribute="class" defaultTheme={"light"}>
                   <DIDContextProvider >
                     <BaseLayout>
                       <Component {...props} />
@@ -81,7 +70,6 @@ export default function App({ Component, pageProps }: AppProps) {
                   </DIDContextProvider>
                   {isLoading && <LoadingModal />}
                 </ThemeProvider>
-            </SelfIDProvider>
           </Hydrate>
         </QueryClientProvider>
       </Web3ReactProvider>

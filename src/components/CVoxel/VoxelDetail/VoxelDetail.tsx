@@ -8,8 +8,6 @@ import {
 import { GenreBadge } from "@/components/common/badge/GenreBadge";
 import { getGenre } from "@/utils/genreUtil";
 import { TagBadge } from "@/components/common/badge/TagBadge";
-import { NamePlate } from "@/components/common/NamePlate";
-import LeftArrow from "@/components/CVoxel/VoxelListItem/left-arrow.svg";
 import RightArrow from "@/components/CVoxel/VoxelListItem/right-arrow.svg";
 import { shortenStr } from "@/utils/objectUtil";
 import { Button } from "@/components/common/button/Button";
@@ -18,13 +16,13 @@ import { faExternalLink } from "@fortawesome/free-solid-svg-icons";
 import { getExploreLink } from "@/utils/etherscanUtils";
 import { ShareButton } from "@/components/common/button/shareButton/ShareButton";
 import { formatBigNumber } from "@/utils/ethersUtil";
-import { getAddressFromPkhDID } from "@/utils/ceramicUtils";
 import { DIDContext } from "@/context/DIDContext";
 import { CopyRequestURLButton } from "./CopyRequestURLButton";
 import { useWorkCredential, useWorkCredentialRecord } from "@/hooks/useWorkCredential";
 import { WorkCredentialWithId } from "@/interfaces";
 import { WorkCredential } from "@/__generated__/types/WorkCredential";
 import { useOffchainItem } from "@/hooks/useOffchainList";
+import { UserPlate } from "@/components/common/UserPlate";
 
 type Props = {
   itemId: string;
@@ -45,7 +43,7 @@ export const VoxelDetail: FC<Props> = ({
   
   const detailItem = useMemo(() => {
     return item.content || null;
-  }, [item.content, item]);
+  }, [item.content]);
 
   const {getOffchainItem} = useOffchainItem()
 
@@ -58,7 +56,7 @@ export const VoxelDetail: FC<Props> = ({
         setOffchainItem(existed)
         return
       }
-      const offchain = await getOffchainItem(id)
+      const offchain = await getOffchainItem(id.replace("ceramic://", ""))
       setOffchainItem(offchain)
     }
     if(!offchainItem && detailItem){
@@ -111,46 +109,41 @@ export const VoxelDetail: FC<Props> = ({
     return detailItem?.subject.work?.id
   },[detailItem])
 
-  const partnerDID = useMemo(() => {
-    if(!detailItem) return ""
-    return detailItem.subject.client?.value
+  const client = useMemo(() => {
+    if(!detailItem) return
+    return detailItem.subject.client
   },[detailItem])
-
-  const isPayer = useMemo(() => {
-    return detailItem?.subject.tx ? detailItem?.subject.tx?.isPayer : false
-  },[detailItem?.subject.tx])
 
   // component
   const PcDirection = () => {
     return <div className="flex items-center space-x-3">
-      <NamePlate
-        did={holderDID}
+      <UserPlate
+        client={{format: "DID", value: holderDID}}
         isMe={holderDID == myDid}
         hasBackgroundColor
       />
-      {isPayer ? (
-        <RightArrow />
-      ): (
-        <LeftArrow />
-      )}
-      <NamePlate did={partnerDID} address={partnerDID ? getAddressFromPkhDID(partnerDID) : ""}/>
+      <RightArrow />
+      <UserPlate
+        client={client}
+        hasBackgroundColor
+      />
   </div>
   };
 
   const SpDirection = () => {
     return <div className="flex items-center space-x-3">
-        <NamePlate
-          did={holderDID}
-          isMe={holderDID == myDid}
-          hasBackgroundColor
-          withoutIcon
-        />
-        {isPayer ? (
-          <RightArrow />
-        ): (
-          <LeftArrow />
-        )}
-        <NamePlate did={partnerDID} address={partnerDID ? getAddressFromPkhDID(partnerDID) : ""} withoutIcon />
+      <UserPlate
+        client={{format: "DID", value: holderDID}}
+        isMe={holderDID == myDid}
+        hasBackgroundColor
+        withoutIcon
+      />
+        <RightArrow />
+        <UserPlate
+        client={client}
+        hasBackgroundColor
+        withoutIcon
+      />
     </div>
   };
 
@@ -207,7 +200,7 @@ export const VoxelDetail: FC<Props> = ({
       <div className="px-3 sm:px-8 pb-3 lg:py-8 text-left space-y-8">
         <div>
           <p className="mb-2 text-light-on-surface-variant dark:text-light-on-surface-variant font-medium">
-            PAYER & PAYEE
+            HOLDER & CLIENT
           </p>
           <div className="hidden lg:block">
             <PcDirection />

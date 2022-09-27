@@ -1,5 +1,4 @@
 import { useMyCeramicAcount } from "@/hooks/useCeramicAcount";
-import { formatDID } from "@self.id/framework";
 import { AvatarPlaceholder } from "@/components/common/avatar/AvatarPlaceholder";
 import { DropButton } from "grommet";
 import { useContext, useState,useEffect } from "react";
@@ -10,7 +9,8 @@ import { Button } from "@/components/common/button/Button";
 import { useRouter } from "next/router";
 import { useWalletAccount } from "@/hooks/useWalletAccount";
 import { DIDContext } from "@/context/DIDContext";
-import { useStateDeworkConnectModal } from "@/recoilstate";
+import { useDework } from "@/hooks/useDework";
+import { formatDID } from "@/utils/ceramicUtils";
 
 type MenuButtonProps = {
   label: string;
@@ -35,8 +35,9 @@ export default function AccountButton() {
   const {did, account, connection,loggedIn} = useContext(DIDContext)
   const { connectWallet, disconnectWallet } = useWalletAccount();
   const [isMenuOpen, setMenuOpen] = useState(false);
-  const [_, setDeworkConnectOpen] = useStateDeworkConnectModal();
+  
   const router = useRouter();
+  const {deworkAuth,setDeworkConnectOpen, setDeworkTaskListOpen} = useDework()
 
   const goToMypage = () => {
     if (!did && !account) return;
@@ -63,7 +64,11 @@ export default function AccountButton() {
     const buttons =
     <>
       <MenuButton label="My Page" onClick={() => goToMypage()} />
-      <MenuButton label="Connect Dework" onClick={() => setDeworkConnectOpen(true)} />
+      {deworkAuth ? (
+        <MenuButton label="Dework TaskList" onClick={() => setDeworkTaskListOpen(true)} />
+      ): (
+        <MenuButton label="Connect Dework" onClick={() => setDeworkConnectOpen(true)} />
+      )}
       <MenuButton label="Disconnect" onClick={() => disconnectWallet()} />
     </>
 

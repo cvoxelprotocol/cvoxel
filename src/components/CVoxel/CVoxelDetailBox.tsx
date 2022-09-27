@@ -10,10 +10,10 @@ import { useStateCredentialDetailBox } from "@/recoilstate";
 import { Canvas } from "@react-three/fiber";
 import clsx from "clsx";
 import { ShareButton } from "@/components/common/button/shareButton/ShareButton";
-import { TxDirection } from "@/components/common/TxDirection";
 import { useWalletAccount } from "@/hooks/useWalletAccount";
 import { OneVoxelVisualizerPresenter } from "./OneVoxelVisualizerPresenter";
 import { useWorkCredentialRecord } from "@/hooks/useWorkCredential";
+import { CredentialDirection } from "../common/CredentialDirection";
 
 export const CVoxelDetailBox: FC<{}> = () => {
   const [box] = useStateCredentialDetailBox();
@@ -34,24 +34,6 @@ export const CVoxelDetailBox: FC<{}> = () => {
     const {tx} = detailItem.subject
     return tx?.from?.toLowerCase() === account.toLowerCase() || tx?.to?.toLowerCase() === account.toLowerCase()
   },[account,detailItem])
-
-  // const { ens: fromEns, ensLoading: fromEnsLoading } = useENS(detailItem?.from);
-  // const { ens: toEns, ensLoading: toEnsLoading } = useENS(detailItem?.to);
-
-  // const offchainItem = useMemo(() => {
-  //   return box?.offchainItems?.find(
-  //     (offchain) => offchain.txHash === box?.item.txHash
-  //   );
-  // }, [box?.offchainItems, box?.item]);
-
-  // const fiatVal = useMemo(() => {
-  //   if (detailItem && detailItem.fiatValue) {
-  //     return detailItem.fiatValue;
-  //   } else if (offchainItem && offchainItem.fiatValue) {
-  //     return offchainItem.fiatValue;
-  //   }
-  //   return null;
-  // }, [detailItem, offchainItem]);
 
   const [isShow, setIsShow] = useState<boolean>(false);
   const [isMount, setIsMount] = useState<boolean>(false);
@@ -139,10 +121,9 @@ export const CVoxelDetailBox: FC<{}> = () => {
           </div>
 
           <div className="absolute bottom-2 right-0 left-0 flex justify-center">
-            <TxDirection
-              isPayer={detailItem?.subject.tx?.isPayer ?? false}
-              from={detailItem?.subject.tx?.from}
-              to={detailItem?.subject.tx?.to}
+          <CredentialDirection
+              holder={detailItem?.subject.work?.id}
+              client={detailItem?.subject.client}
             />
           </div>
         </div>

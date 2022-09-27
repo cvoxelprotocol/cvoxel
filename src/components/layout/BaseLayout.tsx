@@ -1,5 +1,4 @@
 import React, { ReactNode, useEffect } from "react";
-import { config } from "@fortawesome/fontawesome-svg-core";
 import { Header } from "./Header";
 import { useModal } from "@/hooks/useModal";
 import { LoadingModal } from "@/components/common/LoadingModal";
@@ -11,10 +10,10 @@ import { CVoxelDetailBox } from "@/components/CVoxel/CVoxelDetailBox";
 import { useIsClient } from "@/hooks/useIsClient";
 import { useThemeMode } from "@/hooks/useThemeMode";
 import { ThemeModeSelector } from "@/components/common/mode/ThemeSelector";
-import { useStateDeworkConnectModal } from "@/recoilstate";
-import { ConnectDeworkModal } from "../Dework/ConnectDeworkModal";
-
-config.autoAddCss = false;
+import { DeworkModal } from "../Dework/DeworkModal";
+import { ConnectDeworkCard } from "../Dework/ConnectDeworkCard";
+import { DeworkTaskList } from "../Dework/DeworkTaskList";
+import { useDework } from "@/hooks/useDework";
 
 type Props = {
   children?: ReactNode;
@@ -29,7 +28,7 @@ export const BaseLayout = ({ children }: Props) => {
 
   const { isClient } = useIsClient();
   const { setThemeMode } = useThemeMode();
-  const [isDeworkConnectOpen, _] = useStateDeworkConnectModal();
+  const {isDeworkConnectOpen,isDeworkTaskListOpen } = useDework()
 
   useEffect(() => {
     setThemeMode();
@@ -59,7 +58,14 @@ export const BaseLayout = ({ children }: Props) => {
       <Toast />
       <Toaster />
       {isDeworkConnectOpen && (
-          <ConnectDeworkModal />
+          <DeworkModal>
+            <ConnectDeworkCard />
+          </DeworkModal>
+        )}
+        {isDeworkTaskListOpen && (
+          <DeworkModal>
+            <DeworkTaskList />
+        </DeworkModal>
         )}
     </div>
   );

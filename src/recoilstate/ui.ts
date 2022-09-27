@@ -106,6 +106,15 @@ export const rDeworkConnectModal = atom({
 export const useStateDeworkConnectModal = () =>
   useRecoilState(rDeworkConnectModal);
 
+//dework task list
+export const rDeworkTaskListModal = atom({
+  key: "rDeworkTaskListModal",
+  default: false,
+});
+
+export const useStateDeworkTaskListModal = () =>
+  useRecoilState(rDeworkTaskListModal);
+
 export const issueStatus = atom<"completed" | "issuing" | "failed" | undefined>(
   {
     key: "issueStatus",

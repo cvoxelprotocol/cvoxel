@@ -6,30 +6,21 @@ import {
   CVOXEL_VERIFY_FAILED,
   CVOXEL_VERIFY_SUCCEED,
 } from "@/constants/toastMessage";
-import {
-  ModelTypes,
-  TransactionLogWithChainId,
-  WorkCredentialWithId,
-} from "@/interfaces";
+import { TransactionLogWithChainId, WorkCredentialWithId } from "@/interfaces";
 
-import { getWorkCredentialService } from "@/services/workCredential/WorkCredentialService";
-import { HeldWorkCredentials } from "@/__generated__/types/HeldWorkCredentials";
+import {
+  getWorkCredentialService,
+  IssueFromTXParam,
+} from "@/services/workCredential/WorkCredentialService";
 import { VerifiableWorkCredential } from "@/__generated__/types/VerifiableWorkCredential";
 import {
   DeliverableItem,
   WorkCredential,
 } from "@/__generated__/types/WorkCredential";
-import { TileDocument } from "@ceramicnetwork/stream-tile";
-import { useViewerRecord } from "@self.id/framework";
-import { useCallback } from "react";
 import { useModal } from "./useModal";
 import { TileDoc, useTileDoc } from "./useTileDoc";
 import { useToast } from "./useToast";
-import { CeramicClient } from "@ceramicnetwork/http-client";
-import { useStateMySelfID } from "@/recoilstate/ceramic";
-import { useQuery } from "react-query";
-import { DIDDataStore } from "@glazed/did-datastore";
-import { aliases } from "@/__generated__/aliases";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useStateIssueStatus } from "@/recoilstate";
 
 export function useWorkCredentialRecord(id?: string): TileDoc<WorkCredential> {
@@ -43,7 +34,7 @@ export function useVerifiableWorkCredentialRecord(
 }
 
 export const useWorkCredentials = (did?: string) => {
-  const [mySelfID, _] = useStateMySelfID();
+  const workCredentialService = getWorkCredentialService();
 
   const {
     data: workCredentials,
@@ -51,38 +42,13 @@ export const useWorkCredentials = (did?: string) => {
     refetch,
   } = useQuery<WorkCredentialWithId[] | null>(
     ["heldWorkCredentials", did],
-    () => fetchCRDLs(did),
+    () => workCredentialService.fetchWorkCredentials(did),
     {
       enabled: !!did,
       staleTime: Infinity,
       cacheTime: 30000,
     }
   );
-
-  const fetchCRDLs = async (
-    did?: string
-  ): Promise<WorkCredentialWithId[] | null> => {
-    const ceramic = mySelfID?.client.ceramic || new CeramicClient();
-    const dataStore = new DIDDataStore({ ceramic, model: aliases });
-    const HeldWorkCredentials = await dataStore.get<
-      "heldWorkCredentials",
-      HeldWorkCredentials
-    >("heldWorkCredentials", did);
-    if (!HeldWorkCredentials?.held) return null;
-    const promiseArr = [];
-    for (const id of HeldWorkCredentials.held) {
-      const loadPromise = TileDocument.load<WorkCredential>(ceramic, id);
-      promiseArr.push(loadPromise);
-    }
-    const res = await Promise.all(promiseArr);
-    return res.map((r) => {
-      const crdl: WorkCredentialWithId = {
-        ...r.content,
-        backupId: r.id.toString(),
-      };
-      return crdl;
-    });
-  };
   return {
     workCredentials,
     isLoading,
@@ -94,80 +60,80 @@ export const useWorkCredential = () => {
   const { isLoading, showLoading, closeLoading } = useModal();
   const { lancInfo, lancError } = useToast();
   const [issueStatus, setIssueStatus] = useStateIssueStatus();
-  const workCredentialRecords = useViewerRecord<
-    ModelTypes,
-    "heldWorkCredentials"
-  >("heldWorkCredentials");
   const workCredentialService = getWorkCredentialService();
+  const queryClient = useQueryClient();
 
-  const publish = useCallback(
-    async (
-      address: string,
-      selectedTx: TransactionLogWithChainId,
-      summary: string,
-      detail?: string,
-      deliverables?: DeliverableItem[],
-      relatedAddresses?: string[],
-      genre?: string,
-      tags?: string[],
-      existedItem?: WorkCredentialWithId
-    ) => {
-      if (isLoading || !summary) {
-        return null;
-      }
-      if (!workCredentialRecords.isLoadable) {
-        lancError();
-        return null;
-      }
-      if (!workCredentialService) {
-        lancError();
-        return null;
-      }
-
-      if (!genre) {
-        lancError();
-        return null;
-      }
-
-      showLoading();
-      setIssueStatus("issuing");
-
-      try {
-        const docUrl = await workCredentialService.uploadFromTX(
-          address,
-          selectedTx,
-          summary,
-          detail,
-          deliverables,
-          relatedAddresses,
-          genre,
-          tags,
-          existedItem
-        );
-
-        if (docUrl) {
+  const {
+    mutateAsync: issueCRDL,
+    isLoading: isIssuingCRDL,
+    isSuccess,
+  } = useMutation<string | undefined, unknown, IssueFromTXParam>(
+    (param) => workCredentialService.uploadFromTX(param),
+    {
+      onSuccess(data) {
+        if (data) {
           closeLoading();
           // setCvoxelsForDisplay([{ ...meta, id: "0" }]);
           lancInfo(CVOXEL_CREATION_SUCCEED);
           setIssueStatus("completed");
-
-          return docUrl;
         } else {
           setIssueStatus("failed");
           closeLoading();
           lancError(CVOXEL_CREATION_FAILED);
-          return null;
         }
-      } catch (error) {
+      },
+      onError(error) {
         console.log("error", error);
         setIssueStatus("failed");
         closeLoading();
         lancError(CVOXEL_CREATION_FAILED);
-        return null;
-      }
-    },
-    [workCredentialRecords.isLoadable, isLoading, workCredentialService]
+      },
+      onSettled: () => {
+        queryClient.invalidateQueries("heldWorkCredentials");
+      },
+    }
   );
+
+  const publish = async (
+    address: string,
+    selectedTx: TransactionLogWithChainId,
+    summary: string,
+    detail?: string,
+    deliverables?: DeliverableItem[],
+    relatedAddresses?: string[],
+    genre?: string,
+    tags?: string[],
+    existedItem?: WorkCredentialWithId
+  ) => {
+    if (isLoading || !summary) {
+      return null;
+    }
+    if (!workCredentialService) {
+      lancError();
+      return null;
+    }
+
+    if (!genre) {
+      lancError();
+      return null;
+    }
+
+    showLoading();
+    setIssueStatus("issuing");
+
+    const param: IssueFromTXParam = {
+      address,
+      selectedTx,
+      summary,
+      detail,
+      deliverables,
+      relatedAddresses,
+      genre,
+      tags,
+      existedItem,
+    };
+    return await issueCRDL(param);
+  };
 
   const signCredential = async (
     id: string,
@@ -175,10 +141,6 @@ export const useWorkCredential = () => {
     address: string
   ) => {
     try {
-      if (!workCredentialRecords.isLoadable) {
-        lancError();
-        return null;
-      }
       if (!workCredentialService) {
         lancError();
         return null;
@@ -201,10 +163,6 @@ export const useWorkCredential = () => {
 
   const update = async (id: string, newItem: WorkCredential) => {
     try {
-      if (!workCredentialRecords.isLoadable) {
-        lancError();
-        return null;
-      }
       if (!workCredentialService) {
         lancError();
         return null;
@@ -226,10 +184,6 @@ export const useWorkCredential = () => {
   };
   const updateWithoutNotify = async (id: string, newItem: WorkCredential) => {
     try {
-      if (!workCredentialRecords.isLoadable) {
-        lancError();
-        return null;
-      }
       if (!workCredentialService) {
         lancError();
         return null;

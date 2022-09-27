@@ -1,6 +1,7 @@
 import { functions } from "../app";
 import { httpsCallable } from "firebase/functions";
-import { DeworkUser, Task } from "@/interfaces/dework";
+import { DeworkUser } from "@/interfaces/dework";
+import { WorkSubjectFromDework } from "@/interfaces";
 
 type DeworkAuthResults = {
   status: string;
@@ -8,7 +9,17 @@ type DeworkAuthResults = {
 };
 type DeworkTasksResults = {
   status: string;
-  tasks: Task[];
+  subjects: WorkSubjectFromDework[];
+};
+
+type DeworkTaskUpdateResults = {
+  status: string;
+  subject: WorkSubjectFromDework;
+};
+
+type DeworkCRDLsResults = {
+  status: string;
+  streamIds: string[];
 };
 
 export const deworkAuth = (
@@ -43,7 +54,7 @@ export const deworkAuth = (
 export const getDeworkUserTasks = (
   address: string,
   id?: string
-): Promise<Task[] | null> =>
+): Promise<WorkSubjectFromDework[] | null> =>
   new Promise((resolve, reject) => {
     const getDeworkUserTasksFunc = httpsCallable<
       { [x: string]: string | undefined },
@@ -55,7 +66,62 @@ export const getDeworkUserTasks = (
     })
       .then((result) => {
         if (result.data.status === "ok") {
-          resolve(result.data.tasks);
+          resolve(result.data.subjects);
+        } else {
+          resolve(null);
+        }
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+
+export const updateGenreOfDeworkTask = (
+  address: string,
+  id: string,
+  genre: string
+): Promise<WorkSubjectFromDework | null> =>
+  new Promise((resolve, reject) => {
+    const getDeworkUserTasksFunc = httpsCallable<
+      { [x: string]: string | undefined },
+      DeworkTaskUpdateResults
+    >(functions, "updateGenreOfDeworkTask");
+    getDeworkUserTasksFunc({
+      address: address,
+      id: id,
+      genre: genre,
+    })
+      .then((result) => {
+        if (result.data.status === "ok") {
+          resolve(result.data.subject);
+        } else {
+          resolve(null);
+        }
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+
+export const issueCRDLFromDework = (
+  address: string,
+  ids: string[],
+  storeAll: boolean
+): Promise<string[] | null> =>
+  new Promise((resolve, reject) => {
+    const issueCRDLFromDeworkFunc = httpsCallable<
+      { [x: string]: string | string[] | boolean | undefined },
+      DeworkCRDLsResults
+    >(functions, "issueCRDLFromDework");
+    issueCRDLFromDeworkFunc({
+      address: address,
+      ids: ids,
+      storeAll: storeAll,
+    })
+      .then((result) => {
+        console.log({ result });
+        if (result.data.status === "ok") {
+          resolve(result.data.streamIds);
         } else {
           resolve(null);
         }

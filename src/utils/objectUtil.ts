@@ -4,6 +4,10 @@ export const removeUndefined = <T extends {}>(object: T): T => {
   ) as T;
 };
 
+export const removeUndefinedFromArray = <T>(arr: Array<T>): Array<T> => {
+  return arr.filter((a) => a !== undefined);
+};
+
 export const shortenStr = (str?: string, length = 20): string => {
   if (!str) return "";
   const half = Math.floor(length / 2);
