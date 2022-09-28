@@ -1,5 +1,13 @@
 import { useTab } from "@/hooks/useTab";
-import { FC, useCallback, useContext, useMemo, useState } from "react";
+import {
+  FC,
+  LegacyRef,
+  useCallback,
+  useContext,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { NoItemPresenter } from "../../../common/NoItemPresenter";
 import CVoxelsPresenter from "../../../CVoxel/CVoxelsPresenter";
 import { useStateForceUpdate } from "@/recoilstate";;
@@ -15,6 +23,8 @@ import { DIDContext } from "@/context/DIDContext";
 import { useWorkCredentials } from "@/hooks/useWorkCredential";
 import Router from "next/router";
 import { WorkCredential } from "@/__generated__/types/WorkCredential";
+import { useVirtualizer } from "@tanstack/react-virtual";
+import { useIsTabletOrMobile } from "@/hooks/useIsTabletOrMobile";
 
 export const MyCVoxelContainer: FC = () => {
   const {did, account} = useContext(DIDContext)
@@ -27,7 +37,6 @@ export const MyCVoxelContainer: FC = () => {
     useStateForceUpdate();
 
   const forceReload = () => {
-    setForceUpdateCVoxelList(v => !v);
     if(did) Router.push(`/${did}`)
   };
 
@@ -75,6 +84,24 @@ export const MyCVoxelContainer: FC = () => {
     }
   }, [router.query]);
 
+  const filteredVoxels = useMemo(
+    () =>
+    sortCredentials.filter((voxel) =>
+        !!keyword && keyword != "" ? isHitSearch(voxel) : true
+      ),
+    [isHitSearch, keyword, sortCredentials]
+  );
+
+  const parentRef: LegacyRef<any> = useRef();
+
+  const { isTabletOrMobile } = useIsTabletOrMobile();
+
+  const rowVirtualizer = useVirtualizer({
+    count: filteredVoxels.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => ((isTabletOrMobile ? 15 : 13) + 1) * 16, // NOTE: (item + margin) * rem
+  });
+
   return useMemo(
     () => (
       <>
@@ -108,29 +135,55 @@ export const MyCVoxelContainer: FC = () => {
                 )}
               </div>
             )}
+
             {txLoading && <CommonLoading />}
-            {!txLoading &&
-              sortCredentials &&
-              sortCredentials
-                .filter((voxel) =>
-                  !!keyword && keyword != "" ? isHitSearch(voxel) : true
-                )
-                .map((item) => {
-                  return <VoxelListItem key={item.backupId} workCredential={item} />;
-                })}
+            {!txLoading && filteredVoxels && (
+              <div ref={parentRef} className={"overflow-auto h-full w-full"}>
+                <div
+                  style={{
+                    height: `${rowVirtualizer.getTotalSize() / 16}rem`,
+                    width: "100%",
+                    position: "relative",
+                  }}
+                >
+                  {rowVirtualizer
+                    .getVirtualItems()
+                    .map((virtualItem, index) => (
+                      <div
+                        key={virtualItem.index}
+                        style={{
+                          position: "absolute",
+                          top: 0,
+                          left: 0,
+                          width: "100%",
+                          height: `${virtualItem.size / 16}rem`,
+                          transform: `translateY(${virtualItem.start / 16}rem)`,
+                        }}
+                      >
+                        <VoxelListItem
+                          key={filteredVoxels[virtualItem.index].id}
+                          workCredential={filteredVoxels[virtualItem.index]}
+                        />
+                      </div>
+                    ))}
+                </div>
+              </div>
+            )}
           </CVoxelsPresenter>
         )}
       </>
     ),
     [
       txLoading,
-      sortCredentials,
+      filteredVoxels,
       account,
       offchainMetaList,
       did,
       forceUpdateCVoxelList,
       currentVoxelID,
       keyword,
+      rowVirtualizer,
+      isTabletOrMobile,
     ]
   );
 };

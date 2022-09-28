@@ -34,12 +34,11 @@ export const VoxelListItem: FC<Props> = ({ workCredential }) => {
         {/* NOTE: if voxel state exist, add padding bottom*/}
         <div
           className={clsx(
-            "rounded-r-lg w-40 relative bg-light-surface dark:bg-dark-surface",
-            false && "pb-6"
+            "rounded-r-lg w-40 relative bg-light-surface dark:bg-dark-surface"
           )}
         >
-         {detailItem && (
-            <Canvas>
+          {detailItem && (
+            <Canvas> 
               <OneVoxelVisualizerPresenter zoom={6} disableHover workCredential={workCredential} />
             </Canvas>
           )}
@@ -70,7 +69,6 @@ export const VoxelListItem: FC<Props> = ({ workCredential }) => {
                 {subject?.work?.summary}
               </div>
             )}
-
             {(subject?.deliverables &&
               subject.deliverables.length > 0) &&
               subject?.deliverables.map((deliverable) =>
@@ -147,19 +145,24 @@ export const VoxelListItem: FC<Props> = ({ workCredential }) => {
               {subject?.work?.summary}
             </div>
           )}
-
           {subject?.deliverables &&
             subject.deliverables.length > 0 &&
             subject?.deliverables.map((deliverable) =>
               <a
                 className="flex items-center flex-wrap"
-                href={`${deliverable.format==="url" ? deliverable.value : `https://dweb.link/ipfs/${deliverable.value}`}`}
+                href={`${
+                  deliverable.format === "url"
+                    ? deliverable.value
+                    : `https://dweb.link/ipfs/${deliverable.value}`
+                }`}
                 target="_blank"
                 rel="noreferrer"
                 key={deliverable.value}
               >
                 <p className="text-light-secondary dark:text-dark-secondary text-md text-left">
-                  {deliverable.format==="url" ? deliverable.value : shortenStr(deliverable.value)}
+                  {deliverable.format === "url"
+                    ? deliverable.value
+                    : shortenStr(deliverable.value)}
                 </p>
               </a>
             )}
@@ -186,10 +189,7 @@ export const VoxelListItem: FC<Props> = ({ workCredential }) => {
     );
   };
 
-  if(!detailItem) return (
-    <></>
-  )
-
+  if (!detailItem) return <></>;
   return (
     <Link href={`${router.asPath.split("?")[0]}?voxel=${workCredential.backupId}`}>
       <div className="w-full">
@@ -199,9 +199,29 @@ export const VoxelListItem: FC<Props> = ({ workCredential }) => {
           </div>
           <div className="lg:hidden">
             <SpContent />
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-    </Link>
-  );
+        </Link>
+      );
+
+  // return useMemo(
+  //   () => {
+  //   return (
+  //     <Link href={`${router.asPath.split("?")[0]}?voxel=${workCredential.backupId}`}>
+  //       <div className="w-full">
+  //         <div className="w-full border border-light-on-primary-container dark:border-dark-on-primary-container rounded-lg overflow-hidden bg-light-surface-1 dark:bg-dark-surface-1">
+  //           <div className="hidden lg:block w-full">
+  //             <PcContent />
+  //           </div>
+  //           <div className="lg:hidden">
+  //             <SpContent />
+  //               </div>
+  //             </div>
+  //           </div>
+  //         </Link>
+  //       );
+  //     },
+  //     [PcContent, SpContent, detailItem, workCredential.backupId, router.asPath] // NOTE: Do not make it dependent on not rendering when scrolling
+  //   );
 };
