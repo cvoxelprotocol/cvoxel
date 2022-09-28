@@ -1,6 +1,6 @@
 import type { ModelTypesToAliases } from "@glazed/types";
 import type { AppProps } from "next/app";
-import { cVoxelModel } from "@/lib/ceramic/dataModel";
+import { dataModel } from "@/lib/ceramic/dataModel";
 import type { ModelTypes } from "../interfaces";
 import "tailwindcss/tailwind.css";
 import { RecoilRoot } from "recoil";
@@ -16,7 +16,7 @@ import { LoadingModal } from "@/components/common/LoadingModal";
 import { DIDContextProvider } from "@/context/DIDContext";
 import type { DehydratedState } from 'react-query';
 
-const aliases: ModelTypesToAliases<ModelTypes> = cVoxelModel;
+const aliases: ModelTypesToAliases<ModelTypes> = dataModel;
 
 function getLibrary(provider: any): Web3Provider {
   const library = new Web3Provider(provider);

@@ -1,10 +1,11 @@
 import { AliasTypes } from "@/interfaces";
-import { aliases } from "@/__generated__/aliases";
+import { dataModel } from "@/lib/ceramic/dataModel";
+
 import { CeramicClient } from "@ceramicnetwork/http-client";
 import { TileDocument } from "@ceramicnetwork/stream-tile";
 
 export const getSchema = (alias: AliasTypes): string => {
-  return aliases.schemas[alias];
+  return dataModel.schemas[alias];
 };
 
 export const createTileDocument = async <T>(

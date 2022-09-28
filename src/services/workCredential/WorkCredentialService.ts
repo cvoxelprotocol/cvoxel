@@ -26,7 +26,7 @@ import {
 } from "@/__generated__/types/WorkCredential";
 import { CeramicClient } from "@ceramicnetwork/http-client";
 import { DIDDataStore } from "@glazed/did-datastore";
-import { aliases } from "@/__generated__/aliases";
+import { dataModel } from "@/lib/ceramic/dataModel";
 import { DID } from "dids";
 import { HeldWorkCredentials } from "@/__generated__/types/HeldWorkCredentials";
 import { Organization } from "@/__generated__/types/Organization";
@@ -62,7 +62,7 @@ export class WorkCredentialService {
     if (client && did) {
       this.dataStore = new DIDDataStore({
         ceramic: client,
-        model: aliases,
+        model: dataModel,
         id: did.parent,
       });
     }
@@ -75,7 +75,7 @@ export class WorkCredentialService {
     if (client && did) {
       this.dataStore = new DIDDataStore({
         ceramic: client,
-        model: aliases,
+        model: dataModel,
         id: did.parent,
       });
     }
@@ -402,7 +402,7 @@ export class WorkCredentialService {
   ): Promise<WorkCredentialWithId[]> => {
     if (!did) return [];
     const ceramic = this.client || new CeramicClient();
-    const dataStore = new DIDDataStore({ ceramic, model: aliases });
+    const dataStore = new DIDDataStore({ ceramic, model: dataModel });
     const HeldWorkCredentials = await dataStore.get<
       "heldWorkCredentials",
       HeldWorkCredentials

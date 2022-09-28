@@ -6,10 +6,13 @@ import dotenv from 'dotenv'
 dotenv.config();
 
 
-// const CERAMIC_URL = process.env.NEXT_PUBLIC_CERAMIC_URL || 'http://localhost:7007'
-const CERAMIC_URL = 'http://localhost:7007'
-const modelJsonName = "model_v3.json"
-const aliasesFile = "aliases.ts"
+
+// const ENVIRONMENT = "prod"
+const ENVIRONMENT = "dev"
+
+const modelJsonName = `model_${ENVIRONMENT}_v3.json`
+const CERAMIC_URL = ENVIRONMENT === "prod" ? "https://prod.cvoxelceramic.com/" : 'http://localhost:7007'
+const aliasesFile = ENVIRONMENT === "prod" ? "aliases.ts" : "aliases_dev.ts"
 
 // Connect to the Ceramic node
 const ceramic = new CeramicClient(CERAMIC_URL)

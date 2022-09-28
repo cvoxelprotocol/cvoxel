@@ -90,6 +90,8 @@ export const useWorkCredential = () => {
       },
       onSettled: () => {
         queryClient.invalidateQueries("heldWorkCredentials");
+        // refetch  offchain DB
+        queryClient.invalidateQueries("offchainCVoxelMeta");
       },
     }
   );

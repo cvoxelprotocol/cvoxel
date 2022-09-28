@@ -3,7 +3,7 @@ import { RequestState } from "@self.id/framework";
 import type { GetServerSidePropsContext } from "next";
 
 import { CERAMIC_URL } from "@/constants/common";
-import { cVoxelModel } from "@/lib/ceramic/dataModel";
+import { dataModel } from "@/lib/ceramic/dataModel";
 import type { ModelTypes } from "@/interfaces";
 import { isDIDstring, isSupportedDID } from "../../utils/ceramicUtils";
 import { Core } from "@self.id/framework";
@@ -18,7 +18,7 @@ export const createRequestClient = (
   return new RequestClient({
     ceramic: CERAMIC_URL,
     cookie: ctx.req.headers.cookie,
-    aliases: cVoxelModel,
+    aliases: dataModel,
   });
 };
 
