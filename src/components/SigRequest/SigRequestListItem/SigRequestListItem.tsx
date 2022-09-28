@@ -131,7 +131,7 @@ export const SigRequestListItem: FC<Props> = ({ item }) => {
     return (
       <div className="w-full">
         <div className="w-full h-32 relative bg-light-surface dark:bg-dark-surface rounded-b-lg">
-          <Canvas>
+          <Canvas className="!touch-auto">
             <OneVoxelVisualizerPresenter
               zoom={6}
               disableHover
