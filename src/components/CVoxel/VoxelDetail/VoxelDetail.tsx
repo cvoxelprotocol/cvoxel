@@ -281,12 +281,20 @@ export const VoxelDetail: FC<Props> = ({
             >
               <div className="flex-initial flex lg:block">
                 <div className="text-lg font-medium">
-                  {formatBigNumber(
-                    detailItem?.subject.tx?.value || detailItem?.subject.work?.value,
-                    8,
-                    detailItem?.subject.tx?.value ? detailItem?.subject.tx?.tokenDecimal?.toString(): "6"
-                  )}{" "}
-                  {detailItem.subject.tx?.tokenSymbol || detailItem.subject.tx?.networkId}
+                  {(detailItem?.subject.tx?.value || detailItem?.subject.work?.value) ? (
+                    <>
+                      {formatBigNumber(
+                        detailItem?.subject.tx?.value || detailItem?.subject.work?.value,
+                        8,
+                        detailItem?.subject.tx?.value ? detailItem?.subject.tx?.tokenDecimal?.toString(): "6"
+                      )}{" "}
+                      {detailItem.subject.tx?.tokenSymbol || ""}
+                    </>
+                  ): (
+                    <>
+                    {"-"}
+                    </>
+                  )}
                 </div>
                 <div className="flex items-center justify-center">
                   <div className="ml-2 lg:ml-0 text-xs text-light-on-surface-variant dark:text-dark-on-surface-variant">

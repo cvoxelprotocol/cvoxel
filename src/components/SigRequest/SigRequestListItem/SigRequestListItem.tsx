@@ -10,7 +10,7 @@ import { convertTimestampToDateStr } from "@/utils/dateUtil";
 import clsx from "clsx";
 import Link from "next/link";
 import { useRouter } from "next/dist/client/router";
-import { useVoxStyler } from "@/hooks/useVoxStyler";
+import { useVoxelStyler } from "@/hooks/useVoxStyler";
 import { TxDirection } from "@/components/common/TxDirection";
 
 type Props = {
@@ -21,15 +21,7 @@ export const SigRequestListItem: FC<Props> = ({ item }) => {
   const router = useRouter();
 
   // convert display
-  const { setVoxelForDisplay, displayVoxel } = useVoxStyler();
-
-  useEffect(() => {
-    let isMounted = true;
-    setVoxelForDisplay(item);
-    return () => {
-      isMounted = false;
-    };
-  }, [item]);
+  const { displayVoxel } = useVoxelStyler(item);
 
   const PcContent = () => {
     return (

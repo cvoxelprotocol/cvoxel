@@ -1,8 +1,8 @@
-import { FC, LegacyRef, useCallback, useMemo, useRef, useState } from "react";
+import { FC, LegacyRef, useMemo, useRef } from "react";
 import { NoItemPresenter } from "../../common/NoItemPresenter";
 import CVoxelsPresenter from "../../CVoxel/CVoxelsPresenter";
 import { CommonLoading } from "../../common/CommonLoading";
-import { VoxelListItem } from "@/components/CVoxel/VoxelListItem/VoxelListItem";
+import { VoxelListItemMemo } from "@/components/CVoxel/VoxelListItem/VoxelListItem";
 import { VoxelDetail } from "@/components/CVoxel/VoxelDetail/VoxelDetail";
 import { useOffchainList } from "@/hooks/useOffchainList";
 import { useStateForceUpdate } from "@/recoilstate";
@@ -75,11 +75,6 @@ export const UserCVoxelContainer: FC<UserCVoxelContainerProps> = ({
                 <NoItemPresenter text="No Voxels yet" />
               </div>
             )}
-            {/* {!isLoading &&
-              sortCredentials &&
-              sortCredentials.map((item) => {
-                return <VoxelListItem key={item.backupId} workCredential={item} />;
-              })} */}
 
             {!isLoading && sortCredentials && (
               <div ref={parentRef} className={"overflow-auto h-full w-full"}>
@@ -105,7 +100,7 @@ export const UserCVoxelContainer: FC<UserCVoxelContainerProps> = ({
                         }}
                       >
                         {/*<div className="h-40">{virtualItem.index}</div>*/}
-                        <VoxelListItem
+                        <VoxelListItemMemo
                           key={sortCredentials[virtualItem.index].id}
                           workCredential={sortCredentials[virtualItem.index]}
                         />

@@ -1,9 +1,9 @@
 import * as THREE from "three";
-import { FC, useRef, useEffect } from "react";
+import { FC, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import { OrbitControls, PerspectiveCamera, Plane } from "@react-three/drei";
 import CVoxelPresenter from "./CVoxelPresenter";
-import { CVoxelThreeWithId, useVoxStyler } from "@/hooks/useVoxStyler";
+import { CVoxelThreeWithId, useVoxelStyler } from "@/hooks/useVoxStyler";
 import { WorkCredentialWithId } from "@/interfaces";
 
 // NOTE: useCVoxelDetailBox cannot be called by VisualPresenter, so it is passed by props.
@@ -20,18 +20,8 @@ export const OneVoxelVisualizerPresenter: FC<OneVoxelVisualizerPresenterProps> =
   workCredential,
   voxelForDisplay
 }) => {
-  const { setVoxelForDisplay, displayVoxel } = useVoxStyler();
+  const { displayVoxel } = useVoxelStyler(workCredential);
   const cCollectionRef = useRef<THREE.Group>(new THREE.Group());
-
-  useEffect(() => {
-    let isMounted = true;
-    if(!voxelForDisplay) {
-      setVoxelForDisplay(workCredential)
-    }
-    return () => {
-      isMounted = false;
-    };
-  }, [workCredential,voxelForDisplay]);
 
   useFrame(() => {
     cCollectionRef.current.rotation.y += 0.005;

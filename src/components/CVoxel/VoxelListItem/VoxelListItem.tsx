@@ -1,4 +1,4 @@
-import { FC, useMemo } from "react";
+import { FC, memo, useMemo } from "react";
 import { GenreBadge } from "@/components/common/badge/GenreBadge";
 import { getGenre } from "@/utils/genreUtil";
 import { TagBadge } from "@/components/common/badge/TagBadge";
@@ -16,7 +16,7 @@ type Props = {
   workCredential: WorkCredentialWithId;
 };
 
-export const VoxelListItem: FC<Props> = ({ workCredential }) => {
+const VoxelListItem: FC<Props> = ({ workCredential }) => {
   // item detail
   const detailItem = useMemo(() => {
     return workCredential || null;
@@ -204,24 +204,6 @@ export const VoxelListItem: FC<Props> = ({ workCredential }) => {
           </div>
         </Link>
       );
-
-  // return useMemo(
-  //   () => {
-  //   return (
-  //     <Link href={`${router.asPath.split("?")[0]}?voxel=${workCredential.backupId}`}>
-  //       <div className="w-full">
-  //         <div className="w-full border border-light-on-primary-container dark:border-dark-on-primary-container rounded-lg overflow-hidden bg-light-surface-1 dark:bg-dark-surface-1">
-  //           <div className="hidden lg:block w-full">
-  //             <PcContent />
-  //           </div>
-  //           <div className="lg:hidden">
-  //             <SpContent />
-  //               </div>
-  //             </div>
-  //           </div>
-  //         </Link>
-  //       );
-  //     },
-  //     [PcContent, SpContent, detailItem, workCredential.backupId, router.asPath] // NOTE: Do not make it dependent on not rendering when scrolling
-  //   );
 };
+
+export const VoxelListItemMemo = memo(VoxelListItem)

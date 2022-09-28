@@ -13,7 +13,7 @@ import CVoxelsPresenter from "../../../CVoxel/CVoxelsPresenter";
 import { useStateForceUpdate } from "@/recoilstate";;
 import { CommonLoading } from "../../../common/CommonLoading";
 import { useOffchainList } from "@/hooks/useOffchainList";
-import { VoxelListItem } from "@/components/CVoxel/VoxelListItem/VoxelListItem";
+import { VoxelListItemMemo } from "@/components/CVoxel/VoxelListItem/VoxelListItem";
 import { useRouter } from "next/dist/client/router";
 import { NavBar } from "@/components/CVoxel/NavBar/NavBar";
 import { VoxelDetail } from "@/components/CVoxel/VoxelDetail/VoxelDetail";
@@ -148,7 +148,7 @@ export const MyCVoxelContainer: FC = () => {
                 >
                   {rowVirtualizer
                     .getVirtualItems()
-                    .map((virtualItem, index) => (
+                    .map((virtualItem) => (
                       <div
                         key={virtualItem.index}
                         style={{
@@ -160,7 +160,7 @@ export const MyCVoxelContainer: FC = () => {
                           transform: `translateY(${virtualItem.start / 16}rem)`,
                         }}
                       >
-                        <VoxelListItem
+                        <VoxelListItemMemo
                           key={filteredVoxels[virtualItem.index].id}
                           workCredential={filteredVoxels[virtualItem.index]}
                         />

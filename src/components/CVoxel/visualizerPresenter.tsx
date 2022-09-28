@@ -1,9 +1,9 @@
 import * as THREE from "three";
-import { FC, useRef, useState, useEffect } from "react";
+import { FC, useRef, useMemo } from "react";
 import { useFrame } from "@react-three/fiber";
 import { OrbitControls, PerspectiveCamera, Plane } from "@react-three/drei";
 import CVoxelPresenter from "./CVoxelPresenter";
-import { CVoxelThreeWithId, useVoxStyler } from "@/hooks/useVoxStyler";
+import { CVoxelThreeWithId, useMultipleVoxelStyler } from "@/hooks/useVoxStyler";
 import { initCVoxel } from "@/constants/cVoxel";
 import {  WorkCredentialWithId } from "@/interfaces";
 
@@ -30,25 +30,13 @@ const VisualizerPresenter: FC<VisualizerPresenterProps> = ({
   disableHover = false,
   workCredentials
 }) => {
-  const [isInitVoxels, setIsInitVoxels] = useState<boolean>(true);
-  const { displayVoxels, setCvoxelsForDisplay } = useVoxStyler();
+  const { displayVoxels } = useMultipleVoxelStyler(workCredentials && workCredentials.length>0 ? workCredentials : initCVoxel);
 
   const cCollectionRef = useRef<THREE.Group>(new THREE.Group());
 
-
-  useEffect(() => {
-    let isMounted = true;
-    if(workCredentials && workCredentials.length>0){
-      setIsInitVoxels(false)
-      setCvoxelsForDisplay(workCredentials)
-    } else {
-      setIsInitVoxels(true)
-      setCvoxelsForDisplay(initCVoxel)
-    }
-    return () => {
-      isMounted = false;
-    };
-  }, [workCredentials,setCvoxelsForDisplay]);
+  const isInitVoxels = useMemo(() => {
+    return !(workCredentials && workCredentials.length>0)
+  },[workCredentials])
 
   useFrame(() => {
     cCollectionRef.current.rotation.y += 0.005;

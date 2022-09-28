@@ -18,7 +18,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faExternalLink } from "@fortawesome/free-solid-svg-icons";
 import { getExploreLink } from "@/utils/etherscanUtils";
 import { formatBigNumber } from "@/utils/ethersUtil";
-import { useVoxStyler } from "@/hooks/useVoxStyler";
+import { useVoxelStyler } from "@/hooks/useVoxStyler";
 import { DIDContext } from "@/context/DIDContext";
 import { useWalletAccount } from "@/hooks/useWalletAccount";
 
@@ -73,15 +73,7 @@ export const SigRequestDetail: FC<Props> = ({
 
 
   // convert display
-  const { displayVoxel, setVoxelForDisplay } = useVoxStyler();
-
-  useEffect(() => {
-    let isMounted = true;
-    setVoxelForDisplay(offchainItem);
-    return () => {
-      isMounted = false;
-    };
-  }, [offchainItem]);
+  const { displayVoxel } = useVoxelStyler(offchainItem);
 
   // verify
   const handleVerify = useCallback(() => {
