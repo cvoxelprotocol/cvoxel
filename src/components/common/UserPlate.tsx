@@ -118,7 +118,7 @@ export const UserPlate: FC<Props> = ({
   return (
     <div
       className={clsx(
-        "flex rounded-full border border-light-primary dark:border-dark-primary items-center overflow-hidden px-3",
+        "flex rounded-full border border-light-primary dark:border-dark-primary items-center overflow-hidden px-3 space-x-1 sm:space-x-0.5",
         bg,
         size == "lg" ? "py-1.5" : "py-0.5",
         !!onClick && "cursor-pointer"

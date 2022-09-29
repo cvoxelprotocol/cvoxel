@@ -41,15 +41,15 @@ export const DeworkTaskItem:FC<DeworkTaskItemProps> = ({item}) => {
 
 
     return (
-        <div className={"p-2 w-full relative flex items-center rounded-lg border border-light-on-surface-variant dark:border-dark-on-surface-variant justify-between text-xs lg:text-sm text-black dark:text-white break-words  bg-light-surface-2 dark:bg-dark-surface-2"}>
+        <div className={"p-2 w-full relative sm:flex items-center rounded-lg border border-light-on-surface-variant dark:border-dark-on-surface-variant justify-between text-xs lg:text-sm text-black dark:text-white break-words  bg-light-surface-2 dark:bg-dark-surface-2"}>
             <div>
-                <div className="lg:col-span-4 h-full">
-                    <div className="flex items-center space-x-4">
+                <div className="lg:col-span-4 h-full space-y-1">
+                    <div className="flex items-center space-x-4 p-1 sm:p-0">
                         <UserPlate
                             client={item.client}
                             hasBackgroundColor
                         />
-                        <div className="text-light-on-primary-container dark:text-dark-on-error-container text-2xl font-medium">
+                        <div className="text-light-on-primary-container dark:text-dark-on-error-container text-lg sm:text-2xl font-medium">
                             {item.work?.summary} 
                         </div>
                     </div>
@@ -71,7 +71,7 @@ export const DeworkTaskItem:FC<DeworkTaskItemProps> = ({item}) => {
                             <span>No Deliverable</span>
                         )}
                 </div>
-                <div className="flex flex-wrap">
+                <div className="flex flex-wrap py-1 sm:py-0">
                     {item?.work?.genre && (
                         <div className="mr-2">
                         <GenreBadge
