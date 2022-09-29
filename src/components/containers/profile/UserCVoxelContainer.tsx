@@ -27,7 +27,7 @@ export const UserCVoxelContainer: FC<UserCVoxelContainerProps> = ({
     });
   }, [workCredentials]);
 
-  const currentVoxel = useMemo(
+  const currentCredential = useMemo(
     () => sortCredentials.find((crdl) => crdl.backupId == currentVoxelID),
     [currentVoxelID, sortCredentials]
   );
@@ -54,10 +54,10 @@ export const UserCVoxelContainer: FC<UserCVoxelContainerProps> = ({
   return useMemo(
     () => (
       <div className="max-w-[820px] mx-auto">
-        {!!currentVoxelID ? (
+        {!!currentCredential ? (
           <div className="mt-6 px-2 sm:px-6">
             <VoxelDetail
-              itemId={currentVoxelID}
+              crdl={currentCredential}
               offchainItems={offchainMetaList}
               isOwner={false}
               notifyUpdated={forceReload}

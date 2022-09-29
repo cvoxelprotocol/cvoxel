@@ -84,6 +84,11 @@ export const MyCVoxelContainer: FC = () => {
     }
   }, [router.query]);
 
+  const currentCredential = useMemo(
+    () => sortCredentials.find((crdl) => crdl.backupId == currentVoxelID),
+    [currentVoxelID, sortCredentials]
+  );
+
   const filteredVoxels = useMemo(
     () =>
     sortCredentials.filter((voxel) =>
@@ -112,10 +117,10 @@ export const MyCVoxelContainer: FC = () => {
           onClear={handleSearchClear}
         />
 
-        {!!currentVoxelID ? (
+        {!!currentCredential ? (
           <div className="mt-6 px-2 sm:px-6">
             <VoxelDetail
-              itemId={currentVoxelID}
+              crdl={currentCredential}
               offchainItems={offchainMetaList}
               isOwner={true}
               notifyUpdated={forceReload}
@@ -180,7 +185,7 @@ export const MyCVoxelContainer: FC = () => {
       offchainMetaList,
       did,
       forceUpdateCVoxelList,
-      currentVoxelID,
+      currentCredential,
       keyword,
       rowVirtualizer,
       isTabletOrMobile,

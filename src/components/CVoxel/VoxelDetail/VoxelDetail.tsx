@@ -18,58 +18,54 @@ import { ShareButton } from "@/components/common/button/shareButton/ShareButton"
 import { formatBigNumber } from "@/utils/ethersUtil";
 import { DIDContext } from "@/context/DIDContext";
 import { CopyRequestURLButton } from "./CopyRequestURLButton";
-import { useWorkCredential, useWorkCredentialRecord } from "@/hooks/useWorkCredential";
+import { useWorkCredential } from "@/hooks/useWorkCredential";
 import { WorkCredentialWithId } from "@/interfaces";
 import { WorkCredential } from "@/__generated__/types/WorkCredential";
 import { useOffchainItem } from "@/hooks/useOffchainList";
 import { UserPlate } from "@/components/common/UserPlate";
 
 type Props = {
-  itemId: string;
+  crdl?: WorkCredentialWithId;
   offchainItems?: WorkCredentialWithId[];
   notifyUpdated?: () => void;
   isOwner: boolean;
 };
 
 export const VoxelDetail: FC<Props> = ({
-  itemId,
+  crdl,
   offchainItems,
   notifyUpdated,
   isOwner,
 }) => {
-  // item detail
-  const item = useWorkCredentialRecord(itemId);
+
   const { update } = useWorkCredential();
-  
-  const detailItem = useMemo(() => {
-    return item.content || null;
-  }, [item.content]);
 
   const {getOffchainItem} = useOffchainItem()
 
   const [offchainItem, setOffchainItem] = useState<WorkCredentialWithId | null>(null)
 
   useEffect(() => {
-    const fetch = async(id:string) => {
-      const existed = offchainItems?.find((offchain) => offchain.subject.tx?.txHash === detailItem?.subject.tx?.txHash)
+    const fetch = async(id?:string) => {
+      const existed = offchainItems?.find((offchain) => offchain.subject.tx?.txHash === crdl?.subject.tx?.txHash)
       if(existed){
         setOffchainItem(existed)
         return
       }
+      if(!id) return
       const offchain = await getOffchainItem(id.replace("ceramic://", ""))
       setOffchainItem(offchain)
     }
-    if(!offchainItem && detailItem){
-      fetch(itemId)
+    if(!offchainItem && crdl){
+      fetch(crdl?.backupId)
     }
-  },[detailItem])
+  },[crdl])
 
   // update
   const updatable = useMemo(() => {
-    if (!(detailItem && offchainItem)) return false;
-    const {signature} = detailItem
+    if (!(crdl && offchainItem)) return false;
+    const {signature} = crdl
     return !signature?.partnerSig && !signature?.agentSig && (!!offchainItem.signature?.partnerSig || !!offchainItem.signature?.agentSig)
-  }, [offchainItem, detailItem]);
+  }, [offchainItem, crdl]);
 
 
   // user is the owner but offchainItem doesn't have sigs of both payer and payee
@@ -80,17 +76,17 @@ export const VoxelDetail: FC<Props> = ({
   },[offchainItem])
 
   const handleUpdate = async () => {
-    if (!(offchainItem && detailItem)) return false;
+    if (!(offchainItem && crdl && crdl.backupId)) return false;
     if (updatable) {
-      let newItem: WorkCredential = {...detailItem}
+      let newItem: WorkCredential = {...crdl}
       if(offchainItem.signature?.partnerSigner && offchainItem.signature?.partnerSig){
-        newItem.signature = {...detailItem.signature, partnerSigner: offchainItem.signature?.partnerSigner,partnerSig: offchainItem.signature?.partnerSig }
+        newItem.signature = {...crdl.signature, partnerSigner: offchainItem.signature?.partnerSigner,partnerSig: offchainItem.signature?.partnerSig }
       }
       if(offchainItem.signature?.agentSigner && offchainItem.signature?.agentSig){
-        newItem.signature = {...detailItem.signature, agentSigner: offchainItem.signature?.agentSigner,agentSig: offchainItem.signature?.agentSig }
+        newItem.signature = {...crdl.signature, agentSigner: offchainItem.signature?.agentSigner,agentSig: offchainItem.signature?.agentSig }
       }
 
-      await update(itemId, newItem);
+      await update(crdl.backupId, newItem);
       if (notifyUpdated) {
         notifyUpdated();
       }
@@ -98,21 +94,21 @@ export const VoxelDetail: FC<Props> = ({
   };
 
   const exploreLink = useMemo(() => {
-    if (!detailItem || !detailItem.subject.tx?.txHash) return;
-    return getExploreLink(detailItem.subject.tx?.txHash, detailItem.subject.tx?.networkId);
-  }, [detailItem?.subject.tx?.txHash, detailItem?.subject.tx?.networkId]);
+    if (!crdl || !crdl.subject.tx?.txHash) return;
+    return getExploreLink(crdl.subject.tx?.txHash, crdl.subject.tx?.networkId);
+  }, [crdl?.subject.tx?.txHash, crdl?.subject.tx?.networkId]);
 
   const {did: myDid} = useContext(DIDContext)
 
   const holderDID = useMemo(() => {
-    if(!detailItem) return ""
-    return detailItem?.subject.work?.id
-  },[detailItem])
+    if(!crdl) return ""
+    return crdl?.subject.work?.id
+  },[crdl])
 
   const client = useMemo(() => {
-    if(!detailItem) return
-    return detailItem.subject.client
-  },[detailItem])
+    if(!crdl) return
+    return crdl.subject.client
+  },[crdl])
 
   // component
   const PcDirection = () => {
@@ -151,37 +147,37 @@ export const VoxelDetail: FC<Props> = ({
     <div className="w-full border border-light-on-primary-container dark:border-dark-on-primary-container rounded-2xl overflow-hidden bg-light-surface-1 dark:bg-dark-surface-1">
       <div className="lg:flex w-full">
         <div className="flex-initial w-full lg:w-52 h-52 relative bg-light-surface dark:bg-dark-surface rounded-br-2xl rounded-bl-2xl lg:rounded-bl-none">
-          {detailItem && (
+          {crdl && (
             <Canvas className="!touch-auto">
-              <OneVoxelVisualizerPresenter zoom={6} disableHover workCredential={{...detailItem, backupId:itemId}} />
+              <OneVoxelVisualizerPresenter zoom={6} disableHover workCredential={crdl} />
             </Canvas>
           )}
 
           <div className="absolute right-4 bottom-4">
-            <ShareButton valiant="icon" voxelID={itemId} isOwner={isOwner}/>
+            <ShareButton valiant="icon" voxelID={crdl?.backupId} isOwner={isOwner}/>
           </div>
         </div>
 
         <div className="text-left w-full mx-3 sm:mx-8 py-3 lg:py-8 lg:border-b-2 border-b-light-inverse-primary dark:border-b-dark-inverse-primary">
-          {detailItem?.createdAt && (
+          {crdl?.createdAt && (
             <div className="text-light-on-surface dark:text-dark-on-surface text-base">
-              {convertTimestampToDateStr(detailItem.createdAt)}
+              {convertTimestampToDateStr(crdl.createdAt)}
             </div>
           )}
 
-          {detailItem?.subject.work?.summary && (
+          {crdl?.subject.work?.summary && (
             <div className="text-light-on-primary-container dark:text-dark-on-error-container text-2xl font-medium line-clamp-3">
-              {detailItem?.subject.work?.summary}
+              {crdl?.subject.work?.summary}
             </div>
           )}
 
           <div className="flex mt-2 flex-wrap">
-            {detailItem?.subject.work?.genre ? (
+            {crdl?.subject.work?.genre ? (
               <div className="mr-2">
                 <GenreBadge
-                  text={detailItem.subject.work?.genre || "Other"}
+                  text={crdl.subject.work?.genre || "Other"}
                   baseColor={
-                    getGenre(detailItem.subject.work?.genre)?.bgColor || "bg-[#b7b7b7]"
+                    getGenre(crdl.subject.work?.genre)?.bgColor || "bg-[#b7b7b7]"
                   }
                   isSelected={true}
                 />
@@ -189,8 +185,8 @@ export const VoxelDetail: FC<Props> = ({
             ) : (
               <></>
             )}
-            {detailItem?.subject.work?.tags &&
-              detailItem?.subject.work?.tags.map((tag) => {
+            {crdl?.subject.work?.tags &&
+              crdl?.subject.work?.tags.map((tag) => {
                 return <TagBadge key={tag} text={tag} />;
               })}
           </div>
@@ -217,13 +213,13 @@ export const VoxelDetail: FC<Props> = ({
         {/*  </p>*/}
         {/*</div>*/}
 
-        {detailItem?.subject.deliverables && detailItem.subject.deliverables.length > 0 && (
+        {crdl?.subject.deliverables && crdl.subject.deliverables.length > 0 && (
           <div>
             <p className="mb-2 text-light-on-surface-variant dark:text-light-on-surface-variant font-medium">
               DELIVERABLES
             </p>
 
-            {detailItem?.subject.deliverables.map((deliverable) =>
+            {crdl?.subject.deliverables.map((deliverable) =>
             <a
               className="flex items-center flex-wrap"
               href={`${deliverable.format==="url" ? deliverable.value : `https://dweb.link/ipfs/${deliverable.value}`}`}
@@ -239,14 +235,14 @@ export const VoxelDetail: FC<Props> = ({
           </div>
         )}
 
-        {detailItem?.subject.work?.detail && (
+        {crdl?.subject.work?.detail && (
           <div>
             <p className="mb-2 text-light-on-surface-variant dark:text-light-on-surface-variant font-medium">
               DESCRIPTION
             </p>
 
             <div className="text-light-on-surface dark:text-dark-on-surface font-medium">
-              {detailItem?.subject.work?.detail}
+              {crdl?.subject.work?.detail}
             </div>
           </div>
         )}
@@ -272,7 +268,7 @@ export const VoxelDetail: FC<Props> = ({
       <div className="bg-light-outline dark:bg-dark-outline h-[1px] w-full" />
 
       <div className="lg:flex w-full px-3 sm:px-8 py-6 space-y-3 lg:space-y-0 lg:space-x-6">
-          {detailItem?.subject.work?.value && (
+          {crdl?.subject.work?.value && (
             <a
               className="flex items-center flex-wrap"
               href={exploreLink}
@@ -281,14 +277,14 @@ export const VoxelDetail: FC<Props> = ({
             >
               <div className="flex-initial flex lg:block">
                 <div className="text-lg font-medium">
-                  {(detailItem?.subject.tx?.value || detailItem?.subject.work?.value) ? (
+                  {(crdl?.subject.tx?.value || crdl?.subject.work?.value) ? (
                     <>
                       {formatBigNumber(
-                        detailItem?.subject.tx?.value || detailItem?.subject.work?.value,
+                        crdl?.subject.tx?.value || crdl?.subject.work?.value,
                         8,
-                        detailItem?.subject.tx?.value ? detailItem?.subject.tx?.tokenDecimal?.toString(): "6"
+                        crdl?.subject.tx?.value ? crdl?.subject.tx?.tokenDecimal?.toString(): "6"
                       )}{" "}
-                      {detailItem.subject.tx?.tokenSymbol || ""}
+                      {crdl.subject.tx?.tokenSymbol || ""}
                     </>
                   ): (
                     <>
@@ -309,24 +305,24 @@ export const VoxelDetail: FC<Props> = ({
             </a>
           )}
 
-          {detailItem?.subject.tx?.txHash && (
+          {crdl?.subject.tx?.txHash && (
             <div className="flex-auto text-left">
               <div className="text-sm text-light-on-surface-variant dark:text-dark-on-surface-variant font-medium">
                 Tx Hash
               </div>
               <div className="bg-light-surface dark:bg-dark-surface px-2 py-1 rounded-lg font-medium">
-                {shortenStr(detailItem?.subject.tx?.txHash, 30)}
+                {shortenStr(crdl?.subject.tx?.txHash, 30)}
               </div>
             </div>
           )}
 
-          {detailItem?.subject.tx?.issuedTimestamp && (
+          {crdl?.subject.tx?.issuedTimestamp && (
             <div className="flex-auto text-left">
               <div className="text-sm text-light-on-surface-variant dark:text-dark-on-surface-variant font-medium">
                 Timestamp
               </div>
               <div className="bg-light-surface dark:bg-dark-surface px-2 py-1 rounded-lg font-medium">
-                {convertTimestampToDateStrLocaleUS(detailItem?.subject.tx?.issuedTimestamp)}
+                {convertTimestampToDateStrLocaleUS(crdl?.subject.tx?.issuedTimestamp)}
               </div>
             </div>
           )}

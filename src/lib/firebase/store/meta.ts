@@ -38,16 +38,20 @@ const getV2SigRequestList = (
     const q = query(
       collection(firestore, "credentials").withConverter(crdlConverter),
       where("holderDid", "!=", getPkhDIDFromAddress(address)),
-      where("potentialSigners", "array-contains", address.toLowerCase()),
-      where("partnerSig", "==", null)
+      where("potentialSigners", "array-contains", address.toLowerCase())
     );
     getDocs(q)
       .then((result) => {
         const docs = result.empty
           ? []
-          : result.docs.map((doc) => {
-              return doc.data() as WorkCredentialWithId;
-            });
+          : result.docs
+              .map((doc) => {
+                return doc.data() as WorkCredentialWithId;
+              })
+              .filter(
+                (d) =>
+                  !d.signature?.partnerSig || d.signature?.partnerSig === ""
+              );
         resolve(docs);
       })
       .catch((error) => {

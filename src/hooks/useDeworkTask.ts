@@ -27,7 +27,7 @@ export const useDeworkTask = () => {
     }
   );
 
-  const { mutate: updateGenreofDeworkTask, isLoading: isUpdatingGenre } =
+  const { mutateAsync: updateGenreofDeworkTask, isLoading: isUpdatingGenre } =
     useMutation<WorkSubjectFromDework | null, unknown, updateGenreParam>(
       (param) => deworkService.updateDeworkTaskGenre(param),
       {
@@ -54,28 +54,28 @@ export const useDeworkTask = () => {
         },
       }
     );
-  const { mutate } = useMutation<void, unknown, issueCRDLFromDeworkParam>(
-    (param) => issueCRDLsFromDework(param),
-    {
-      onSuccess() {},
-      onError(error) {
-        console.log(error);
-      },
-      onSettled: () => {
-        queryClient.invalidateQueries("heldWorkCredentials");
-      },
-    }
-  );
+  const { mutateAsync: issue } = useMutation<
+    void,
+    unknown,
+    issueCRDLFromDeworkParam
+  >((param) => issueCRDLsFromDework(param), {
+    onSuccess() {},
+    onError(error) {
+      console.log(error);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries("heldWorkCredentials");
+    },
+  });
 
   const updateGenre = async (id: string, genre: string) => {
     if (!account) return;
-    updateGenreofDeworkTask({ account, id, genre });
+    await updateGenreofDeworkTask({ account, id, genre });
   };
 
   const issueCRDLsFromDework = async (param: issueCRDLFromDeworkParam) => {
     try {
       const streamIds = await deworkService.issueCRDLs(param);
-      console.log({ streamIds });
       if (streamIds && streamIds.length > 0) {
         await workCredentialService.setMultipleHeldWorkCredentials(streamIds);
       }
@@ -91,7 +91,7 @@ export const useDeworkTask = () => {
       ids,
       storeAll,
     };
-    mutate(param);
+    await issue(param);
   };
 
   return {
