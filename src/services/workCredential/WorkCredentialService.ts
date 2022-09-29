@@ -13,7 +13,10 @@ import { getPkhDIDFromAddress } from "@/utils/ceramicUtils";
 import { createTileDocument, getSchema } from "./CeramicHelper";
 import { uploadCRDL } from "@/lib/firebase/functions/workCredential";
 import { getEIP712WorkCredentialSubjectSignature } from "@/utils/providerUtils";
-import { convertV1DataToCRDLOnCeramic } from "@/utils/workCredentialUtil";
+import {
+  convertV1DataToCRDLOnCeramic,
+  convertValidworkSubjectTypedData,
+} from "@/utils/workCredentialUtil";
 import { TileDocument } from "@ceramicnetwork/stream-tile";
 import {
   Client,
@@ -196,13 +199,14 @@ export class WorkCredentialService {
 
     if (existedItem) {
       const { id, subject, signature } = existedItem;
+      const subjectWithDefaultValue = convertValidworkSubjectTypedData(subject);
       const holderSig = await getEIP712WorkCredentialSubjectSignature(
-        subject,
+        subjectWithDefaultValue,
         this.provider
       );
       crdl = {
         id,
-        subject,
+        subject: subjectWithDefaultValue,
         signature: {
           holderSig: holderSig,
           partnerSig: signature?.partnerSig || "",

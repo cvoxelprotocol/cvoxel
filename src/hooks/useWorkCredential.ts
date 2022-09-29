@@ -73,7 +73,6 @@ export const useWorkCredential = () => {
       onSuccess(data) {
         if (data) {
           closeLoading();
-          // setCvoxelsForDisplay([{ ...meta, id: "0" }]);
           lancInfo(CVOXEL_CREATION_SUCCEED);
           setIssueStatus("completed");
         } else {

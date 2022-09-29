@@ -1,5 +1,12 @@
 import { CVoxel, CVoxelMetaDraft, WorkCredentialWithId } from "@/interfaces";
 import {
+  CLIENT_EIP712_TYPE,
+  DELIVERABLES_EIP712_TYPE,
+  TX_EIP712_TYPE,
+  TypedData,
+  WORK_EIP712_TYPE,
+} from "@/interfaces/eip712";
+import {
   Client,
   DeliverableItem,
   Signatures,
@@ -158,12 +165,14 @@ export const convertV1DataToCRDLOnCeramic = (
     issuedAt: v1.createdAt || "",
   });
 
-  const subject: WorkSubject = removeUndefined<WorkSubject>({
-    work: work,
-    client: client,
-    tx: tx,
-    deliverables: v1.deliverables || [],
-  });
+  const subject: WorkSubject = convertValidworkSubjectTypedData(
+    removeUndefined<WorkSubject>({
+      work: work,
+      client: client,
+      tx: tx,
+      deliverables: v1.deliverables || [],
+    })
+  );
 
   const sig: Signatures = removeUndefined<Signatures>({
     holderSig: holderSig,
@@ -199,4 +208,51 @@ export const DeliverableItemsFromStr = (
         };
   });
   return deliverables;
+};
+
+export const convertValidworkSubjectTypedData = (
+  subject: WorkSubject
+): WorkSubject => {
+  const deliverables: DeliverableItem[] = subject.deliverables
+    ? subject.deliverables?.map((v) => {
+        return castUndifined2DefaultValue(v, DELIVERABLES_EIP712_TYPE);
+      })
+    : [];
+
+  return {
+    work: castUndifined2DefaultValue(subject.work, WORK_EIP712_TYPE),
+    tx: castUndifined2DefaultValue(subject.tx, TX_EIP712_TYPE),
+    client: castUndifined2DefaultValue(subject.client, CLIENT_EIP712_TYPE),
+    deliverables: deliverables,
+  };
+};
+
+export const castUndifined2DefaultValue = <T extends Record<string, any>>(
+  obj: T | undefined,
+  typeFormat: TypedData[]
+): T => {
+  if (obj === undefined) return {} as T;
+  const entries = Object.entries(obj);
+  let newEntries: [string, any][] = [];
+  for (const t of typeFormat) {
+    const e = entries.find(([k, v]) => k === t.name);
+    if (e) {
+      newEntries.push(e);
+    } else {
+      let val;
+      if (t.type === "string") {
+        val = "";
+      } else if (t.type === "string[]") {
+        val = [];
+      } else if (t.type === "uint256") {
+        val = 0;
+      } else if (t.type === "bool") {
+        val = false;
+      } else {
+        val = "";
+      }
+      newEntries.push([t.name, val]);
+    }
+  }
+  return Object.fromEntries(newEntries) as T;
 };
