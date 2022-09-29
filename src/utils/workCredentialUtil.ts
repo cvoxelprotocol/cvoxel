@@ -71,6 +71,7 @@ export const convertV1DataToCRDL = (
     endTimestamp: v1.endTimestamp,
     platform: v1.platform,
     deliverableHash: v1.deliverableHash,
+    organization: "",
     issuedAt: v1.createdAt || "",
   });
 
@@ -153,6 +154,7 @@ export const convertV1DataToCRDLOnCeramic = (
     endTimestamp: v1.endTimestamp || "",
     platform: v1.platform,
     deliverableHash: v1.deliverableHash,
+    organization: "",
     issuedAt: v1.createdAt || "",
   });
 
