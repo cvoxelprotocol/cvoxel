@@ -4,6 +4,7 @@ import {
   deworkAuth,
   getDeworkUserTasks,
   issueCRDLFromDework,
+  reFetchDeworkUserTasks,
   updateGenreOfDeworkTask,
 } from "@/lib/firebase/functions/dework";
 import { DeworkUser } from "@/interfaces/dework";
@@ -57,6 +58,13 @@ export class DeworkService {
     id?: string
   ): Promise<WorkSubjectFromDework[] | null> => {
     return await getDeworkUserTasks(address, id);
+  };
+
+  refetchDeworkTasks = async (
+    address: string,
+    id?: string
+  ): Promise<WorkSubjectFromDework[] | null> => {
+    return await reFetchDeworkUserTasks(address, id);
   };
 
   updateDeworkTaskGenre = async (

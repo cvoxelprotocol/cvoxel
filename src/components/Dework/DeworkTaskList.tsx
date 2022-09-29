@@ -4,7 +4,7 @@ import { useDeworkTask } from "@/hooks/useDeworkTask";
 import { useModal } from "@/hooks/useModal";
 import { useToast } from "@/hooks/useToast";
 import { useStateDeworkTargetIds } from "@/recoilstate/dework";
-import { faClose } from "@fortawesome/free-solid-svg-icons";
+import { faClose, faRefresh } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import clsx from "clsx";
 import { FC, useMemo, useState } from "react";
@@ -15,7 +15,7 @@ export type FormProps = {
     ids: string[]
 }
 export const DeworkTaskList:FC = () => {
-    const {data, issueCRDLs} = useDeworkTask()
+    const {data, issueCRDLs, refetchDeworkTasks} = useDeworkTask()
      const [targetIds, setDeworkTargetIds] = useStateDeworkTargetIds()
      const [isSelectedAll, selectAll] = useState(false)
      const {setDeworkTaskListOpen} = useDework()
@@ -61,20 +61,34 @@ export const DeworkTaskList:FC = () => {
         selectAll(v => !v)
       }
 
+      const refresh = async () => {
+        showLoading()
+        await refetchDeworkTasks()
+        closeLoading()
+      }
+
     return (
         <div className="w-full sm:w-3/4 h-2/3 relative p-4 bg-gray-100 dark:bg-card">
             <div className="w-full h-full overflow-auto">
                 <div className="p-4 sm:flex items-center justify-between absolute top-0 right-0 left-0 z-50 bg-gray-100 dark:bg-card">
-                    <div className="text-light-on-primary-container dark:text-dark-on-error-container text-3xl font-bold py-2">
-                        Your Tasks from Dework
+                    <div className="flex space-x-3 items-center">
+                        <div className="text-light-on-primary-container dark:text-dark-on-error-container text-3xl font-bold py-2">
+                            Your Tasks from Dework
+                        </div>
                     </div>
-                    <div className="flex space-x-4 items-center justify-end text-sm sm:text-lg">
-                        <div className="flex items-center">
+                    <div className="flex space-x-4 items-center justify-end text-xs sm:text-lg text-light-on-primary-container dark:text-dark-on-error-container">
+                        <button className="w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center bg-gray-300" onClick={() => refresh()}>
+                            <FontAwesomeIcon
+                                className="w-3 h-3 sm:w-4 sm:h-4 text-light-on-primary-container "
+                                icon={faRefresh}
+                            />
+                        </button>
+                        <div className="flex items-center ">
                             <div className="relative inline-block w-14 mr-2 align-middle select-none transition duration-200 ease-in" onClick={() => storeAll()}>
                                 <span className={clsx("absolute block w-8 h-8 rounded-full bg-white border-4 appearance-none cursor-pointer", isSelectedAll ? "right-0 bg-primary-300": "right-1/2")}/>
                                 <label className="toggle-label block overflow-hidden h-8 rounded-full bg-gray-300 cursor-pointer"></label>
                             </div>
-                            <span className="font-bold">Store All</span>
+                            <span className={clsx("font-bold", isSelectedAll ? "text-primary-300": "")}>Select All</span>
                         </div>
                         <div className="flex items-center">
                             <p className="font-bold">{`${targetIdsNum} / ${onlyTasksWithGenre.length}`}</p>

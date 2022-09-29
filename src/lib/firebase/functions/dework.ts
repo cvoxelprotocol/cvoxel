@@ -76,6 +76,31 @@ export const getDeworkUserTasks = (
       });
   });
 
+export const reFetchDeworkUserTasks = (
+  address: string,
+  id?: string
+): Promise<WorkSubjectFromDework[] | null> =>
+  new Promise((resolve, reject) => {
+    const reFetchDeworkUserTasksFuns = httpsCallable<
+      { [x: string]: string | undefined },
+      DeworkTasksResults
+    >(functions, "reFetchDeworkUserTasks");
+    reFetchDeworkUserTasksFuns({
+      address: address,
+      id: id,
+    })
+      .then((result) => {
+        if (result.data.status === "ok") {
+          resolve(result.data.subjects);
+        } else {
+          resolve(null);
+        }
+      })
+      .catch((error) => {
+        reject(error);
+      });
+  });
+
 export const updateGenreOfDeworkTask = (
   address: string,
   id: string,
@@ -119,7 +144,6 @@ export const issueCRDLFromDework = (
       storeAll: storeAll,
     })
       .then((result) => {
-        console.log({ result });
         if (result.data.status === "ok") {
           resolve(result.data.streamIds);
         } else {

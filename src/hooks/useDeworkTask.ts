@@ -68,6 +68,18 @@ export const useDeworkTask = () => {
     },
   });
 
+  const refetchDeworkTasks = async () => {
+    if (!account) return;
+    const res = await deworkService.refetchDeworkTasks(account);
+    if (res) {
+      queryClient.setQueryData<WorkSubjectFromDework[]>(
+        "getDeworkTaskListFromFB",
+        res
+      );
+      queryClient.invalidateQueries("getDeworkTaskListFromFB");
+    }
+  };
+
   const updateGenre = async (id: string, genre: string) => {
     if (!account) return;
     await updateGenreofDeworkTask({ account, id, genre });
@@ -99,5 +111,6 @@ export const useDeworkTask = () => {
     updateGenre,
     isUpdatingGenre,
     issueCRDLs,
+    refetchDeworkTasks,
   };
 };
