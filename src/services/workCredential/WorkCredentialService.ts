@@ -33,6 +33,7 @@ import { dataModel } from "@/lib/ceramic/dataModel";
 import { DID } from "dids";
 import { HeldWorkCredentials } from "@/__generated__/types/HeldWorkCredentials";
 import { Organization } from "@/__generated__/types/Organization";
+import { CERAMIC_URL } from "@/constants/common";
 
 type MigrateDataType = {
   v1: CVoxelItem;
@@ -405,12 +406,13 @@ export class WorkCredentialService {
     did?: string
   ): Promise<WorkCredentialWithId[]> => {
     if (!did) return [];
-    const ceramic = this.client || new CeramicClient();
+    const ceramic = this.client || new CeramicClient(CERAMIC_URL);
     const dataStore = new DIDDataStore({ ceramic, model: dataModel });
     const HeldWorkCredentials = await dataStore.get<
       "heldWorkCredentials",
       HeldWorkCredentials
     >("heldWorkCredentials", did);
+    console.log({ HeldWorkCredentials });
     if (!HeldWorkCredentials?.held) return [];
     const promiseArr = [];
     for (const id of HeldWorkCredentials.held) {
@@ -429,7 +431,7 @@ export class WorkCredentialService {
 
   fetchOrganization = async (orgId?: string): Promise<Organization | null> => {
     if (!orgId) return null;
-    const ceramic = this.client || new CeramicClient();
+    const ceramic = this.client || new CeramicClient(CERAMIC_URL);
     const doc = await TileDocument.load<Organization>(ceramic, orgId);
     return doc.content;
   };
