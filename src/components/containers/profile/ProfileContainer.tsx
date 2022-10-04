@@ -63,7 +63,7 @@ export const ProfileContainer: FC<Props> = ({ did }) => {
   };
 
   const sortCVoxels = useMemo(() => {
-    if (!CVoxelsRecords.content) return [];
+    if (!(CVoxelsRecords.content && CVoxelsRecords.content.WorkCredentials)) return [];
     return CVoxelsRecords.content.WorkCredentials.sort((a, b) => {
       return Number(a.issuedTimestamp) > Number(b.issuedTimestamp) ? -1 : 1;
     });
@@ -126,8 +126,8 @@ export const ProfileContainer: FC<Props> = ({ did }) => {
               </div>
             </div>
 
-            <div className="sm:w-[700px] pt-12 mx-auto">
-              <div className="flex items-center w-full space-x-4 pb-3 border-b border-light-outline dark:border-dark-outline">
+            <div className="sm:w-[700px] px-2 sm:px-0 pt-12 mx-auto">
+              <div className="flex items-center w-full space-x-1 sm:space-x-4 pb-3 border-b border-light-outline dark:border-dark-outline">
                 {!!currentVoxelID && (
                   <button onClick={handleClickNavBackButton}>
                     <LeftArrow className="text-light-on-surface-variant dark:text-dark-on-surface-variant " />
@@ -151,17 +151,17 @@ export const ProfileContainer: FC<Props> = ({ did }) => {
                 <div className="flex-initial">
                   {account ? (
                     <Button
-                      text="Go To Mypage"
+                      text="Mypage"
                       href={`/${myDid || account}`}
                       color="primary"
-                      className="text-xs sm:text-base"
+                      className="text-sm sm:text-base"
                     />
                   ) : (
                     <Button
-                      text="Connect Wallet"
+                      text="Connect"
                       onClick={() => connect()}
                       color="primary"
-                      className="text-xs sm:text-base"
+                      className="text-sm sm:text-base"
                     />
                   )}
                 </div>

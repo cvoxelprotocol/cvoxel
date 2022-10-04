@@ -8,6 +8,85 @@ export type Genre = {
   colorCode: string;
   bgColor: string;
 };
+export const genreListV2: Genre[] = [
+  {
+    id: 0,
+    label: "Dev",
+    value: "Dev",
+    colorCode: "#4285f4",
+    bgColor: "bg-[#4285f4]",
+  },
+  {
+    id: 1,
+    label: "Marketing",
+    value: "Marketing",
+    colorCode: "#c755ff",
+    bgColor: "bg-[#c755ff]",
+  },
+  {
+    id: 2,
+    label: "Design",
+    value: "Design",
+    colorCode: "#fbbc04",
+    bgColor: "bg-[#fbbc04]",
+  },
+  // {
+  //   id: 3,
+  //   label: "Art",
+  //   value: "Art",
+  //   colorCode: "#f57d05",
+  //   bgColor: "bg-[#f57d05]",
+  // },
+  {
+    id: 4,
+    label: "Community",
+    value: "Community",
+    colorCode: "#34a853",
+    bgColor: "bg-[#34a853]",
+  },
+  // {
+  //   id: 5,
+  //   label: "Writing&Translation",
+  //   value: "Writing&Translation",
+  //   colorCode: "#5b46c6",
+  //   bgColor: "bg-[#5b46c6]",
+  // },
+  // {
+  //   id: 6,
+  //   label: "Audio&Video",
+  //   value: "Audio&Video",
+  //   colorCode: "#ff63d6",
+  //   bgColor: "bg-[#ff63d6]",
+  // },
+  // {
+  //   id: 7,
+  //   label: "Accounting&Consulting",
+  //   value: "Accounting&Consulting",
+  //   colorCode: "#95d500",
+  //   bgColor: "bg-[#95d500]",
+  // },
+  {
+    id: 8,
+    label: "Donation&Investment",
+    value: "Donation&Investment",
+    colorCode: "#ff2c71",
+    bgColor: "bg-[#ff2c71]",
+  },
+  // {
+  //   id: 9,
+  //   label: "Legal",
+  //   value: "Legal",
+  //   colorCode: "#fb4432",
+  //   bgColor: "bg-[#fb4432]",
+  // },
+  {
+    id: 10,
+    label: "Other",
+    value: "Other",
+    colorCode: "#b7b7b7",
+    bgColor: "bg-[#b7b7b7]",
+  },
+];
 export const genreList: Genre[] = [
   {
     id: 0,
@@ -20,8 +99,8 @@ export const genreList: Genre[] = [
     id: 1,
     label: "Marketing",
     value: "Marketing",
-    colorCode: "#ff9900",
-    bgColor: "bg-[#ff9900]",
+    colorCode: "#c755ff",
+    bgColor: "bg-[#c755ff]",
   },
   {
     id: 2,
@@ -34,8 +113,8 @@ export const genreList: Genre[] = [
     id: 3,
     label: "Art",
     value: "Art",
-    colorCode: "#c755ff",
-    bgColor: "bg-[#c755ff]",
+    colorCode: "#f57d05",
+    bgColor: "bg-[#f57d05]",
   },
   {
     id: 4,

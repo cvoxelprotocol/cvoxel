@@ -1,5 +1,5 @@
 import { FC, useMemo } from "react";
-import { Genre, genreColorStyle, genreList } from "@/constants/genre";
+import { Genre, genreColorStyle,genreListV2 } from "@/constants/genre";
 import Select, { ActionMeta, OnChangeValue } from "react-select";
 import { getGenre } from "@/utils/genreUtil";
 
@@ -27,7 +27,7 @@ export const GenreList: FC<GenreListProps> = ({ handleGenre, genre }) => {
         defaultValue={defaultVal}
         onChange={handleChange}
         isMulti={false}
-        options={genreList}
+        options={genreListV2}
         styles={genreColorStyle}
         placeholder={"Select Genre"}
         className={

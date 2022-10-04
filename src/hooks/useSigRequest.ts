@@ -18,11 +18,13 @@ import { useStateMySelfID } from "@/recoilstate/ceramic";
 import { useContext } from "react";
 import { DIDContext } from "@/context/DIDContext";
 import { useWalletAccount } from "./useWalletAccount";
+import { useUpdateWorkCRDL } from "./useUpdateCVoxel";
 
 export function useSigRequest() {
   const cVoxelsRecord = useViewerRecord<ModelTypes, "workCredentials">(
     "workCredentials"
   );
+  const { updateWithoutNotify } = useUpdateWorkCRDL();
   const { showLoading, closeLoading } = useModal();
   const cVoxelService = getCVoxelService();
   const { lancInfo, lancError } = useToast();
@@ -33,16 +35,16 @@ export function useSigRequest() {
   const verifyWithCeramic = async (tx: CVoxelMetaDraft) => {
     if (!account) {
       lancError();
-      return false;
+      return null;
     }
     if (mySelfID == null || mySelfID.did == null) {
       await connectWallet();
       lancError("Please retry again");
-      return false;
+      return null;
     }
     if (!cVoxelsRecord.isLoadable) {
       lancError("Please retry again");
-      return false;
+      return null;
     }
 
     showLoading();
@@ -50,56 +52,47 @@ export function useSigRequest() {
       const isPayer = tx.from.toLowerCase() === account.toLowerCase();
       const meta = await verifyCVoxel(tx, account);
       if (meta) {
-        const doc = await mySelfID.client.dataModel.createTile(
-          "WorkCredential",
-          {
-            ...meta,
-          }
+        const wcs = cVoxelsRecord.content?.WorkCredentials ?? [];
+        const existedItem = wcs.find(
+          (wc) => wc.txHash?.toLowerCase() === tx.txHash?.toLowerCase()
         );
-        const cVoxels = cVoxelsRecord.content?.WorkCredentials ?? [];
-        const docUrl = doc.id.toUrl();
-        await cVoxelsRecord.set({
-          WorkCredentials: [
-            ...cVoxels,
+        if (existedItem) {
+          await updateWithoutNotify(existedItem.id, meta);
+          lancInfo(CVOXEL_VERIFY_SUCCEED);
+          closeLoading();
+          return existedItem.id;
+        } else {
+          const doc = await mySelfID.client.dataModel.createTile(
+            "WorkCredential",
             {
-              id: docUrl,
-              summary: meta.summary,
-              isPayer: isPayer,
-              txHash: meta.txHash,
-              deliverables: meta.deliverables,
-              fiatValue: meta.fiatValue,
-              genre: meta.genre,
-              issuedTimestamp: meta.issuedTimestamp,
-            },
-          ],
-        });
-        lancInfo(CVOXEL_VERIFY_SUCCEED);
-        closeLoading();
-        return true;
+              ...meta,
+            }
+          );
+          const docUrl = doc.id.toUrl();
+          await cVoxelsRecord.set({
+            WorkCredentials: [
+              ...wcs,
+              {
+                id: docUrl,
+                summary: meta.summary,
+                isPayer: isPayer,
+                txHash: meta.txHash,
+                deliverables: meta.deliverables,
+                fiatValue: meta.fiatValue,
+                genre: meta.genre,
+                isVerified: !!meta.toSig && !!meta.fromSig,
+                issuedTimestamp: meta.issuedTimestamp,
+              },
+            ],
+          });
+          lancInfo(CVOXEL_VERIFY_SUCCEED);
+          closeLoading();
+          return docUrl;
+        }
       } else {
         lancError(CVOXEL_VERIFY_FAILED);
         closeLoading();
-        return false;
-      }
-    } catch (error) {
-      lancError(CVOXEL_VERIFY_FAILED);
-      closeLoading();
-    }
-  };
-
-  const verifyWithoutCeramic = async (tx: CVoxelMetaDraft) => {
-    if (!account) return;
-    showLoading();
-    try {
-      const meta = await verifyCVoxel(tx, account);
-      if (meta) {
-        lancInfo(CVOXEL_VERIFY_SUCCEED);
-        closeLoading();
-        return true;
-      } else {
-        lancError(CVOXEL_VERIFY_FAILED);
-        closeLoading();
-        return false;
+        return null;
       }
     } catch (error) {
       lancError(CVOXEL_VERIFY_FAILED);
@@ -123,18 +116,18 @@ export function useSigRequest() {
     );
     if (!metaDraft) return null;
 
-    const meta = extractCVoxel(metaDraft);
+    const meta = extractCVoxel(metaDraft, isPayer);
 
     try {
       const sig = isPayer ? meta.fromSig : meta.toSig;
       if (!(sig && meta.txHash)) return null;
-      const status = await updateDraftWighVerify(
+      await updateDraftWighVerify(
         sig,
         meta.txHash,
         usr,
         tx.networkId.toString()
       );
-      return status === "ok" ? meta : null;
+      return meta;
     } catch (error) {
       console.log("Error: ", error);
       return null;
@@ -198,5 +191,5 @@ export function useSigRequest() {
     }
   };
 
-  return { verifyWithCeramic, verifyWithoutCeramic };
+  return { verifyWithCeramic };
 }

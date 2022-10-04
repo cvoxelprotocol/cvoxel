@@ -20,6 +20,7 @@ import { TxDirection } from "@/components/common/TxDirection";
 // import RightArrow from "@/components/CVoxel/VoxelListItem/right-arrow.svg";
 // import LeftArrow from "@/components/CVoxel/VoxelListItem/left-arrow.svg";
 import { useWalletAccount } from "@/hooks/useWalletAccount";
+import { OneVoxelVisualizerPresenter } from "./OneVoxelVisualizerPresenter";
 
 export const CVoxelDetailBox: FC<{}> = () => {
   const [box] = useStateCVoxelDetailBox();
@@ -110,7 +111,7 @@ export const CVoxelDetailBox: FC<{}> = () => {
         className={clsx(
           "bg-light-surface-1 dark:bg-dark-surface-1 top-6 sm:top-24 right-0 absolute border rounded-l-2xl border-y-light-outline border-l-light-outline dark:border-y-dark-outline dark:border-l-dark-outline z-10 w-72 sm:w-96 max-h-screen overflow-scroll",
           !isMount && "hidden",
-          isShow ? "animate-slide-from-right" : "animate-slide-to-right hidden sm:block"
+          isShow ? "animate-slide-from-right" : "animate-slide-to-right hidden"
         )}
         ref={boxRef}
       >
@@ -130,12 +131,11 @@ export const CVoxelDetailBox: FC<{}> = () => {
             </button>
           </div>
 
-          {/*c-voxel*/}
           <div className="h-52">
-            {box && box.item.id && (
-              <Canvas>
-                <VisualizerPresenter
-                  ids={box ? [box.item.id] : undefined}
+            {(box && box.item.id && detailItem) &&  (
+              <Canvas className="!touch-auto">
+                <OneVoxelVisualizerPresenter
+                  workCredential={{...detailItem, id:box.item.id}}
                   zoom={5}
                   disableHover
                 />

@@ -1,7 +1,7 @@
 import { FC, useCallback, useContext, useEffect, useMemo } from "react";
 import { CVoxelMetaDraft } from "@/interfaces";
 import { Canvas } from "@react-three/fiber";
-import VisualizerPresenter from "@/components/CVoxel/visualizerPresenter";
+import { OneVoxelVisualizerPresenter } from "@/components/CVoxel/OneVoxelVisualizerPresenter";
 import {
   convertTimestampToDateStr,
   convertTimestampToDateStrLocaleUS,
@@ -20,35 +20,60 @@ import { getExploreLink } from "@/utils/etherscanUtils";
 import { formatBigNumber } from "@/utils/ethersUtil";
 import { useVoxStyler } from "@/hooks/useVoxStyler";
 import { DIDContext } from "@/context/DIDContext";
+import { useWalletAccount } from "@/hooks/useWalletAccount";
 
 type Props = {
   offchainItem: CVoxelMetaDraft;
   onVerify: (tx: CVoxelMetaDraft) => void;
-  account?: string | null;
+  isSinglePageForVerify?: boolean
 };
 
 export const SigRequestDetail: FC<Props> = ({
   offchainItem,
   onVerify,
-  account,
+  isSinglePageForVerify = false
 }) => {
+  const {did, account} = useContext(DIDContext)
+  const { connectWallet } = useWalletAccount();
   const isPayer = useMemo(() => {
     return account?.toLowerCase() === offchainItem.from.toLowerCase();
   }, [account, offchainItem]);
+
+  const isEligibleToVerify = useMemo(() => {
+    if(!(account)) return false
+    return (!offchainItem.toSig && offchainItem.to.toLowerCase()===account.toLowerCase()) || (!offchainItem.fromSig && offchainItem.from.toLowerCase()===account.toLowerCase())
+  },[account, offchainItem])
+
+  const isYourRequest = useMemo(() => {
+    if(!(account)) return false
+    return (offchainItem.toSig && offchainItem.to.toLowerCase()===account.toLowerCase()) || (offchainItem.fromSig && offchainItem.from.toLowerCase()===account.toLowerCase())
+  },[account, offchainItem])
+
+  const isMe = useCallback((address: string) => {
+    if(!account) return false
+    return address.toLowerCase() === account.toLowerCase()
+  },[account])
 
   const exploreLink = useMemo(() => {
     if (!offchainItem || !offchainItem.txHash) return;
     return getExploreLink(offchainItem.txHash, offchainItem.networkId);
   }, [offchainItem?.txHash, offchainItem?.networkId]);
 
-  const {did} = useContext(DIDContext)
+  const connect = async () => {
+    try {
+      await connectWallet();
+    } catch (error) {
+      console.log("error:", error);
+    }
+  };
+
 
   // convert display
-  const { cvoxelsForDisplay, convertCVoxelsForDisplay } = useVoxStyler();
+  const { displayVoxel, setVoxelForDisplay } = useVoxStyler();
 
   useEffect(() => {
     let isMounted = true;
-    convertCVoxelsForDisplay([{ ...offchainItem, id: "0" }]);
+    setVoxelForDisplay({ ...offchainItem, id: "0" });
     return () => {
       isMounted = false;
     };
@@ -63,13 +88,13 @@ export const SigRequestDetail: FC<Props> = ({
   const PcDirection = () => {
     return isPayer ? (
       <div className="flex items-center space-x-3">
-        <NamePlate did={did} isMe hasBackgroundColor />
+        <NamePlate address={offchainItem?.from ?? ""} isMe={isMe(offchainItem.from)} hasBackgroundColor />
         <RightArrow />
         <NamePlate address={offchainItem?.to ?? ""} />
       </div>
     ) : (
       <div className="flex items-center space-x-3">
-        <NamePlate did={did} isMe hasBackgroundColor />
+        <NamePlate address={offchainItem?.to ?? ""} isMe={isMe(offchainItem.to)} hasBackgroundColor />
         <LeftArrow />
         <NamePlate address={offchainItem?.from ?? ""} />
       </div>
@@ -96,11 +121,11 @@ export const SigRequestDetail: FC<Props> = ({
     <div className="w-full border border-light-on-primary-container dark:border-dark-on-primary-container rounded-2xl overflow-hidden bg-light-surface-1 dark:bg-dark-surface-1">
       <div className="lg:flex w-full">
         <div className="flex-initial w-full lg:w-52 h-52 relative bg-light-surface dark:bg-dark-surface rounded-br-2xl rounded-bl-2xl lg:rounded-bl-none">
-          <Canvas>
-            <VisualizerPresenter
-              voxelsForDisplay={cvoxelsForDisplay}
+          <Canvas className="!touch-auto">
+            <OneVoxelVisualizerPresenter
               zoom={6}
               disableHover
+              voxelForDisplay={displayVoxel}
             />
           </Canvas>
 
@@ -202,14 +227,44 @@ export const SigRequestDetail: FC<Props> = ({
             </div>
           </div>
         )}
-
         <div className="text-right">
-          <Button
-            text="Verify"
-            color="primary"
-            buttonType="button"
-            onClick={handleVerify}
-          />
+          {isSinglePageForVerify ? (
+            <>
+              {!account ? (
+                <Button
+                  text="Connect Wallet"
+                  color="primary"
+                  buttonType="button"
+                  onClick={connect}
+                />
+            ): (
+              <>
+                {isEligibleToVerify ? (
+                  <Button
+                    text="Verify"
+                    color="primary"
+                    buttonType="button"
+                    onClick={handleVerify}
+                  />
+                ): (
+                  <Button
+                    text={isYourRequest ? "Your Request" : "Not Eligible"}
+                    color="gray"
+                    buttonType="button"
+                    disabled={true}
+                  />
+                )}
+              </>
+            )}
+            </>
+          ): (
+            <Button
+              text="Verify"
+              color="primary"
+              buttonType="button"
+              onClick={handleVerify}
+            />
+          )}
         </div>
       </div>
 

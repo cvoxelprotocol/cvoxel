@@ -4,7 +4,7 @@ import clsx from "clsx";
 
 type Props = {
   text: string;
-  color?: "grad-red" | "grad-blue" | "primary" | "secondary";
+  color?: "grad-red" | "grad-blue" | "primary" | "secondary" | "gray"
   variant?: string;
   onClick?: () => void;
   href?: string;
@@ -42,6 +42,11 @@ export const Button: FC<Props> = ({
   } else if (color == "secondary") {
     buttonColor = clsx(
       "bg-light-secondary dark:bg-dark-secondary",
+      buttonColor
+    );
+  } else if (color == "gray") {
+    buttonColor = clsx(
+      "bg-gray-300 dark:bg-gray-400",
       buttonColor
     );
   }

@@ -74,7 +74,7 @@ export const ShareButton: FC<Props> = ({ voxelID, valiant = "button", isOwner = 
     const u = new URL("https://twitter.com/intent/tweet");
     u.searchParams.set("url", shareUrl);
 
-    u.searchParams.set("text", isOwner ? "Check out my web3.0 resume at VESS, the web3 work credential protocol.\n" : "Check out VESS | @vess_id , the web3 work credential protocol for your web3 resume! Take a look:\n");
+    u.searchParams.set("text", isOwner ? "Check out my resume at VESS | @vess_id, the web3 work credential protocol.\n" : "Check out VESS | @vess_id , the web3 work credential protocol for your resume! Take a look:\n");
     u.searchParams.set("hashtags", "WorkCredential");
 
     return u.toString();

@@ -2,19 +2,16 @@ import { HomeSPHeader } from "@/components/HomeTab/HomeSPHeader";
 import { HomeTabsHeader } from "@/components/HomeTab/HomeTabsHeader";
 import { MyCVoxelContainer } from "@/components/containers/home/tabs/MyCVoxelContainer";
 import { useTab } from "@/hooks/useTab";
-import { CVoxels } from "@/interfaces";
 import { FC, RefObject } from "react";
 import { MyTxContainer } from "./tabs/MyTxContainer";
 import { MyNotificationContainer } from "./tabs/MyNotificationContainer";
 import { Arrow } from "@/components/common/arrow/Arrow";
 
 type props = {
-  content?: CVoxels | null;
   scrollToVisual: () => void;
   visualContainerRef: RefObject<HTMLDivElement>;
 };
 export const MyPageContainer: FC<props> = ({
-  content,
   scrollToVisual,
   visualContainerRef,
 }) => {
