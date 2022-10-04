@@ -1,0 +1,16 @@
+{
+  "type": "object",
+  "title": "client",
+  "properties": {
+    "format": {
+      "type": "string",
+      "title": "format",
+      "description": "name or DID"
+    },
+    "value": {
+      "type": "string",
+      "title": "value",
+      "description": "Client Info"
+    }
+  }
+}

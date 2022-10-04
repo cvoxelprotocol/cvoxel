@@ -7,32 +7,12 @@ import {
   NoEthereumProviderError,
   UserRejectedRequestError as UserRejectedRequestErrorInjected,
 } from "@web3-react/injected-connector";
-import { useEffect } from "react";
-import { getCVoxelService } from "@/services/CVoxel/CVoxelService";
-import { getEtherService } from "@/services/Ether/EtherService";
 import web3 from "web3";
 
 export const useWalletAccount = () => {
   const { library, account, active, activate, deactivate, chainId } =
     useWeb3React<Web3Provider>();
-  const etherService = getEtherService();
-  const cVoxelService = getCVoxelService();
   const { lancError } = useToast();
-
-  useEffect(() => {
-    let isMounted = true;
-    if (
-      library &&
-      isMounted &&
-      (!cVoxelService.provider || !etherService.provider)
-    ) {
-      cVoxelService.setProvider(library);
-      etherService.setProvider(library);
-    }
-    return () => {
-      isMounted = false;
-    };
-  }, [library]);
 
   const connectWallet = async () => {
     await activate(injected, async (error) => {

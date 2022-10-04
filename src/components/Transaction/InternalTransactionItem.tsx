@@ -1,6 +1,6 @@
 import { TransactionLogWithChainId } from "@/interfaces";
 import { formatBigNumber } from "@/utils/ethersUtil";
-import { shortHash } from "@/utils/tools";
+import { shortHash } from "@/utils/objectUtil";
 import { FC } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";

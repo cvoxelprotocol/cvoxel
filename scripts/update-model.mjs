@@ -18,8 +18,8 @@ const SCHEMAS = {
     BasicProfile: 'ceramic://k3y52l7qbv1frxt706gqfzmq6cbqdkptzk8uudaryhlkf6ly9vx21hqu4r6k1jqio',
     CryptoAccounts: 'ceramic://k3y52l7qbv1frypussjburqg4fykyyycfu0p9znc75lv2t5cg4xaslhagkd7h7mkg',
     AlsoKnownAs: 'ceramic://k3y52l7qbv1fryojt8n8cw2k04p9wp67ly59iwqs65dejso566fij5wsdrb871yio',
-    CVoxel: 'ceramic://k3y52l7qbv1frxhj9pfaopsost1szb6w20xua25gzmmhbmbxwlwds9h3ak67a85q8',
-    CVoxels: 'ceramic://k3y52l7qbv1frxqcggjbg2qhnfwkyea8n40132vpwm91fs0alx4i1tu4b154agfeo'
+    WorkCredential:"ceramic://k3y52l7qbv1frxlqnopwhl2tpnw4inawt7upovcr7d0dqtws5t9tn99pigg7ehlvk",
+    WorkCredentials:"ceramic://k3y52l7qbv1fryh5yum8uvbtm4a0t63fu1tp2saaxlx0d5ibwfp786yk5h647qj9c"
   }
 
 // The seed must be provided as an environment variable
@@ -171,6 +171,8 @@ const newCVoxelsModel = {
 
 const loadedCVoxelStream = await TileDocument.load(ceramic, SCHEMAS["CVoxel"]);
 const loadedCVoxelsStream = await TileDocument.load(ceramic, SCHEMAS["CVoxels"]);
+
+loadedCVoxelStream.metadata
 
 const tile = new TileDocument(ceramic)
 

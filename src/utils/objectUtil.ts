@@ -1,21 +1,11 @@
-import { is } from "./typeUtils";
-import superjson from "superjson";
-
-export const removeUndefined = <T>(object: T): T => {
+export const removeUndefined = <T extends {}>(object: T): T => {
   return Object.fromEntries(
     Object.entries(object).filter(([_, v]) => v !== undefined)
   ) as T;
 };
 
-export const removeUndefinedFromArray = <T>(array: T[]): T[] => {
-  return array.filter((a) => a !== undefined);
-};
-
-export const formatFromSuperjson = <T>(object: any): T => {
-  if (isString(object)) {
-    return superjson.parse<{ json: T }>(object).json;
-  }
-  return object;
+export const removeUndefinedFromArray = <T>(arr: Array<T>): Array<T> => {
+  return arr.filter((a) => a !== undefined);
 };
 
 export const shortenStr = (str?: string, length = 20): string => {
@@ -27,6 +17,11 @@ export const shortenStr = (str?: string, length = 20): string => {
     : `${str.slice(0, half)}...${str.slice(remaining)}`;
 };
 
-const isString = (obj: any): obj is string => {
-  return is("String", obj);
+export const shortHash = (hash?: string, maxLength: number = 20) => {
+  if (!hash) return "";
+  const half = Math.floor(maxLength / 2);
+  const remaining = half - maxLength;
+  return hash.length <= maxLength
+    ? hash
+    : `${hash.slice(0, half)}...${hash.slice(remaining)}`;
 };

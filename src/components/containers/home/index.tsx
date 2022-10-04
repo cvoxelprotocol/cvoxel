@@ -1,14 +1,14 @@
-import { useCVoxelsRecord } from "@/hooks/useCVoxel";
 import { FC, useCallback, useContext, useEffect, useRef } from "react";
 import { CVoxelsContainer } from "./CVoxelsContainer";
 import { MyPageContainer } from "./MyPageContainer";
 import { Arrow } from "@/components/common/arrow/Arrow";
 import { DIDContext } from "@/context/DIDContext";
 import { useMyPageScreen, useTab } from "@/hooks/useTab";
+import { useWorkCredentials } from "@/hooks/useWorkCredential";
 
 export const HomeContainer: FC = () => {
   const {did} = useContext(DIDContext)
-  const CVoxelsRecords = useCVoxelsRecord(did || "");
+  const {workCredentials} = useWorkCredentials(did)
   const myPageContainerRef = useRef<HTMLDivElement>(null);
   const visualContainerRef = useRef<HTMLDivElement>(null);
   const { setTabState } = useTab();
@@ -39,7 +39,7 @@ export const HomeContainer: FC = () => {
         className="relative snap-start snap-always min-h-screen"
         ref={visualContainerRef}
       >
-        <CVoxelsContainer did={did || ""} content={CVoxelsRecords.content} isMe moveToCreateSection={handleCreateNewVoxel}>
+        <CVoxelsContainer did={did || ""} content={workCredentials} isMe moveToCreateSection={handleCreateNewVoxel}>
           <div className="absolute bottom-0 pb-12">
             <div className="relative mx-auto cursor-pointer hidden sm:block">
               <button onClick={() => scrollToInfo()}>

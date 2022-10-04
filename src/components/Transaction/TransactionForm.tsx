@@ -1,7 +1,7 @@
-import { useDraftCVoxel } from "@/hooks/useDraftCVoxel";
 import { useFileUpload } from "@/hooks/useFileUpload";
 import { useInternalTransactions } from "@/hooks/useInternalTransactions";
 import { WorkCredentialForm, TransactionLogWithChainId } from "@/interfaces";
+import { useStateIssueStatus } from "@/recoilstate";
 import { ViewerConnectionState } from "@self.id/react";
 import { FC, useMemo, useEffect } from "react";
 import { useForm } from "react-hook-form";
@@ -25,7 +25,7 @@ export const TransactionForm: FC<TransactionFormProps> = ({
 }) => {
   const { internalTxs, internalTxLoading } = useInternalTransactions(tx);
   const { cid, status:fileUploadStatus } = useFileUpload();
-  const { issueStatus } = useDraftCVoxel();
+  const [issueStatus, _] = useStateIssueStatus();
 
   const {
     register,

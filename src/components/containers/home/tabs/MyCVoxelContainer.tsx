@@ -1,24 +1,35 @@
 import { useTab } from "@/hooks/useTab";
-import { FC, useCallback, useContext, useMemo, useState } from "react";
+import {
+  FC,
+  LegacyRef,
+  useCallback,
+  useContext,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { NoItemPresenter } from "../../../common/NoItemPresenter";
 import CVoxelsPresenter from "../../../CVoxel/CVoxelsPresenter";
-import type { CVoxelItem as ICVoxelItem } from "@/interfaces";
-import { useStateForceUpdate } from "@/recoilstate";
-import { useCVoxelsRecord } from "@/hooks/useCVoxel";
+import { useStateForceUpdate } from "@/recoilstate";;
 import { CommonLoading } from "../../../common/CommonLoading";
-import { useCVoxelList } from "@/hooks/useCVoxelList";
-import { VoxelListItem } from "@/components/CVoxel/VoxelListItem/VoxelListItem";
+import { useOffchainList } from "@/hooks/useOffchainList";
+import { VoxelListItemMemo } from "@/components/CVoxel/VoxelListItem/VoxelListItem";
 import { useRouter } from "next/dist/client/router";
 import { NavBar } from "@/components/CVoxel/NavBar/NavBar";
 import { VoxelDetail } from "@/components/CVoxel/VoxelDetail/VoxelDetail";
 import { SearchData } from "@/components/common/search/Search";
 import { Button } from "@/components/common/button/Button";
 import { DIDContext } from "@/context/DIDContext";
+import { useWorkCredentials } from "@/hooks/useWorkCredential";
+import Router from "next/router";
+import { WorkCredential } from "@/__generated__/types/WorkCredential";
+import { useVirtualizer } from "@tanstack/react-virtual";
+import { useIsTabletOrMobile } from "@/hooks/useIsTabletOrMobile";
 
 export const MyCVoxelContainer: FC = () => {
   const {did, account} = useContext(DIDContext)
-  const { offchainMetaList, txLoading } = useCVoxelList();
-  const CVoxelsRecords = useCVoxelsRecord(did || "");
+  const { offchainMetaList, txLoading } = useOffchainList();
+  const {workCredentials} = useWorkCredentials(did)
   const { setTabState } = useTab();
 
   // TODO: This is temporary solution because of useTileDoc bug
@@ -26,15 +37,15 @@ export const MyCVoxelContainer: FC = () => {
     useStateForceUpdate();
 
   const forceReload = () => {
-    setForceUpdateCVoxelList(v => !v);
+    if(did) Router.push(`/${did}`)
   };
 
-  const sortCVoxels = useMemo(() => {
-    if (!CVoxelsRecords.content) return [];
-    return CVoxelsRecords.content.WorkCredentials.sort((a, b) => {
-      return Number(a.issuedTimestamp) > Number(b.issuedTimestamp) ? -1 : 1;
+  const sortCredentials = useMemo(() => {
+    if (!workCredentials) return [];
+    return workCredentials.sort((a, b) => {
+      return Number(a.updatedAt) > Number(b.updatedAt) ? -1 : 1;
     });
-  }, [CVoxelsRecords.content,forceUpdateCVoxelList,CVoxelsRecords.content?.WorkCredentials]);
+  }, [workCredentials,forceUpdateCVoxelList]);
 
   const router = useRouter();
   const handleClickNavBackButton = useCallback(() => {
@@ -54,14 +65,14 @@ export const MyCVoxelContainer: FC = () => {
   };
 
   // TODO: improvement search logic
-  const isHitSearch = (voxel: ICVoxelItem) => {
+  const isHitSearch = (voxel: WorkCredential) => {
     if (!keyword) {
       return false;
     }
-    if (voxel.summary.toLowerCase().match(keyword.toLowerCase())) {
+    if (voxel.subject.work?.summary?.toLowerCase().match(keyword.toLowerCase())) {
       return true;
     }
-    if (voxel.genre?.toLowerCase().match(keyword.toLowerCase())) {
+    if (voxel.subject.work?.genre?.toLowerCase().match(keyword.toLowerCase())) {
       return true;
     }
     return false;
@@ -73,6 +84,29 @@ export const MyCVoxelContainer: FC = () => {
     }
   }, [router.query]);
 
+  const currentCredential = useMemo(
+    () => sortCredentials.find((crdl) => crdl.backupId == currentVoxelID),
+    [currentVoxelID, sortCredentials]
+  );
+
+  const filteredVoxels = useMemo(
+    () =>
+    sortCredentials.filter((voxel) =>
+        !!keyword && keyword != "" ? isHitSearch(voxel) : true
+      ),
+    [isHitSearch, keyword, sortCredentials]
+  );
+
+  const parentRef: LegacyRef<any> = useRef();
+
+  const { isTabletOrMobile } = useIsTabletOrMobile();
+
+  const rowVirtualizer = useVirtualizer({
+    count: filteredVoxels.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => ((isTabletOrMobile ? 15 : 13) + 1) * 16, // NOTE: (item + margin) * rem
+  });
+
   return useMemo(
     () => (
       <>
@@ -83,10 +117,10 @@ export const MyCVoxelContainer: FC = () => {
           onClear={handleSearchClear}
         />
 
-        {!!currentVoxelID ? (
+        {!!currentCredential ? (
           <div className="mt-6 px-2 sm:px-6">
             <VoxelDetail
-              itemId={currentVoxelID}
+              crdl={currentCredential}
               offchainItems={offchainMetaList}
               isOwner={true}
               notifyUpdated={forceReload}
@@ -94,7 +128,7 @@ export const MyCVoxelContainer: FC = () => {
           </div>
         ) : (
           <CVoxelsPresenter>
-            {!txLoading && (!sortCVoxels || sortCVoxels.length === 0) && (
+            {!txLoading && (!sortCredentials || sortCredentials.length === 0) && (
               <div className="mx-auto">
                 <NoItemPresenter text="No Voxels yet" />
                 {account && (
@@ -106,29 +140,55 @@ export const MyCVoxelContainer: FC = () => {
                 )}
               </div>
             )}
+
             {txLoading && <CommonLoading />}
-            {!txLoading &&
-              sortCVoxels &&
-              sortCVoxels
-                .filter((voxel) =>
-                  !!keyword && keyword != "" ? isHitSearch(voxel) : true
-                )
-                .map((item) => {
-                  return <VoxelListItem key={item.id} item={item} />;
-                })}
+            {!txLoading && filteredVoxels && (
+              <div ref={parentRef} className={"overflow-auto h-full w-full"}>
+                <div
+                  style={{
+                    height: `${rowVirtualizer.getTotalSize() / 16}rem`,
+                    width: "100%",
+                    position: "relative",
+                  }}
+                >
+                  {rowVirtualizer
+                    .getVirtualItems()
+                    .map((virtualItem) => (
+                      <div
+                        key={virtualItem.index}
+                        style={{
+                          position: "absolute",
+                          top: 0,
+                          left: 0,
+                          width: "100%",
+                          height: `${virtualItem.size / 16}rem`,
+                          transform: `translateY(${virtualItem.start / 16}rem)`,
+                        }}
+                      >
+                        <VoxelListItemMemo
+                          key={filteredVoxels[virtualItem.index].id}
+                          workCredential={filteredVoxels[virtualItem.index]}
+                        />
+                      </div>
+                    ))}
+                </div>
+              </div>
+            )}
           </CVoxelsPresenter>
         )}
       </>
     ),
     [
       txLoading,
-      sortCVoxels,
+      filteredVoxels,
       account,
       offchainMetaList,
       did,
       forceUpdateCVoxelList,
-      currentVoxelID,
+      currentCredential,
       keyword,
+      rowVirtualizer,
+      isTabletOrMobile,
     ]
   );
 };

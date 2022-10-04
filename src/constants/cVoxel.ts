@@ -1,303 +1,572 @@
-import { CVoxelItem } from "@/interfaces";
+import { WorkCredentialWithId } from "@/interfaces";
 
-export const initCVoxel: CVoxelItem[] = [
+export const initCVoxel: WorkCredentialWithId[] = [
   {
+    backupId: "1",
     id: "1",
-    summary: "", // work summary
-    deliverables: [],
-    isPayer: false,
-    fiatValue: "58400",
-    issuedTimestamp: "", //block timestamp
-    txHash: "",
-    genre: "Art",
-    isVerified: true,
+    subject: {
+      work: {
+        id: "did:pkh:hoge",
+        summary: "", // work summary
+        value: "58400",
+        issuedAt: "", //block timestamp
+        genre: "Art",
+      },
+      tx: {
+        txHash: "",
+      },
+      deliverables: [],
+    },
+    signature: {
+      holderSig: "hgoe",
+      partnerSig: "piyo",
+    },
   },
   {
+    backupId: "2",
     id: "2",
-    summary: "", // work summary
-    deliverables: [],
-    isPayer: false,
-    fiatValue: "5800",
-    issuedTimestamp: "", //block timestamp
-    txHash: "",
-    genre: "Donation&Investment",
-    isVerified: false,
+    subject: {
+      work: {
+        id: "did:pkh:hoge",
+        summary: "", // work summary
+        value: "58400",
+        issuedAt: "", //block timestamp
+        genre: "Donation&Investment",
+      },
+      tx: {
+        txHash: "",
+      },
+      deliverables: [],
+    },
+    signature: {
+      holderSig: "hgoe",
+      partnerSig: "piyo",
+    },
   },
   {
+    backupId: "3",
     id: "3",
-    summary: "", // work summary
-    deliverables: [{ format: "cid", value: "aaaa" }],
-    isPayer: false,
-    fiatValue: "2920",
-    issuedTimestamp: "", //block timestamp
-    txHash: "",
-    genre: "Dev",
-    isVerified: false,
+    subject: {
+      work: {
+        id: "did:pkh:hoge",
+        summary: "", // work summary
+        value: "58400",
+        issuedAt: "", //block timestamp
+        genre: "Donation&Investment",
+      },
+      tx: {
+        txHash: "",
+      },
+      deliverables: [],
+    },
+    signature: {
+      holderSig: "hgoe",
+      partnerSig: "piyo",
+    },
   },
   {
+    backupId: "4",
     id: "4",
-    summary: "", // work summary
-    deliverables: [],
-    isPayer: false,
-    fiatValue: "58400",
-    issuedTimestamp: "", //block timestamp
-    txHash: "",
-    genre: "Marketing",
-    isVerified: true,
+    subject: {
+      work: {
+        id: "did:pkh:hoge",
+        summary: "", // work summary
+        value: "58400",
+        issuedAt: "", //block timestamp
+        genre: "Donation&Investment",
+      },
+      tx: {
+        txHash: "",
+      },
+      deliverables: [],
+    },
+    signature: {
+      holderSig: "hgoe",
+      partnerSig: "piyo",
+    },
   },
   {
+    backupId: "5",
     id: "5",
-    summary: "", // work summary
-    deliverables: [],
-    isPayer: false,
-    fiatValue: "8760",
-    issuedTimestamp: "", //block timestamp
-    txHash: "",
-    genre: "Art",
-    isVerified: true,
+    subject: {
+      work: {
+        id: "did:pkh:hoge",
+        summary: "", // work summary
+        value: "58400",
+        issuedAt: "", //block timestamp
+        genre: "Donation&Investment",
+      },
+      tx: {
+        txHash: "",
+      },
+      deliverables: [],
+    },
+    signature: {
+      holderSig: "hgoe",
+      partnerSig: "piyo",
+    },
   },
   {
+    backupId: "6",
     id: "6",
-    summary: "", // work summary
-    deliverables: [{ format: "cid", value: "aaaa" }],
-    isPayer: false,
-    fiatValue: "58400",
-    issuedTimestamp: "", //block timestamp
-    txHash: "",
-    genre: "Community",
-    isVerified: true,
+    subject: {
+      work: {
+        id: "did:pkh:hoge",
+        summary: "", // work summary
+        value: "58400",
+        issuedAt: "", //block timestamp
+        genre: "Donation&Investment",
+      },
+      tx: {
+        txHash: "",
+      },
+      deliverables: [],
+    },
+    signature: {
+      holderSig: "hgoe",
+      partnerSig: "piyo",
+    },
   },
   {
+    backupId: "7",
     id: "7",
-    summary: "", // work summary
-    deliverables: [],
-    isPayer: false,
-    fiatValue: "2920",
-    issuedTimestamp: "", //block timestamp
-    txHash: "",
-    genre: "Accounting&Consulting",
-    isVerified: true,
+    subject: {
+      work: {
+        id: "did:pkh:hoge",
+        summary: "", // work summary
+        value: "58400",
+        issuedAt: "", //block timestamp
+        genre: "Donation&Investment",
+      },
+      tx: {
+        txHash: "",
+      },
+      deliverables: [],
+    },
+    signature: {
+      holderSig: "hgoe",
+      partnerSig: "piyo",
+    },
   },
   {
+    backupId: "8",
     id: "8",
-    summary: "", // work summary
-    deliverables: [],
-    isPayer: false,
-    fiatValue: "4380",
-    issuedTimestamp: "", //block timestamp
-    txHash: "",
-    genre: "Audio&Video",
-    isVerified: false,
+    subject: {
+      work: {
+        id: "did:pkh:hoge",
+        summary: "", // work summary
+        value: "58400",
+        issuedAt: "", //block timestamp
+        genre: "Donation&Investment",
+      },
+      tx: {
+        txHash: "",
+      },
+      deliverables: [],
+    },
+    signature: {
+      holderSig: "hgoe",
+      partnerSig: "piyo",
+    },
   },
   {
+    backupId: "9",
     id: "9",
-
-    summary: "", // work summary
-    deliverables: [],
-    isPayer: false,
-    fiatValue: "5840",
-    issuedTimestamp: "", //block timestamp
-    txHash: "",
-    genre: "Accounting&Consulting",
-    isVerified: true,
+    subject: {
+      work: {
+        id: "did:pkh:hoge",
+        summary: "", // work summary
+        value: "58400",
+        issuedAt: "", //block timestamp
+        genre: "Donation&Investment",
+      },
+      tx: {
+        txHash: "",
+      },
+      deliverables: [],
+    },
+    signature: {
+      holderSig: "hgoe",
+      partnerSig: "piyo",
+    },
   },
   {
+    backupId: "10",
     id: "10",
-    summary: "", // work summary
-    deliverables: [],
-    isPayer: false,
-    fiatValue: "4380",
-    issuedTimestamp: "", //block timestamp
-    txHash: "",
-    genre: "Donation&Investment",
-    isVerified: true,
+    subject: {
+      work: {
+        id: "did:pkh:hoge",
+        summary: "", // work summary
+        value: "58400",
+        issuedAt: "", //block timestamp
+        genre: "Donation&Investment",
+      },
+      tx: {
+        txHash: "",
+      },
+      deliverables: [],
+    },
+    signature: {
+      holderSig: "hgoe",
+      partnerSig: "piyo",
+    },
   },
   {
+    backupId: "11",
     id: "11",
-    summary: "", // work summary
-    deliverables: [],
-    isPayer: false,
-    fiatValue: "5840",
-    issuedTimestamp: "", //block timestamp
-    txHash: "",
-    genre: "Legal",
-    isVerified: false,
+    subject: {
+      work: {
+        id: "did:pkh:hoge",
+        summary: "", // work summary
+        value: "58400",
+        issuedAt: "", //block timestamp
+        genre: "Donation&Investment",
+      },
+      tx: {
+        txHash: "",
+      },
+      deliverables: [],
+    },
+    signature: {
+      holderSig: "hgoe",
+      partnerSig: "piyo",
+    },
   },
   {
+    backupId: "12",
     id: "12",
-    summary: "", // work summary
-    deliverables: [],
-    isPayer: false,
-    fiatValue: "8760",
-    issuedTimestamp: "", //block timestamp
-    txHash: "",
-    genre: "",
-    isVerified: true,
+    subject: {
+      work: {
+        id: "did:pkh:hoge",
+        summary: "", // work summary
+        value: "58400",
+        issuedAt: "", //block timestamp
+        genre: "Donation&Investment",
+      },
+      tx: {
+        txHash: "",
+      },
+      deliverables: [],
+    },
+    signature: {
+      holderSig: "hgoe",
+      partnerSig: "piyo",
+    },
   },
   {
+    backupId: "13",
     id: "13",
-    summary: "", // work summary
-    deliverables: [],
-    isPayer: false,
-    fiatValue: "8760",
-    issuedTimestamp: "", //block timestamp
-    txHash: "",
-    genre: "Art",
-    isVerified: true,
+    subject: {
+      work: {
+        id: "did:pkh:hoge",
+        summary: "", // work summary
+        value: "58400",
+        issuedAt: "", //block timestamp
+        genre: "Donation&Investment",
+      },
+      tx: {
+        txHash: "",
+      },
+      deliverables: [],
+    },
+    signature: {
+      holderSig: "hgoe",
+      partnerSig: "piyo",
+    },
   },
   {
+    backupId: "14",
     id: "14",
-    summary: "", // work summary
-    deliverables: [],
-    isPayer: false,
-    fiatValue: "4672",
-    issuedTimestamp: "", //block timestamp
-    txHash: "",
-    genre: "Art",
-    isVerified: false,
+    subject: {
+      work: {
+        id: "did:pkh:hoge",
+        summary: "", // work summary
+        value: "58400",
+        issuedAt: "", //block timestamp
+        genre: "Donation&Investment",
+      },
+      tx: {
+        txHash: "",
+      },
+      deliverables: [],
+    },
+    signature: {
+      holderSig: "hgoe",
+      partnerSig: "piyo",
+    },
   },
   {
+    backupId: "15",
     id: "15",
-    summary: "", // work summary
-    deliverables: [{ format: "cid", value: "aaaa" }],
-    isPayer: false,
-    fiatValue: "5840",
-    issuedTimestamp: "", //block timestamp
-    txHash: "",
-    genre: "Dev",
-    isVerified: true,
+    subject: {
+      work: {
+        id: "did:pkh:hoge",
+        summary: "", // work summary
+        value: "58400",
+        issuedAt: "", //block timestamp
+        genre: "Donation&Investment",
+      },
+      tx: {
+        txHash: "",
+      },
+      deliverables: [],
+    },
+    signature: {
+      holderSig: "hgoe",
+      partnerSig: "piyo",
+    },
   },
   {
+    backupId: "16",
     id: "16",
-    summary: "", // work summary
-    deliverables: [],
-    isPayer: false,
-    fiatValue: "4380",
-    issuedTimestamp: "", //block timestamp
-    txHash: "",
-    genre: "Community",
-    isVerified: true,
+    subject: {
+      work: {
+        id: "did:pkh:hoge",
+        summary: "", // work summary
+        value: "58400",
+        issuedAt: "", //block timestamp
+        genre: "Donation&Investment",
+      },
+      tx: {
+        txHash: "",
+      },
+      deliverables: [],
+    },
+    signature: {
+      holderSig: "hgoe",
+      partnerSig: "piyo",
+    },
   },
   {
+    backupId: "17",
     id: "17",
-    summary: "", // work summary
-    deliverables: [],
-    isPayer: false,
-    fiatValue: "5840",
-    issuedTimestamp: "", //block timestamp
-    txHash: "",
-    genre: "Donation&Investment",
-    isVerified: false,
+    subject: {
+      work: {
+        id: "did:pkh:hoge",
+        summary: "", // work summary
+        value: "58400",
+        issuedAt: "", //block timestamp
+        genre: "Donation&Investment",
+      },
+      tx: {
+        txHash: "",
+      },
+      deliverables: [],
+    },
+    signature: {
+      holderSig: "hgoe",
+      partnerSig: "piyo",
+    },
   },
   {
+    backupId: "18",
     id: "18",
-    summary: "", // work summary
-    deliverables: [],
-    isPayer: false,
-    fiatValue: "5548",
-    issuedTimestamp: "", //block timestamp
-    txHash: "",
-    genre: "Donation&Investment",
-    isVerified: false,
+    subject: {
+      work: {
+        id: "did:pkh:hoge",
+        summary: "", // work summary
+        value: "58400",
+        issuedAt: "", //block timestamp
+        genre: "Donation&Investment",
+      },
+      tx: {
+        txHash: "",
+      },
+      deliverables: [],
+    },
+    signature: {
+      holderSig: "hgoe",
+      partnerSig: "piyo",
+    },
   },
 
   {
+    backupId: "19",
     id: "19",
-    summary: "", // work summary
-    deliverables: [],
-    isPayer: false,
-    fiatValue: "4628",
-    issuedTimestamp: "", //block timestamp
-    txHash: "",
-    genre: "Donation&Investment",
-    isVerified: false,
+    subject: {
+      work: {
+        id: "did:pkh:hoge",
+        summary: "", // work summary
+        value: "58400",
+        issuedAt: "", //block timestamp
+        genre: "Donation&Investment",
+      },
+      tx: {
+        txHash: "",
+      },
+      deliverables: [],
+    },
+    signature: {
+      holderSig: "hgoe",
+      partnerSig: "piyo",
+    },
   },
   {
+    backupId: "20",
     id: "20",
-    summary: "", // work summary
-    deliverables: [],
-    isPayer: false,
-    fiatValue: "4380",
-    issuedTimestamp: "", //block timestamp
-    txHash: "",
-    genre: "Legal",
-    isVerified: true,
+    subject: {
+      work: {
+        id: "did:pkh:hoge",
+        summary: "", // work summary
+        value: "58400",
+        issuedAt: "", //block timestamp
+        genre: "Donation&Investment",
+      },
+      tx: {
+        txHash: "",
+      },
+      deliverables: [],
+    },
+    signature: {
+      holderSig: "hgoe",
+      partnerSig: "piyo",
+    },
   },
   {
+    backupId: "21",
     id: "21",
-    summary: "", // work summary
-    deliverables: [{ format: "cid", value: "aaaa" }],
-    isPayer: false,
-    fiatValue: "5840",
-    issuedTimestamp: "", //block timestamp
-    txHash: "",
-    genre: "Dev",
-    isVerified: false,
+    subject: {
+      work: {
+        id: "did:pkh:hoge",
+        summary: "", // work summary
+        value: "58400",
+        issuedAt: "", //block timestamp
+        genre: "Donation&Investment",
+      },
+      tx: {
+        txHash: "",
+      },
+      deliverables: [],
+    },
+    signature: {
+      holderSig: "hgoe",
+      partnerSig: "piyo",
+    },
   },
   {
+    backupId: "22",
     id: "22",
-    summary: "", // work summary
-    deliverables: [],
-    isPayer: false,
-    fiatValue: "52560",
-    issuedTimestamp: "", //block timestamp
-    txHash: "",
-    genre: "Design",
-    isVerified: true,
+    subject: {
+      work: {
+        id: "did:pkh:hoge",
+        summary: "", // work summary
+        value: "58400",
+        issuedAt: "", //block timestamp
+        genre: "Donation&Investment",
+      },
+      tx: {
+        txHash: "",
+      },
+      deliverables: [],
+    },
+    signature: {
+      holderSig: "hgoe",
+      partnerSig: "piyo",
+    },
   },
   {
+    backupId: "23",
     id: "23",
-    summary: "", // work summary
-    deliverables: [{ format: "cid", value: "aaaa" }],
-    isPayer: false,
-    fiatValue: "8760",
-    issuedTimestamp: "", //block timestamp
-    txHash: "",
-    genre: "Dev",
-    isVerified: true,
+    subject: {
+      work: {
+        id: "did:pkh:hoge",
+        summary: "", // work summary
+        value: "58400",
+        issuedAt: "", //block timestamp
+        genre: "Donation&Investment",
+      },
+      tx: {
+        txHash: "",
+      },
+      deliverables: [],
+    },
+    signature: {
+      holderSig: "hgoe",
+      partnerSig: "piyo",
+    },
   },
   {
+    backupId: "24",
     id: "24",
-    summary: "", // work summary
-    deliverables: [],
-    isPayer: false,
-    fiatValue: "4380",
-    issuedTimestamp: "", //block timestamp
-    txHash: "",
-    genre: "",
-    isVerified: true,
+    subject: {
+      work: {
+        id: "did:pkh:hoge",
+        summary: "", // work summary
+        value: "58400",
+        issuedAt: "", //block timestamp
+        genre: "Donation&Investment",
+      },
+      tx: {
+        txHash: "",
+      },
+      deliverables: [],
+    },
+    signature: {
+      holderSig: "hgoe",
+      partnerSig: "piyo",
+    },
   },
   {
+    backupId: "25",
     id: "25",
-    summary: "", // work summary
-    deliverables: [],
-    isPayer: false,
-    fiatValue: "14600",
-    issuedTimestamp: "", //block timestamp
-    txHash: "",
-    genre: "Art",
-    isVerified: false,
+    subject: {
+      work: {
+        id: "did:pkh:hoge",
+        summary: "", // work summary
+        value: "58400",
+        issuedAt: "", //block timestamp
+        genre: "Donation&Investment",
+      },
+      tx: {
+        txHash: "",
+      },
+      deliverables: [],
+    },
+    signature: {
+      holderSig: "hgoe",
+      partnerSig: "piyo",
+    },
   },
   {
+    backupId: "26",
     id: "26",
-    summary: "", // work summary
-    deliverables: [],
-    isPayer: false,
-    fiatValue: "438",
-    issuedTimestamp: "", //block timestamp
-    txHash: "",
-    genre: "Writing&Translation",
-    isVerified: true,
+    subject: {
+      work: {
+        id: "did:pkh:hoge",
+        summary: "", // work summary
+        value: "58400",
+        issuedAt: "", //block timestamp
+        genre: "Donation&Investment",
+      },
+      tx: {
+        txHash: "",
+      },
+      deliverables: [],
+    },
+    signature: {
+      holderSig: "hgoe",
+      partnerSig: "piyo",
+    },
   },
   {
+    backupId: "27",
     id: "27",
-    summary: "", // work summary
-    deliverables: [],
-    isPayer: false,
-    fiatValue: "87600",
-    issuedTimestamp: "", //block timestamp
-    txHash: "",
-    genre: "Donation&Investment",
-    isVerified: false,
+    subject: {
+      work: {
+        id: "did:pkh:hoge",
+        summary: "", // work summary
+        value: "58400",
+        issuedAt: "", //block timestamp
+        genre: "Donation&Investment",
+      },
+      tx: {
+        txHash: "",
+      },
+      deliverables: [],
+    },
+    signature: {
+      holderSig: "hgoe",
+      partnerSig: "piyo",
+    },
   },
 ];

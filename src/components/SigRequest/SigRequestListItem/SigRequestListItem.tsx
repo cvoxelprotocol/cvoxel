@@ -2,7 +2,7 @@ import { FC, useEffect } from "react";
 import { GenreBadge } from "@/components/common/badge/GenreBadge";
 import { getGenre } from "@/utils/genreUtil";
 import { TagBadge } from "@/components/common/badge/TagBadge";
-import { CVoxelMetaDraft } from "@/interfaces";
+import { WorkCredentialWithId } from "@/interfaces";
 import { shortenStr } from "@/utils/objectUtil";
 import { Canvas } from "@react-three/fiber";
 import { OneVoxelVisualizerPresenter } from "@/components/CVoxel/OneVoxelVisualizerPresenter";
@@ -10,26 +10,18 @@ import { convertTimestampToDateStr } from "@/utils/dateUtil";
 import clsx from "clsx";
 import Link from "next/link";
 import { useRouter } from "next/dist/client/router";
-import { useVoxStyler } from "@/hooks/useVoxStyler";
+import { useVoxelStyler } from "@/hooks/useVoxStyler";
 import { TxDirection } from "@/components/common/TxDirection";
 
 type Props = {
-  offchainItem: CVoxelMetaDraft;
+  item: WorkCredentialWithId;
 };
 
-export const SigRequestListItem: FC<Props> = ({ offchainItem }) => {
+export const SigRequestListItem: FC<Props> = ({ item }) => {
   const router = useRouter();
 
   // convert display
-  const { setVoxelForDisplay, displayVoxel } = useVoxStyler();
-
-  useEffect(() => {
-    let isMounted = true;
-    setVoxelForDisplay({ ...offchainItem, id: "0" });
-    return () => {
-      isMounted = false;
-    };
-  }, [offchainItem]);
+  const { displayVoxel } = useVoxelStyler(item);
 
   const PcContent = () => {
     return (
@@ -68,27 +60,27 @@ export const SigRequestListItem: FC<Props> = ({ offchainItem }) => {
         <div className=" flex-auto text-left p-4 space-y-3">
           <div className="flex justify-between">
             <TxDirection
-              from={offchainItem.from}
-              to={offchainItem.to}
-              isPayer={offchainItem.isPayer}
+              from={item.subject.tx?.from}
+              to={item.subject.tx?.to}
+              isPayer={item.subject.tx?.isPayer || false}
             />
-            {offchainItem?.createdAt && (
+            {item.createdAt && (
               <div className="text-light-on-surface dark:text-dark-on-surface text-sm">
-                {convertTimestampToDateStr(offchainItem.createdAt)}
+                {convertTimestampToDateStr(item.createdAt)}
               </div>
             )}
           </div>
 
           <div>
-            {offchainItem?.summary && (
+            {item.subject.work?.summary && (
               <div className="text-light-on-primary-container dark:text-dark-on-error-container text-2xl font-medium">
-                {offchainItem?.summary}
+                {item.subject.work?.summary}
               </div>
             )}
 
-            {offchainItem?.deliverables &&
-              offchainItem.deliverables.length > 0 &&
-              offchainItem?.deliverables.map((deliverable) =>
+            {item.subject.deliverables &&
+              item.subject.deliverables.length > 0 &&
+              item.subject.deliverables.map((deliverable) =>
                 <a
                   className="flex items-center flex-wrap"
                   href={`${deliverable.format==="url" ? deliverable.value : `https://dweb.link/ipfs/${deliverable.value}`}`}
@@ -104,12 +96,12 @@ export const SigRequestListItem: FC<Props> = ({ offchainItem }) => {
           </div>
 
           <div className="flex">
-            {offchainItem?.genre ? (
+            {item.subject.work?.genre ? (
               <div className="mr-2">
               <GenreBadge
-                text={offchainItem.genre}
+                text={item.subject.work?.genre || "Other"}
                 baseColor={
-                  getGenre(offchainItem.genre)?.bgColor || "bg-[#b7b7b7]"
+                  getGenre(item.subject.work?.genre)?.bgColor || "bg-[#b7b7b7]"
                 }
                 isSelected={true}
               />
@@ -117,8 +109,8 @@ export const SigRequestListItem: FC<Props> = ({ offchainItem }) => {
             ) : (
               <></>
             )}
-            {offchainItem?.tags &&
-              offchainItem.tags.map((tag) => {
+            {item.subject.work?.tags &&
+              item.subject.work?.tags.map((tag) => {
                 return <TagBadge key={tag} text={tag} />;
               })}
           </div>
@@ -157,29 +149,29 @@ export const SigRequestListItem: FC<Props> = ({ offchainItem }) => {
 
           <div className="absolute right-2 top-2">
             <TxDirection
-              from={offchainItem.from}
-              to={offchainItem.to}
-              isPayer={offchainItem.isPayer}
+              from={item.subject.tx?.from}
+              to={item.subject.tx?.to}
+              isPayer={item.subject.tx?.isPayer || false}
             />
           </div>
         </div>
 
         <div className="text-left px-8 py-3">
-          {offchainItem?.createdAt && (
+          {item.createdAt && (
             <div className="text-light-on-surface dark:text-dark-on-surface text-sm">
-              {convertTimestampToDateStr(offchainItem.createdAt)}
+              {convertTimestampToDateStr(item.createdAt)}
             </div>
           )}
 
-          {offchainItem?.summary && (
+          {item.subject.work?.summary && (
             <div className="text-light-on-primary-container dark:text-dark-on-error-container text-xl font-medium">
-              {offchainItem?.summary}
+              {item.subject.work?.summary}
             </div>
           )}
 
-          {offchainItem?.deliverables &&
-            offchainItem.deliverables.length > 0 &&
-            offchainItem?.deliverables.map((deliverable) =>
+          {item.subject?.deliverables &&
+            item.subject.deliverables.length > 0 &&
+            item.subject?.deliverables.map((deliverable) =>
               <a
                 className="flex items-center flex-wrap"
                 href={`${deliverable.format==="url" ? deliverable.value : `https://dweb.link/ipfs/${deliverable.value}`}`}
@@ -194,12 +186,12 @@ export const SigRequestListItem: FC<Props> = ({ offchainItem }) => {
             )}
 
           <div className="flex">
-            {offchainItem?.genre ? (
+            {item.subject.work?.genre ? (
               <div className="mr-2">
               <GenreBadge
-                text={offchainItem.genre}
+                text={item.subject.work?.genre || "Other"}
                 baseColor={
-                  getGenre(offchainItem.genre)?.bgColor || "bg-[#b7b7b7]"
+                  getGenre(item.subject.work?.genre)?.bgColor || "bg-[#b7b7b7]"
                 }
                 isSelected={true}
               />
@@ -207,8 +199,8 @@ export const SigRequestListItem: FC<Props> = ({ offchainItem }) => {
             ) : (
               <></>
             )}
-            {offchainItem?.tags &&
-              offchainItem.tags.map((tag) => {
+            {item.subject.work?.tags &&
+              item.subject.work?.tags.map((tag) => {
                 return <TagBadge key={tag} text={tag} />;
               })}
           </div>
@@ -218,7 +210,7 @@ export const SigRequestListItem: FC<Props> = ({ offchainItem }) => {
   };
 
   return (
-    <Link href={`${router.asPath.split("?")[0]}?tx=${offchainItem.txHash}`}>
+    <Link href={`${router.asPath.split("?")[0]}?crdl=${item.backupId}`}>
       <a className="w-full">
         <div className="w-full border border-light-on-primary-container dark:border-dark-on-primary-container rounded-lg overflow-hidden bg-light-surface-1 dark:bg-dark-surface-1">
           <div className="hidden lg:block w-full">

@@ -1,37 +1,35 @@
 import { FC, useCallback, useContext } from "react";
 import { useRouter } from "next/router";
 import { DIDContext } from "@/context/DIDContext";
-import { useSigRequest } from "@/hooks/useSigRequest";
-import { useOffchainItem } from "@/hooks/useOffchainItem";
-import { CVoxelMetaDraft } from "@/interfaces";
-import { useStateForceUpdate } from "@/recoilstate";
+import { WorkCredentialWithId } from "@/interfaces";
 import { SigRequestDetail } from "@/components/SigRequest/SigRequestDetail/SigRequestDetail";
 import { NoItemPresenter } from "@/components/common/NoItemPresenter";
 import { CommonLoading } from "@/components/common/CommonLoading";
-import { useMyPageScreen, useTab } from "@/hooks/useTab";
+import { useMyPageScreen } from "@/hooks/useTab";
+import { useWorkCredential } from "@/hooks/useWorkCredential";
+import { useOffchainItem } from "@/hooks/useOffchainList";
 
 type Props = {
   txId?: string;
 };
 
 export const SigRequestContainer: FC<Props> = ({ txId }) => {
-  const {did, account} = useContext(DIDContext)
+  const {did} = useContext(DIDContext)
   const {isLoading, offchainItem} = useOffchainItem(txId)
-  const {verifyWithCeramic} = useSigRequest()
-  const [_, setForceUpdateCVoxelList] = useStateForceUpdate();
+  const {signCredential} = useWorkCredential()
   const router = useRouter()
   const {setScreenState} = useMyPageScreen()
 
   const handleVerify = useCallback(
-    async (tx: CVoxelMetaDraft) => {
-      const result = await verifyWithCeramic(tx);
+    async (crdl: WorkCredentialWithId) => {
+      if(!crdl.backupId || !did) return
+      const result = await signCredential(crdl.backupId, crdl, did)
         if (result) {
-          setForceUpdateCVoxelList(v => !v);
           setScreenState("info")
-          router.push(`/${did}/?voxel=${result}`)
+          router.push(`/${did}`)
         }
       },
-    [did, router, setForceUpdateCVoxelList,setScreenState, verifyWithCeramic]
+    [did, router,setScreenState, signCredential]
   );
 
   return (

@@ -1,16 +1,14 @@
-import { FC, useCallback, useMemo, useState } from "react";
+import { FC, LegacyRef, useMemo, useRef } from "react";
 import { NoItemPresenter } from "../../common/NoItemPresenter";
 import CVoxelsPresenter from "../../CVoxel/CVoxelsPresenter";
-import type { CVoxelItem as ICVoxelItem } from "@/interfaces";
-import { useCVoxelsRecord } from "@/hooks/useCVoxel";
 import { CommonLoading } from "../../common/CommonLoading";
-import { VoxelListItem } from "@/components/CVoxel/VoxelListItem/VoxelListItem";
-import { useRouter } from "next/dist/client/router";
-import { NavBar } from "@/components/CVoxel/NavBar/NavBar";
+import { VoxelListItemMemo } from "@/components/CVoxel/VoxelListItem/VoxelListItem";
 import { VoxelDetail } from "@/components/CVoxel/VoxelDetail/VoxelDetail";
-import { SearchData } from "@/components/common/search/Search";
-import { useCVoxelList } from "@/hooks/useCVoxelList";
+import { useOffchainList } from "@/hooks/useOffchainList";
 import { useStateForceUpdate } from "@/recoilstate";
+import { useWorkCredentials } from "@/hooks/useWorkCredential";
+import { useIsTabletOrMobile } from "@/hooks/useIsTabletOrMobile";
+import { useVirtualizer } from "@tanstack/react-virtual";
 
 type UserCVoxelContainerProps = {
   did: string;
@@ -20,36 +18,46 @@ export const UserCVoxelContainer: FC<UserCVoxelContainerProps> = ({
   did,
   currentVoxelID,
 }) => {
-  const CVoxelsRecords = useCVoxelsRecord(did);
+  const {workCredentials, isLoading} = useWorkCredentials(did)
 
-  const sortCVoxels = useMemo(() => {
-    if (!(CVoxelsRecords.content && CVoxelsRecords.content.WorkCredentials)) return [];
-    return CVoxelsRecords.content.WorkCredentials.sort((a, b) => {
-      return Number(a.issuedTimestamp) > Number(b.issuedTimestamp) ? -1 : 1;
+  const sortCredentials = useMemo(() => {
+    if (!workCredentials) return [];
+    return workCredentials.sort((a, b) => {
+      return Number(a.updatedAt) > Number(b.updatedAt) ? -1 : 1;
     });
-  }, [CVoxelsRecords.content]);
+  }, [workCredentials]);
 
-  const currentVoxel = useMemo(
-    () => sortCVoxels.find((voxel) => voxel.id == currentVoxelID),
-    [currentVoxelID, sortCVoxels]
+  const currentCredential = useMemo(
+    () => sortCredentials.find((crdl) => crdl.backupId == currentVoxelID),
+    [currentVoxelID, sortCredentials]
   );
 
-  const { offchainMetaList } = useCVoxelList();
+  const { offchainMetaList } = useOffchainList();
 
   // TODO: This is temporary solution because of useTileDoc bug
   const [forceUpdateCVoxelList, setForceUpdateCVoxelList] =
     useStateForceUpdate();
   const forceReload = () => {
-    setForceUpdateCVoxelList(v => !v);
+    setForceUpdateCVoxelList((v) => !v);
   };
+
+  const parentRef: LegacyRef<any> = useRef();
+
+  const { isTabletOrMobile } = useIsTabletOrMobile();
+
+  const rowVirtualizer = useVirtualizer({
+    count: sortCredentials.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => ((isTabletOrMobile ? 15 : 13) + 1) * 16, // NOTE: (item + margin) * rem
+  });
 
   return useMemo(
     () => (
       <div className="max-w-[820px] mx-auto">
-        {!!currentVoxelID ? (
+        {!!currentCredential ? (
           <div className="mt-6 px-2 sm:px-6">
             <VoxelDetail
-              itemId={currentVoxelID}
+              crdl={currentCredential}
               offchainItems={offchainMetaList}
               isOwner={false}
               notifyUpdated={forceReload}
@@ -61,15 +69,44 @@ export const UserCVoxelContainer: FC<UserCVoxelContainerProps> = ({
           </div>
         ) : (
           <CVoxelsPresenter>
-            {CVoxelsRecords.isLoading && <CommonLoading />}
-            {!CVoxelsRecords.isLoading &&
-              sortCVoxels &&
-              sortCVoxels.map((item) => {
-                return <VoxelListItem key={item.id} item={item} />;
-              })}
-            {!CVoxelsRecords.isLoading && !CVoxelsRecords.content && (
+            {isLoading && <CommonLoading />}
+            {!isLoading && !sortCredentials && (
               <div className="mx-auto">
                 <NoItemPresenter text="No Voxels yet" />
+              </div>
+            )}
+
+            {!isLoading && sortCredentials && (
+              <div ref={parentRef} className={"overflow-auto h-full w-full"}>
+                <div
+                  style={{
+                    height: `${rowVirtualizer.getTotalSize() / 16}rem`,
+                    width: "100%",
+                    position: "relative",
+                  }}
+                >
+                  {rowVirtualizer
+                    .getVirtualItems()
+                    .map((virtualItem, index) => (
+                      <div
+                        key={virtualItem.index}
+                        style={{
+                          position: "absolute",
+                          top: 0,
+                          left: 0,
+                          width: "100%",
+                          height: `${virtualItem.size / 16}rem`,
+                          transform: `translateY(${virtualItem.start / 16}rem)`,
+                        }}
+                      >
+                        {/*<div className="h-40">{virtualItem.index}</div>*/}
+                        <VoxelListItemMemo
+                          key={sortCredentials[virtualItem.index].id}
+                          workCredential={sortCredentials[virtualItem.index]}
+                        />
+                      </div>
+                    ))}
+                </div>
               </div>
             )}
           </CVoxelsPresenter>
@@ -77,12 +114,14 @@ export const UserCVoxelContainer: FC<UserCVoxelContainerProps> = ({
       </div>
     ),
     [
-      currentVoxel,
+      currentVoxelID,
       offchainMetaList,
-      CVoxelsRecords.isLoading,
-      CVoxelsRecords.content,
+      isLoading,
+      sortCredentials,
       did,
       forceUpdateCVoxelList,
+      forceReload,
+      rowVirtualizer
     ]
   );
 };

@@ -1,1 +1,55 @@
-export const aliases = {"definitions":{"basicProfile":"kjzl6cwe1jw145cjbeko9kil8g9bxszjhyde21ob8epxuxkaon1izyqsu8wgcic","cryptoAccounts":"kjzl6cwe1jw149z4rvwzi56mjjukafta30kojzktd9dsrgqdgz4wlnceu59f95f","alsoKnownAs":"kjzl6cwe1jw146zfmqa10a5x1vry6au3t362p44uttz4l0k4hi88o41zplhmxnf","workCredential":"kjzl6cwe1jw1491q8fzv2iy6qk20bi4y2deifkxut9njnuztq822duslj2m3wuv","workCredentials":"kjzl6cwe1jw1468dfi4s2xvft87skxxlp43pz9sscd897fw1zbl1k507u6z7pqv"},"schemas":{"BasicProfile":"ceramic://k3y52l7qbv1frxt706gqfzmq6cbqdkptzk8uudaryhlkf6ly9vx21hqu4r6k1jqio","CryptoAccounts":"ceramic://k3y52l7qbv1frypussjburqg4fykyyycfu0p9znc75lv2t5cg4xaslhagkd7h7mkg","AlsoKnownAs":"ceramic://k3y52l7qbv1fryojt8n8cw2k04p9wp67ly59iwqs65dejso566fij5wsdrb871yio","WorkCredential":"ceramic://k3y52l7qbv1frxlqnopwhl2tpnw4inawt7upovcr7d0dqtws5t9tn99pigg7ehlvk","WorkCredentials":"ceramic://k3y52l7qbv1fryh5yum8uvbtm4a0t63fu1tp2saaxlx0d5ibwfp786yk5h647qj9c"},"tiles":{}}
+export const aliases = {
+  definitions: {
+    basicProfile:
+      "kjzl6cwe1jw145cjbeko9kil8g9bxszjhyde21ob8epxuxkaon1izyqsu8wgcic",
+    cryptoAccounts:
+      "kjzl6cwe1jw149z4rvwzi56mjjukafta30kojzktd9dsrgqdgz4wlnceu59f95f",
+    alsoKnownAs:
+      "kjzl6cwe1jw146zfmqa10a5x1vry6au3t362p44uttz4l0k4hi88o41zplhmxnf",
+    OldWorkCredential:
+      "kjzl6cwe1jw1491q8fzv2iy6qk20bi4y2deifkxut9njnuztq822duslj2m3wuv",
+    OldWorkCredentials:
+      "kjzl6cwe1jw1468dfi4s2xvft87skxxlp43pz9sscd897fw1zbl1k507u6z7pqv",
+    workCredential:
+      "kjzl6cwe1jw146kr3ku1e8bu722g16nm5klsjpypxt3ua5uc5yoen3n8cw50dux",
+    verifiableWorkCredential:
+      "kjzl6cwe1jw147ypvn1qcvn3v5yjkpv8aw9tjxdhw86us81ytfom1rn6ozq3647",
+    heldWorkCredentials:
+      "kjzl6cwe1jw1462u8nvfxik0pk7mxg3607uiy1j8i12zs4qvr7coal47k83oxqu",
+    heldVerifiableWorkCredentials:
+      "kjzl6cwe1jw145rb52cffnykjia416rj2a8xn9wmxrschk3b3scsfuozeskr015",
+    MemberShip:
+      "kjzl6cwe1jw146atvl5hmaii1dwgy5o1vqu5xepmnvzdkqd6958f6azviyrvlqk",
+    Organization:
+      "kjzl6cwe1jw14afrtvkjgefqwmalj9l5ckmhafhaqtpoxajvgg5kg2fgvyp5wxn",
+    MembershipSubject:
+      "kjzl6cwe1jw1497pei4dttpf4z62460m1rtk8r74q7lh830qby3155pt8j36euv",
+  },
+  schemas: {
+    BasicProfile:
+      "ceramic://k3y52l7qbv1frxt706gqfzmq6cbqdkptzk8uudaryhlkf6ly9vx21hqu4r6k1jqio",
+    CryptoAccounts:
+      "ceramic://k3y52l7qbv1frypussjburqg4fykyyycfu0p9znc75lv2t5cg4xaslhagkd7h7mkg",
+    AlsoKnownAs:
+      "ceramic://k3y52l7qbv1fryojt8n8cw2k04p9wp67ly59iwqs65dejso566fij5wsdrb871yio",
+    OldWorkCredential:
+      "ceramic://k3y52l7qbv1frxlqnopwhl2tpnw4inawt7upovcr7d0dqtws5t9tn99pigg7ehlvk",
+    OldWorkCredentials:
+      "ceramic://k3y52l7qbv1fryh5yum8uvbtm4a0t63fu1tp2saaxlx0d5ibwfp786yk5h647qj9c",
+    WorkCredential:
+      "ceramic://k3y52l7qbv1frxsfl7rq15l42m418432kgn9y05jjpa0iht1vkc49btq7oeerz6dc",
+    VerifiableWorkCredential:
+      "ceramic://k3y52l7qbv1fryb7nwt2un9jf46c3kdchz1kz3c1oy0osti69xzlbafmym8g3dq0w",
+    HeldWorkCredentials:
+      "ceramic://k3y52l7qbv1frycpcv49ocxdlbt766i94vaj4mpu6vv09dcplwmyd90gqsrzdzgn4",
+    HeldVerifiableWorkCredentials:
+      "ceramic://k3y52l7qbv1frxv33l9x19y93tso1k0uzc6seoah67bfj7gkybe1gd6aqx9556q68",
+    Organization:
+      "ceramic://k3y52l7qbv1frxlarqwlxy7uozpo7hy6t3wyct3cv4ibscv2smxxfhsbx2labpedc",
+    MemberShip:
+      "ceramic://k3y52l7qbv1fry96pqami38jzufty7ovstaqis0jys0cuvn3zzqbwawbsxwpxheyo",
+    MembershipSubject:
+      "ceramic://k3y52l7qbv1frxox7068huf9wkllb4f714ppop3i1t8rfp0er5hgmmiv53j4tol4w",
+  },
+  tiles: {},
+};

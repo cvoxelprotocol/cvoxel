@@ -1,0 +1,21 @@
+{
+  "type": "array",
+  "title": "deliverables",
+  "items": {
+    "type": "object",
+    "title": "deliverableItem",
+    "properties": {
+      "format": {
+        "type": "string",
+        "title": "format",
+        "description": "current formats are url or cid"
+      },
+      "value": {
+        "type": "string",
+        "title": "value",
+        "description": "work deliverable value(url/cid)"
+      }
+    },
+    "additionalProperties":false
+  }
+}

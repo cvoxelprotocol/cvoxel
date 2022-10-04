@@ -1,20 +1,11 @@
 import { formatUnits } from "@ethersproject/units";
-import { BigNumberish, utils } from "ethers";
-
-export const getAddressFromStr = (addressStr: string): string => {
-  return utils.getAddress(addressStr);
-};
+import { BigNumberish } from "ethers";
 
 export const formatBigNumber = (
-  value: BigNumberish,
+  value: BigNumberish = "0",
   precision = 2,
   decimals: string = "18"
 ): string =>
   Number(formatUnits(value, decimals)).toLocaleString(undefined, {
     maximumFractionDigits: precision,
   });
-
-export const formatBigNumberWithoutPrecision = (
-  value: BigNumberish,
-  decimals: string = "18"
-): string => formatUnits(value, decimals);

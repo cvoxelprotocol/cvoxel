@@ -1,17 +1,17 @@
-import { useStateCVoxelDetailBox } from "@/recoilstate";
+import { useStateCredentialDetailBox } from "@/recoilstate";
 import { useCallback } from "react";
-import { CVoxelItem as ICVoxelItem, CVoxelMetaDraft } from "@/interfaces";
+import { WorkCredentialWithId } from "@/interfaces";
 
-export const useCVoxelDetailBox = () => {
-  const [_, setBox] = useStateCVoxelDetailBox();
+export const useWorkCredentialDetailBox = () => {
+  const [_, setBox] = useStateCredentialDetailBox();
 
   const showDetailBox = useCallback(
     ({
       item,
       offchainItems,
     }: {
-      item: ICVoxelItem;
-      offchainItems?: CVoxelMetaDraft[];
+      item: WorkCredentialWithId;
+      offchainItems?: WorkCredentialWithId[];
     }) => {
       setBox({ item: item, offchainItems: offchainItems });
     },

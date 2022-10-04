@@ -5,7 +5,7 @@ module.exports = {
     styledComponents: true,
   },
   images: {
-    domains: ["joeschmoe.io", "ipfs.io", "ipfs.infura.io"],
+    domains: ["joeschmoe.io", "ipfs.io", "ipfs.infura.io", "storage.googleapis.com"],
   },
   async redirects() {
     return [

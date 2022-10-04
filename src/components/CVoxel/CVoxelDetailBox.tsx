@@ -6,57 +6,34 @@ import { getGenre } from "@/utils/genreUtil";
 import { TagBadge } from "@/components/common/badge/TagBadge";
 import { shortenStr } from "@/utils/objectUtil";
 import { convertTimestampToDateStr } from "@/utils/dateUtil";
-// import { formatBigNumber } from "@/utils/ethersUtil";
-import VisualizerPresenter from "@/components/CVoxel/visualizerPresenter";
-import { useCVoxelRecord } from "@/hooks/useCVoxel";
-import { useStateCVoxelDetailBox } from "@/recoilstate";
+import { useStateCredentialDetailBox } from "@/recoilstate";
 import { Canvas } from "@react-three/fiber";
-// import { useENS } from "@/hooks/useENS";
-// import { CommonSpinner } from "@/components/common/CommonSpinner";
 import clsx from "clsx";
 import { ShareButton } from "@/components/common/button/shareButton/ShareButton";
-import { TxDirection } from "@/components/common/TxDirection";
-// import { NamePlate } from "@/components/common/NamePlate";
-// import RightArrow from "@/components/CVoxel/VoxelListItem/right-arrow.svg";
-// import LeftArrow from "@/components/CVoxel/VoxelListItem/left-arrow.svg";
 import { useWalletAccount } from "@/hooks/useWalletAccount";
 import { OneVoxelVisualizerPresenter } from "./OneVoxelVisualizerPresenter";
+import { useWorkCredentialRecord } from "@/hooks/useWorkCredential";
+import { CredentialDirection } from "../common/CredentialDirection";
 
 export const CVoxelDetailBox: FC<{}> = () => {
-  const [box] = useStateCVoxelDetailBox();
+  const [box] = useStateCredentialDetailBox();
   const { account } = useWalletAccount();
 
-  const cVoxelItem = useCVoxelRecord(box?.item.id);
+  const workCredential = useWorkCredentialRecord(box?.item.backupId)
 
   const detailItem = useMemo(() => {
-    if (cVoxelItem.isError) {
+    if (workCredential.isError) {
       return null;
     }
-    return cVoxelItem.content || null;
-  }, [cVoxelItem.content, cVoxelItem]);
+    return workCredential.content || null;
+  }, [workCredential.content]);
 
   const isOwner = useMemo(() => {
     if(!account) return false
-    return detailItem?.from.toLowerCase() === account.toLowerCase() || detailItem?.to.toLowerCase() === account.toLowerCase()
+    if(!detailItem) return false
+    const {tx} = detailItem.subject
+    return tx?.from?.toLowerCase() === account.toLowerCase() || tx?.to?.toLowerCase() === account.toLowerCase()
   },[account,detailItem])
-
-  // const { ens: fromEns, ensLoading: fromEnsLoading } = useENS(detailItem?.from);
-  // const { ens: toEns, ensLoading: toEnsLoading } = useENS(detailItem?.to);
-
-  // const offchainItem = useMemo(() => {
-  //   return box?.offchainItems?.find(
-  //     (offchain) => offchain.txHash === box?.item.txHash
-  //   );
-  // }, [box?.offchainItems, box?.item]);
-
-  // const fiatVal = useMemo(() => {
-  //   if (detailItem && detailItem.fiatValue) {
-  //     return detailItem.fiatValue;
-  //   } else if (offchainItem && offchainItem.fiatValue) {
-  //     return offchainItem.fiatValue;
-  //   }
-  //   return null;
-  // }, [detailItem, offchainItem]);
 
   const [isShow, setIsShow] = useState<boolean>(false);
   const [isMount, setIsMount] = useState<boolean>(false);
@@ -135,7 +112,7 @@ export const CVoxelDetailBox: FC<{}> = () => {
             {(box && box.item.id && detailItem) &&  (
               <Canvas className="!touch-auto">
                 <OneVoxelVisualizerPresenter
-                  workCredential={{...detailItem, id:box.item.id}}
+                  workCredential={{...detailItem, backupId:box.item.id}}
                   zoom={5}
                   disableHover
                 />
@@ -144,10 +121,9 @@ export const CVoxelDetailBox: FC<{}> = () => {
           </div>
 
           <div className="absolute bottom-2 right-0 left-0 flex justify-center">
-            <TxDirection
-              isPayer={box?.item.isPayer ?? false}
-              from={detailItem?.from}
-              to={detailItem?.to}
+          <CredentialDirection
+              holder={detailItem?.subject.work?.id}
+              client={detailItem?.subject.client}
             />
           </div>
         </div>
@@ -160,19 +136,19 @@ export const CVoxelDetailBox: FC<{}> = () => {
               </div>
             )}
 
-            {detailItem?.summary && (
+            {detailItem?.subject.work?.summary && (
               <div className="text-light-on-primary-container dark:text-dark-on-error-container text-2xl font-medium line-clamp-3">
-                {detailItem?.summary}
+                {detailItem?.subject.work?.summary}
               </div>
             )}
 
             <div className="flex mt-2">
-              {detailItem?.genre ? (
+              {detailItem?.subject.work?.genre ? (
                 <div className="mr-2">
                   <GenreBadge
-                    text={detailItem.genre}
+                    text={detailItem.subject.work?.genre || "Other"}
                     baseColor={
-                      getGenre(detailItem.genre)?.bgColor || "bg-[#b7b7b7]"
+                      getGenre(detailItem.subject.work?.genre)?.bgColor || "bg-[#b7b7b7]"
                     }
                     isSelected={true}
                   />
@@ -180,21 +156,21 @@ export const CVoxelDetailBox: FC<{}> = () => {
               ) : (
                 <></>
               )}
-              {detailItem?.tags &&
-                detailItem.tags.map((tag) => {
+              {detailItem?.subject.work?.tags &&
+                detailItem.subject.work?.tags.map((tag) => {
                   return <TagBadge key={tag} text={tag} />;
                 })}
             </div>
           </div>
 
           {/*deliverables*/}
-          {detailItem?.deliverables && detailItem.deliverables.length > 0 && (
+          {detailItem?.subject.deliverables && detailItem.subject.deliverables.length > 0 && (
             <div>
               <p className="mb-2 text-light-on-surface-variant dark:text-light-on-surface-variant font-medium">
                 DELIVERABLES
               </p>
 
-              {detailItem?.deliverables.map((deliverable) =>
+              {detailItem?.subject.deliverables.map((deliverable) =>
                 <a
                   className="flex items-center flex-wrap"
                   href={`${deliverable.format==="url" ? deliverable.value : `https://dweb.link/ipfs/${deliverable.value}`}`}
@@ -211,14 +187,14 @@ export const CVoxelDetailBox: FC<{}> = () => {
           )}
 
           {/*description*/}
-          {detailItem?.detail && (
+          {detailItem?.subject.work?.detail && (
             <div>
               <p className="mb-2 text-light-on-surface-variant dark:text-light-on-surface-variant font-medium">
                 DESCRIPTION
               </p>
 
               <div className="text-light-on-surface dark:text-dark-on-surface font-medium">
-                {detailItem?.detail}
+                {detailItem?.subject.work?.detail}
               </div>
             </div>
           )}

@@ -1,6 +1,6 @@
 import { FC, useContext, useMemo } from "react";
 import { DisplayAvatar } from "../common/DisplayAvatar";
-import { formatDID } from "@self.id/framework";
+import { formatDID } from "@/utils/ceramicUtils";
 import { useMyCeramicAcount } from "@/hooks/useCeramicAcount";
 import { DIDContext } from "@/context/DIDContext";
 
