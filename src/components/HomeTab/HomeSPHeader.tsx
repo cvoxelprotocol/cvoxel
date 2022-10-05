@@ -30,15 +30,15 @@ export const HomeSPHeader: FC<Props> = ({ visualContainerRef }) => {
     }
 
     return router.pathname == "/[did]" && !!router.query["voxel"];
-  }, [router.isReady, router.pathname, router.asPath]);
+  }, [router.isReady, router.pathname, router.query]);
 
   const isSigRequestDetail = useMemo(() => {
     if (!router.isReady) {
       return false;
     }
 
-    return router.pathname == "/[did]" && !!router.query["tx"];
-  }, [router.isReady, router.pathname, router.asPath]);
+    return router.pathname == "/[did]" && !!router.query["crdl"];
+  }, [router.isReady, router.pathname, router.query]);
 
   const handleClickNavBackButton = useCallback(() => {
     router.push(router.asPath.split("?")[0]);
@@ -51,7 +51,7 @@ export const HomeSPHeader: FC<Props> = ({ visualContainerRef }) => {
   return (
     <ul
       className={
-        "w-full items-center justify-around grid-cols-6 py-1 bg-light-surface-1 dark:bg-dark-surface-1 px-4 py-2 flex"
+        "w-full items-center justify-around grid-cols-6 bg-light-surface-1 dark:bg-dark-surface-1 px-4 py-2 flex"
       }
       role="tablist"
     >

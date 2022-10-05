@@ -1,4 +1,4 @@
-import { CVoxelItem, TransactionLogWithChainId } from "@/interfaces";
+import { TransactionLogWithChainId } from "@/interfaces";
 import { getExploreLink } from "@/utils/etherscanUtils";
 import { formatBigNumber } from "@/utils/ethersUtil";
 import { FC, useMemo } from "react";

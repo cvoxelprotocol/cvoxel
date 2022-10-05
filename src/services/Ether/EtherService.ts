@@ -1,4 +1,4 @@
-import { shortHash } from "@/utils/tools";
+import { shortHash } from "@/utils/objectUtil";
 import { Web3Provider } from "@ethersproject/providers";
 import Web3 from "web3";
 

@@ -1,13 +1,9 @@
 import { useMemo, useState } from "react";
-import {
-  CVoxelItem,
-  CVoxelThree,
-  CVoxelVisType,
-  CVoxelWithId,
-} from "@/interfaces/cVoxelType";
+import { CVoxelThree, CVoxelVisType } from "@/interfaces/cVoxelType";
 import * as THREE from "three";
 import { getGenreColor } from "@/utils/genreUtil";
 import chroma from "chroma-js";
+import { WorkCredentialWithId } from "@/interfaces";
 
 type RoomType = {
   position: THREE.Vector3;
@@ -19,66 +15,30 @@ type CVoxelVisTypeWithId = CVoxelVisType & { id: string };
 
 const sigmoid_a: number = 1;
 
-export const useVoxStyler = () => {
-  const [cvoxelsForDisplay, setCvoxelsForDisplay] = useState<
-    CVoxelItem[] | undefined
-  >();
-  const [voxelForDisplay, setVoxelForDisplay] = useState<
-    CVoxelWithId | undefined
-  >();
-
-  const displayVoxel = useMemo(() => {
-    if (!(voxelForDisplay && voxelForDisplay.id)) return;
-    const initPosition = new THREE.Vector3(0, 0, 0);
-    const { deliverables, toSig, fromSig, genre } = voxelForDisplay;
-    let hue, lightness, saturation: number;
-    // masked value effects temporarily
-    /* Set vividness from value based on ETH currently */
-    // const sigmoidValue =
-    //   1.0 /
-    //   (1.0 +
-    //     Math.exp(-sigmoid_a * Math.log10(parseFloat(fiatValue || value))));
-    // lightness = 100 - sigmoidValue * 50;
-    // saturation = sigmoidValue * 70;
-    lightness = 50;
-    saturation = 70;
-
-    /* Set hue from hoge (unassinged yet) */
-    const hexColor = getGenreColor(genre);
-    const genreHue = hexColor ? chroma(hexColor).hsl()[0] : 330;
-    hue = genreHue || 330;
-
-    const styledVoxel: CVoxelThreeWithId = {
-      id: voxelForDisplay.id,
-      color: `hsl(${hue}, ${saturation.toFixed()}%, ${lightness.toFixed()}%)`,
-      opacity: toSig && toSig !== "" && fromSig && fromSig !== "" ? 0.75 : 0.45,
-      lattice: !!deliverables && deliverables.length > 0,
-      scale: 1.0,
-      position: initPosition,
-      offset: initPosition,
-    };
-
-    return styledVoxel;
-  }, [voxelForDisplay]);
-
+export const useMultipleVoxelStyler = (crdls: WorkCredentialWithId[]) => {
   const displayVoxels = useMemo(() => {
     const styledVoxel: CVoxelVisTypeWithId[] = [];
     let stackedVoxels: CVoxelThreeWithId[] = [];
-    if (cvoxelsForDisplay && cvoxelsForDisplay.length > 0) {
-      cvoxelsForDisplay.forEach((voxel, i) => {
-        if (!voxel.id) return;
+    if (crdls && crdls.length > 0) {
+      crdls.forEach((voxel, i) => {
+        if (!voxel.backupId) return;
         let voxelTemp: CVoxelVisTypeWithId = {
-          id: voxel.id,
+          id: voxel.backupId,
           color: "",
           opacity: 0.45,
           lattice: false,
           scale: 1.0,
         };
-        const { deliverables, isVerified, genre } = voxel;
+        const { signature } = voxel;
+        const { work, deliverables } = voxel.subject;
+        const holderSig = signature?.holderSig || "";
+        const partnerSig = signature?.partnerSig || "";
+        const genre = work?.genre;
+
         let hue, lightness, saturation: number;
 
         /* Set opacity from sigs */
-        if (isVerified) {
+        if (holderSig && partnerSig) {
           voxelTemp["opacity"] = 0.75;
         }
 
@@ -235,12 +195,48 @@ export const useVoxStyler = () => {
       stackedVoxels = [...newStackedVoxels];
     }
     return stackedVoxels;
-  }, [cvoxelsForDisplay]);
+  }, [crdls]);
 
   return {
     displayVoxels,
-    setCvoxelsForDisplay,
+  };
+};
+
+export const useVoxelStyler = (crdl?: WorkCredentialWithId) => {
+  const displayVoxel = useMemo(() => {
+    if (!(crdl && crdl.backupId)) return;
+    const initPosition = new THREE.Vector3(0, 0, 0);
+    const { signature } = crdl;
+    const { work, deliverables } = crdl.subject;
+    const holderSig = signature?.holderSig;
+    const partnerSig = signature?.partnerSig;
+    const genre = work?.genre;
+    let hue, lightness, saturation: number;
+    lightness = 50;
+    saturation = 70;
+
+    /* Set hue from hoge (unassinged yet) */
+    const hexColor = getGenreColor(genre);
+    const genreHue = hexColor ? chroma(hexColor).hsl()[0] : 330;
+    hue = genreHue || 330;
+
+    const styledVoxel: CVoxelThreeWithId = {
+      id: crdl.backupId,
+      color: `hsl(${hue}, ${saturation.toFixed()}%, ${lightness.toFixed()}%)`,
+      opacity:
+        holderSig && holderSig !== "" && partnerSig && partnerSig !== ""
+          ? 0.75
+          : 0.45,
+      lattice: !!deliverables && deliverables.length > 0,
+      scale: 1.0,
+      position: initPosition,
+      offset: initPosition,
+    };
+
+    return styledVoxel;
+  }, [crdl]);
+
+  return {
     displayVoxel,
-    setVoxelForDisplay,
   };
 };

@@ -1,10 +1,9 @@
-import { ModelTypes } from "@/interfaces";
-import { SelfID } from "@self.id/web";
+import { DIDSession } from "did-session";
 import { atom, useRecoilState } from "recoil";
 
-export const mySelfID = atom<SelfID<ModelTypes> | null>({
-  key: "mySelfID",
+export const mySession = atom<DIDSession | null>({
+  key: "mySession",
   default: null,
 });
 
-export const useStateMySelfID = () => useRecoilState(mySelfID);
+export const useStateMySession = () => useRecoilState(mySession);

@@ -220,6 +220,7 @@ export const genreColorStyle: StylesConfig<Genre> = {
         backgroundColor: color.alpha(0.3).css(),
       },
       fontWeight: "bold",
+      color: "#333333",
     };
   },
   input: (styles) => ({ ...styles, fontWeight: "bold" }),

@@ -1,0 +1,79 @@
+{
+  "type": "object",
+  "title": "Transaction",
+  "properties": {
+    "txHash": {
+      "type": "string",
+      "title": "txHash",
+      "description": "hash of the transaction"
+    },
+    "to": {
+      "type": "string",
+      "title": "to",
+      "description": "payee address"
+    },
+    "from": {
+      "type": "string",
+      "title": "from",
+      "description": "payer address"
+    },
+    "isPayer": {
+      "type": "boolean",
+      "title": "isPayer",
+      "description": "whether or not DID is payer"
+    },
+    "value": {
+      "type": "string",
+      "title": "value",
+      "description": "paid value"
+    },
+    "tokenSymbol": {
+      "type": "string",
+      "title": "tokenSymbol",
+      "description": "paid token symbol"
+    },
+    "tokenDecimal": {
+      "type": "number",
+      "title": "tokenDecimal",
+      "description": "paid token decimal"
+    },
+    "fiatValue": {
+      "type": "string",
+      "title": "value",
+      "description": "fiat price at the time of the transaction"
+    },
+    "fiatSymbol": {
+      "type": "string",
+      "title": "fiatSymbol",
+      "description": "currently only support USD"
+    },
+    "networkId": {
+      "type": "number",
+      "title": "networkId",
+      "description": "network id of the transaction"
+    },
+    "issuedTimestamp": {
+      "type": "string",
+      "title": "issuedTimestamp",
+      "description": "Time stamp of transaction occurrence"
+    },
+    "relatedAddresses": {
+      "type": "array",
+      "title": "relatedAddress",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "relatedTxHashes": {
+      "type": "array",
+      "title": "relatedTxHashes",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    }
+  },
+  "required": ["txHash"],
+  "additionalProperties":false
+}

@@ -1,5 +1,4 @@
 import { useMyCeramicAcount } from "@/hooks/useCeramicAcount";
-import { formatDID } from "@self.id/framework";
 import { AvatarPlaceholder } from "@/components/common/avatar/AvatarPlaceholder";
 import { DropButton } from "grommet";
 import { useContext, useState,useEffect } from "react";
@@ -10,6 +9,8 @@ import { Button } from "@/components/common/button/Button";
 import { useRouter } from "next/router";
 import { useWalletAccount } from "@/hooks/useWalletAccount";
 import { DIDContext } from "@/context/DIDContext";
+import { useDework } from "@/hooks/useDework";
+import { formatDID } from "@/utils/ceramicUtils";
 
 type MenuButtonProps = {
   label: string;
@@ -34,7 +35,9 @@ export default function AccountButton() {
   const {did, account, connection,loggedIn} = useContext(DIDContext)
   const { connectWallet, disconnectWallet } = useWalletAccount();
   const [isMenuOpen, setMenuOpen] = useState(false);
+  
   const router = useRouter();
+  const {deworkAuth,setDeworkConnectOpen, setDeworkTaskListOpen} = useDework()
 
   const goToMypage = () => {
     if (!did && !account) return;
@@ -59,20 +62,15 @@ export default function AccountButton() {
 
   if (account) {
     const buttons =
-      loggedIn ? (
-        <>
-          <MenuButton label="My Page" onClick={() => goToMypage()} />
-          <MenuButton label="Disconnect" onClick={() => disconnectWallet()} />
-        </>
-      ) : (
-        <>
-          <MenuButton label="My Page" onClick={() => goToMypage()} />
-          <MenuButton
-            label="Disconnect Wallet"
-            onClick={() => disconnectWallet()}
-          />
-        </>
-      );
+    <>
+      <MenuButton label="My Page" onClick={() => goToMypage()} />
+      {deworkAuth ? (
+        <MenuButton label="Dework TaskList" onClick={() => setDeworkTaskListOpen(true)} />
+      ): (
+        <MenuButton label="Connect Dework" onClick={() => setDeworkConnectOpen(true)} />
+      )}
+      <MenuButton label="Disconnect" onClick={() => disconnectWallet()} />
+    </>
 
     const content = (
       <div className="border-gray-200 rounded-lg w-64 mt-12 p-4 text-primary bg-gray-100 dark:bg-card dark:text-oncard">
@@ -93,25 +91,28 @@ export default function AccountButton() {
     );
 
     return (
-      <DropButton
-        dropAlign={{ top: "bottom", right: "right" }}
-        dropContent={content}
-        dropProps={{ plain: true }}
-        onClose={() => {
-          setMenuOpen(false);
-        }}
-        onOpen={() => {
-          setMenuOpen(true);
-        }}
-        open={isMenuOpen}
-      >
-        <div className="hidden md:block">
-          <NamePlate did={did} isMe size="lg" />
-        </div>
-        <div className="block md:hidden">
-          <NamePlate did={did} isMe iconOnly />
-        </div>
-      </DropButton>
+      <>
+        <DropButton
+          dropAlign={{ top: "bottom", right: "right" }}
+          dropContent={content}
+          dropProps={{ plain: true }}
+          onClose={() => {
+            setMenuOpen(false);
+          }}
+          onOpen={() => {
+            setMenuOpen(true);
+          }}
+          open={isMenuOpen}
+        >
+          <div className="hidden md:block">
+            <NamePlate did={did} isMe size="lg" />
+          </div>
+          <div className="block md:hidden">
+            <NamePlate did={did} isMe iconOnly />
+          </div>
+        </DropButton>
+        
+      </>
     );
   }
 

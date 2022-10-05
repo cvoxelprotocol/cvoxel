@@ -1,7 +1,6 @@
-import { Button } from "@/components/common/button/Button";
 import { ToolTip } from "@/components/common/ToolTip";
 import clsx from "clsx";
-import { FC, useEffect, useMemo, useState } from "react";
+import { FC, useMemo, useState } from "react";
 import CopyToClipboard from "react-copy-to-clipboard";
 
 type Props = {

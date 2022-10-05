@@ -5,7 +5,7 @@ import RightArrow from "@/components/CVoxel/VoxelListItem/right-arrow.svg";
 import { CommonSpinner } from "@/components/common/CommonSpinner";
 import LeftArrow from "@/components/CVoxel/VoxelListItem/left-arrow.svg";
 import { useENS } from "@/hooks/useENS";
-import { getPkhDIDFromAddress } from "@/utils/addressUtil";
+import { getPkhDIDFromAddress } from "@/utils/ceramicUtils";
 import { getProfileInfo } from "@/utils/ceramicUtils";
 
 type Props = {

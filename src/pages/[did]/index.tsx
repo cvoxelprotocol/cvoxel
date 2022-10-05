@@ -1,6 +1,5 @@
-import { isDIDstring } from "@self.id/framework";
 import type { GetServerSideProps } from "next";
-import { isEthereumAddress } from "@/utils/ceramicUtils";
+import { isDIDstring, isEthereumAddress } from "@/utils/ceramicUtils";
 import { ETH_CHAIN_ID } from "@/constants/common";
 import { getRequestState } from "@/lib/ceramic/server";
 import { CeramicProps, CeramicSupport } from "@/interfaces/ceramic";
