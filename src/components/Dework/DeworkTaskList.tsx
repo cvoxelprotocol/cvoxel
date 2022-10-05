@@ -29,6 +29,7 @@ export const DeworkTaskList:FC = () => {
             setDeworkTaskListOpen(false)
             closeLoading()
             lancInfo(CVOXEL_CREATION_SUCCEED)
+            setDeworkTargetIds([])
         } catch (error) {
             closeLoading()
             console.log(error);

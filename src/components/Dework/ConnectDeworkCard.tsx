@@ -66,12 +66,19 @@ export const ConnectDeworkCard:FC = () => {
                         {...register("name", { required: "enter your dework user name" })}
                         />
                     </div>
-                    <div className="text-right py-4 space-x-4 flex justify-end items-center">
-                        <Button
-                            text={"connect"}
-                            buttonType={"submit"}
-                            color={"secondary"}
-                        />
+                    <div className="grid grid-cols-2 items-center">
+                        <div className="cols-span-1">
+                            <a className="text-sm" href="https://doc.vess.id/tutorials/dework-integration" target={"_blank"} rel="noreferrer">
+                                <p className="text-sm underline">How to Connect?</p>
+                            </a>
+                        </div>
+                        <div className="cols-span-1 text-right py-4 space-x-4 flex justify-end items-center">
+                            <Button
+                                text={"connect"}
+                                buttonType={"submit"}
+                                color={"secondary"}
+                            />
+                        </div>
                     </div>
                 </form>
             </div>
