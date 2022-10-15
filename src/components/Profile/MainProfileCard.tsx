@@ -1,7 +1,7 @@
 import { FC} from "react";
 import clsx from "clsx";
 import { useHeldMembershipSubject } from "@/hooks/useHeldMembershipSubject";
-import { useMyCeramicAcount } from "@/hooks/useCeramicAcount";
+import { useUserCeramicAcount } from "@/hooks/useCeramicAcount";
 import { SubjectBadge } from "../common/badge/SubjectBadge";
 import { AvatarPlaceholder } from "../common/avatar/AvatarPlaceholder";
 
@@ -10,13 +10,13 @@ type Props = {
 }
 export const MainProfileCard: FC<Props> = ({did}) => {
   const {HeldMembershipSubjects, orbisProfile} = useHeldMembershipSubject(did)
-  const { name } = useMyCeramicAcount();
+  const { name } = useUserCeramicAcount(did || "");
 
 
   return (
     <div className="flex items-center space-x-0.5">
       <div
-        className={clsx("bg-light-surface-1 dark:bg-dark-surface-1 border rounded-2xl w-96 max-h-screen overflow-scroll",)}>
+        className={clsx("bg-light-surface-1 dark:bg-dark-surface-1 border rounded-2xl w-80 sm:w-96 max-h-screen overflow-scroll",)}>
 
 
         <div className="px-4 py-4 space-y-3 text-center">

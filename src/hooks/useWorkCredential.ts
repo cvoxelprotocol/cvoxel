@@ -35,6 +35,7 @@ export function useVerifiableWorkCredentialRecord(
 
 export const useWorkCredentials = (did?: string) => {
   const workCredentialService = getWorkCredentialService();
+  const queryClient = useQueryClient();
 
   const {
     data: workCredentials,
@@ -49,9 +50,24 @@ export const useWorkCredentials = (did?: string) => {
       cacheTime: 30000,
     }
   );
+
+  const { mutateAsync: deleteCRDLs } = useMutation<void, unknown, string[]>(
+    (param) => workCredentialService.deleteCredential(param),
+    {
+      onSuccess() {},
+      onError(error) {
+        console.log(error);
+      },
+      onSettled: () => {
+        queryClient.invalidateQueries("heldWorkCredentials");
+      },
+    }
+  );
+
   return {
     workCredentials,
     isLoading,
+    deleteCRDLs,
     refetch,
   };
 };

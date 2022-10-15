@@ -260,6 +260,12 @@ const event = await manager.createDefinition('Event', {
   description: 'Event',
   schema: manager.getSchemaURL(EventSchemaID),
 })
+const EventAttendanceVerifiableCredential = await manager.createDefinition('EventAttendanceVerifiableCredential', {
+  name: 'EventAttendanceVerifiableCredential',
+  description: 'EventAttendanceVerifiableCredential',
+  schema: manager.getSchemaURL(EventAttendanceVerifiableCredentialSchemaID),
+})
+
 
 const IssuedEventAttendanceVerifiableCredentials = await manager.createDefinition('IssuedEventAttendanceVerifiableCredentials', {
   name: 'IssuedEventAttendanceVerifiableCredentials',
@@ -319,3 +325,4 @@ await writeFile(new URL(`../src/__generated__/types/IssuedEventAttendanceVerifia
 
 const HeldEventAttendanceVerifiableCredentialsTS = await compile(HeldEventAttendanceVerifiableCredentialSchema, 'HeldEventAttendanceVerifiableCredentials')
 await writeFile(new URL(`../src/__generated__/types/HeldEventAttendanceVerifiableCredentials.d.ts`, import.meta.url), HeldEventAttendanceVerifiableCredentialsTS)
+

@@ -19,7 +19,7 @@ export const SubjectBadge: FC<Props> = ({ item }) => {
                 )}
             </div>
         </div>
-        <div className="text-light-on-primary-container dark:text-dark-on-error-container text-md">
+        <div className="text-light-on-primary-container dark:text-dark-on-error-container text-xs sm:text-md">
             {item.credentialSubject.organizationName} | {item.credentialSubject.membershipName} 
         </div>
       </div>

@@ -466,12 +466,22 @@ export class WorkCredentialService {
     });
   };
 
-  fetchCreatedOrganization = async (): Promise<OrganizationWIthId[] | null> => {
-    if (!this.dataStore || !this.did) return null;
-    const CreatedOrganizations = await this.dataStore.get<
+  fetchCreatedOrganization = async (
+    did?: string
+  ): Promise<OrganizationWIthId[] | null> => {
+    const ceramic = this.client || new CeramicClient(CERAMIC_URL);
+    const pkhDid = did || this.did?.parent;
+    const dataStore =
+      this.dataStore ||
+      new DIDDataStore({
+        ceramic: ceramic,
+        model: dataModel,
+        id: pkhDid,
+      });
+    const CreatedOrganizations = await dataStore.get<
       "CreatedOrganizations",
       CreatedOrganizations
-    >("CreatedOrganizations", this.did.parent);
+    >("CreatedOrganizations", pkhDid);
     const createdOrgs = CreatedOrganizations?.created ?? [];
     if (createdOrgs.length === 0) return null;
     const arr: Promise<OrganizationWIthId | undefined>[] = [];
@@ -483,12 +493,22 @@ export class WorkCredentialService {
     return removeUndefinedFromArray<OrganizationWIthId>(res);
   };
 
-  fetchCreatedMemberships = async (): Promise<MembershipWithId[] | null> => {
-    if (!this.dataStore || !this.did) return null;
-    const CreatedMemberships = await this.dataStore.get<
+  fetchCreatedMemberships = async (
+    did?: string
+  ): Promise<MembershipWithId[] | null> => {
+    const ceramic = this.client || new CeramicClient(CERAMIC_URL);
+    const pkhDid = did || this.did?.parent;
+    const dataStore =
+      this.dataStore ||
+      new DIDDataStore({
+        ceramic: ceramic,
+        model: dataModel,
+        id: pkhDid,
+      });
+    const CreatedMemberships = await dataStore.get<
       "CreatedMemberships",
       CreatedMemberships
-    >("CreatedMemberships", this.did.parent);
+    >("CreatedMemberships", pkhDid);
     const created = CreatedMemberships?.created ?? [];
     if (created.length === 0) return null;
     const arr: Promise<MembershipWithId | undefined>[] = [];
@@ -500,14 +520,22 @@ export class WorkCredentialService {
     return removeUndefinedFromArray<MembershipWithId>(res);
   };
 
-  fetchIssuedMembershipSubjects = async (): Promise<
-    MembershipSubjectWithId[] | null
-  > => {
-    if (!this.dataStore || !this.did) return null;
-    const IssuedVerifiableMembershipSubjects = await this.dataStore.get<
+  fetchIssuedMembershipSubjects = async (
+    did?: string
+  ): Promise<MembershipSubjectWithId[] | null> => {
+    const ceramic = this.client || new CeramicClient(CERAMIC_URL);
+    const pkhDid = did || this.did?.parent;
+    const dataStore =
+      this.dataStore ||
+      new DIDDataStore({
+        ceramic: ceramic,
+        model: dataModel,
+        id: pkhDid,
+      });
+    const IssuedVerifiableMembershipSubjects = await dataStore.get<
       "IssuedVerifiableMembershipSubjects",
       IssuedVerifiableMembershipSubjects
-    >("IssuedVerifiableMembershipSubjects", this.did.parent);
+    >("IssuedVerifiableMembershipSubjects", pkhDid);
     const issued = IssuedVerifiableMembershipSubjects?.issued ?? [];
     console.log({ issued });
     if (issued.length === 0) return null;
@@ -520,14 +548,22 @@ export class WorkCredentialService {
     return removeUndefinedFromArray<MembershipSubjectWithId>(res);
   };
 
-  fetchHeldMembershipSubjects = async (): Promise<
-    MembershipSubjectWithId[] | null
-  > => {
-    if (!this.dataStore || !this.did) return null;
-    const HeldMembershipSubjects = await this.dataStore.get<
+  fetchHeldMembershipSubjects = async (
+    did?: string
+  ): Promise<MembershipSubjectWithId[] | null> => {
+    const ceramic = this.client || new CeramicClient(CERAMIC_URL);
+    const pkhDid = did || this.did?.parent;
+    const dataStore =
+      this.dataStore ||
+      new DIDDataStore({
+        ceramic: ceramic,
+        model: dataModel,
+        id: pkhDid,
+      });
+    const HeldMembershipSubjects = await dataStore.get<
       "HeldVerifiableMembershipSubjects",
       HeldVerifiableMembershipSubjects
-    >("HeldVerifiableMembershipSubjects", this.did.parent);
+    >("HeldVerifiableMembershipSubjects", pkhDid);
     const created = HeldMembershipSubjects?.held ?? [];
     if (created.length === 0) return [];
     const arr: Promise<MembershipSubjectWithId | undefined>[] = [];
@@ -609,7 +645,7 @@ export class WorkCredentialService {
       this.client,
       this.did.parent,
       content,
-      getSchema("Membership")
+      getSchema("MemberShip")
     );
     if (!doc) return undefined;
     const docUrl = doc.id.toUrl();

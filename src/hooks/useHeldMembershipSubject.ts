@@ -1,14 +1,16 @@
 import { getWorkCredentialService } from "@/services/workCredential/WorkCredentialService";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { MembershipSubjectWithId } from "@/interfaces";
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
 import { getHeldMembershipSubjectsFromDB } from "@/lib/firebase/store/workspace";
 import { useSocialAccount } from "./useSocialAccount";
+import { DIDContext } from "@/context/DIDContext";
 
 export const useHeldMembershipSubject = (did?: string) => {
   const workCredentialService = getWorkCredentialService();
   const queryClient = useQueryClient();
   const { orbisProfile } = useSocialAccount(did);
+  const { did: myDid } = useContext(DIDContext);
 
   const { mutateAsync: setHeldMembershipSubjects } = useMutation<
     void,
@@ -31,7 +33,7 @@ export const useHeldMembershipSubject = (did?: string) => {
     isLoading: isFetchingHeldMembershipSubjects,
   } = useQuery<MembershipSubjectWithId[] | null>(
     ["HeldMembershipSubjects", did],
-    () => workCredentialService.fetchHeldMembershipSubjects(),
+    () => workCredentialService.fetchHeldMembershipSubjects(did),
     {
       enabled: !!did,
       staleTime: Infinity,
@@ -65,8 +67,10 @@ export const useHeldMembershipSubject = (did?: string) => {
         }
       }
     }
-    migrate();
-  }, [HeldMembershipSubjects, heldMembershipSubjectsFromDB]);
+    if (myDid && myDid === did) {
+      migrate();
+    }
+  }, [HeldMembershipSubjects, heldMembershipSubjectsFromDB, myDid, did]);
 
   const shouldStartToDataMigrationOnCeramic = () => {
     if (

@@ -66,9 +66,9 @@ export type ModelTypes = ModelTypeAliases<
     OldWorkCredentials: CVoxels;
     HeldVerifiableWorkCredentials: HeldVerifiableWorkCredentials;
     Organization: Organization;
-    Membership: Membership;
-    MembershipSubject: MembershipSubject;
+    MemberShip: Membership;
     Event: Event;
+    MembershipSubject: MembershipSubject;
     IssuedEventAttendanceVerifiableCredentials: IssuedEventAttendanceVerifiableCredentials;
     HeldEventAttendanceVerifiableCredentials: HeldEventAttendanceVerifiableCredentials;
     CreatedOrganizations: CreatedOrganizations;
@@ -89,9 +89,9 @@ export type ModelTypes = ModelTypeAliases<
     OldWorkCredentials: "OldWorkCredentials";
     heldVerifiableWorkCredentials: "HeldVerifiableWorkCredentials";
     Organization: "Organization";
-    Membership: "Membership";
-    MembershipSubject: "MembershipSubject";
+    MemberShip: "MemberShip";
     Event: "Event";
+    MembershipSubject: "MembershipSubject";
     IssuedEventAttendanceVerifiableCredentials: "IssuedEventAttendanceVerifiableCredentials";
     HeldEventAttendanceVerifiableCredentials: "HeldEventAttendanceVerifiableCredentials";
     CreatedOrganizations: "CreatedOrganizations";
@@ -114,9 +114,9 @@ const AliasType = {
   OldWorkCredentials: "OldWorkCredentials",
   heldVerifiableWorkCredentials: "HeldVerifiableWorkCredentials",
   Organization: "Organization",
-  Membership: "Membership",
-  MembershipSubject: "MembershipSubject",
+  MemberShip: "MemberShip",
   Event: "Event",
+  MembershipSubject: "MembershipSubject",
   IssuedEventAttendanceVerifiableCredentials:
     "IssuedEventAttendanceVerifiableCredentials",
   HeldEventAttendanceVerifiableCredentials:

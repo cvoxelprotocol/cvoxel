@@ -10,6 +10,7 @@ import { NoCRDLItem } from "./NoCRDLItem";
 import { Button } from "@/components/common/button/Button";
 import { WorkCredentialWithId } from "@/interfaces";
 import { MainProfileCard } from "@/components/Profile/MainProfileCard";
+import { UserSearchWithProfile } from "@/components/common/search/UserSearchWithProfile";
 
 type props = {
   did: string;
@@ -76,25 +77,14 @@ export const CVoxelsContainer: FC<props> = ({
       {mode == "nameplate" && (
         <div className="flex-none mt-12 w-full max-w-[720px]">
           <div className="w-fit mx-auto">
-            {isMe ? (
-              <div>
-                <MainProfileCard did={did} />
-              </div>
-            ):(
-              <NamePlate
-                did={did}
-                size="lg"
-                onClick={handleClickNamePlate}
-                isMe
-              />
-            )}
+            <MainProfileCard did={did} />
           </div>
         </div>
       )}
       {mode == "search" && did != undefined && onClearUser != undefined && (
-        <div className="w-[320px] sm:w-[500px] mt-24">
+        <div className="w-[320px] sm:w-[500px] sm:mt-24">
           <div className="hidden md:block">
-            <UserSearch
+            <UserSearchWithProfile
               onSubmit={handleSearch}
               did={did}
               onClearUser={onClearUser}
@@ -102,7 +92,7 @@ export const CVoxelsContainer: FC<props> = ({
             />
           </div>
           <div className="md:hidden">
-            <UserSearch
+            <UserSearchWithProfile
               onSubmit={handleSearch}
               did={did}
               onClearUser={onClearUser}
