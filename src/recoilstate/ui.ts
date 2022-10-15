@@ -115,6 +115,33 @@ export const rDeworkTaskListModal = atom({
 export const useStateDeworkTaskListModal = () =>
   useRecoilState(rDeworkTaskListModal);
 
+//workspace create
+export const rWorkspaceCreateModal = atom({
+  key: "rWorkspaceCreateModal",
+  default: false,
+});
+
+export const useStateWorkspaceCreateModal = () =>
+  useRecoilState(rWorkspaceCreateModal);
+
+//MEMBERSHIP create
+export const rMembershipCreateModal = atom({
+  key: "rMembershipCreateModal",
+  default: false,
+});
+
+export const useStateMembershipCreateModal = () =>
+  useRecoilState(rMembershipCreateModal);
+
+//MEMBERSHIP subject create
+export const rMembershipSubjectCreateModal = atom({
+  key: "rMembershipSubjectCreateModal",
+  default: false,
+});
+
+export const useStateMembershipSubjectCreateModal = () =>
+  useRecoilState(rMembershipSubjectCreateModal);
+
 export const issueStatus = atom<"completed" | "issuing" | "failed" | undefined>(
   {
     key: "issueStatus",

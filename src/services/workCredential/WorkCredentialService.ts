@@ -2,7 +2,10 @@ import { Web3Provider } from "@ethersproject/providers";
 import {
   CVoxel,
   CVoxelItem,
+  MembershipSubjectWithId,
+  MembershipWithId,
   ModelTypes,
+  OrganizationWIthId,
   TransactionLogWithChainId,
   WorkCredentialWithId,
 } from "@/interfaces";
@@ -11,8 +14,16 @@ import { getNetworkSymbol } from "@/utils/networkUtil";
 import { convertDateToTimestampStr } from "@/utils/dateUtil";
 import { getPkhDIDFromAddress } from "@/utils/ceramicUtils";
 import { createTileDocument, getSchema } from "./CeramicHelper";
-import { uploadCRDL } from "@/lib/firebase/functions/workCredential";
-import { getEIP712WorkCredentialSubjectSignature } from "@/utils/providerUtils";
+import {
+  uploadCRDL,
+  uploadMembership,
+  uploadMembershipSubject,
+  uploadOrg,
+} from "@/lib/firebase/functions/workCredential";
+import {
+  createVerifiableMembershipSubjectCredential,
+  getEIP712WorkCredentialSubjectSignature,
+} from "@/utils/providerUtils";
 import {
   convertV1DataToCRDLOnCeramic,
   convertValidworkSubjectTypedData,
@@ -34,6 +45,15 @@ import { DID } from "dids";
 import { HeldWorkCredentials } from "@/__generated__/types/HeldWorkCredentials";
 import { Organization } from "@/__generated__/types/Organization";
 import { CERAMIC_URL } from "@/constants/common";
+import { CreatedOrganizations } from "@/__generated__/types/CreatedOrganizations";
+import { Membership } from "@/__generated__/types/MemberShip";
+import { CreatedMemberships } from "@/__generated__/types/CreatedMemberships";
+import { CreatedMembershipSubjects } from "@/__generated__/types/CreatedMembershipSubjects";
+import { removeUndefinedFromArray } from "@/utils/objectUtil";
+import { HeldVerifiableMembershipSubjects } from "@/__generated__/types/HeldVerifiableMembershipSubjects";
+import { IssuedVerifiableMembershipSubjects } from "@/__generated__/types/IssuedVerifiableMembershipSubjects";
+import { VerifiableMembershipSubjectCredential } from "@/interfaces/eip712";
+import { VerifiableMembershipSubject } from "@/__generated__/types/VerifiableMembershipSubjectCredential";
 
 type MigrateDataType = {
   v1: CVoxelItem;
@@ -171,6 +191,23 @@ export class WorkCredentialService {
     >("heldWorkCredentials", this.did.parent);
     const workCRDLs = heldWorkCredentials?.held ?? [];
     const updatedCredentails = [...workCRDLs, ...contentIds];
+    await this.dataStore.set("heldWorkCredentials", {
+      held: updatedCredentails,
+    });
+  };
+
+  deleteCredential = async (contentIds: string[]): Promise<void> => {
+    if (!this.dataStore || !this.did) return undefined;
+    const heldWorkCredentials = await this.dataStore.get<
+      "heldWorkCredentials",
+      HeldWorkCredentials
+    >("heldWorkCredentials", this.did.parent);
+    const workCRDLs = heldWorkCredentials?.held ?? [];
+    const updatedCredentails = workCRDLs.filter((c) => !contentIds.includes(c));
+    console.log(contentIds.length);
+    console.log(updatedCredentails.length);
+    console.log({ contentIds });
+    console.log({ updatedCredentails });
     await this.dataStore.set("heldWorkCredentials", {
       held: updatedCredentails,
     });
@@ -429,11 +466,223 @@ export class WorkCredentialService {
     });
   };
 
-  fetchOrganization = async (orgId?: string): Promise<Organization | null> => {
-    if (!orgId) return null;
+  fetchCreatedOrganization = async (): Promise<OrganizationWIthId[] | null> => {
+    if (!this.dataStore || !this.did) return null;
+    const CreatedOrganizations = await this.dataStore.get<
+      "CreatedOrganizations",
+      CreatedOrganizations
+    >("CreatedOrganizations", this.did.parent);
+    const createdOrgs = CreatedOrganizations?.created ?? [];
+    if (createdOrgs.length === 0) return null;
+    const arr: Promise<OrganizationWIthId | undefined>[] = [];
+    for (const orgId of createdOrgs) {
+      const o = this.fetchOrganization(orgId);
+      arr.push(o);
+    }
+    const res = await Promise.all(arr);
+    return removeUndefinedFromArray<OrganizationWIthId>(res);
+  };
+
+  fetchCreatedMemberships = async (): Promise<MembershipWithId[] | null> => {
+    if (!this.dataStore || !this.did) return null;
+    const CreatedMemberships = await this.dataStore.get<
+      "CreatedMemberships",
+      CreatedMemberships
+    >("CreatedMemberships", this.did.parent);
+    const created = CreatedMemberships?.created ?? [];
+    if (created.length === 0) return null;
+    const arr: Promise<MembershipWithId | undefined>[] = [];
+    for (const id of created) {
+      const o = this.fetcMembership(id);
+      arr.push(o);
+    }
+    const res = await Promise.all(arr);
+    return removeUndefinedFromArray<MembershipWithId>(res);
+  };
+
+  fetchIssuedMembershipSubjects = async (): Promise<
+    MembershipSubjectWithId[] | null
+  > => {
+    if (!this.dataStore || !this.did) return null;
+    const IssuedVerifiableMembershipSubjects = await this.dataStore.get<
+      "IssuedVerifiableMembershipSubjects",
+      IssuedVerifiableMembershipSubjects
+    >("IssuedVerifiableMembershipSubjects", this.did.parent);
+    const issued = IssuedVerifiableMembershipSubjects?.issued ?? [];
+    console.log({ issued });
+    if (issued.length === 0) return null;
+    const arr: Promise<MembershipSubjectWithId | undefined>[] = [];
+    for (const id of issued) {
+      const o = this.fetcMembershipSubject(id);
+      arr.push(o);
+    }
+    const res = await Promise.all(arr);
+    return removeUndefinedFromArray<MembershipSubjectWithId>(res);
+  };
+
+  fetchHeldMembershipSubjects = async (): Promise<
+    MembershipSubjectWithId[] | null
+  > => {
+    if (!this.dataStore || !this.did) return null;
+    const HeldMembershipSubjects = await this.dataStore.get<
+      "HeldVerifiableMembershipSubjects",
+      HeldVerifiableMembershipSubjects
+    >("HeldVerifiableMembershipSubjects", this.did.parent);
+    const created = HeldMembershipSubjects?.held ?? [];
+    if (created.length === 0) return [];
+    const arr: Promise<MembershipSubjectWithId | undefined>[] = [];
+    for (const id of created) {
+      const o = this.fetcMembershipSubject(id);
+      arr.push(o);
+    }
+    const res = await Promise.all(arr);
+    return removeUndefinedFromArray<MembershipSubjectWithId>(res);
+  };
+
+  fetchOrganization = async (
+    orgId?: string
+  ): Promise<OrganizationWIthId | undefined> => {
+    if (!orgId) return undefined;
     const ceramic = this.client || new CeramicClient(CERAMIC_URL);
     const doc = await TileDocument.load<Organization>(ceramic, orgId);
-    return doc.content;
+    return { ...doc.content, ceramicId: orgId };
+  };
+
+  fetcMembership = async (
+    id?: string
+  ): Promise<MembershipWithId | undefined> => {
+    if (!id) return undefined;
+    const ceramic = this.client || new CeramicClient(CERAMIC_URL);
+    const doc = await TileDocument.load<Membership>(ceramic, id);
+    return { ...doc.content, ceramicId: id };
+  };
+
+  fetcMembershipSubject = async (
+    id?: string
+  ): Promise<MembershipSubjectWithId | undefined> => {
+    if (!id) return undefined;
+    const ceramic = this.client || new CeramicClient(CERAMIC_URL);
+    const doc = await TileDocument.load<VerifiableMembershipSubjectCredential>(
+      ceramic,
+      id
+    );
+    return { ...doc.content, ceramicId: id };
+  };
+
+  createOrganization = async (
+    content: Organization
+  ): Promise<string | undefined> => {
+    if (!this.client || !this.did || !this.dataStore) return undefined;
+    const doc = await createTileDocument<Organization>(
+      this.client,
+      this.did.parent,
+      content,
+      getSchema("Organization")
+    );
+    if (!doc) return undefined;
+    const docUrl = doc.id.toUrl();
+    const val: OrganizationWIthId = { ...content, ceramicId: docUrl };
+    const setOrgs = this.setCreatedOrganizations(docUrl);
+    const uploadBackup = uploadOrg(val);
+    await Promise.all([setOrgs, uploadBackup]);
+    return docUrl;
+  };
+
+  setCreatedOrganizations = async (contentId: string): Promise<void> => {
+    if (!this.dataStore || !this.did) return undefined;
+    const CreatedOrganizations = await this.dataStore.get<
+      "CreatedOrganizations",
+      CreatedOrganizations
+    >("CreatedOrganizations", this.did.parent);
+    const orgs = CreatedOrganizations?.created ?? [];
+    const updatedOrgs = [...orgs, contentId];
+    await this.dataStore.set("CreatedOrganizations", {
+      created: updatedOrgs,
+    });
+  };
+
+  createMembership = async (
+    content: Membership
+  ): Promise<string | undefined> => {
+    if (!this.client || !this.did || !this.dataStore) return undefined;
+    const doc = await createTileDocument<Membership>(
+      this.client,
+      this.did.parent,
+      content,
+      getSchema("Membership")
+    );
+    if (!doc) return undefined;
+    const docUrl = doc.id.toUrl();
+    const val: MembershipWithId = { ...content, ceramicId: docUrl };
+    const setPromise = this.setCreatedMemberships(docUrl);
+    const uploadBackup = uploadMembership(val);
+    await Promise.all([setPromise, uploadBackup]);
+    return docUrl;
+  };
+
+  setCreatedMemberships = async (contentId: string): Promise<void> => {
+    if (!this.dataStore || !this.did) return undefined;
+    const CreatedMemberships = await this.dataStore.get<
+      "CreatedMemberships",
+      CreatedMemberships
+    >("CreatedMemberships", this.did.parent);
+    const currentVal = CreatedMemberships?.created ?? [];
+    const updatedVal = [...currentVal, contentId];
+    await this.dataStore.set("CreatedMemberships", {
+      created: updatedVal,
+    });
+  };
+
+  issueMembershipSubject = async (
+    content: VerifiableMembershipSubject
+  ): Promise<string | undefined> => {
+    if (!this.client || !this.did || !this.dataStore) return undefined;
+
+    // TODO: sign and create verifiable credential before save data
+    const vc = await createVerifiableMembershipSubjectCredential(
+      content,
+      this.provider
+    );
+
+    const doc = await createTileDocument<VerifiableMembershipSubjectCredential>(
+      this.client,
+      this.did.parent,
+      vc,
+      getSchema("VerifiableMembershipSubjectCredential")
+    );
+    if (!doc) return undefined;
+    const docUrl = doc.id.toUrl();
+    const val: MembershipSubjectWithId = { ...vc, ceramicId: docUrl };
+    const setOrgs = this.setIssuedMembershipSubjects(docUrl);
+    const uploadBackup = uploadMembershipSubject(val);
+    await Promise.all([setOrgs, uploadBackup]);
+    return docUrl;
+  };
+
+  setIssuedMembershipSubjects = async (contentId: string): Promise<void> => {
+    if (!this.dataStore || !this.did) return undefined;
+    const CreatedMembershipSubjects = await this.dataStore.get<
+      "IssuedVerifiableMembershipSubjects",
+      IssuedVerifiableMembershipSubjects
+    >("IssuedVerifiableMembershipSubjects", this.did.parent);
+    const currentVal = CreatedMembershipSubjects?.issued ?? [];
+    const updatedVal = [...currentVal, contentId];
+    await this.dataStore.set("IssuedVerifiableMembershipSubjects", {
+      issued: updatedVal,
+    });
+  };
+
+  setHeldMembershipSubjects = async (contentIds: string[]): Promise<void> => {
+    if (!this.dataStore || !this.did) return undefined;
+    const HeldMembershipSubjects = await this.dataStore.get<
+      "HeldVerifiableMembershipSubjects",
+      HeldVerifiableMembershipSubjects
+    >("HeldVerifiableMembershipSubjects", this.did.parent);
+    const currentVal = HeldMembershipSubjects?.held ?? [];
+    const updatedVal = [...currentVal, ...contentIds];
+    await this.dataStore.set("HeldVerifiableMembershipSubjects", {
+      held: updatedVal,
+    });
   };
 }
 

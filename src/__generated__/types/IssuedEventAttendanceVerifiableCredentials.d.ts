@@ -5,7 +5,7 @@
  * and run json-schema-to-typescript to regenerate this file.
  */
 
-export interface IssuedVerifiableMembershipSubjects {
+export interface IssuedEventAttendanceVerifiableCredentials {
   issued?: string[];
   [k: string]: unknown;
 }

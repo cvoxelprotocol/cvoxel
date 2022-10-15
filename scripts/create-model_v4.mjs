@@ -164,7 +164,7 @@ const HeldVerifiableMembershipSubjectSchema = {
 
 const IssuedEventAttendanceVerifiableCredentialSchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "IssuedVerifiableMembershipSubjects",
+  "title": "IssuedEventAttendanceVerifiableCredentials",
   "type": "object",
   "properties": {
     "issued": {
@@ -183,7 +183,7 @@ const IssuedEventAttendanceVerifiableCredentialSchema = {
 
 const HeldEventAttendanceVerifiableCredentialSchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "HeldVerifiableMembershipSubjects",
+  "title": "HeldEventAttendanceVerifiableCredentials",
   "type": "object",
   "properties": {
     "held": {

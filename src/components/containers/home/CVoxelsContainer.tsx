@@ -9,6 +9,7 @@ import { UserSearch } from "@/components/common/search/UserSearch";
 import { NoCRDLItem } from "./NoCRDLItem";
 import { Button } from "@/components/common/button/Button";
 import { WorkCredentialWithId } from "@/interfaces";
+import { MainProfileCard } from "@/components/Profile/MainProfileCard";
 
 type props = {
   did: string;
@@ -75,12 +76,18 @@ export const CVoxelsContainer: FC<props> = ({
       {mode == "nameplate" && (
         <div className="flex-none mt-12 w-full max-w-[720px]">
           <div className="w-fit mx-auto">
-            <NamePlate
-              did={did}
-              size="lg"
-              onClick={handleClickNamePlate}
-              isMe
-            />
+            {isMe ? (
+              <div>
+                <MainProfileCard did={did} />
+              </div>
+            ):(
+              <NamePlate
+                did={did}
+                size="lg"
+                onClick={handleClickNamePlate}
+                isMe
+              />
+            )}
           </div>
         </div>
       )}

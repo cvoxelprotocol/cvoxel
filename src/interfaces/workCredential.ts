@@ -15,6 +15,15 @@ import { HeldVerifiableWorkCredentials } from "@/__generated__/types/HeldVerifia
 import { Organization } from "@/__generated__/types/Organization";
 import { Membership } from "@/__generated__/types/MemberShip";
 import { MembershipSubject } from "@/__generated__/types/MembershipSubject";
+import { CreatedOrganizations } from "@/__generated__/types/CreatedOrganizations";
+import { CreatedMemberships } from "@/__generated__/types/CreatedMemberships";
+import { CreatedMembershipSubjects } from "@/__generated__/types/CreatedMembershipSubjects";
+import { HeldVerifiableMembershipSubjects } from "@/__generated__/types/HeldVerifiableMembershipSubjects";
+import { IssuedVerifiableMembershipSubjects } from "@/__generated__/types/IssuedVerifiableMembershipSubjects";
+import { VerifiableMembershipSubjectCredential } from "./eip712";
+import { Event } from "@/__generated__/types/Event";
+import { IssuedEventAttendanceVerifiableCredentials } from "@/__generated__/types/IssuedEventAttendanceVerifiableCredentials";
+import { HeldEventAttendanceVerifiableCredentials } from "@/__generated__/types/HeldEventAttendanceVerifiableCredentials";
 
 export type WorkCredentialWithId = WorkCredential & {
   backupId?: string;
@@ -33,6 +42,18 @@ export type WorkSubjectFromDework = WorkSubject & {
   taskId?: string;
 };
 
+export type OrganizationWIthId = Organization & {
+  ceramicId: string;
+};
+
+export type MembershipWithId = Membership & {
+  ceramicId: string;
+};
+
+export type MembershipSubjectWithId = VerifiableMembershipSubjectCredential & {
+  ceramicId: string;
+};
+
 export type ModelTypes = ModelTypeAliases<
   {
     AlsoKnownAs: AlsoKnownAs;
@@ -45,8 +66,17 @@ export type ModelTypes = ModelTypeAliases<
     OldWorkCredentials: CVoxels;
     HeldVerifiableWorkCredentials: HeldVerifiableWorkCredentials;
     Organization: Organization;
-    MemberShip: Membership;
+    Membership: Membership;
     MembershipSubject: MembershipSubject;
+    Event: Event;
+    IssuedEventAttendanceVerifiableCredentials: IssuedEventAttendanceVerifiableCredentials;
+    HeldEventAttendanceVerifiableCredentials: HeldEventAttendanceVerifiableCredentials;
+    CreatedOrganizations: CreatedOrganizations;
+    CreatedMemberships: CreatedMemberships;
+    CreatedMembershipSubjects: CreatedMembershipSubjects;
+    VerifiableMembershipSubjectCredential: VerifiableMembershipSubjectCredential;
+    HeldVerifiableMembershipSubjects: HeldVerifiableMembershipSubjects;
+    IssuedVerifiableMembershipSubjects: IssuedVerifiableMembershipSubjects;
   },
   {
     alsoKnownAs: "AlsoKnownAs";
@@ -59,8 +89,17 @@ export type ModelTypes = ModelTypeAliases<
     OldWorkCredentials: "OldWorkCredentials";
     heldVerifiableWorkCredentials: "HeldVerifiableWorkCredentials";
     Organization: "Organization";
-    MemberShip: "MemberShip";
+    Membership: "Membership";
     MembershipSubject: "MembershipSubject";
+    Event: "Event";
+    IssuedEventAttendanceVerifiableCredentials: "IssuedEventAttendanceVerifiableCredentials";
+    HeldEventAttendanceVerifiableCredentials: "HeldEventAttendanceVerifiableCredentials";
+    CreatedOrganizations: "CreatedOrganizations";
+    CreatedMemberships: "CreatedMemberships";
+    CreatedMembershipSubjects: "CreatedMembershipSubjects";
+    VerifiableMembershipSubjectCredential: "VerifiableMembershipSubjectCredential";
+    HeldVerifiableMembershipSubjects: "HeldVerifiableMembershipSubjects";
+    IssuedVerifiableMembershipSubjects: "IssuedVerifiableMembershipSubjects";
   }
 >;
 
@@ -75,7 +114,19 @@ const AliasType = {
   OldWorkCredentials: "OldWorkCredentials",
   heldVerifiableWorkCredentials: "HeldVerifiableWorkCredentials",
   Organization: "Organization",
-  MemberShip: "MemberShip",
+  Membership: "Membership",
   MembershipSubject: "MembershipSubject",
+  Event: "Event",
+  IssuedEventAttendanceVerifiableCredentials:
+    "IssuedEventAttendanceVerifiableCredentials",
+  HeldEventAttendanceVerifiableCredentials:
+    "HeldEventAttendanceVerifiableCredentials",
+  CreatedOrganizations: "CreatedOrganizations",
+  CreatedMemberships: "CreatedMemberships",
+  CreatedMembershipSubjects: "CreatedMembershipSubjects",
+  VerifiableMembershipSubjectCredential:
+    "VerifiableMembershipSubjectCredential",
+  HeldVerifiableMembershipSubjects: "HeldVerifiableMembershipSubjects",
+  IssuedVerifiableMembershipSubjects: "IssuedVerifiableMembershipSubjects",
 } as const;
 export type AliasTypes = typeof AliasType[keyof typeof AliasType];

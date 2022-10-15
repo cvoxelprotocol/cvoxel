@@ -24,6 +24,7 @@ import { WorkCredential } from "@/__generated__/types/WorkCredential";
 import { useOffchainItem } from "@/hooks/useOffchainList";
 import { UserPlate } from "@/components/common/UserPlate";
 
+
 type Props = {
   crdl?: WorkCredentialWithId;
   offchainItems?: WorkCredentialWithId[];
@@ -193,7 +194,7 @@ export const VoxelDetail: FC<Props> = ({
         </div>
       </div>
 
-      <div className="px-3 sm:px-8 pb-3 lg:py-8 text-left space-y-8">
+      <div className="px-3 sm:px-8 pb-3 lg:py-8 text-left space-y-8 relative">
         <div>
           <p className="mb-2 text-light-on-surface-variant dark:text-light-on-surface-variant font-medium">
             HOLDER & CLIENT
@@ -263,6 +264,11 @@ export const VoxelDetail: FC<Props> = ({
             </div>
           )}
         </div>
+        <div className="absolute bottom-0 right-0 px-4 pb-1">
+            {crdl?.subject.work?.platform && (
+              <p className="text-light-on-primary-container dark:text-dark-on-error-container text-base">Via: {crdl?.subject.work?.platform}</p>
+            )}
+          </div>
       </div>
 
       <div className="bg-light-outline dark:bg-dark-outline h-[1px] w-full" />

@@ -44,6 +44,11 @@ export default function AccountButton() {
     router.push(`/${did ? did : account}`);
   };
 
+  const goToWorkSpaceList = () => {
+    if (!did && !account) return;
+    router.push(`/workspace/list`);
+  };
+
   const [isConnect, setIsConnect] = useState<boolean>(false);
   const connect = async () => {
     try {
@@ -69,6 +74,7 @@ export default function AccountButton() {
       ): (
         <MenuButton label="Connect Dework" onClick={() => setDeworkConnectOpen(true)} />
       )}
+      <MenuButton label="Workspace" onClick={() => goToWorkSpaceList()} />
       <MenuButton label="Disconnect" onClick={() => disconnectWallet()} />
     </>
 

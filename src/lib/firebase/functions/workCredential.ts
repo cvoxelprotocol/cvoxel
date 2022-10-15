@@ -1,4 +1,9 @@
-import { WorkCredentialWithId } from "@/interfaces";
+import {
+  MembershipSubjectWithId,
+  MembershipWithId,
+  OrganizationWIthId,
+  WorkCredentialWithId,
+} from "@/interfaces";
 import { removeCeramicPrefix } from "@/utils/workCredentialUtil";
 import { httpsCallable } from "firebase/functions";
 import { functions } from "../app";
@@ -18,6 +23,69 @@ export const uploadCRDL = (
         holderDid: crdl.subject.work?.id,
         potentialSigners: crdl.subject.tx?.relatedAddresses,
       },
+    })
+      .then((result) => {
+        const { status } = result.data;
+        resolve({ status: status });
+      })
+      .catch((error) => {
+        console.log({ error });
+        reject(error);
+      });
+  });
+
+export const uploadOrg = (
+  param: OrganizationWIthId
+): Promise<{ [x: string]: string }> =>
+  new Promise((resolve, reject) => {
+    const uploadFunc = httpsCallable<
+      { [x: string]: OrganizationWIthId },
+      { [x: string]: string }
+    >(functions, "uploadOrg");
+    uploadFunc({
+      org: param,
+    })
+      .then((result) => {
+        const { status } = result.data;
+        resolve({ status: status });
+      })
+      .catch((error) => {
+        console.log({ error });
+        reject(error);
+      });
+  });
+
+export const uploadMembership = (
+  param: MembershipWithId
+): Promise<{ [x: string]: string }> =>
+  new Promise((resolve, reject) => {
+    const uploadFunc = httpsCallable<
+      { [x: string]: MembershipWithId },
+      { [x: string]: string }
+    >(functions, "uploadMembership");
+    uploadFunc({
+      membership: param,
+    })
+      .then((result) => {
+        const { status } = result.data;
+        resolve({ status: status });
+      })
+      .catch((error) => {
+        console.log({ error });
+        reject(error);
+      });
+  });
+
+export const uploadMembershipSubject = (
+  param: MembershipSubjectWithId
+): Promise<{ [x: string]: string }> =>
+  new Promise((resolve, reject) => {
+    const uploadFunc = httpsCallable<
+      { [x: string]: MembershipSubjectWithId },
+      { [x: string]: string }
+    >(functions, "uploadMembershipSubject");
+    uploadFunc({
+      subject: param,
     })
       .then((result) => {
         const { status } = result.data;
