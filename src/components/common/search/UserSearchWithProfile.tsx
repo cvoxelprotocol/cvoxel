@@ -27,7 +27,7 @@ export const UserSearchWithProfile: FC<Props> = ({
           <div className="w-fit relative">
             <MainProfileCard did={did} />
           </div>
-          <button onClick={onClearUser} className="absolute">
+          <button onClick={onClearUser} className="absolute right-2 top-2">
             <div className="bg-light-surface-variant dark:bg-dark-surface-variant p-3 rounded-full">
               <CloseIcon />
             </div>
