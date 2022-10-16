@@ -48,7 +48,6 @@ import { CERAMIC_URL } from "@/constants/common";
 import { CreatedOrganizations } from "@/__generated__/types/CreatedOrganizations";
 import { Membership } from "@/__generated__/types/MemberShip";
 import { CreatedMemberships } from "@/__generated__/types/CreatedMemberships";
-import { CreatedMembershipSubjects } from "@/__generated__/types/CreatedMembershipSubjects";
 import { removeUndefinedFromArray } from "@/utils/objectUtil";
 import { HeldVerifiableMembershipSubjects } from "@/__generated__/types/HeldVerifiableMembershipSubjects";
 import { IssuedVerifiableMembershipSubjects } from "@/__generated__/types/IssuedVerifiableMembershipSubjects";
@@ -469,16 +468,10 @@ export class WorkCredentialService {
   fetchCreatedOrganization = async (
     did?: string
   ): Promise<OrganizationWIthId[] | null> => {
-    const ceramic = this.client || new CeramicClient(CERAMIC_URL);
+    if (!this.dataStore) return null;
+    // const ceramic = this.client || new CeramicClient(CERAMIC_URL);
     const pkhDid = did || this.did?.parent;
-    const dataStore =
-      this.dataStore ||
-      new DIDDataStore({
-        ceramic: ceramic,
-        model: dataModel,
-        id: pkhDid,
-      });
-    const CreatedOrganizations = await dataStore.get<
+    const CreatedOrganizations = await this.dataStore.get<
       "CreatedOrganizations",
       CreatedOrganizations
     >("CreatedOrganizations", pkhDid);
