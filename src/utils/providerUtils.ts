@@ -16,7 +16,6 @@ import {
   SignTypedData,
   TX_EIP712_TYPE,
   VerifiableCredential,
-  VERIFIABLE_CREDENTIAL_EIP712_TYPE,
   VERIFIABLE_CREDENTIAL_PRIMARY_TYPE,
   VERIFIABLE_CREDENTIAL_W3C_TYPE,
   VerifyTypedData,
@@ -36,6 +35,7 @@ export const DEFAULT_CONTEXT = "https://www.w3.org/2018/credentials/v1";
 export const EIP712_CONTEXT =
   "https://raw.githubusercontent.com/w3c-ccg/ethereum-eip712-signature-2021-spec/main/contexts/v1/index.json";
 export const DEFAULT_VC_TYPE = "VerifiableCredential";
+export const MEMBERSHIP_VC_TYPE = "MembershipCredential";
 
 export const getDeworkConnectSignature = async (
   nonce: string,
@@ -172,7 +172,7 @@ export const createVerifiableMembershipSubjectCredential = async (
 
   let credential: W3CCredential = {
     "@context": [DEFAULT_CONTEXT, EIP712_CONTEXT],
-    type: [DEFAULT_VC_TYPE],
+    type: [DEFAULT_VC_TYPE, MEMBERSHIP_VC_TYPE],
     id: credentialId,
     issuer: {
       id: issuerDID,
