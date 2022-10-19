@@ -1,9 +1,9 @@
+import { EventAttendanceWithId } from "@/interfaces";
 import {
   CLIENT_EIP712_TYPE,
   CREDENTIAL_SCHEMA_W3C_TYPE,
   DELIVERABLES_EIP712_TYPE,
   DOMAIN_TYPE,
-  EIP712Credential,
   EIP712DomainTypedData,
   EIP712MessageTypes,
   EIP712TypedData,
@@ -23,19 +23,30 @@ import {
   W3CCredentialTypedData,
   WORK_EIP712_TYPE,
   WORK_SUBJECT_EIP712_TYPE,
+  EVENT_ATTENDANCE_EIP712_TYPE,
+  EventAttendanceVerifiableCredential,
 } from "@/interfaces/eip712";
+import { EventAttendance } from "@/__generated__/types/EventAttendanceVerifiableCredential";
 import { VerifiableMembershipSubject } from "@/__generated__/types/VerifiableMembershipSubjectCredential";
 import { WorkSubject } from "@/__generated__/types/WorkCredential";
 import { Web3Provider } from "@ethersproject/providers";
 import { utils } from "ethers";
 import { getPkhDIDFromAddress } from "./ceramicUtils";
-import { renameType } from "./objectUtil";
+import {
+  SignTypedDataVersion,
+  recoverTypedSignature,
+} from "@metamask/eth-sig-util";
 
 export const DEFAULT_CONTEXT = "https://www.w3.org/2018/credentials/v1";
 export const EIP712_CONTEXT =
   "https://raw.githubusercontent.com/w3c-ccg/ethereum-eip712-signature-2021-spec/main/contexts/v1/index.json";
 export const DEFAULT_VC_TYPE = "VerifiableCredential";
 export const MEMBERSHIP_VC_TYPE = "MembershipCredential";
+export const EVENT_ATTENDANCE_VC_TYPE = "EventAttendanceCredential";
+
+const EVENT_DOMAIN_NAME = "Verifiable Event Attendance";
+const WORK_DOMAIN_NAME = "Work Credential";
+const MEMBERSHIP_DOMAIN_NAME = "Verifiable Member Subject";
 
 export const getDeworkConnectSignature = async (
   nonce: string,
@@ -69,12 +80,7 @@ export const getEIP712WorkCredentialSubjectSignature = async (
 ): Promise<string> => {
   if (!provider) throw "Missing provider for getSignature";
 
-  const domain: EIP712DomainTypedData = {
-    name: "Work Credential",
-    version: "1",
-    chainId: provider.network.chainId,
-    verifyingContract: "0x00000000000000000000000000000000000000000000", // WIP
-  };
+  const domain = getDefaultDomainTypedData(WORK_DOMAIN_NAME);
 
   const credentialTypedData = getEIP712WorkSubjectTypedData(domain, subject);
   const signer = provider.getSigner();
@@ -105,56 +111,6 @@ const getEIP712WorkSubjectTypedData = (
   };
 };
 
-// const getEIP712WorkCredentialTypedData = (
-//   domain: EIP712DomainTypedData,
-//   subject: WorkCredential
-// ): EIP712WorkCredentialTypedData => {
-//   return {
-//     domain: domain,
-//     primaryType: PRIMARY_SUBJECT_TYPE,
-//     message: subject,
-//     types: {
-//       EIP712Domain: DOMAIN_TYPE,
-//       WorkCredential: WORK_CREDENTIAL_EIP712_TYPE,
-//       WorkCredentialSubject: WORK_SUBJECT_EIP712_TYPE,
-//       DeliverableItem: DELIVERABLES_EIP712_TYPE,
-//       TX: TX_EIP712_TYPE,
-//       Client: CLIENT_EIP712_TYPE,
-//     },
-//   };
-// };
-
-// const getEIP712VerifiableCredentialTypedData = (
-//   domain: EIP712DomainTypedData,
-//   credential: EIP712Credential,
-//   credentialSubjectTypes: any
-// ): EIP712CredentialTypedData => {
-//   return {
-//     domain: domain,
-//     primaryType: PRIMARY_TYPE,
-//     message: credential,
-//     types: {
-//       EIP712Domain: DOMAIN_TYPE,
-//       VerifiableCredential: VERIFIABLE_CREDENTIAL_EIP712_TYPE,
-//       CredentialSchema: CREDENTIAL_SCHEMA_EIP712_TYPE,
-//       ...credentialSubjectTypes,
-//     },
-//   };
-// };
-
-// const verifyEIP712Credential = async(
-//   issuer: string,
-//   credential: EIP712Credential,
-//   credentialSubjectTypes: any,
-//   proofValue: string,
-//   verifyTypedData: VerifyTypedData<EIP712MessageTypes>
-// ): Promise<boolean> => {
-//   let data: EIP712CredentialTypedData = this.getEIP712CredentialTypedData(credential, credentialSubjectTypes)
-//   const recoveredAddress = await verifyTypedData(data, proofValue)
-
-//   return getAddress(issuer) === getAddress(recoveredAddress)
-// }
-
 export const createVerifiableMembershipSubjectCredential = async (
   membershipSubject: VerifiableMembershipSubject,
   provider?: Web3Provider
@@ -180,19 +136,14 @@ export const createVerifiableMembershipSubjectCredential = async (
     },
     credentialSubject: membershipSubject,
     credentialSchema: {
-      id: "https://example.com/schemas/v1",
+      id: "https://app.vess.id/schemas/VerifiableMembershipSubject.json",
       type: "Eip712SchemaValidator2021",
     },
     issuanceDate: new Date(issuanceDate).toISOString(),
     expirationDate: new Date(expirationDate).toISOString(),
   };
 
-  const domain: EIP712DomainTypedData = {
-    name: "Verifiable Member Subject",
-    version: "1",
-    chainId: provider.network.chainId,
-    verifyingContract: "0x00000000000000000000000000000000000000000000", // WIP
-  };
+  const domain = getDefaultDomainTypedData(MEMBERSHIP_DOMAIN_NAME);
 
   const vc: VerifiableCredential = await createEIP712VerifiableCredential(
     domain,
@@ -211,7 +162,79 @@ export const createVerifiableMembershipSubjectCredential = async (
   return vc as VerifiableMembershipSubjectCredential;
 };
 
-export const createEIP712VerifiableCredential = async (
+export const createEventAttendanceCredential = async (
+  eventAttendance: EventAttendance,
+  provider?: Web3Provider
+): Promise<EventAttendanceVerifiableCredential> => {
+  if (!provider) throw "Missing provider for getSignature";
+
+  let issuanceDate = Date.now();
+  let expirationDate = new Date();
+  expirationDate.setFullYear(expirationDate.getFullYear() + 100);
+
+  const credentialId = `${eventAttendance.eventId}-${eventAttendance.id}`;
+  const signer = provider.getSigner();
+  const address = await signer.getAddress();
+  const issuerDID = getPkhDIDFromAddress(address);
+
+  let credential: W3CCredential = {
+    "@context": [DEFAULT_CONTEXT, EIP712_CONTEXT],
+    type: [DEFAULT_VC_TYPE, EVENT_ATTENDANCE_VC_TYPE],
+    id: credentialId,
+    issuer: {
+      id: issuerDID,
+      ethereumAddress: address,
+    },
+    credentialSubject: eventAttendance,
+    credentialSchema: {
+      id: "https://app.vess.id/schemas/EventAttendance.json",
+      type: "Eip712SchemaValidator2021",
+    },
+    issuanceDate: new Date(issuanceDate).toISOString(),
+    expirationDate: new Date(expirationDate).toISOString(),
+  };
+
+  const domain = getDefaultDomainTypedData(EVENT_DOMAIN_NAME);
+
+  const vc: VerifiableCredential = await createEIP712VerifiableCredential(
+    domain,
+    credential,
+    { CredentialSubject: EVENT_ATTENDANCE_EIP712_TYPE },
+    async (data: EIP712TypedData<EIP712MessageTypes>) => {
+      const signer = provider.getSigner();
+      const address = await signer.getAddress();
+      const sig: string = await provider.send("eth_signTypedData_v4", [
+        address,
+        JSON.stringify(data),
+      ]);
+      return sig;
+    }
+  );
+  return vc as EventAttendanceVerifiableCredential;
+};
+
+export const verifyEventAttendanceCredential = async (
+  eventAttendance: EventAttendanceWithId
+): Promise<boolean> => {
+  const domain = getDefaultDomainTypedData(EVENT_DOMAIN_NAME);
+  return await verifyEIP712Credential(
+    domain,
+    eventAttendance.issuer.ethereumAddress,
+    eventAttendance,
+    { CredentialSubject: EVENT_ATTENDANCE_EIP712_TYPE },
+    eventAttendance.proof.proofValue,
+    async (data: EIP712TypedData<EIP712MessageTypes>, proofValue: string) => {
+      // Replace this fuction with your own signing code
+      return recoverTypedSignature({
+        data: data,
+        signature: proofValue,
+        version: SignTypedDataVersion.V4,
+      });
+    }
+  );
+};
+
+const createEIP712VerifiableCredential = async (
   domain: EIP712DomainTypedData,
   credential: W3CCredential,
   credentialSubjectTypes: any,
@@ -255,7 +278,7 @@ const getW3CCredentialTypedData = (
   credentialSubjectTypes: any
 ): W3CCredentialTypedData => {
   return {
-    domain: getDomainTypedData(domain),
+    domain: formatDomainTypedData(domain),
     primaryType: VERIFIABLE_CREDENTIAL_PRIMARY_TYPE,
     message: credential,
     types: {
@@ -268,7 +291,7 @@ const getW3CCredentialTypedData = (
   };
 };
 
-const getDomainTypedData = (
+const formatDomainTypedData = (
   domain: EIP712DomainTypedData
 ): EIP712DomainTypedData => {
   return {
@@ -293,21 +316,14 @@ export const verifyEIP712Credential = async (
     credentialSubjectTypes
   );
   const recoveredAddress = await verifyTypedData(data, proofValue);
-
   return utils.getAddress(issuer) === utils.getAddress(recoveredAddress);
 };
 
-export const getEIP712Credential = (
-  credential: W3CCredential
-): EIP712Credential => {
+const getDefaultDomainTypedData = (name: string): EIP712DomainTypedData => {
   return {
-    _context: JSON.stringify(credential["@context"]),
-    _type: JSON.stringify(credential.type),
-    id: credential.id,
-    issuer: credential.issuer,
-    credentialSubject: renameType(credential.credentialSubject),
-    credentialSchema: renameType(credential.credentialSchema),
-    issuanceDate: credential.issuanceDate,
-    expirationDate: credential.expirationDate,
+    name: name,
+    version: "1",
+    chainId: 1,
+    verifyingContract: "0x00000000000000000000000000000000000000000000", // WIP
   };
 };

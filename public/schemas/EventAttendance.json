@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "title": "EventAttendance",
+  "properties": {
+    "id": {
+      "type": "string",
+      "maxLength": 240
+    },
+    "eventName": {
+      "title": "eventName",
+      "type": "string",
+      "maxLength": 240
+    },
+    "eventIcon": {
+      "title": "eventIcon",
+      "type": "string"
+    },
+    "eventId": {
+      "title": "eventId",
+      "type": "string",
+      "maxLength": 240
+    }
+  },
+  "required": ["id", "eventName", "eventId"],
+  "additionalProperties": true
+}

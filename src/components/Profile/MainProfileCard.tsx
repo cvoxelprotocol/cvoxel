@@ -1,22 +1,24 @@
 import { FC} from "react";
-import clsx from "clsx";
 import { useHeldMembershipSubject } from "@/hooks/useHeldMembershipSubject";
 import { useUserCeramicAcount } from "@/hooks/useCeramicAcount";
 import { SubjectBadge } from "../common/badge/SubjectBadge";
 import { AvatarPlaceholder } from "../common/avatar/AvatarPlaceholder";
+import { useHeldEventAttendances } from "@/hooks/useHeldEventAttendances";
+import { EventBadge } from "../common/badge/EventBadge";
 
 type Props = {
   did?: string
 }
 export const MainProfileCard: FC<Props> = ({did}) => {
   const {HeldMembershipSubjects, orbisProfile} = useHeldMembershipSubject(did)
+  const {HeldEventAttendances} = useHeldEventAttendances(did)
   const { name } = useUserCeramicAcount(did || "");
 
 
   return (
     <div className="flex items-center space-x-0.5">
       <div
-        className={clsx("bg-light-surface-1 dark:bg-dark-surface-1 border rounded-2xl w-80 sm:w-96 max-h-screen overflow-scroll",)}>
+        className={"bg-light-surface-1 dark:bg-dark-surface-1 border rounded-2xl w-80 sm:w-96 max-h-screen overflow-scroll"}>
 
 
         <div className="px-4 py-4 space-y-3 text-center">
@@ -50,7 +52,12 @@ export const MainProfileCard: FC<Props> = ({did}) => {
                 HeldMembershipSubjects.sort((a,b) => a.credentialSubject.membershipName > b.credentialSubject.membershipName ? -1 : 1).map((subject) => {
                   return <SubjectBadge item={subject} key={subject.ceramicId}/>
                 })}
-              
+            </div>
+            <div className="flex mt-2 space-x-2">
+              {HeldEventAttendances &&
+                HeldEventAttendances.sort((a,b) => a.credentialSubject.membershipName > b.credentialSubject.membershipName ? -1 : 1).map((subject) => {
+                  return <EventBadge item={subject} key={subject.ceramicId}/>
+                })}
             </div>
           </div>
         </div>

@@ -19,3 +19,11 @@ export const MEMBERSHIP_SUBJECT_CREATION_SUCCEED =
   "Successfully assigned membership!";
 export const MEMBERSHIP_SUBJECT_CREATION_FAILED =
   "Failed to assign membership...";
+
+export const EVENT_CREATION_SUCCEED = "Successfully created new event!";
+export const EVENT_CREATION_FAILED = "Failed to create event...";
+
+export const EVENT_ATTENDANCE_CREATION_SUCCEED =
+  "Successfully issued event attendance!";
+export const EVENT_ATTENDANCE_CREATION_FAILED =
+  "Failed to issue event attendance...";

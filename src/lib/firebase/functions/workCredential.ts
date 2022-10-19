@@ -1,4 +1,6 @@
 import {
+  EventAttendanceWithId,
+  EventWithId,
   MembershipSubjectWithId,
   MembershipWithId,
   OrganizationWIthId,
@@ -7,6 +9,11 @@ import {
 import { removeCeramicPrefix } from "@/utils/workCredentialUtil";
 import { httpsCallable } from "firebase/functions";
 import { functions } from "../app";
+
+export type issueEventAttendancesParam = {
+  event: EventWithId;
+  dids: string[];
+};
 
 export const uploadCRDL = (
   crdl: WorkCredentialWithId
@@ -87,6 +94,67 @@ export const uploadMembershipSubject = (
     uploadFunc({
       subject: param,
     })
+      .then((result) => {
+        const { status } = result.data;
+        resolve({ status: status });
+      })
+      .catch((error) => {
+        console.log({ error });
+        reject(error);
+      });
+  });
+
+export const uploadEvent = (
+  param: EventWithId
+): Promise<{ [x: string]: string }> =>
+  new Promise((resolve, reject) => {
+    const uploadFunc = httpsCallable<
+      { [x: string]: EventWithId },
+      { [x: string]: string }
+    >(functions, "uploadEvent");
+    uploadFunc({
+      event: param,
+    })
+      .then((result) => {
+        const { status } = result.data;
+        resolve({ status: status });
+      })
+      .catch((error) => {
+        console.log({ error });
+        reject(error);
+      });
+  });
+
+export const uploadEventAttendance = (
+  param: EventAttendanceWithId
+): Promise<{ [x: string]: string }> =>
+  new Promise((resolve, reject) => {
+    const uploadFunc = httpsCallable<
+      { [x: string]: EventAttendanceWithId },
+      { [x: string]: string }
+    >(functions, "uploadEventAttendance");
+    uploadFunc({
+      event: param,
+    })
+      .then((result) => {
+        const { status } = result.data;
+        resolve({ status: status });
+      })
+      .catch((error) => {
+        console.log({ error });
+        reject(error);
+      });
+  });
+
+export const issueEventAttendancesFromProxy = (
+  param: issueEventAttendancesParam
+): Promise<{ [x: string]: string }> =>
+  new Promise((resolve, reject) => {
+    const uploadFunc = httpsCallable<
+      issueEventAttendancesParam,
+      { [x: string]: string }
+    >(functions, "issueEventAttendances");
+    uploadFunc(param)
       .then((result) => {
         const { status } = result.data;
         resolve({ status: status });

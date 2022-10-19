@@ -11,36 +11,40 @@ export const aliases = {
     OldWorkCredentials:
       "kjzl6cwe1jw1468dfi4s2xvft87skxxlp43pz9sscd897fw1zbl1k507u6z7pqv",
     workCredential:
-      "kjzl6cwe1jw146377rldghygh6zfm3xvcyelwvp168fz8xrixin13nlv3gbsqxn",
+      "kjzl6cwe1jw146kr3ku1e8bu722g16nm5klsjpypxt3ua5uc5yoen3n8cw50dux",
     verifiableWorkCredential:
-      "kjzl6cwe1jw147fn4dc76zgt24lhk604iso4y4re6bqeanjgw01y63vi11r3giy",
+      "kjzl6cwe1jw147ypvn1qcvn3v5yjkpv8aw9tjxdhw86us81ytfom1rn6ozq3647",
     heldWorkCredentials:
-      "kjzl6cwe1jw148j7rhydrzziz2oa54q84dpg5047k3meq8nfbasaipafyy812b2",
+      "kjzl6cwe1jw1462u8nvfxik0pk7mxg3607uiy1j8i12zs4qvr7coal47k83oxqu",
     heldVerifiableWorkCredentials:
-      "kjzl6cwe1jw149gjv8icw2gk4m1ealf6k5lyrpm4it269unl02xxn0vqp0rk2g8",
+      "kjzl6cwe1jw145rb52cffnykjia416rj2a8xn9wmxrschk3b3scsfuozeskr015",
     MemberShip:
-      "kjzl6cwe1jw146njxc67vklboyp97bd3iu2cjthaozna56ms8znb3egdrswt0mb",
+      "kjzl6cwe1jw146atvl5hmaii1dwgy5o1vqu5xepmnvzdkqd6958f6azviyrvlqk",
     Organization:
-      "kjzl6cwe1jw14afzzqsn9sgpkcmynkhnabzx4w8e9dvd77js3iud5axoau19pz9",
+      "kjzl6cwe1jw14afrtvkjgefqwmalj9l5ckmhafhaqtpoxajvgg5kg2fgvyp5wxn",
     MembershipSubject:
-      "kjzl6cwe1jw1498bejr5d8d7zzxc9veu6r48q7fj144refbf7smsi6k4yhe5uc8",
+      "kjzl6cwe1jw1497pei4dttpf4z62460m1rtk8r74q7lh830qby3155pt8j36euv",
     CreatedOrganizations:
-      "kjzl6cwe1jw149cacdhv1g5qniswx48g4nz82ci0tpq9wadyk60yl12avdlaiys",
+      "kjzl6cwe1jw148ipsz4jom0otbh99u2tsl8rqgq29pndfgu1fyfnenwwxyvq9ck",
     CreatedMemberships:
-      "kjzl6cwe1jw147180cn7ppoy1cht4y6o6iipl2yzjd5i41n6kfjl4v8zwfaco3t",
+      "kjzl6cwe1jw145pnoeu7d2q0v8wnqchk7jynugmbzamb1rynxj8o54747n7crkh",
     CreatedMembershipSubjects:
-      "kjzl6cwe1jw146z58yc9mg9ugc0s4olfcgyu288zze83i5inip3cdqilpj4rmvo",
+      "kjzl6cwe1jw148972qlwp96t99635rpmp7onqllhwe1a4p4pewfpka0wy3rvxtc",
     VerifiableMembershipSubjectCredential:
-      "kjzl6cwe1jw148peuahm9743kog182lfthamg9ir4xjgbf50jst4mhw6yoo6xct",
+      "kjzl6cwe1jw14aahdkcchgn6kj9ob3870i5ee71vkfe6s8br9avbj8yba5myz6v",
     HeldVerifiableMembershipSubjects:
-      "kjzl6cwe1jw14bd2e2ckgrudtyisi0u8ejj324xbp2n7mbos511zcjtir3vczog",
+      "kjzl6cwe1jw149s0q669ewjj8oclmp27vrf88yyu3wgxuk7w4o05zyt5up5kndx",
     IssuedVerifiableMembershipSubjects:
-      "kjzl6cwe1jw148ssru928bajqodcco9kea3utv02b2pl42iisihdkk2urxut9i7",
-    Event: "kjzl6cwe1jw145tfhov4emxd2ygibwglf7n24tb97ygf43uuz4k054arqvujnwv",
+      "kjzl6cwe1jw14af923ojjfitkcsl3chhbi8q43pmmriidwxj8d7sirjc0wk2u8r",
+    Event: "kjzl6cwe1jw149lyha44roferlju59ucze73po563v0mo802slbca48rsfwnnda",
+    EventAttendanceVerifiableCredential:
+      "kjzl6cwe1jw145dru3sq5gvxx93dizxd6tisrykfs288av2drg40kdgxhu96o15",
+    IssuedEvents:
+      "kjzl6cwe1jw147bcpee8mjwod9nsuqmpurt4kbyce8mapm9ucutn3xfcy7qwtv5",
     IssuedEventAttendanceVerifiableCredentials:
-      "kjzl6cwe1jw145oji4e79n6j3lkclny39hbgjscx4hrgaica4rzryfei6ode47r",
+      "kjzl6cwe1jw147xz2kljechfx56t9yrkk0sdu8qvtr5zax5jf3evp7q4w1rkcms",
     HeldEventAttendanceVerifiableCredentials:
-      "kjzl6cwe1jw147ou1ag8fnjm8r5hkv841fgi98u4qg372g9dop718aly0towkpr",
+      "kjzl6cwe1jw147m21ec8q2cxs0s2shdy2x909tuugz6oe6ljw8t1mng3if1ie0p",
   },
   schemas: {
     BasicProfile:
@@ -54,39 +58,41 @@ export const aliases = {
     OldWorkCredentials:
       "ceramic://k3y52l7qbv1fryh5yum8uvbtm4a0t63fu1tp2saaxlx0d5ibwfp786yk5h647qj9c",
     WorkCredential:
-      "ceramic://k3y52l7qbv1fry88q9qae5dobg5s96bru5pw4qtpmiib1c1wvw4j4nt3eixoqmbk0",
+      "ceramic://k3y52l7qbv1frxsfl7rq15l42m418432kgn9y05jjpa0iht1vkc49btq7oeerz6dc",
     VerifiableWorkCredential:
-      "ceramic://k3y52l7qbv1frxoav0td0qacnvxhb8lqalmli2rla4cd2gkbeqkx2d8rzwekrnrb4",
+      "ceramic://k3y52l7qbv1fryb7nwt2un9jf46c3kdchz1kz3c1oy0osti69xzlbafmym8g3dq0w",
     HeldWorkCredentials:
-      "ceramic://k3y52l7qbv1fry9nmj4pcvrm7zzblyi6vtsnrbf2mmm45o7a5ai6jf6q7kf0xfxfk",
+      "ceramic://k3y52l7qbv1frycpcv49ocxdlbt766i94vaj4mpu6vv09dcplwmyd90gqsrzdzgn4",
     HeldVerifiableWorkCredentials:
-      "ceramic://k3y52l7qbv1fryk1ufd431hp9rrhom8wqc10h3vics6w3gtu7o1udutubolfde4u8",
+      "ceramic://k3y52l7qbv1frxv33l9x19y93tso1k0uzc6seoah67bfj7gkybe1gd6aqx9556q68",
     Organization:
-      "ceramic://k3y52l7qbv1fryaz619mfc1d50rq96t1od3j08rlwjh5mjr382fed6k368rn8q4u8",
+      "ceramic://k3y52l7qbv1frxlarqwlxy7uozpo7hy6t3wyct3cv4ibscv2smxxfhsbx2labpedc",
     MemberShip:
-      "ceramic://k3y52l7qbv1fry12cofeesgz3phnr3ppusdzy8kevmqkzonj5obmi7mzqdydapybk",
+      "ceramic://k3y52l7qbv1fry96pqami38jzufty7ovstaqis0jys0cuvn3zzqbwawbsxwpxheyo",
     MembershipSubject:
-      "ceramic://k3y52l7qbv1fry33z1ie2xl3gcgnaft9nviq2h2pi5xxj55y505dainl4z7do3bpc",
+      "ceramic://k3y52l7qbv1frxox7068huf9wkllb4f714ppop3i1t8rfp0er5hgmmiv53j4tol4w",
     VerifiableMembershipSubjectCredential:
-      "ceramic://k3y52l7qbv1frygqn0ujuu7l6xhi17xdlurmi2nmfvbehmydx3ogtzyszr09sbg1s",
-    EventAttendanceVerifiableCredential:
-      "ceramic://k3y52l7qbv1fry2ti5872z2s1lazufewb0t1ln7bra16rnj7vajaowrtcc78tq5fk",
-    Event:
-      "ceramic://k3y52l7qbv1fryh7rox2mrlaxnxsjl61eges6bl6y8f2m9luoa00s0d90xaznkjcw",
+      "ceramic://k3y52l7qbv1frymj6nr0muv9q7yzcy0xot5rqlxpitpm8vrrskftr3q9di8iryps0",
     CreatedOrganizations:
-      "ceramic://k3y52l7qbv1fry1zybyl1tth0ufc0i2v486zqiph7v53lbkznf2emjm1xfa8f9pts",
+      "ceramic://k3y52l7qbv1frymg9c9kprlm1xzkngqvxcfvfhww13imgdzvontgxnngrdmojt9ts",
     CreatedMemberships:
-      "ceramic://k3y52l7qbv1fry0reppxn16ufl3i7ku4l9zooee17uh5q8ak412bo1xvydm4thr7k",
+      "ceramic://k3y52l7qbv1fry2l5tl97xreladtpt6i6jsbn6ctoreluaa9215al9a9uv9pco0zk",
     CreatedMembershipSubjects:
-      "ceramic://k3y52l7qbv1fry09ky3wigalsxq422mmv2rxu8njiohegxlsih32lqcvtp5uoqneo",
+      "ceramic://k3y52l7qbv1frxkc5lj9706fcpyccdtooz2lzbkvoenjv6izcvn2vr2ow8lp99fk0",
     IssuedVerifiableMembershipSubjects:
-      "ceramic://k3y52l7qbv1fry20teqd7tnks8wx071iofbgbo7qkv2q62645zho79puupk97nta8",
+      "ceramic://k3y52l7qbv1frxz4yroqg1rznjdwsrhs34uxm8tgvdbwp41vjfasdskxnvpqqvny8",
     HeldVerifiableMembershipSubjects:
-      "ceramic://k3y52l7qbv1fry9rpqulowitzxpkv1awr4ra8ntgpsmn4lld9lroo3xirhny3oe80",
+      "ceramic://k3y52l7qbv1fryjphoe8oogr7hp3twnvdviywk6sifj8uwtvyh26gk1tzf8ltqolc",
+    Event:
+      "ceramic://k3y52l7qbv1frxtm77jx7r633gq7wd212yn8rdmh35qboq88rp84hz990issgt79c",
+    EventAttendanceVerifiableCredential:
+      "ceramic://k3y52l7qbv1fryfprxiss0009aegpf5u24mo0rmbdexcj5bdoqgzbv44jltudphq8",
+    IssuedEvents:
+      "ceramic://k3y52l7qbv1fryiiqyb0q8c7rerw041inm6k4id5538sq4bqwn1r22ghhknn139c0",
     IssuedEventAttendanceVerifiableCredentials:
-      "ceramic://k3y52l7qbv1fryc6adek7962h7xrszggh4spa2rfdeh39d83p93vjapzj5f1k7abk",
+      "ceramic://k3y52l7qbv1fryao8bsixnjsvkawi3x0zplafb6psq5c68m7x3moc50akwv183d34",
     HeldEventAttendanceVerifiableCredentials:
-      "ceramic://k3y52l7qbv1frxq51ab6shh2tixy10hgwye973sy6kfvihmtp8jz8ig9uphve483k",
+      "ceramic://k3y52l7qbv1fry9fdi2xiye56ix1n0cp5986sc0e5ldw16fwl71bsa6x2xww3bmyo",
   },
   tiles: {},
 };

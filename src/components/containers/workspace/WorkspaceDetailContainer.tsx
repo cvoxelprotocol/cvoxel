@@ -1,13 +1,17 @@
 import { Button } from "@/components/common/button/Button";
 import { CreateMembershipCard } from "@/components/workspace/CreateMembershipCard";
 import { CreateMembershipSubjectCard } from "@/components/workspace/CreateMembershipSubjectCard";
+import { EventItem } from "@/components/workspace/EventItem";
+import { IssueEventCard } from "@/components/workspace/IssueEventCard";
 import { MembershipItem } from "@/components/workspace/MembershipItem";
 import { MembershipSubjectItem } from "@/components/workspace/MembershipSubjectItem";
 import { WorkspaceModal } from "@/components/workspace/WorkspaceModal";
+import { useEventAttendance } from "@/hooks/useEventAttendance";
 import { useMembership } from "@/hooks/useMembership";
 import { useMembershipSubject } from "@/hooks/useMembershipSubject";
 import { useOrganization } from "@/hooks/useOrganization";
-import { MembershipSubjectWithId, OrganizationWIthId } from "@/interfaces";
+import { EventWithId, MembershipSubjectWithId } from "@/interfaces";
+import { removeCeramicPrefix } from "@/utils/workCredentialUtil";
 import clsx from "clsx";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -21,14 +25,15 @@ export const WorkspaceDetailContainer:FC<Props> =({orgId}) => {
     const {organization} = useOrganization(orgId)
     const {createdMembershipsOfOrg,setShowModal, showModal} = useMembership(orgId)
     const {IssuedMembershipSubjects, setShowSubjectModal, showSubjectModal} = useMembershipSubject(orgId)
+    const {issuedEvent, showEventModal, setShowEventModal} = useEventAttendance(orgId)
     const router = useRouter()
-
-    const goToWorkspace = (item: OrganizationWIthId) => {
-        router.push(`/workspace/${item.ceramicId}`)
-    }
 
     const goToUserPage = (item: MembershipSubjectWithId) => {
         router.push(`/${item.id}`)
+    }
+
+    const goToEventPage = (item: EventWithId) => {
+        router.push(`/event/${removeCeramicPrefix(item.ceramicId)}`)
     }
 
     if(!organization) {
@@ -70,6 +75,11 @@ export const WorkspaceDetailContainer:FC<Props> =({orgId}) => {
                             color={"secondary"}
                             onClick={() => setShowSubjectModal(true)}
                         />
+                        <Button
+                            text={"Issue Event"}
+                            color={"secondary"}
+                            onClick={() => setShowEventModal(true)}
+                        />
                     </div>
                 </div>
                 <div className="p-4 w-full text-left">
@@ -100,6 +110,18 @@ export const WorkspaceDetailContainer:FC<Props> =({orgId}) => {
                             })}
                     </div>
                 </div>
+                <div className="w-full pt-4">
+                    <div className="w-full relative space-y-2 border-light-on-primary-container dark:border-dark-on-primary-container overflow-y-scroll hidden-scrollbar">
+                        <p className="text-left text-lg font-bold text-light-on-surface dark:text-dark-on-surface">Event</p>
+                            {issuedEvent && issuedEvent.map(item => {
+                                return (
+                                    <div key={item.ceramicId} className="cursor-pointer" onClick={() => goToEventPage(item)}>
+                                        <EventItem item={item} />
+                                    </div>
+                                )
+                            })}
+                    </div>
+                </div>
             </div>
             {(showModal && orgId) && (
                 <WorkspaceModal>
@@ -109,6 +131,11 @@ export const WorkspaceDetailContainer:FC<Props> =({orgId}) => {
             {(showSubjectModal && orgId) && (
                 <WorkspaceModal>
                     <CreateMembershipSubjectCard org={organization} memberships={createdMembershipsOfOrg}/>
+                </WorkspaceModal>
+            )}
+            {(showEventModal && orgId) && (
+                <WorkspaceModal>
+                    <IssueEventCard orgId={orgId}/>
                 </WorkspaceModal>
             )}
         </main>

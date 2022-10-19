@@ -10,8 +10,7 @@ import dotenv from 'dotenv'
 import { compile } from 'json-schema-to-typescript'
 
 import { devModel, prodModel } from './models/v3/dist/index.mjs'
-import { VerifiableMembershipSubjectCredentialSchema, EventAttendanceVerifiableCredentialSchema } from './schema.mjs'
-import Event from "./schemas/Event.json" assert { type: "json" }
+import { VerifiableMembershipSubjectCredentialSchema } from './schema.mjs'
 
 dotenv.config();
 
@@ -65,8 +64,6 @@ const memberSubjectSchema = ENVIRONMENT === "prod" ? MEMBERSHIP_SUBJECT_PROD : M
 
 // Create the schemas
 const VerifiableMembershipSubjectCredentialSchemaID = await manager.createSchema('VerifiableMembershipSubjectCredential', VerifiableMembershipSubjectCredentialSchema)
-const EventAttendanceVerifiableCredentialSchemaID = await manager.createSchema('EventAttendanceVerifiableCredential', EventAttendanceVerifiableCredentialSchema)
-const EventSchemaID = await manager.createSchema('Event', Event)
 
 const CreatedOrganizationsSchema = {
   "$schema": "http://json-schema.org/draft-07/schema#",
@@ -162,52 +159,12 @@ const HeldVerifiableMembershipSubjectSchema = {
   },
 }
 
-const IssuedEventAttendanceVerifiableCredentialSchema = {
-  "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "IssuedEventAttendanceVerifiableCredentials",
-  "type": "object",
-  "properties": {
-    "issued": {
-      "type": "array",
-      "items": {
-        "type": "string",
-        "$comment": `cip88:ref:${manager.getSchemaURL(EventAttendanceVerifiableCredentialSchemaID)}`,
-        "pattern": "^ceramic://.+(\\?version=.+)?",
-        "maxLength": 200,
-      },
-      "default": [],
-      "additionalProperties":false,
-    }
-  },
-}
-
-const HeldEventAttendanceVerifiableCredentialSchema = {
-  "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "HeldEventAttendanceVerifiableCredentials",
-  "type": "object",
-  "properties": {
-    "held": {
-      "type": "array",
-      "items": {
-        "type": "string",
-        "$comment": `cip88:ref:${manager.getSchemaURL(EventAttendanceVerifiableCredentialSchemaID)}`,
-        "pattern": "^ceramic://.+(\\?version=.+)?",
-        "maxLength": 200,
-      },
-      "default": [],
-      "additionalProperties":false,
-    }
-  },
-}
 
 const CreatedOrganizationsSchemaID = await manager.createSchema('CreatedOrganizations', CreatedOrganizationsSchema)
 const CreatedMembershipsSchemaID = await manager.createSchema('CreatedMemberships', CreatedMembershipsSchema)
 const CreatedMembershipSubjectsSchemaID = await manager.createSchema('CreatedMembershipSubjects', CreatedMembershipSubjectsSchema)
-// const HeldMembershipSubjectsSchemaID = await manager.createSchema('HeldMembershipSubjects', HeldMembershipSubjectsSchema)
 const IssuedVerifiableMembershipSubjectsSchemaID = await manager.createSchema('IssuedVerifiableMembershipSubjects', IssuedVerifiableMembershipSubjectsSchema)
 const HeldVerifiableMembershipSubjectSchemaID = await manager.createSchema('HeldVerifiableMembershipSubjects', HeldVerifiableMembershipSubjectSchema)
-const IssuedEventAttendanceVerifiableCredentialSchemaID = await manager.createSchema('IssuedEventAttendanceVerifiableCredentials', IssuedEventAttendanceVerifiableCredentialSchema)
-const HeldEventAttendanceVerifiableCredentialSchemaID = await manager.createSchema('HeldEventAttendanceVerifiableCredentials', HeldEventAttendanceVerifiableCredentialSchema)
 
 console.log({CreatedOrganizationsSchemaID})
 console.log({CreatedMembershipsSchemaID})
@@ -215,9 +172,6 @@ console.log({CreatedMembershipSubjectsSchemaID})
 console.log({VerifiableMembershipSubjectCredentialSchemaID})
 console.log({HeldVerifiableMembershipSubjectSchemaID})
 console.log({IssuedVerifiableMembershipSubjectsSchemaID})
-console.log({EventSchemaID})
-console.log({IssuedEventAttendanceVerifiableCredentialSchemaID})
-console.log({HeldEventAttendanceVerifiableCredentialSchemaID})
 
 // Create the definition using the created schema ID
 const CreatedOrganizations = await manager.createDefinition('CreatedOrganizations', {
@@ -255,29 +209,6 @@ const IssuedVerifiableMembershipSubjects = await manager.createDefinition('Issue
   schema: manager.getSchemaURL(IssuedVerifiableMembershipSubjectsSchemaID),
 })
 
-const event = await manager.createDefinition('Event', {
-  name: 'Event',
-  description: 'Event',
-  schema: manager.getSchemaURL(EventSchemaID),
-})
-const EventAttendanceVerifiableCredential = await manager.createDefinition('EventAttendanceVerifiableCredential', {
-  name: 'EventAttendanceVerifiableCredential',
-  description: 'EventAttendanceVerifiableCredential',
-  schema: manager.getSchemaURL(EventAttendanceVerifiableCredentialSchemaID),
-})
-
-
-const IssuedEventAttendanceVerifiableCredentials = await manager.createDefinition('IssuedEventAttendanceVerifiableCredentials', {
-  name: 'IssuedEventAttendanceVerifiableCredentials',
-  description: 'IssuedEventAttendanceVerifiableCredentials',
-  schema: manager.getSchemaURL(IssuedEventAttendanceVerifiableCredentialSchemaID),
-})
-
-const HeldEventAttendanceVerifiableCredentials = await manager.createDefinition('HeldEventAttendanceVerifiableCredentials', {
-  name: 'HeldEventAttendanceVerifiableCredentials',
-  description: 'HeldEventAttendanceVerifiableCredentials',
-  schema: manager.getSchemaURL(HeldEventAttendanceVerifiableCredentialSchemaID),
-})
 
 console.log({CreatedOrganizations})
 console.log({CreatedMemberships})
@@ -285,9 +216,6 @@ console.log({CreatedMembershipSubjects})
 console.log({VerifiableMembershipSubjectCredential})
 console.log({HeldVerifiableMembershipSubjects})
 console.log({IssuedVerifiableMembershipSubjects})
-console.log({event})
-console.log({IssuedEventAttendanceVerifiableCredentials})
-console.log({HeldEventAttendanceVerifiableCredentials})
 
 
 
@@ -313,16 +241,3 @@ await writeFile(new URL(`../src/__generated__/types/IssuedVerifiableMembershipSu
 
 const HeldVerifiableMembershipSubjectsTS = await compile(HeldVerifiableMembershipSubjectSchema, 'HeldVerifiableMembershipSubjects')
 await writeFile(new URL(`../src/__generated__/types/HeldVerifiableMembershipSubjects.d.ts`, import.meta.url), HeldVerifiableMembershipSubjectsTS)
-
-const EventTS = await compile(Event, 'Event')
-await writeFile(new URL(`../src/__generated__/types/Event.d.ts`, import.meta.url), EventTS)
-
-const EventAttendanceVerifiableCredentialTS = await compile(EventAttendanceVerifiableCredentialSchema, 'EventAttendanceVerifiableCredential')
-await writeFile(new URL(`../src/__generated__/types/EventAttendanceVerifiableCredential.d.ts`, import.meta.url), EventAttendanceVerifiableCredentialTS)
-
-const IssuedEventAttendanceVerifiableCredentialsTS = await compile(IssuedEventAttendanceVerifiableCredentialSchema, 'IssuedEventAttendanceVerifiableCredentials')
-await writeFile(new URL(`../src/__generated__/types/IssuedEventAttendanceVerifiableCredentials.d.ts`, import.meta.url), IssuedEventAttendanceVerifiableCredentialsTS)
-
-const HeldEventAttendanceVerifiableCredentialsTS = await compile(HeldEventAttendanceVerifiableCredentialSchema, 'HeldEventAttendanceVerifiableCredentials')
-await writeFile(new URL(`../src/__generated__/types/HeldEventAttendanceVerifiableCredentials.d.ts`, import.meta.url), HeldEventAttendanceVerifiableCredentialsTS)
-

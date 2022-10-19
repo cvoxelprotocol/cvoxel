@@ -1,3 +1,4 @@
+import { EventAttendance } from "@/__generated__/types/EventAttendanceVerifiableCredential";
 import { VerifiableMembershipSubject } from "@/__generated__/types/VerifiableMembershipSubjectCredential";
 import {
   WorkCredential,
@@ -186,6 +187,13 @@ export const MEMBERSHIP_SUBJECT_EIP712_TYPE: TypedData[] = [
   { name: "membershipId", type: "string" },
 ];
 
+export const EVENT_ATTENDANCE_EIP712_TYPE: TypedData[] = [
+  { name: "id", type: "string" },
+  { name: "eventName", type: "string" },
+  { name: "eventIcon", type: "string" },
+  { name: "eventId", type: "string" },
+];
+
 export const CLIENT_EIP712_TYPE: TypedData[] = [
   { name: "format", type: "string" },
   { name: "value", type: "string" },
@@ -339,6 +347,10 @@ export type VerifiableCredential = Verifiable<W3CCredential>;
 
 export type VerifiableMembershipSubjectCredential = VerifiableCredential & {
   credentialSubject: VerifiableMembershipSubject;
+};
+
+export type EventAttendanceVerifiableCredential = VerifiableCredential & {
+  credentialSubject: EventAttendance;
 };
 
 export interface EIP712CredentialMessageTypes extends EIP712MessageTypes {
