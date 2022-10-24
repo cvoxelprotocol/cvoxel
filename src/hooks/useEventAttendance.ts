@@ -162,18 +162,18 @@ export const useEventAttendance = (eventId?: string) => {
     unknown,
     issueEventAttendanceFromProxyProps
   >((param) => issueEventAttendancesFromProxy(param.param), {
-    onMutate(param) {
-      if (!param.isBackground) {
-        showLoading();
-      }
+    onMutate() {
+      showLoading();
     },
     onSuccess(data, param) {
-      if (!param.isBackground) {
-        if (data.vcs) {
-          closeLoading();
+      if (data.vcs) {
+        closeLoading();
+        if (!param.isBackground) {
           lancInfo(EVENT_ATTENDANCE_CREATION_SUCCEED);
-        } else {
-          closeLoading();
+        }
+      } else {
+        closeLoading();
+        if (!param.isBackground) {
           lancError(EVENT_ATTENDANCE_CREATION_FAILED);
         }
       }
