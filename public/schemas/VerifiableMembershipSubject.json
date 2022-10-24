@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "title": "VerifiableMembership",
+    "properties": {
+      "id": {
+        "type": "string",
+        "maxLength": 240
+      },
+      "organizationName": {
+        "title": "organizationName",
+        "type": "string",
+        "maxLength": 240
+      },
+      "organizationIcon": {
+        "title": "icon",
+        "type": "string"
+      },
+      "membershipName": {
+        "title": "membershipName",
+        "type": "string",
+        "maxLength": 240
+      },
+      "membershipIcon": {
+        "title": "icon",
+        "type": "string"
+      },
+      "organizationId": {
+        "title": "organizationId",
+        "type": "string",
+        "maxLength": 240
+      },
+      "membershipId": {
+        "title": "membershipId",
+        "type": "string",
+        "maxLength": 240
+      }
+    },
+    "required": ["id", "organizationName", "membershipName"],
+    "additionalProperties": true
+  }

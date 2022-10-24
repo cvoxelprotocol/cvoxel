@@ -1,18 +1,16 @@
 import { FC, useContext, useMemo } from "react";
 import { DisplayAvatar } from "../common/DisplayAvatar";
-import { formatDID } from "@/utils/ceramicUtils";
-import { useMyCeramicAcount } from "@/hooks/useCeramicAcount";
 import { DIDContext } from "@/context/DIDContext";
+import { useSocialAccount } from "@/hooks/useSocialAccount";
 
 type MyProfileCardProps = {
   handleClick?: () => void;
 };
 export const MyProfileCard: FC<MyProfileCardProps> = ({ handleClick }) => {
-  const { name, avator } = useMyCeramicAcount();
   const {did, account, connection} = useContext(DIDContext)
+  const { socialProfile } = useSocialAccount(did);
   const getLabel = useMemo(() => {
-    if (name && name !== "") return name;
-    if (did) return formatDID(did, 12);
+    if (socialProfile.displayName !== "") return socialProfile.displayName;
     return account || "No DID Found";
   }, [name, did, account]);
 
@@ -28,7 +26,7 @@ export const MyProfileCard: FC<MyProfileCardProps> = ({ handleClick }) => {
       }
       onClick={handleClick}
     >
-      <DisplayAvatar did={did} label={getLabel} src={avator} />
+      <DisplayAvatar did={did} label={getLabel} src={socialProfile.avatarSrc} />
     </div>
   );
 };

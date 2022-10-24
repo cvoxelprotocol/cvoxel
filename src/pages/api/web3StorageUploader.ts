@@ -25,6 +25,14 @@ export default async function web3StorageUpload(
       (resolve, reject) => {
         const form = new IncomingForm({
           multiples: false,
+          filename: (name, _, part, form) => {
+            const { originalFilename, mimetype } = part;
+            if (originalFilename) return originalFilename;
+            const ex = mimetype?.includes("image")
+              ? mimetype.replace("image/", "")
+              : "png";
+            return `${name}.${ex}`;
+          },
         });
         form.parse(req, (err, fields, files) => {
           if (err) {
@@ -41,9 +49,9 @@ export default async function web3StorageUpload(
       respondError(req, res, "No File Data");
       return;
     }
-
+    const fileName = data?.files.file.originalFilename;
     const files = await getFilesFromPath(data?.files.file[0].filepath);
-    const rootCid = await client.put(files);
+    const rootCid = await client.put(files, { name: fileName });
     res.statusCode = 200;
     res.json({ cid: rootCid });
     res.end();

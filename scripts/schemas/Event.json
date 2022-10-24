@@ -1,0 +1,29 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+    "title": "Event",
+    "properties": {
+      "name": {
+        "type": "string",
+        "maxLength": 240
+      },
+      "icon": {
+        "title": "icon",
+        "type": "string"
+      },
+      "desc": {
+        "title": "desc",
+        "type": "string"
+      },
+      "url": {
+        "title": "url",
+        "type": "string"
+      },
+      "organizationId": {
+        "type": "string",
+        "maxLength": 240
+      }
+    },
+    "required": ["name"],
+    "additionalProperties": true
+}

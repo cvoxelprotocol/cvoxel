@@ -115,6 +115,59 @@ export const rDeworkTaskListModal = atom({
 export const useStateDeworkTaskListModal = () =>
   useRecoilState(rDeworkTaskListModal);
 
+//workspace create
+export const rWorkspaceCreateModal = atom({
+  key: "rWorkspaceCreateModal",
+  default: false,
+});
+
+export const useStateWorkspaceCreateModal = () =>
+  useRecoilState(rWorkspaceCreateModal);
+
+//MEMBERSHIP create
+export const rMembershipCreateModal = atom({
+  key: "rMembershipCreateModal",
+  default: false,
+});
+
+export const useStateMembershipCreateModal = () =>
+  useRecoilState(rMembershipCreateModal);
+
+//MEMBERSHIP subject create
+export const rMembershipSubjectCreateModal = atom({
+  key: "rMembershipSubjectCreateModal",
+  default: false,
+});
+
+export const useStateMembershipSubjectCreateModal = () =>
+  useRecoilState(rMembershipSubjectCreateModal);
+
+//event create
+export const rIssueEventModal = atom({
+  key: "rIssueEventModal",
+  default: false,
+});
+
+export const useStateIssueEventModal = () => useRecoilState(rIssueEventModal);
+
+//issue event attendance
+export const rIssueEventAttendanceModal = atom({
+  key: "rIssueEventAttendanceModal",
+  default: false,
+});
+
+export const useStateIssueEventAttendanceModal = () =>
+  useRecoilState(rIssueEventAttendanceModal);
+
+//issue event attendance from proxy
+export const rIssueEventAttendanceFromProxyModal = atom({
+  key: "rIssueEventAttendanceFromProxyModal",
+  default: false,
+});
+
+export const useStateIssueEventAttendanceFromProxyModal = () =>
+  useRecoilState(rIssueEventAttendanceFromProxyModal);
+
 export const issueStatus = atom<"completed" | "issuing" | "failed" | undefined>(
   {
     key: "issueStatus",

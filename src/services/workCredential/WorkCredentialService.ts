@@ -2,7 +2,12 @@ import { Web3Provider } from "@ethersproject/providers";
 import {
   CVoxel,
   CVoxelItem,
+  EventAttendanceWithId,
+  EventWithId,
+  MembershipSubjectWithId,
+  MembershipWithId,
   ModelTypes,
+  OrganizationWIthId,
   TransactionLogWithChainId,
   WorkCredentialWithId,
 } from "@/interfaces";
@@ -11,8 +16,19 @@ import { getNetworkSymbol } from "@/utils/networkUtil";
 import { convertDateToTimestampStr } from "@/utils/dateUtil";
 import { getPkhDIDFromAddress } from "@/utils/ceramicUtils";
 import { createTileDocument, getSchema } from "./CeramicHelper";
-import { uploadCRDL } from "@/lib/firebase/functions/workCredential";
-import { getEIP712WorkCredentialSubjectSignature } from "@/utils/providerUtils";
+import {
+  uploadCRDL,
+  uploadEvent,
+  uploadEventAttendance,
+  uploadMembership,
+  uploadMembershipSubject,
+  uploadOrg,
+} from "@/lib/firebase/functions/workCredential";
+import {
+  createEventAttendanceCredential,
+  createVerifiableMembershipSubjectCredential,
+  getEIP712WorkCredentialSubjectSignature,
+} from "@/utils/providerUtils";
 import {
   convertV1DataToCRDLOnCeramic,
   convertValidworkSubjectTypedData,
@@ -34,6 +50,22 @@ import { DID } from "dids";
 import { HeldWorkCredentials } from "@/__generated__/types/HeldWorkCredentials";
 import { Organization } from "@/__generated__/types/Organization";
 import { CERAMIC_URL } from "@/constants/common";
+import { CreatedOrganizations } from "@/__generated__/types/CreatedOrganizations";
+import { Membership } from "@/__generated__/types/MemberShip";
+import { CreatedMemberships } from "@/__generated__/types/CreatedMemberships";
+import { removeUndefinedFromArray } from "@/utils/objectUtil";
+import { HeldVerifiableMembershipSubjects } from "@/__generated__/types/HeldVerifiableMembershipSubjects";
+import { IssuedVerifiableMembershipSubjects } from "@/__generated__/types/IssuedVerifiableMembershipSubjects";
+import {
+  EventAttendanceVerifiableCredential,
+  VerifiableMembershipSubjectCredential,
+} from "@/interfaces/eip712";
+import { VerifiableMembershipSubject } from "@/__generated__/types/VerifiableMembershipSubjectCredential";
+import { EventAttendance } from "@/__generated__/types/EventAttendanceVerifiableCredential";
+import { IssuedEventAttendanceVerifiableCredentials } from "@/__generated__/types/IssuedEventAttendanceVerifiableCredentials";
+import { HeldEventAttendanceVerifiableCredentials } from "@/__generated__/types/HeldEventAttendanceVerifiableCredentials";
+import { Event } from "@/__generated__/types/Event";
+import { IssuedEvents } from "@/__generated__/types/IssuedEvents";
 
 type MigrateDataType = {
   v1: CVoxelItem;
@@ -171,6 +203,23 @@ export class WorkCredentialService {
     >("heldWorkCredentials", this.did.parent);
     const workCRDLs = heldWorkCredentials?.held ?? [];
     const updatedCredentails = [...workCRDLs, ...contentIds];
+    await this.dataStore.set("heldWorkCredentials", {
+      held: updatedCredentails,
+    });
+  };
+
+  deleteCredential = async (contentIds: string[]): Promise<void> => {
+    if (!this.dataStore || !this.did) return undefined;
+    const heldWorkCredentials = await this.dataStore.get<
+      "heldWorkCredentials",
+      HeldWorkCredentials
+    >("heldWorkCredentials", this.did.parent);
+    const workCRDLs = heldWorkCredentials?.held ?? [];
+    const updatedCredentails = workCRDLs.filter((c) => !contentIds.includes(c));
+    console.log(contentIds.length);
+    console.log(updatedCredentails.length);
+    console.log({ contentIds });
+    console.log({ updatedCredentails });
     await this.dataStore.set("heldWorkCredentials", {
       held: updatedCredentails,
     });
@@ -429,11 +478,442 @@ export class WorkCredentialService {
     });
   };
 
-  fetchOrganization = async (orgId?: string): Promise<Organization | null> => {
-    if (!orgId) return null;
+  fetchCreatedOrganization = async (
+    did?: string
+  ): Promise<OrganizationWIthId[] | null> => {
+    if (!this.dataStore) return null;
+    // const ceramic = this.client || new CeramicClient(CERAMIC_URL);
+    const pkhDid = did || this.did?.parent;
+    const CreatedOrganizations = await this.dataStore.get<
+      "CreatedOrganizations",
+      CreatedOrganizations
+    >("CreatedOrganizations", pkhDid);
+    const createdOrgs = CreatedOrganizations?.created ?? [];
+    if (createdOrgs.length === 0) return null;
+    const arr: Promise<OrganizationWIthId | undefined>[] = [];
+    for (const orgId of createdOrgs) {
+      const o = this.fetchOrganization(orgId);
+      arr.push(o);
+    }
+    const res = await Promise.all(arr);
+    return removeUndefinedFromArray<OrganizationWIthId>(res);
+  };
+
+  fetchCreatedMemberships = async (
+    did?: string
+  ): Promise<MembershipWithId[] | null> => {
+    const ceramic = this.client || new CeramicClient(CERAMIC_URL);
+    const pkhDid = did || this.did?.parent;
+    const dataStore =
+      this.dataStore ||
+      new DIDDataStore({
+        ceramic: ceramic,
+        model: dataModel,
+        id: pkhDid,
+      });
+    const CreatedMemberships = await dataStore.get<
+      "CreatedMemberships",
+      CreatedMemberships
+    >("CreatedMemberships", pkhDid);
+    const created = CreatedMemberships?.created ?? [];
+    if (created.length === 0) return null;
+    const arr: Promise<MembershipWithId | undefined>[] = [];
+    for (const id of created) {
+      const o = this.fetcMembership(id);
+      arr.push(o);
+    }
+    const res = await Promise.all(arr);
+    return removeUndefinedFromArray<MembershipWithId>(res);
+  };
+
+  fetchIssuedMembershipSubjects = async (
+    did?: string
+  ): Promise<MembershipSubjectWithId[] | null> => {
+    const ceramic = this.client || new CeramicClient(CERAMIC_URL);
+    const pkhDid = did || this.did?.parent;
+    const dataStore =
+      this.dataStore ||
+      new DIDDataStore({
+        ceramic: ceramic,
+        model: dataModel,
+        id: pkhDid,
+      });
+    const IssuedVerifiableMembershipSubjects = await dataStore.get<
+      "IssuedVerifiableMembershipSubjects",
+      IssuedVerifiableMembershipSubjects
+    >("IssuedVerifiableMembershipSubjects", pkhDid);
+    const issued = IssuedVerifiableMembershipSubjects?.issued ?? [];
+    console.log({ issued });
+    if (issued.length === 0) return null;
+    const arr: Promise<MembershipSubjectWithId | undefined>[] = [];
+    for (const id of issued) {
+      const o = this.fetcMembershipSubject(id);
+      arr.push(o);
+    }
+    const res = await Promise.all(arr);
+    return removeUndefinedFromArray<MembershipSubjectWithId>(res);
+  };
+
+  fetchHeldMembershipSubjects = async (
+    did?: string
+  ): Promise<MembershipSubjectWithId[] | null> => {
+    const ceramic = this.client || new CeramicClient(CERAMIC_URL);
+    const pkhDid = did || this.did?.parent;
+    const dataStore =
+      this.dataStore ||
+      new DIDDataStore({
+        ceramic: ceramic,
+        model: dataModel,
+        id: pkhDid,
+      });
+    const HeldMembershipSubjects = await dataStore.get<
+      "HeldVerifiableMembershipSubjects",
+      HeldVerifiableMembershipSubjects
+    >("HeldVerifiableMembershipSubjects", pkhDid);
+    const created = HeldMembershipSubjects?.held ?? [];
+    if (created.length === 0) return [];
+    const arr: Promise<MembershipSubjectWithId | undefined>[] = [];
+    for (const id of created) {
+      const o = this.fetcMembershipSubject(id);
+      arr.push(o);
+    }
+    const res = await Promise.all(arr);
+    return removeUndefinedFromArray<MembershipSubjectWithId>(res);
+  };
+
+  fetchIssuedEvents = async (did?: string): Promise<EventWithId[] | null> => {
+    const ceramic = this.client || new CeramicClient(CERAMIC_URL);
+    const pkhDid = did || this.did?.parent;
+    const dataStore =
+      this.dataStore ||
+      new DIDDataStore({
+        ceramic: ceramic,
+        model: dataModel,
+        id: pkhDid,
+      });
+    const IssuedEvents = await dataStore.get<"IssuedEvents", IssuedEvents>(
+      "IssuedEvents",
+      pkhDid
+    );
+    const issued = IssuedEvents?.issued ?? [];
+    console.log("issued event", issued);
+    if (issued.length === 0) return null;
+    const arr: Promise<EventWithId | undefined>[] = [];
+    for (const id of issued) {
+      const o = this.fetchEvent(id);
+      arr.push(o);
+    }
+    const res = await Promise.all(arr);
+    return removeUndefinedFromArray<EventWithId>(res);
+  };
+
+  fetchIssuedEventAttendanceVerifiableCredentials = async (
+    did?: string
+  ): Promise<EventAttendanceWithId[] | null> => {
+    const ceramic = this.client || new CeramicClient(CERAMIC_URL);
+    const pkhDid = did || this.did?.parent;
+    const dataStore =
+      this.dataStore ||
+      new DIDDataStore({
+        ceramic: ceramic,
+        model: dataModel,
+        id: pkhDid,
+      });
+    const IssuedEventAttendanceVerifiableCredentials = await dataStore.get<
+      "IssuedEventAttendanceVerifiableCredentials",
+      IssuedEventAttendanceVerifiableCredentials
+    >("IssuedEventAttendanceVerifiableCredentials", pkhDid);
+    const issued = IssuedEventAttendanceVerifiableCredentials?.issued ?? [];
+    console.log({ issued });
+    if (issued.length === 0) return null;
+    const arr: Promise<EventAttendanceWithId | undefined>[] = [];
+    for (const id of issued) {
+      const o = this.fetchEventAttendance(id);
+      arr.push(o);
+    }
+    const res = await Promise.all(arr);
+    return removeUndefinedFromArray<EventAttendanceWithId>(res);
+  };
+
+  fetchHeldEventAttendanceVerifiableCredentials = async (
+    did?: string
+  ): Promise<EventAttendanceWithId[] | null> => {
+    const ceramic = this.client || new CeramicClient(CERAMIC_URL);
+    const pkhDid = did || this.did?.parent;
+    const dataStore =
+      this.dataStore ||
+      new DIDDataStore({
+        ceramic: ceramic,
+        model: dataModel,
+        id: pkhDid,
+      });
+    const HeldEventAttendanceVerifiableCredentials = await dataStore.get<
+      "HeldEventAttendanceVerifiableCredentials",
+      HeldEventAttendanceVerifiableCredentials
+    >("HeldEventAttendanceVerifiableCredentials", pkhDid);
+    const created = HeldEventAttendanceVerifiableCredentials?.held ?? [];
+    if (created.length === 0) return [];
+    const arr: Promise<EventAttendanceWithId | undefined>[] = [];
+    for (const id of created) {
+      const o = this.fetchEventAttendance(id);
+      arr.push(o);
+    }
+    const res = await Promise.all(arr);
+    return removeUndefinedFromArray<EventAttendanceWithId>(res);
+  };
+
+  fetchOrganization = async (
+    orgId?: string
+  ): Promise<OrganizationWIthId | undefined> => {
+    if (!orgId) return undefined;
     const ceramic = this.client || new CeramicClient(CERAMIC_URL);
     const doc = await TileDocument.load<Organization>(ceramic, orgId);
-    return doc.content;
+    return { ...doc.content, ceramicId: orgId };
+  };
+
+  fetcMembership = async (
+    id?: string
+  ): Promise<MembershipWithId | undefined> => {
+    if (!id) return undefined;
+    const ceramic = this.client || new CeramicClient(CERAMIC_URL);
+    const doc = await TileDocument.load<Membership>(ceramic, id);
+    return { ...doc.content, ceramicId: id };
+  };
+
+  fetcMembershipSubject = async (
+    id?: string
+  ): Promise<MembershipSubjectWithId | undefined> => {
+    if (!id) return undefined;
+    const ceramic = this.client || new CeramicClient(CERAMIC_URL);
+    const doc = await TileDocument.load<VerifiableMembershipSubjectCredential>(
+      ceramic,
+      id
+    );
+    return { ...doc.content, ceramicId: id };
+  };
+
+  fetchEvent = async (id?: string): Promise<EventWithId | undefined> => {
+    if (!id) return undefined;
+    const ceramic = this.client || new CeramicClient(CERAMIC_URL);
+    const doc = await TileDocument.load<Event>(ceramic, id);
+    return { ...doc.content, ceramicId: id };
+  };
+
+  fetchEventAttendance = async (
+    id?: string
+  ): Promise<EventAttendanceWithId | undefined> => {
+    if (!id) return undefined;
+    const ceramic = this.client || new CeramicClient(CERAMIC_URL);
+    const doc = await TileDocument.load<EventAttendanceVerifiableCredential>(
+      ceramic,
+      id
+    );
+    return { ...doc.content, ceramicId: id };
+  };
+
+  createOrganization = async (
+    content: Organization
+  ): Promise<string | undefined> => {
+    if (!this.client || !this.did || !this.dataStore) return undefined;
+    const doc = await createTileDocument<Organization>(
+      this.client,
+      this.did.parent,
+      content,
+      getSchema("Organization"),
+      ["vess", "organization"]
+    );
+    if (!doc) return undefined;
+    const docUrl = doc.id.toUrl();
+    const val: OrganizationWIthId = { ...content, ceramicId: docUrl };
+    const setOrgs = this.setCreatedOrganizations(docUrl);
+    const uploadBackup = uploadOrg(val);
+    await Promise.all([setOrgs, uploadBackup]);
+    return docUrl;
+  };
+
+  setCreatedOrganizations = async (contentId: string): Promise<void> => {
+    if (!this.dataStore || !this.did) return undefined;
+    const CreatedOrganizations = await this.dataStore.get<
+      "CreatedOrganizations",
+      CreatedOrganizations
+    >("CreatedOrganizations", this.did.parent);
+    const orgs = CreatedOrganizations?.created ?? [];
+    const updatedOrgs = [...orgs, contentId];
+    await this.dataStore.set("CreatedOrganizations", {
+      created: updatedOrgs,
+    });
+  };
+
+  createMembership = async (
+    content: Membership
+  ): Promise<string | undefined> => {
+    if (!this.client || !this.did || !this.dataStore) return undefined;
+    const doc = await createTileDocument<Membership>(
+      this.client,
+      this.did.parent,
+      content,
+      getSchema("MemberShip"),
+      ["vess", "membership"]
+    );
+    if (!doc) return undefined;
+    const docUrl = doc.id.toUrl();
+    const val: MembershipWithId = { ...content, ceramicId: docUrl };
+    const setPromise = this.setCreatedMemberships(docUrl);
+    const uploadBackup = uploadMembership(val);
+    await Promise.all([setPromise, uploadBackup]);
+    return docUrl;
+  };
+
+  createEvent = async (content: Event): Promise<string | undefined> => {
+    if (!this.client || !this.did || !this.dataStore) return undefined;
+    const doc = await createTileDocument<Event>(
+      this.client,
+      this.did.parent,
+      content,
+      getSchema("Event"),
+      ["vess", "event"]
+    );
+    if (!doc) return undefined;
+    const docUrl = doc.id.toUrl();
+    const val: EventWithId = { ...content, ceramicId: docUrl };
+    const setPromise = this.setIssuedEvents(docUrl);
+    const uploadBackup = uploadEvent(val);
+    await Promise.all([setPromise, uploadBackup]);
+    return docUrl;
+  };
+
+  setCreatedMemberships = async (contentId: string): Promise<void> => {
+    if (!this.dataStore || !this.did) return undefined;
+    const CreatedMemberships = await this.dataStore.get<
+      "CreatedMemberships",
+      CreatedMemberships
+    >("CreatedMemberships", this.did.parent);
+    const currentVal = CreatedMemberships?.created ?? [];
+    const updatedVal = [...currentVal, contentId];
+    await this.dataStore.set("CreatedMemberships", {
+      created: updatedVal,
+    });
+  };
+
+  setIssuedEvents = async (contentId: string): Promise<void> => {
+    if (!this.dataStore || !this.did) return undefined;
+    const IssuedEvents = await this.dataStore.get<"IssuedEvents", IssuedEvents>(
+      "IssuedEvents",
+      this.did.parent
+    );
+    const currentVal = IssuedEvents?.issued ?? [];
+    const updatedVal = [...currentVal, contentId];
+    await this.dataStore.set("IssuedEvents", {
+      issued: updatedVal,
+    });
+  };
+
+  issueMembershipSubject = async (
+    content: VerifiableMembershipSubject
+  ): Promise<string | undefined> => {
+    if (!this.client || !this.did || !this.dataStore) return undefined;
+
+    // TODO: sign and create verifiable credential before save data
+    const vc = await createVerifiableMembershipSubjectCredential(
+      content,
+      this.provider
+    );
+
+    const doc = await createTileDocument<VerifiableMembershipSubjectCredential>(
+      this.client,
+      this.did.parent,
+      vc,
+      getSchema("VerifiableMembershipSubjectCredential"),
+      ["vess", "membershipCredential"]
+    );
+    if (!doc) return undefined;
+    const docUrl = doc.id.toUrl();
+    const val: MembershipSubjectWithId = { ...vc, ceramicId: docUrl };
+    const setOrgs = this.setIssuedMembershipSubjects(docUrl);
+    const uploadBackup = uploadMembershipSubject(val);
+    await Promise.all([setOrgs, uploadBackup]);
+    return docUrl;
+  };
+
+  setIssuedMembershipSubjects = async (contentId: string): Promise<void> => {
+    if (!this.dataStore || !this.did) return undefined;
+    const CreatedMembershipSubjects = await this.dataStore.get<
+      "IssuedVerifiableMembershipSubjects",
+      IssuedVerifiableMembershipSubjects
+    >("IssuedVerifiableMembershipSubjects", this.did.parent);
+    const currentVal = CreatedMembershipSubjects?.issued ?? [];
+    const updatedVal = [...currentVal, contentId];
+    await this.dataStore.set("IssuedVerifiableMembershipSubjects", {
+      issued: updatedVal,
+    });
+  };
+
+  setHeldMembershipSubjects = async (contentIds: string[]): Promise<void> => {
+    if (!this.dataStore || !this.did) return undefined;
+    const HeldMembershipSubjects = await this.dataStore.get<
+      "HeldVerifiableMembershipSubjects",
+      HeldVerifiableMembershipSubjects
+    >("HeldVerifiableMembershipSubjects", this.did.parent);
+    const currentVal = HeldMembershipSubjects?.held ?? [];
+    const updatedVal = [...currentVal, ...contentIds];
+    await this.dataStore.set("HeldVerifiableMembershipSubjects", {
+      held: updatedVal,
+    });
+  };
+
+  issueEventAttendanceCredential = async (
+    content: EventAttendance
+  ): Promise<string | undefined> => {
+    if (!this.client || !this.did || !this.dataStore) return undefined;
+
+    // TODO: sign and create verifiable credential before save data
+    const vc = await createEventAttendanceCredential(content, this.provider);
+
+    const doc = await createTileDocument<EventAttendanceVerifiableCredential>(
+      this.client,
+      this.did.parent,
+      vc,
+      getSchema("EventAttendanceVerifiableCredential"),
+      ["vess", "eventAttendanceCredential"]
+    );
+    if (!doc) return undefined;
+    const docUrl = doc.id.toUrl();
+    const val: EventAttendanceWithId = { ...vc, ceramicId: docUrl };
+    const setIssued =
+      this.setIssuedEventAttendanceVerifiableCredentials(docUrl);
+    const uploadBackup = uploadEventAttendance(val);
+    await Promise.all([setIssued, uploadBackup]);
+    return docUrl;
+  };
+
+  setIssuedEventAttendanceVerifiableCredentials = async (
+    contentId: string
+  ): Promise<void> => {
+    if (!this.dataStore || !this.did) return undefined;
+    const IssuedEventAttendanceVerifiableCredentials = await this.dataStore.get<
+      "IssuedEventAttendanceVerifiableCredentials",
+      IssuedEventAttendanceVerifiableCredentials
+    >("IssuedEventAttendanceVerifiableCredentials", this.did.parent);
+    const currentVal = IssuedEventAttendanceVerifiableCredentials?.issued ?? [];
+    const updatedVal = [...currentVal, contentId];
+    await this.dataStore.set("IssuedEventAttendanceVerifiableCredentials", {
+      issued: updatedVal,
+    });
+  };
+
+  setHeldEventAttendanceVerifiableCredentials = async (
+    contentIds: string[]
+  ): Promise<void> => {
+    if (!this.dataStore || !this.did) return undefined;
+    const HeldEventAttendanceVerifiableCredentials = await this.dataStore.get<
+      "HeldEventAttendanceVerifiableCredentials",
+      HeldEventAttendanceVerifiableCredentials
+    >("HeldEventAttendanceVerifiableCredentials", this.did.parent);
+    const currentVal = HeldEventAttendanceVerifiableCredentials?.held ?? [];
+    const updatedVal = [...currentVal, ...contentIds];
+    await this.dataStore.set("HeldEventAttendanceVerifiableCredentials", {
+      held: updatedVal,
+    });
   };
 }
 

@@ -33,9 +33,7 @@ const VoxelListItem: FC<Props> = ({ workCredential }) => {
       <div className="flex h-48 overflow-y-scroll">
         {/* NOTE: if voxel state exist, add padding bottom*/}
         <div
-          className={clsx(
-            "rounded-r-lg w-40 relative bg-light-surface dark:bg-dark-surface"
-          )}
+          className={"rounded-r-lg w-40 relative bg-light-surface dark:bg-dark-surface"}
         >
           {detailItem && (
             <Canvas> 
@@ -50,8 +48,8 @@ const VoxelListItem: FC<Props> = ({ workCredential }) => {
           {/*  </div>*/}
           {/*</div>*/}
         </div>
-        <div className=" flex-auto text-left p-4 space-y-3">
-          <div className="flex justify-between">
+        <div className="w-full text-left p-4 space-y-3">
+          <div className="flex justify-between items-center">
             <CredentialDirection
               holder={subject.work?.id}
               client={subject.client}
@@ -63,9 +61,8 @@ const VoxelListItem: FC<Props> = ({ workCredential }) => {
             )}
           </div>
 
-          <div>
-            {subject?.work?.summary && (
-              <div className="text-light-on-primary-container dark:text-dark-on-error-container text-2xl font-medium">
+          {subject?.work?.summary && (
+              <div className="text-light-on-primary-container dark:text-dark-on-error-container text-2xl font-medium text-ellipsis whitespace-nowrap overflow-x-hidden flex-nowrap max-w-[550px]">
                 {subject?.work?.summary}
               </div>
             )}
@@ -80,13 +77,12 @@ const VoxelListItem: FC<Props> = ({ workCredential }) => {
                 key={deliverable.value}
               >
                 <span className="text-light-secondary dark:text-dark-secondary text-md text-left">
-                  {deliverable.format==="url" ? deliverable.value : shortenStr(deliverable.value)}
+                  {shortenStr(deliverable.value, 60)}
                 </span>
               </a>
               )}
-          </div>
 
-          <div className="flex flex-wrap">
+          <div className="flex overflow-x-scroll items-center">
             {subject?.work?.genre && (
               <div className="mr-2">
                 <GenreBadge
@@ -141,7 +137,7 @@ const VoxelListItem: FC<Props> = ({ workCredential }) => {
           )}
 
           {subject?.work?.summary && (
-            <div className="text-light-on-primary-container dark:text-dark-on-error-container text-xl font-medium">
+            <div className="text-light-on-primary-container dark:text-dark-on-error-container text-lg sm:text-xl font-medium text-ellipsis whitespace-nowrap overflow-hidden">
               {subject?.work?.summary}
             </div>
           )}
@@ -160,14 +156,12 @@ const VoxelListItem: FC<Props> = ({ workCredential }) => {
                 key={deliverable.value}
               >
                 <p className="text-light-secondary dark:text-dark-secondary text-md text-left">
-                  {deliverable.format === "url"
-                    ? deliverable.value
-                    : shortenStr(deliverable.value)}
+                  {shortenStr(deliverable.value, 30)}
                 </p>
               </a>
             )}
 
-          <div className="flex overflow-x-scroll">
+          <div className="flex overflow-x-scroll items-center">
             {subject?.work?.genre && (
               <div className="mr-2">
               <GenreBadge
