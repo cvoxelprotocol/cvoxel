@@ -56,7 +56,7 @@ export const useOrganization = (orgId?: string) => {
     ["createdOrganizations", did],
     () => workCredentialService.fetchCreatedOrganization(),
     {
-      enabled: !!did,
+      enabled: !!did && did !== "",
       staleTime: Infinity,
       cacheTime: 30000,
     }

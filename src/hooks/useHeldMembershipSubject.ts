@@ -3,13 +3,11 @@ import { useMutation, useQuery, useQueryClient } from "react-query";
 import { MembershipSubjectWithId } from "@/interfaces";
 import { useContext, useEffect } from "react";
 import { getHeldMembershipSubjectsFromDB } from "@/lib/firebase/store/workspace";
-import { useSocialAccount } from "./useSocialAccount";
 import { DIDContext } from "@/context/DIDContext";
 
 export const useHeldMembershipSubject = (did?: string) => {
   const workCredentialService = getWorkCredentialService();
   const queryClient = useQueryClient();
-  const { orbisProfile } = useSocialAccount(did);
   const { did: myDid } = useContext(DIDContext);
 
   const { mutateAsync: setHeldMembershipSubjects } = useMutation<
@@ -35,7 +33,7 @@ export const useHeldMembershipSubject = (did?: string) => {
     ["HeldMembershipSubjects", did],
     () => workCredentialService.fetchHeldMembershipSubjects(did),
     {
-      enabled: !!did,
+      enabled: !!did && did !== "",
       staleTime: Infinity,
       cacheTime: 30000,
     }
@@ -48,7 +46,7 @@ export const useHeldMembershipSubject = (did?: string) => {
     ["heldMembershipSubjectsFromDB", did],
     () => getHeldMembershipSubjectsFromDB(did),
     {
-      enabled: !!did,
+      enabled: !!did && did !== "",
       staleTime: Infinity,
       cacheTime: 30000,
     }
@@ -87,6 +85,5 @@ export const useHeldMembershipSubject = (did?: string) => {
     HeldMembershipSubjects,
     isFetchingHeldMembershipSubjects,
     isLoadingHeldSubjectsFromDB,
-    orbisProfile,
   };
 };

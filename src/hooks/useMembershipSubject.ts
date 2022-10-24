@@ -62,7 +62,7 @@ export const useMembershipSubject = (orgId?: string) => {
     ["IssuedMembershipSubjects", did],
     () => workCredentialService.fetchIssuedMembershipSubjects(),
     {
-      enabled: !!did,
+      enabled: !!did && did !== "",
       staleTime: Infinity,
       cacheTime: 30000,
     }
@@ -75,7 +75,7 @@ export const useMembershipSubject = (orgId?: string) => {
     ["IssuedMembershipSubjects", did],
     () => workCredentialService.fetchHeldMembershipSubjects(),
     {
-      enabled: !!did,
+      enabled: !!did && did !== "",
       staleTime: Infinity,
       cacheTime: 30000,
     }
@@ -88,7 +88,7 @@ export const useMembershipSubject = (orgId?: string) => {
     ["IssuedMembershipSubjects", did],
     () => getHeldMembershipSubjectsFromDB(did),
     {
-      enabled: !!did,
+      enabled: !!did && did !== "",
       staleTime: Infinity,
       cacheTime: 30000,
     }

@@ -7,7 +7,8 @@ export const fetchOrbisProfile = async (
   let orbis = new Orbis();
   const res = await orbis.getProfile(did.toLowerCase());
   const profile: OrbisProfile = res.data as OrbisProfile;
-  if (!profile.details) return undefined;
+  if (!profile || !profile.details || !profile.details.profile)
+    return undefined;
   return profile.details.profile;
 };
 

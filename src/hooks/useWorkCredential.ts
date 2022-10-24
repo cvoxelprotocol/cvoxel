@@ -45,7 +45,7 @@ export const useWorkCredentials = (did?: string) => {
     ["heldWorkCredentials", did],
     () => workCredentialService.fetchWorkCredentials(did),
     {
-      enabled: !!did,
+      enabled: !!did && did !== "",
       staleTime: Infinity,
       cacheTime: 30000,
     }

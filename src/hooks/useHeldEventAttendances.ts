@@ -52,7 +52,7 @@ export const useHeldEventAttendances = (did?: string, eventId?: string) => {
     () =>
       workCredentialService.fetchHeldEventAttendanceVerifiableCredentials(did),
     {
-      enabled: !!did,
+      enabled: !!did && did !== "",
       staleTime: Infinity,
       cacheTime: 30000,
     }
@@ -64,7 +64,7 @@ export const useHeldEventAttendances = (did?: string, eventId?: string) => {
     ["HeldEventAttendancesFromDB", did],
     () => getHeldEventAttendanceFromDB(did),
     {
-      enabled: !!did,
+      enabled: !!did && did !== "",
       staleTime: Infinity,
       cacheTime: 30000,
     }

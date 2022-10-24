@@ -1,4 +1,3 @@
-import { useMyCeramicAcount } from "@/hooks/useCeramicAcount";
 import { AvatarPlaceholder } from "@/components/common/avatar/AvatarPlaceholder";
 import { DropButton } from "grommet";
 import { useContext, useState,useEffect } from "react";
@@ -11,11 +10,15 @@ import { useWalletAccount } from "@/hooks/useWalletAccount";
 import { DIDContext } from "@/context/DIDContext";
 import { useDework } from "@/hooks/useDework";
 import { formatDID } from "@/utils/ceramicUtils";
+import { useSocialAccount } from "@/hooks/useSocialAccount";
 
 type MenuButtonProps = {
   label: string;
   onClick: () => void;
 };
+
+const PROXY_DID = "did:pkh:eip155:1:0x1Cd36a9e09575d7ca3660763990F082D3A7e4919"
+const ADMIN_DID = "did:pkh:eip155:1:0xdE695CBb6ec0CF3f4C9564070bAeB032552C5111"
 
 function MenuButton({ label, ...props }: MenuButtonProps) {
   return (
@@ -28,11 +31,8 @@ function MenuButton({ label, ...props }: MenuButtonProps) {
 }
 
 export default function AccountButton() {
-  const {
-    name,
-    avator,
-  } = useMyCeramicAcount();
-  const {did, account, connection,loggedIn} = useContext(DIDContext)
+  const {did, account, connection} = useContext(DIDContext)
+  const {socialProfile} = useSocialAccount(did);
   const { connectWallet, disconnectWallet } = useWalletAccount();
   const [isMenuOpen, setMenuOpen] = useState(false);
   
@@ -74,7 +74,9 @@ export default function AccountButton() {
       ): (
         <MenuButton label="Connect Dework" onClick={() => setDeworkConnectOpen(true)} />
       )}
-      <MenuButton label="Workspace" onClick={() => goToWorkSpaceList()} />
+      {did && (did === PROXY_DID || did === ADMIN_DID) && (
+        <MenuButton label="Workspace" onClick={() => goToWorkSpaceList()} />
+      )}
       <MenuButton label="Disconnect" onClick={() => disconnectWallet()} />
     </>
 
@@ -82,14 +84,14 @@ export default function AccountButton() {
       <div className="border-gray-200 rounded-lg w-64 mt-12 p-4 text-primary bg-gray-100 dark:bg-card dark:text-oncard">
         <div className="space-y-4 text-center p-2">
           <div className="flex items-center justify-center">
-            {avator ? (
-              <IconAvatar src={avator} size={"lg"} />
+            {socialProfile.avatarSrc ? (
+              <IconAvatar src={socialProfile.avatarSrc} size={"lg"} />
             ) : (
               <AvatarPlaceholder did={did} size={60} />
             )}
           </div>
           <p className="font-bold text-sm">
-            {name ? name : did ? formatDID(did, 12) : formatDID(account, 12)}
+            {socialProfile.displayName}
           </p>
         </div>
         <div className="rounded-lg space-y-2">{buttons}</div>

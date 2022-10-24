@@ -45,6 +45,7 @@ export const DIDContextProvider = ({ children }: { children: any }) => {
       setMySession(null);
       setLoggedIn(false)
       disconnect()
+      localStorage.removeItem('didsession')
     };
   
     const connectDID = async (): Promise<void> => {

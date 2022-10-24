@@ -2,12 +2,11 @@ import { FC, useMemo } from "react";
 import clsx from "clsx";
 import { useENS } from "@/hooks/useENS";
 import { CommonSpinner } from "@/components/common/CommonSpinner";
-import { useProfile } from "@/hooks/useCeramicAcount";
 import { IconAvatar } from "@/components/common/IconAvatar";
 import { shortenStr } from "@/utils/objectUtil";
-import { getProfileInfo } from "@/utils/ceramicUtils";
 import { AvatarPlaceholder } from "@/components/common/avatar/AvatarPlaceholder";
 import SearchIcon from "@/components/common/search/search.svg";
+import { useSocialAccount } from "@/hooks/useSocialAccount";
 
 type Props = {
   address?: string;
@@ -140,14 +139,7 @@ export const NamePlate: FC<Props> = ({
     </div>
   );
 
-  const profileRecord = useProfile(did ?? "");
-  const displayProfile = useMemo(() => {
-    if (did == undefined && address == undefined) {
-      return undefined;
-    }
-
-    return getProfileInfo(did ?? "", profileRecord.content);
-  }, [did, address, profileRecord.content]);
+  const {socialProfile} = useSocialAccount(did);
 
   return (
     <div
@@ -171,12 +163,12 @@ export const NamePlate: FC<Props> = ({
       )}
       {!withoutIcon && (
         <div className="md:mr-2">
-          {!!displayProfile ? (
+          {!!socialProfile ? (
             <>
-              {displayProfile.avatarSrc ? (
+              {socialProfile.avatarSrc ? (
                 <IconAvatar
                   size={avatarSize}
-                  src={displayProfile.avatarSrc}
+                  src={socialProfile.avatarSrc}
                   flex={false}
                 />
               ) : (

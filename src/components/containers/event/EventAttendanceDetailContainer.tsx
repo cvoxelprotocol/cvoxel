@@ -6,8 +6,6 @@ import { removeCeramicPrefix } from "@/utils/workCredentialUtil";
 import Image from "next/image";
 import { FC } from "react";
 
-const PROXY_WORKSPACE = "ceramic://kjzl6cwe1jw148904dvpnhwxhu3nps59702ufd4tpz9v6l0mfphgqn1df24op09"
-
 type Props = {
     attendanceId?: string;
 };

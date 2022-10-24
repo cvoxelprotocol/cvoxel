@@ -53,7 +53,7 @@ export const useMembership = (orgId?: string) => {
     ["createdMemberships", did],
     () => workCredentialService.fetchCreatedMemberships(),
     {
-      enabled: !!did,
+      enabled: !!did && did !== "",
       staleTime: Infinity,
       cacheTime: 30000,
     }
