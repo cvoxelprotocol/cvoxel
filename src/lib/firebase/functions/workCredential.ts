@@ -15,6 +15,11 @@ export type issueEventAttendancesParam = {
   dids: string[];
 };
 
+export type issueEventAttendancesResult = {
+  status: string;
+  vcs: string[];
+};
+
 export const uploadCRDL = (
   crdl: WorkCredentialWithId
 ): Promise<{ [x: string]: string }> =>
@@ -148,7 +153,7 @@ export const uploadEventAttendance = (
 
 export const issueEventAttendancesFromProxy = (
   param: issueEventAttendancesParam
-): Promise<{ [x: string]: string }> =>
+): Promise<{ [x: string]: string | string[] }> =>
   new Promise((resolve, reject) => {
     const uploadFunc = httpsCallable<
       issueEventAttendancesParam,
@@ -156,8 +161,9 @@ export const issueEventAttendancesFromProxy = (
     >(functions, "issueEventAttendances");
     uploadFunc(param)
       .then((result) => {
-        const { status } = result.data;
-        resolve({ status: status });
+        const status = result.data.status as string;
+        const vcs = result.data.vcs.split(",");
+        resolve({ status: status, vcs: vcs });
       })
       .catch((error) => {
         console.log({ error });

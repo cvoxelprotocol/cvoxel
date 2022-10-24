@@ -27,7 +27,12 @@ export const Button: FC<Props> = ({
   let buttonVariant = "";
 
   /* Set button color styles */
-  if (color == "grad-red") {
+  if(disabled) {
+    buttonColor = clsx(
+      "bg-gray-300 dark:bg-gray-400 text-dark-surface",
+      buttonColor
+    );
+  } else if (color == "grad-red") {
     buttonColor = clsx(
       "bg-gradient-to-tr from-[#A66497] to-[#D88F80]",
       buttonColor
@@ -45,13 +50,6 @@ export const Button: FC<Props> = ({
       buttonColor
     );
   } else if (color == "gray") {
-    buttonColor = clsx(
-      "bg-gray-300 dark:bg-gray-400",
-      buttonColor
-    );
-  }
-
-  if(disabled) {
     buttonColor = clsx(
       "bg-gray-300 dark:bg-gray-400",
       buttonColor

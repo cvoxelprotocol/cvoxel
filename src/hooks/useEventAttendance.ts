@@ -23,6 +23,11 @@ import {
   issueEventAttendancesParam,
 } from "@/lib/firebase/functions/workCredential";
 
+type issueEventAttendanceFromProxyProps = {
+  param: issueEventAttendancesParam;
+  isBackground: boolean;
+};
+
 export const useEventAttendance = (eventId?: string) => {
   const { did } = useContext(DIDContext);
   const workCredentialService = getWorkCredentialService();
@@ -152,45 +157,75 @@ export const useEventAttendance = (eventId?: string) => {
   const {
     mutateAsync: issueEventAttendanceFromProxy,
     isLoading: isIssuingFromProxy,
-  } = useMutation<{ [x: string]: string }, unknown, issueEventAttendancesParam>(
-    (param) => issueEventAttendancesFromProxy(param),
-    {
-      onMutate() {
+  } = useMutation<
+    { [x: string]: string | string[] },
+    unknown,
+    issueEventAttendanceFromProxyProps
+  >((param) => issueEventAttendancesFromProxy(param.param), {
+    onMutate(param) {
+      if (!param.isBackground) {
         showLoading();
-      },
-      onSuccess(data) {
-        if (data) {
+      }
+    },
+    onSuccess(data, param) {
+      if (!param.isBackground) {
+        if (data.vcs) {
           closeLoading();
           lancInfo(EVENT_ATTENDANCE_CREATION_SUCCEED);
         } else {
           closeLoading();
           lancError(EVENT_ATTENDANCE_CREATION_FAILED);
         }
-      },
-      onError(error) {
-        console.log("error", error);
-        closeLoading();
-        lancError(EVENT_ATTENDANCE_CREATION_FAILED);
-      },
-      onSettled: () => {
-        queryClient.invalidateQueries(
-          "IssuedEventAttendanceVerifiableCredentials"
-        );
-      },
-    }
-  );
+      }
+    },
+    onError(error) {
+      console.log("error", error);
+      closeLoading();
+      lancError(EVENT_ATTENDANCE_CREATION_FAILED);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries(
+        "IssuedEventAttendanceVerifiableCredentials"
+      );
+    },
+  });
 
   const issueFromProxy = async (event: EventWithId, dids: string[]) => {
     const param: issueEventAttendancesParam = {
       event,
       dids,
     };
+    const paramForProxy: issueEventAttendanceFromProxyProps = {
+      param,
+      isBackground: false,
+    };
 
     //issue
-    const res = await issueEventAttendanceFromProxy(param);
+    const res = await issueEventAttendanceFromProxy(paramForProxy);
     console.log({ res });
 
     return res;
+  };
+
+  const claimEventAttendance = async (
+    event: EventWithId,
+    dids: string[]
+  ): Promise<string[] | null> => {
+    const param: issueEventAttendancesParam = {
+      event,
+      dids,
+    };
+
+    const paramForProxy: issueEventAttendanceFromProxyProps = {
+      param,
+      isBackground: true,
+    };
+
+    //issue
+    const res = await issueEventAttendanceFromProxy(paramForProxy);
+    console.log({ res });
+
+    return res.vcs as string[];
   };
 
   const { data: eventDetail, isLoading: isLoadingEventDetail } = useQuery<
@@ -219,5 +254,6 @@ export const useEventAttendance = (eventId?: string) => {
     issueFromProxy,
     setShowEventAttendanceFromProxyModal,
     showEventAttendanceFromProxyModal,
+    claimEventAttendance,
   };
 };

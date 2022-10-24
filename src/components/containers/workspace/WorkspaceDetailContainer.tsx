@@ -33,7 +33,7 @@ export const WorkspaceDetailContainer:FC<Props> =({orgId}) => {
     }
 
     const goToEventPage = (item: EventWithId) => {
-        router.push(`/event/${removeCeramicPrefix(item.ceramicId)}`)
+        router.push(`/event/admin/${removeCeramicPrefix(item.ceramicId)}`)
     }
 
     if(!organization) {

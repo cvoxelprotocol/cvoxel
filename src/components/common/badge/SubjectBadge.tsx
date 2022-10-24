@@ -9,8 +9,8 @@ type Props = {
 };
 export const SubjectBadge: FC<Props> = ({ item }) => {
   return (
-      <div className="flex space-x-1 items-center rounded-full justify-center px-1.5 py-0.5 my-0.5 border-2 text-light-on-primary-container dark:text-dark-on-primary-container border-light-primary-container dark:border-dark-primary-container font-medium">
-        <div className={"rounded-r-lg w-[30px] h-[30px] relative "}>
+      <div className="relative items-center font-medium w-fit">
+        <div className={"absolute -top-1.5 -left-0.5 rounded-r-lg w-[30px] h-[32px]"}>
             <div className="relative">
                 {item.credentialSubject?.organizationIcon ? (
                     <img src={item.credentialSubject?.organizationIcon} alt={item.credentialSubject.organizationName} className="h-full"/>
@@ -19,7 +19,7 @@ export const SubjectBadge: FC<Props> = ({ item }) => {
                 )}
             </div>
         </div>
-        <div className="text-light-on-primary-container dark:text-dark-on-error-container text-xs sm:text-md">
+        <div className="pl-7 pr-2 rounded-full text-light-on-primary-container dark:text-dark-on-primary-container dark:bg-light-on-primary-container bg-dark-on-primary-container text-xs sm:text-sm">
             {item.credentialSubject.organizationName} | {item.credentialSubject.membershipName} 
         </div>
       </div>

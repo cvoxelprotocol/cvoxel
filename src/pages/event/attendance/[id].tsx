@@ -1,4 +1,4 @@
-import { EventDetailContainer } from "@/components/containers/event/EventDetailContainer";
+import { EventAttendanceDetailContainer } from "@/components/containers/event/EventAttendanceDetailContainer";
 import type { GetServerSideProps } from "next";
 
 type Props = {
@@ -16,6 +16,6 @@ export const getServerSideProps: GetServerSideProps<
   };
 };
 
-export default function EventDetail({ id }: Props) {
-  return <EventDetailContainer eventId={id} />
+export default function EventAttendanceDetail({ id }: Props) {
+  return <EventAttendanceDetailContainer attendanceId={id} />
 }

@@ -27,3 +27,7 @@ export const EVENT_ATTENDANCE_CREATION_SUCCEED =
   "Successfully issued event attendance!";
 export const EVENT_ATTENDANCE_CREATION_FAILED =
   "Failed to issue event attendance...";
+
+export const EVENT_ATTENDANCE_HELD_SUCCEED =
+  "Successfully got event attendance!";
+export const EVENT_ATTENDANCE_HELD_FAILED = "Failed to get event attendance...";

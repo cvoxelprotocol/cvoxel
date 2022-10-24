@@ -17,7 +17,7 @@ type Props = {
     eventId?: string;
 };
 
-export const EventDetailContainer:FC<Props> =({eventId}) => {
+export const AdminEventDetailContainer:FC<Props> =({eventId}) => {
     const {eventDetail, showEventAttendanceModal, setShowEventAttendanceModal,showEventAttendanceFromProxyModal,setShowEventAttendanceFromProxyModal,IssuedEventAttendanceVerifiableCredentials} = useEventAttendance(eventId)
 
     const eventAttendances = useMemo(() => {
