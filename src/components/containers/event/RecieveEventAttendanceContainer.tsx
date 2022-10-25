@@ -58,9 +58,9 @@ export const RecieveEventAttendanceContainer:FC<Props> =({eventId}) => {
     return (
         <main className="text-center">
             <div className="relative w-full max-w-5xl min-h-screen lg:min-h-screen mx-auto pt-20 sm:pt-32 px-4">
-                <div className="w-full text-center">
-                    <div className="text-light-on-primary-container dark:text-dark-on-error-container text-xl sm:text-3xl font-bold">
-                        {eventDetail.name} 
+                <div className="w-full text-center pb-4">
+                    <div className="text-light-on-primary-container dark:text-dark-on-error-container text-2xl sm:text-4xl font-bold">
+                    {eventDetail.name} 
                     </div>  
                 </div>
                 <div className={"rounded-full w-[280px] h-[280px] sm:w-[280px] sm:h-[280px] bg-light-surface dark:bg-dark-surface mx-auto"}>
@@ -72,7 +72,7 @@ export const RecieveEventAttendanceContainer:FC<Props> =({eventId}) => {
                         </div>
                     )}
                 </div>
-                <div className="py-4 flex items-center justify-center">
+                <div className="py-8 flex items-center justify-center">
                     {!did ? (
                         <AccountButton />
                     ): (
@@ -107,7 +107,7 @@ export const RecieveEventAttendanceContainer:FC<Props> =({eventId}) => {
                     )}
                 </div>
                 <div className="py-2 px-4 w-full text-left">
-                    <div className="text-light-on-surface dark:text-dark-on-surface font-medium text-xs sm:text-base">
+                    <div className="text-light-on-surface dark:text-dark-on-surface font-medium text-sm sm:text-base">
                         {eventDetail.desc}
                     </div>
                     <div className="py-2 cursor-pointer">
@@ -118,7 +118,7 @@ export const RecieveEventAttendanceContainer:FC<Props> =({eventId}) => {
                                 target="_blank"
                                 rel="noreferrer"
                                 >
-                                <p className="text-light-secondary dark:text-dark-secondary text-xs sm:text-base">
+                                <p className="text-light-secondary dark:text-dark-secondary text-sm sm:text-base">
                                     {shortenStr(eventDetail.url, 30)}
                                 </p>
                             </a>
