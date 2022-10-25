@@ -35,12 +35,17 @@ export const IssueEventCard:FC<Props> = ({orgId}) => {
         const {name, desc, url } = data
         if (!name || !did || !icon || !url) return;
 
+        const eventDate = new Date('25 October 2022 18:00 UTC');
+
         const event:Event = {
             name,
             desc: desc || "",
             icon: icon,
             url: url,
             organizationId: orgId,
+            startDate: eventDate.toISOString(),
+            endDate: "",
+            tags: [],
             createdAt: convertDateToTimestampStr(new Date())
         }
         const res = await issueEvent(event)

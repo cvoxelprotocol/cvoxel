@@ -22,6 +22,25 @@
       "organizationId": {
         "type": "string",
         "maxLength": 240
+      },
+      "tags": {
+        "type": "array",
+        "title": "tags",
+        "description": "tags",
+        "items": {
+          "type": "string"
+        },
+        "uniqueItems": true
+      },
+      "startDate": {
+        "type": "string",
+        "title": "startDate",
+        "description": "Time stamp of event started"
+      },
+      "endDate": {
+        "type": "string",
+        "title": "endDate",
+        "description": "Time stamp of event ended"
       }
     },
     "required": ["name"],

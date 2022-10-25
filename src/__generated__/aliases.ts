@@ -36,15 +36,15 @@ export const aliases = {
       "kjzl6cwe1jw149s0q669ewjj8oclmp27vrf88yyu3wgxuk7w4o05zyt5up5kndx",
     IssuedVerifiableMembershipSubjects:
       "kjzl6cwe1jw14af923ojjfitkcsl3chhbi8q43pmmriidwxj8d7sirjc0wk2u8r",
-    Event: "kjzl6cwe1jw149lyha44roferlju59ucze73po563v0mo802slbca48rsfwnnda",
+    Event: "kjzl6cwe1jw148sc0ry2la1gwfdtimdtoziucwymctmfrvb1isc02noqki3ukhq",
     EventAttendanceVerifiableCredential:
-      "kjzl6cwe1jw145dru3sq5gvxx93dizxd6tisrykfs288av2drg40kdgxhu96o15",
+      "kjzl6cwe1jw14ael95wcvbfl3loxo2rr7q2lestc1wmro7sa9tvdqfmn7hwr112",
     IssuedEvents:
-      "kjzl6cwe1jw147bcpee8mjwod9nsuqmpurt4kbyce8mapm9ucutn3xfcy7qwtv5",
+      "kjzl6cwe1jw14a4mvlt75yh5hf3a9bx9ymmatq8i6ni1m4aug8k2tu189ezfzz8",
     IssuedEventAttendanceVerifiableCredentials:
-      "kjzl6cwe1jw147xz2kljechfx56t9yrkk0sdu8qvtr5zax5jf3evp7q4w1rkcms",
+      "kjzl6cwe1jw147bujmswrzoavcpzs5lx8si6rqvho8fxwe0dukk6kqxowjn8g7j",
     HeldEventAttendanceVerifiableCredentials:
-      "kjzl6cwe1jw147m21ec8q2cxs0s2shdy2x909tuugz6oe6ljw8t1mng3if1ie0p",
+      "kjzl6cwe1jw1474zxyjg0hgf5mly1svo0hpmyxuh6w6h1juql0omovmj668l40m",
   },
   schemas: {
     BasicProfile:
@@ -84,15 +84,15 @@ export const aliases = {
     HeldVerifiableMembershipSubjects:
       "ceramic://k3y52l7qbv1fryjphoe8oogr7hp3twnvdviywk6sifj8uwtvyh26gk1tzf8ltqolc",
     Event:
-      "ceramic://k3y52l7qbv1frxtm77jx7r633gq7wd212yn8rdmh35qboq88rp84hz990issgt79c",
+      "ceramic://k3y52l7qbv1fryl8d3c2sh8dph97gyiy2m7q5l0qk859h86sykwkdn8ap364p8t8g",
     EventAttendanceVerifiableCredential:
-      "ceramic://k3y52l7qbv1fryfprxiss0009aegpf5u24mo0rmbdexcj5bdoqgzbv44jltudphq8",
+      "ceramic://k3y52l7qbv1fry6w2fbmpdhsoq3dyhgv0pgbzf5965iffrfvg1kv92nm3xgk29u68",
     IssuedEvents:
-      "ceramic://k3y52l7qbv1fryiiqyb0q8c7rerw041inm6k4id5538sq4bqwn1r22ghhknn139c0",
+      "ceramic://k3y52l7qbv1frxtw71iwrhrfwlv7xmhh02rds7cs8teu0e826aqxm0d7nurku89a8",
     IssuedEventAttendanceVerifiableCredentials:
-      "ceramic://k3y52l7qbv1fryao8bsixnjsvkawi3x0zplafb6psq5c68m7x3moc50akwv183d34",
+      "ceramic://k3y52l7qbv1fryl6zio60m4k1vmeubkjfg8g7x0r3hn52hlhr5osrbzo3x5ihprsw",
     HeldEventAttendanceVerifiableCredentials:
-      "ceramic://k3y52l7qbv1fry9fdi2xiye56ix1n0cp5986sc0e5ldw16fwl71bsa6x2xww3bmyo",
+      "ceramic://k3y52l7qbv1frxn3jh07vqilq43cdexds5ghie25cyglv78ba41c2mz5itrk7usxs",
   },
   tiles: {},
 };
