@@ -1,13 +1,13 @@
+import { DIDContext } from "@/context/DIDContext";
 import { TransactionLogWithChainId } from "@/interfaces/explore";
 import { getEtherService } from "@/services/Ether/EtherService";
 import { internalTxListFetcher } from "@/services/fetcher/EtherscanFetcher";
-import { useMemo } from "react";
+import { useContext, useMemo } from "react";
 import { useQuery } from "react-query";
-import { useWalletAccount } from "./useWalletAccount";
 
 export const useInternalTransactions = (tx: TransactionLogWithChainId) => {
   const etherService = getEtherService();
-  const { account } = useWalletAccount();
+  const { account } = useContext(DIDContext);
 
   const isPayee = useMemo(() => {
     if (!account || !tx) return null;

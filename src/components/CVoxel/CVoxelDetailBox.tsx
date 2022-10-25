@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { FC, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { GenreBadge } from "@/components/common/badge/GenreBadge";
@@ -10,14 +10,14 @@ import { useStateCredentialDetailBox } from "@/recoilstate";
 import { Canvas } from "@react-three/fiber";
 import clsx from "clsx";
 import { ShareButton } from "@/components/common/button/shareButton/ShareButton";
-import { useWalletAccount } from "@/hooks/useWalletAccount";
 import { OneVoxelVisualizerPresenter } from "./OneVoxelVisualizerPresenter";
 import { useWorkCredentialRecord } from "@/hooks/useWorkCredential";
 import { CredentialDirection } from "../common/CredentialDirection";
+import { DIDContext } from "@/context/DIDContext";
 
 export const CVoxelDetailBox: FC<{}> = () => {
   const [box] = useStateCredentialDetailBox();
-  const { account } = useWalletAccount();
+  const { account } = useContext(DIDContext);
 
   const workCredential = useWorkCredentialRecord(box?.item.backupId)
 
