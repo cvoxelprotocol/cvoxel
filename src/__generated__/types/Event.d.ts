@@ -8,6 +8,18 @@
 export type Icon = string;
 export type Desc = string;
 export type Url = string;
+/**
+ * tags
+ */
+export type Tags = string[];
+/**
+ * Time stamp of event started
+ */
+export type StartDate = string;
+/**
+ * Time stamp of event ended
+ */
+export type EndDate = string;
 
 export interface Event {
   name: string;
@@ -15,5 +27,8 @@ export interface Event {
   desc?: Desc;
   url?: Url;
   organizationId?: string;
+  tags?: Tags;
+  startDate?: StartDate;
+  endDate?: EndDate;
   [k: string]: unknown;
 }

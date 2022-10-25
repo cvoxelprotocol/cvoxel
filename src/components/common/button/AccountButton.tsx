@@ -9,7 +9,6 @@ import { useRouter } from "next/router";
 import { useWalletAccount } from "@/hooks/useWalletAccount";
 import { DIDContext } from "@/context/DIDContext";
 import { useDework } from "@/hooks/useDework";
-import { formatDID } from "@/utils/ceramicUtils";
 import { useSocialAccount } from "@/hooks/useSocialAccount";
 
 type MenuButtonProps = {
