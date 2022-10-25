@@ -12,6 +12,11 @@ import {
 import web3 from "web3";
 import { useRouter } from "next/router";
 
+// const SUPERLOCAL =
+//   "/event/recieve/kjzl6cwe1jw1481mctw75aerbere2xgoef8b3c4gty6qnacroryuj2ln2phf4b5";
+// const WEB3STUDY =
+//   "/event/recieve/kjzl6cwe1jw147eyyfy3ii1u8n49kkit40v70qq95vhe8peifh5rd0em9ahrqb1";
+
 export const useWalletAccount = () => {
   const { library, account, active, activate, deactivate, chainId } =
     useWeb3React<Web3Provider>();
@@ -72,10 +77,10 @@ export const useWalletAccount = () => {
 
   const openMetamaskViaDeepLink = () => {
     if (typeof window !== undefined) {
-      const { protocol, hostname, port } = window.location;
+      // const { protocol, hostname, port } = window.location;
       const path = router.asPath;
       window.open(
-        `${protocol}//${hostname}${port ? ":" + port : ""}${path}`,
+        `https://metamask.app.link/dapp/app.vess.id${path}`,
         "_blank"
       );
     }
