@@ -27,7 +27,12 @@ export const Button: FC<Props> = ({
   let buttonVariant = "";
 
   /* Set button color styles */
-  if (color == "grad-red") {
+  if(disabled) {
+    buttonColor = clsx(
+      "bg-gray-300 dark:bg-gray-400 text-dark-surface",
+      buttonColor
+    );
+  } else if (color == "grad-red") {
     buttonColor = clsx(
       "bg-gradient-to-tr from-[#A66497] to-[#D88F80]",
       buttonColor
@@ -62,7 +67,7 @@ export const Button: FC<Props> = ({
 
   return (
     <button
-      className={clsx("w-fit h-fit px-2 py-1.5 sm:px-6 sm:py-3 rounded-full ", (disabled ? "bg-gray-400" : ""),  buttonStyle)}
+      className={clsx("w-fit h-fit px-2 py-1.5 sm:px-6 sm:py-3 rounded-full ",  buttonStyle)}
       onClick={onClick}
       type={buttonType}
       disabled={disabled}

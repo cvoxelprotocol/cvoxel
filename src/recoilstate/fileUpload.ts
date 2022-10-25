@@ -15,3 +15,10 @@ export const uploadedCID = atom<string | undefined>({
 });
 
 export const useStateUploadedCID = () => useRecoilState(uploadedCID);
+
+export const uploadedIconUrl = atom<string | undefined>({
+  key: "uploadedIcon",
+  default: undefined,
+});
+
+export const useStateUploadedIconUrl = () => useRecoilState(uploadedIconUrl);

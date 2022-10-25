@@ -1,3 +1,5 @@
+import { EventAttendance } from "@/__generated__/types/EventAttendanceVerifiableCredential";
+import { VerifiableMembershipSubject } from "@/__generated__/types/VerifiableMembershipSubjectCredential";
 import {
   WorkCredential,
   WorkSubject,
@@ -39,7 +41,8 @@ export interface TypedData {
     | "Work"
     | "Client"
     | "TX"
-    | "Proof";
+    | "Proof"
+    | "VerifiableMembershipSubject";
 }
 
 export const DOMAIN_TYPE: TypedData[] = [
@@ -176,6 +179,21 @@ export const TX_EIP712_TYPE: TypedData[] = [
   { name: "relatedTxHashes", type: "string[]" },
 ];
 
+export const MEMBERSHIP_SUBJECT_EIP712_TYPE: TypedData[] = [
+  { name: "id", type: "string" },
+  { name: "organizationName", type: "string" },
+  { name: "membershipName", type: "string" },
+  { name: "organizationId", type: "string" },
+  { name: "membershipId", type: "string" },
+];
+
+export const EVENT_ATTENDANCE_EIP712_TYPE: TypedData[] = [
+  { name: "id", type: "string" },
+  { name: "eventName", type: "string" },
+  { name: "eventIcon", type: "string" },
+  { name: "eventId", type: "string" },
+];
+
 export const CLIENT_EIP712_TYPE: TypedData[] = [
   { name: "format", type: "string" },
   { name: "value", type: "string" },
@@ -185,6 +203,19 @@ export const DELIVERABLES_EIP712_TYPE: TypedData[] = [
   { name: "value", type: "string" },
 ];
 
+export const ISSUER_EIP712_TYPE: TypedData[] = [
+  { name: "id", type: "string" },
+  { name: "ethereumAddress", type: "string" },
+];
+
+export interface EIP712MembershipSubjectCredentialMessageTypes
+  extends EIP712CredentialMessageTypes {
+  VerifiableCredential: typeof VERIFIABLE_CREDENTIAL_EIP712_TYPE;
+  Issuer: any;
+  CredentialSubject: typeof MEMBERSHIP_SUBJECT_EIP712_TYPE;
+  CredentialSchema: typeof CREDENTIAL_SCHEMA_EIP712_TYPE;
+  Proof: typeof PROOF_EIP712_TYPE;
+}
 export interface EIP712CredentialMessageTypes extends EIP712MessageTypes {
   VerifiableCredential: typeof VERIFIABLE_CREDENTIAL_EIP712_TYPE;
   Issuer: any;
@@ -219,3 +250,123 @@ export const PROOF_EIP712_TYPE: TypedData[] = [
 
 export const PRIMARY_TYPE = "WorkCredential";
 export const PRIMARY_SUBJECT_TYPE = "WorkCredentialSubject";
+
+export const MEMBERSHIP_SUBJECT_PRIMARY_TYPE = "WorkCredential";
+export const MEMBERSHIP_SUBJECT_PRIMARY_SUBJECT_TYPE = "WorkCredentialSubject";
+
+export const VERIFIABLE_CREDENTIAL_PRIMARY_TYPE = "VerifiableCredential";
+
+export interface W3CCredentialMessageTypes extends EIP712MessageTypes {
+  VerifiableCredential: typeof VERIFIABLE_CREDENTIAL_W3C_TYPE;
+  Issuer: any;
+  CredentialSubject: any;
+  CredentialSchema: typeof CREDENTIAL_SCHEMA_W3C_TYPE;
+  Proof: typeof PROOF_W3C_TYPE;
+}
+interface NarrowCredentialDefinitions {
+  "@context": string[];
+  type: string[];
+  issuer: Exclude<IssuerType, string>;
+  issuanceDate: string;
+  expirationDate?: string;
+}
+
+export interface CredentialStatus {
+  id: string;
+  type: string;
+}
+
+interface FixedCredentialPayload {
+  "@context": string | string[];
+  id: string;
+  type: string | string[];
+  issuer: IssuerType;
+  issuanceDate: DateType;
+  expirationDate?: DateType;
+  credentialSubject: Extensible<{
+    id?: string;
+  }>;
+  credentialStatus?: CredentialStatus;
+  evidence?: any;
+  termsOfUse?: any;
+}
+
+type Replace<T, U> = Omit<T, keyof U> & U;
+export type W3CCredential = Extensible<
+  Replace<FixedCredentialPayload, NarrowCredentialDefinitions>
+>;
+
+export interface W3CCredentialTypedData
+  extends EIP712TypedData<W3CCredentialMessageTypes> {
+  message: W3CCredential;
+}
+
+export const CREDENTIAL_SCHEMA_W3C_TYPE: TypedData[] = [
+  { name: "id", type: "string" },
+  { name: "type", type: "string" },
+];
+
+export const VERIFIABLE_CREDENTIAL_W3C_TYPE: TypedData[] = [
+  { name: "@context", type: "string[]" },
+  { name: "type", type: "string[]" },
+  { name: "id", type: "string" },
+  { name: "issuer", type: "Issuer" },
+  { name: "credentialSubject", type: "CredentialSubject" },
+  { name: "credentialSchema", type: "CredentialSchema" },
+  { name: "issuanceDate", type: "string" },
+  { name: "expirationDate", type: "string" },
+  //{ name: 'proof', type: 'Proof' },
+];
+
+export const PROOF_W3C_TYPE: TypedData[] = [
+  { name: "verificationMethod", type: "string" },
+  { name: "ethereumAddress", type: "address" },
+  { name: "created", type: "string" },
+  { name: "proofPurpose", type: "string" },
+  { name: "type", type: "string" },
+];
+
+export interface Proof {
+  type?: string;
+  [x: string]: any;
+}
+
+export type SignTypedData<T extends EIP712MessageTypes> = (
+  data: EIP712TypedData<T>
+) => Promise<string>;
+export type VerifyTypedData<T extends EIP712MessageTypes> = (
+  data: EIP712TypedData<T>,
+  proofValue: string
+) => Promise<string>;
+
+export type Verifiable<T> = Readonly<T> & { readonly proof: Proof };
+
+export type EIP712VerifiableCredential = Verifiable<EIP712Credential>;
+
+export type VerifiableCredential = Verifiable<W3CCredential>;
+
+export type VerifiableMembershipSubjectCredential = VerifiableCredential & {
+  credentialSubject: VerifiableMembershipSubject;
+};
+
+export type EventAttendanceVerifiableCredential = VerifiableCredential & {
+  credentialSubject: EventAttendance;
+};
+
+export interface EIP712CredentialMessageTypes extends EIP712MessageTypes {
+  VerifiableCredential: typeof VERIFIABLE_CREDENTIAL_EIP712_TYPE;
+  Issuer: any;
+  CredentialSubject: any;
+  CredentialSchema: typeof CREDENTIAL_SCHEMA_EIP712_TYPE;
+  Proof: typeof PROOF_EIP712_TYPE;
+}
+
+export interface EIP712CredentialTypedData
+  extends EIP712TypedData<EIP712CredentialMessageTypes> {
+  message: EIP712Credential;
+}
+
+export interface EIP712MembershipSubjectCredentialTypedData
+  extends EIP712TypedData<EIP712MembershipSubjectCredentialMessageTypes> {
+  message: EIP712Credential;
+}

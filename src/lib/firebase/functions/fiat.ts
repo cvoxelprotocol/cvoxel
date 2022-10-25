@@ -22,9 +22,6 @@ export const getFiat = (
         resolve(result.data.fiat);
       })
       .catch((error) => {
-        // const code = error.code;
-        // const message = error.message;
-        // const details = error.details;
         reject(error);
       });
   });
@@ -43,9 +40,6 @@ export const setFiat = (networkId: string, txHash: string): Promise<string> =>
         resolve(result.data.fiat);
       })
       .catch((error) => {
-        // const code = error.code;
-        // const message = error.message;
-        // const details = error.details;
         reject(error);
       });
   });
