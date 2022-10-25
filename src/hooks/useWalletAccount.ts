@@ -7,14 +7,27 @@ import {
   NoEthereumProviderError,
   UserRejectedRequestError as UserRejectedRequestErrorInjected,
 } from "@web3-react/injected-connector";
+// import WalletConnectProvider from "@walletconnect/web3-provider";
+// import { providers } from "ethers";
 import web3 from "web3";
+import { useRouter } from "next/router";
 
 export const useWalletAccount = () => {
   const { library, account, active, activate, deactivate, chainId } =
     useWeb3React<Web3Provider>();
   const { lancError } = useToast();
 
+  const router = useRouter();
+
   const connectWallet = async () => {
+    //  Create WalletConnect Provider
+    // const provider = new WalletConnectProvider({
+    //   infuraId: process.env.NEXT_PUBLIC_INFURA_KEY,
+    // });
+
+    // //  Enable session (triggers QR Code modal)
+    // await provider.enable();
+    // const web3Provider = new providers.Web3Provider(provider);
     await activate(injected, async (error) => {
       if (error instanceof NoEthereumProviderError) {
         if (isMobile) {
@@ -58,8 +71,14 @@ export const useWalletAccount = () => {
   };
 
   const openMetamaskViaDeepLink = () => {
-    //TODO: set url to env
-    window.open("https://metamask.app.link/dapp/app.vess.id/", "_blank");
+    if (typeof window !== undefined) {
+      const { protocol, hostname, port } = window.location;
+      const path = router.asPath;
+      window.open(
+        `${protocol}//${hostname}${port ? ":" + port : ""}${path}`,
+        "_blank"
+      );
+    }
   };
 
   return {
