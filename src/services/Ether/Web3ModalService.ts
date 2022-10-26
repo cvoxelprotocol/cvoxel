@@ -3,6 +3,7 @@ import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { ethers } from "ethers";
 import Web3 from "web3";
+import { isMobile } from "react-device-detect";
 
 export type connectWalletProps = {
   account?: string;
@@ -83,6 +84,7 @@ export class Web3ModalService {
   }
 
   async validateNetwork(): Promise<boolean> {
+    if (isMobile) return true;
     if (
       (window as any).ethereum &&
       (window as any).ethereum.networkVersion !== 1
