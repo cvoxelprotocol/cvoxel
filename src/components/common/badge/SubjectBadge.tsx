@@ -13,7 +13,7 @@ export const SubjectBadge: FC<Props> = ({ item }) => {
         <div className={"absolute -top-1.5 -left-0.5 rounded-r-lg w-[30px] h-[32px]"}>
             <div className="relative">
                 {item.credentialSubject?.organizationIcon ? (
-                    <img src={item.credentialSubject?.organizationIcon} alt={item.credentialSubject.organizationName} className="h-full"/>
+                    <img src={item.credentialSubject?.organizationIcon} alt={item.credentialSubject.organizationName} className="w-full h-auto"/>
                 ): (
                     <Image src={"/org_icon.png"} alt="org icon" objectFit="contain"  layout="fill"/>
                 )}
