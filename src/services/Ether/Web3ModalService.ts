@@ -51,8 +51,12 @@ export class Web3ModalService {
         walletconnect: {
           package: WalletConnectProvider,
           options: {
-            infuraId: process.env.NEXT_PUBLIC_INFURA_KEY || "",
+            infuraId: process.env.NEXT_PUBLIC_INFURA_KEY,
             chainId: 1,
+            qrcodeModalOptions: {
+              desktopLinks: [],
+              mobileLinks: ["rainbow", "metamask", "trust"],
+            },
           },
         },
       };
@@ -63,7 +67,8 @@ export class Web3ModalService {
           : new Web3Modal({
               network: "mainnet", // optional
               cacheProvider: false, // optional
-              providerOptions: providerOptions, // required
+              providerOptions: providerOptions,
+              theme: "dark",
             });
       const instance = await this.web3Modal.connect();
       this.provider = new ethers.providers.Web3Provider(instance);
