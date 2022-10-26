@@ -2,7 +2,7 @@ import { useFileUpload } from "@/hooks/useFileUpload";
 import { useInternalTransactions } from "@/hooks/useInternalTransactions";
 import { WorkCredentialForm, TransactionLogWithChainId } from "@/interfaces";
 import { useStateIssueStatus } from "@/recoilstate";
-import { ViewerConnectionState } from "@self.id/react";
+import { connectionStatusType } from "@/recoilstate/account";
 import { FC, useMemo, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "../common/button/Button";
@@ -14,7 +14,7 @@ import { TagForm } from "./TagForm";
 
 type TransactionFormProps = {
   tx: TransactionLogWithChainId;
-  connectionState?: ViewerConnectionState;
+  connectionState?: connectionStatusType;
   onSubmit: (data: any) => void;
 };
 
@@ -167,18 +167,18 @@ export const TransactionForm: FC<TransactionFormProps> = ({
         </div>
       </div>
       <div className="text-right py-4 space-x-4 flex justify-end items-center">
-        {connectionState?.status === "connecting" && <CommonSpinner />}
+        {connectionState === "connecting" && <CommonSpinner />}
         <Button
           text={
-            connectionState?.status === "connected"
+            connectionState === "connected"
               ? "Create"
-              : connectionState?.status === "connecting"
+              : connectionState === "connecting"
               ? "Connecitng..."
               : "Connect DID for Create"
           }
           buttonType={"submit"}
           color={
-            connectionState?.status === "connected" ? "primary" : "secondary"
+            connectionState === "connected" ? "primary" : "secondary"
           }
           disabled={fileUploadStatus==="uploading"}
         />

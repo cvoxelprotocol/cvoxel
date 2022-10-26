@@ -1,7 +1,4 @@
-;import { EthereumAuthProvider, useViewerConnection, ViewerConnectionState } from "@self.id/framework";
-import { useEffect, createContext, useState } from "react";
-import { ModelTypes } from "@/interfaces";
-import { useWalletAccount } from "@/hooks/useWalletAccount";
+import { createContext, useState } from "react";
 import { useStateMySession } from "@/recoilstate/ceramic";
 import { getEtherService } from "@/services/Ether/EtherService";
 import { getDeworkService } from "@/services/Dework/DeworkService";
@@ -10,92 +7,103 @@ import { useDework } from "@/hooks/useDework";
 import { CeramicClient } from "@ceramicnetwork/http-client";
 import { CERAMIC_URL } from "@/constants/common";
 import { DIDSession } from 'did-session'
+import { EthereumWebAuth, getAccountId } from '@didtools/pkh-ethereum'
+import { getWeb3ModalService } from "@/services/Ether/Web3ModalService";
+import type { AuthMethod } from '@didtools/cacao'
+import { connectionStatusType, useStateConnectionStatus } from "@/recoilstate/account";
+import { useToast } from "@/hooks/useToast";
 
 export interface UserContextState {
     loggedIn: boolean;
-    connection: ViewerConnectionState<ModelTypes> | undefined
+    connection: connectionStatusType,
     account: string | undefined;
     did: string | undefined
     chainId: number | undefined
+    connectDID: (() => Promise<void>) | undefined
+    disConnectDID: (() => Promise<void>) | undefined
   }
   
   const startingState: UserContextState = {
     loggedIn: false,
-    connection: undefined,
+    connection: "disconnected",
     account: undefined,
     did: undefined,
-    chainId: undefined
+    chainId: undefined,
+    connectDID: undefined,
+    disConnectDID: undefined
   };
 
 export const DIDContext = createContext(startingState);
 
 export const DIDContextProvider = ({ children }: { children: any }) => {
     const [loggedIn, setLoggedIn] = useState(false);
-    const [connection, connect, disconnect] = useViewerConnection<ModelTypes>();
     const [mySession, setMySession] = useStateMySession();
+    const [connectionStatus, setConnectionStatus] = useStateConnectionStatus()
     const etherService = getEtherService();
     const deworkService = getDeworkService();
     const workCredentialService = getWorkCredentialService()
+    const web3ModalService = getWeb3ModalService();
     const {loginDework} = useDework()
-  
-    const { disconnectWallet, account, library, chainId } = useWalletAccount();
+    const { lancError } = useToast();
+
   
     // clear all state
     const clearState = (): void => {
       setMySession(null);
       setLoggedIn(false)
-      disconnect()
       localStorage.removeItem('didsession')
+      setConnectionStatus("disconnected")
     };
   
     const connectDID = async (): Promise<void> => {
-      if (account && library && !loggedIn && !mySession) {
-        setLoggedIn(true);
-        const authProvider = new EthereumAuthProvider(library.provider, account);
-        etherService.setProvider(library);
-        deworkService.setProvider(library);
-        const session = await loadSession(authProvider)
-        setMySession(session)
-        const ceramic = new CeramicClient(CERAMIC_URL)
-        ceramic.did = session.did
-        workCredentialService.setProvider(session.did, library, ceramic)
-        //execute v1 data
-        workCredentialService.executeMigration(account)
-
-        //set dework user auth
-        loginDework(account)
+      setConnectionStatus("connecting")
+      try {
+        const {account, provider} = await web3ModalService.connectWallet()
+        if (account && provider && !loggedIn && !mySession) {
+            etherService.setProvider(web3ModalService.provider);
+            deworkService.setProvider(web3ModalService.provider);
+            const accountId = await getAccountId(provider.provider, account)
+            const authMethod = await EthereumWebAuth.getAuthMethod(provider.provider, accountId)
+            const session = await loadSession(authMethod)
+            setMySession(session)
+            const ceramic = new CeramicClient(CERAMIC_URL)
+            ceramic.did = session.did
+            workCredentialService.setProvider(session.did, provider, ceramic)
+    
+            setLoggedIn(true);
+            setConnectionStatus("connected")
+    
+            //execute v1 data
+            workCredentialService.executeMigration(account)
+            //set dework user auth
+            loginDework(account) 
+        } else {
+          setConnectionStatus("disconnected")
+        }
+      } catch (error) {
+        console.log(error);
+        await disConnectDID()
+        clearState()
+        if (error instanceof Error) {
+          lancError(error.message);
+        }
       }
+      
     };
 
-    
-  
-    // Update on wallet connect
-    useEffect((): void => {
-      if (!account) {
-        clearState();
-      } else {
-        // Login to Ceramic
-        connectDID();
-      }
-    }, [account]);
-  
-    useEffect((): void => {
-      switch (connection.status) {
-        case "failed": {
-          disconnectWallet()
-          console.log("failed to connect self id :(");
-          break;
-        }
-        default:
-          break;
-      }
-    }, [connection.status]);
+    const disConnectDID = async ():Promise<void> => {
+      await web3ModalService.disconnectWallet()
+      clearState()
+    }
 
-    useEffect(() => {
-      connectDID()
-    },[])
+    // useEffect(() => {
+    //   const sessionStr = localStorage.getItem('didsession')
+    //   if(sessionStr) {
+    //     connectDID()
+    //   }
+    // },[])
 
-    const loadSession = async(authProvider: EthereumAuthProvider):Promise<DIDSession> => {
+    const loadSession = async(authMethod: AuthMethod):Promise<DIDSession> => {
       const sessionStr = localStorage.getItem('didsession')
       let session
     
@@ -104,20 +112,21 @@ export const DIDContextProvider = ({ children }: { children: any }) => {
       }
     
       if (!session || (session.hasSession && session.isExpired)) {
-        session = await DIDSession.authorize(authProvider, {resources: ["ceramic://*"]})
+        session = await DIDSession.authorize(authMethod, {resources: ["ceramic://*"]})
         localStorage.setItem('didsession', session.serialize())
       }
-    
       return session
     }
   
     // use props as a way to pass configuration values
     const providerProps:UserContextState = {
       loggedIn,
-      connection,
-      account: account || undefined,
+      connection: connectionStatus,
+      account: web3ModalService.account,
       did: mySession?.id,
-      chainId
+      chainId: web3ModalService.chainId,
+      connectDID: connectDID,
+      disConnectDID: disConnectDID
     };
   
     return (

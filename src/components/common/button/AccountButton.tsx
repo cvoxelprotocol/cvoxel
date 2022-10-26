@@ -123,7 +123,7 @@ export default function AccountButton() {
     );
   }
 
-  return connection?.status === "connecting" ? (
+  return connection === "connecting" ? (
     <DisplayAvatar label="Connecting..." loading hiddenLabelOnSp={true} />
   ) : (
     <Button text="Connect Wallet" onClick={() => connect()} color="primary" />
