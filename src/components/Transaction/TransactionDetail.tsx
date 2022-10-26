@@ -13,13 +13,13 @@ import { GenreBadge } from "../common/badge/GenreBadge";
 import { useStateSelectedGenre } from "@/recoilstate/genre";
 import { TagBadge } from "../common/badge/TagBadge";
 import { TagForm } from "./TagForm";
-import { ViewerConnectionState } from "@self.id/react";
 import { getPkhDIDFromAddress } from "@/utils/ceramicUtils";
+import { connectionStatusType } from "@/recoilstate/account";
 
 type TransactionDetailProps = {
   tx: TransactionLogWithChainId;
   offchainItem: WorkCredentialWithId;
-  connectionState?: ViewerConnectionState;
+  connectionState?: connectionStatusType;
   onClaim: (
     tx: TransactionLogWithChainId,
     offchainItem: WorkCredentialWithId
@@ -193,38 +193,38 @@ export const TransactionDetail: FC<TransactionDetailProps> = ({
       </div>
       {claimable && (
         <div className="text-right py-4 space-x-4 flex justify-end items-center">
-          {connectionState?.status === "connecting" && <CommonSpinner />}
+          {connectionState === "connecting" && <CommonSpinner />}
           <Button
             text={
-              connectionState?.status === "connected"
+              connectionState === "connected"
                 ? "Create"
-                : connectionState?.status === "connecting"
+                : connectionState === "connecting"
                 ? "Connecitng..."
                 : "Connect DID for Create"
             }
             buttonType={"button"}
             onClick={() => onClaim(tx, offchainItem)}
             color={
-              connectionState?.status === "connected" ? "primary" : "secondary"
+              connectionState === "connected" ? "primary" : "secondary"
             }
           />
         </div>
       )}
       {!claimable && reclaimable && (
         <div className="text-right py-4 space-x-4 flex justify-end items-center">
-          {connectionState?.status === "connecting" && <CommonSpinner />}
+          {connectionState === "connecting" && <CommonSpinner />}
           <Button
             text={
-              connectionState?.status === "connected"
+              connectionState === "connected"
                 ? "Re-Create"
-                : connectionState?.status === "connecting"
+                : connectionState === "connecting"
                 ? "Connecitng..."
                 : "Connect DID for Re-Create"
             }
             buttonType={"button"}
             onClick={() => handleReclaim()}
             color={
-              connectionState?.status === "connected" ? "primary" : "secondary"
+              connectionState === "connected" ? "primary" : "secondary"
             }
           />
         </div>

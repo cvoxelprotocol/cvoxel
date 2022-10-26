@@ -7,7 +7,6 @@ import { RecoilRoot } from "recoil";
 import { Hydrate, QueryClient, QueryClientProvider } from "react-query";
 import { useState } from "react";
 import { BaseLayout } from "@/components/layout/BaseLayout";
-import { Web3ReactProvider } from "@web3-react/core";
 import { Web3Provider } from "@ethersproject/providers";
 import { ThemeProvider } from "next-themes";
 import { useEffect } from "react";
@@ -17,12 +16,6 @@ import { DIDContextProvider } from "@/context/DIDContext";
 import type { DehydratedState } from 'react-query';
 
 const aliases: ModelTypesToAliases<ModelTypes> = dataModel;
-
-function getLibrary(provider: any): Web3Provider {
-  const library = new Web3Provider(provider);
-  library.pollingInterval = 12000;
-  return library;
-}
 
 export default function App({ Component, pageProps }: AppProps<{ dehydratedState: DehydratedState }>) {
   const [queryClient] = useState(
@@ -59,8 +52,7 @@ export default function App({ Component, pageProps }: AppProps<{ dehydratedState
 
   return (
     <RecoilRoot>
-      <Web3ReactProvider getLibrary={getLibrary}>
-        <QueryClientProvider client={queryClient}>
+      <QueryClientProvider client={queryClient}>
           <Hydrate state={pageProps.dehydratedState}>
           <ThemeProvider attribute="class" defaultTheme={"light"}>
                   <DIDContextProvider >
@@ -72,7 +64,6 @@ export default function App({ Component, pageProps }: AppProps<{ dehydratedState
                 </ThemeProvider>
           </Hydrate>
         </QueryClientProvider>
-      </Web3ReactProvider>
     </RecoilRoot>
   );
 }

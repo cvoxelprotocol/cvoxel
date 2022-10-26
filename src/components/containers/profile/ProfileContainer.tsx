@@ -75,13 +75,6 @@ export const ProfileContainer: FC<Props> = ({ did }) => {
         className="relative snap-start snap-always min-h-screen"
         ref={visualContainerRef}
       >
-        {isTopPage && (
-          <div className="z-50 absolute w-full max-w-[720px] h-[300px] sm:h-[450px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-2/3 flex items-center justify-center bg-white dark:bg-opacity-0 bg-opacity-50">
-            <div className="w-[240px] sm:w-[320px] h-[64px] sm:h-[120px] relative mx-auto">
-                <Image src={"/vess_logo_full.png"} alt="no item" objectFit="contain"  layout="fill" />
-            </div>
-          </div>
-        )}
         <CVoxelsContainer
           mode="search"
           content={workCredentials}
@@ -102,6 +95,13 @@ export const ProfileContainer: FC<Props> = ({ did }) => {
             </div>
           </div>
         </CVoxelsContainer>
+        {isTopPage && (
+          <div className="absolute z-0 w-full max-w-[720px] h-[300px] sm:h-[450px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-2/3 flex items-center justify-center bg-white dark:bg-opacity-0 bg-opacity-50">
+            <div className="w-[240px] sm:w-[320px] h-[64px] sm:h-[120px] relative mx-auto">
+                <Image src={"/vess_logo_full.png"} alt="no item" objectFit="contain"  layout="fill" />
+            </div>
+          </div>
+        )}
       </div>
 
       <div

@@ -14,7 +14,7 @@ export const MyProfileCard: FC<MyProfileCardProps> = ({ handleClick }) => {
     return account || "No DID Found";
   }, [name, did, account]);
 
-  if (connection?.status === "connecting") {
+  if (connection === "connecting") {
     return <DisplayAvatar label="Loading..." loading />;
   }
 
