@@ -12,6 +12,7 @@ import { getWeb3ModalService } from "@/services/Ether/Web3ModalService";
 import type { AuthMethod } from '@didtools/cacao'
 import { connectionStatusType, useStateConnectionStatus } from "@/recoilstate/account";
 import { useToast } from "@/hooks/useToast";
+import { useGAEvent } from "@/hooks/useGAEvent";
 
 export interface UserContextState {
     loggedIn: boolean;
@@ -45,6 +46,7 @@ export const DIDContextProvider = ({ children }: { children: any }) => {
     const web3ModalService = getWeb3ModalService();
     const {loginDework} = useDework()
     const { lancError } = useToast();
+    const {connectEvent,disConnectEvent} = useGAEvent()
 
   
     // clear all state
@@ -72,6 +74,7 @@ export const DIDContextProvider = ({ children }: { children: any }) => {
     
             setLoggedIn(true);
             setConnectionStatus("connected")
+            connectEvent(session.id)
     
             //execute v1 data
             workCredentialService.executeMigration(account)
@@ -92,6 +95,9 @@ export const DIDContextProvider = ({ children }: { children: any }) => {
     };
 
     const disConnectDID = async ():Promise<void> => {
+      if(mySession?.id) {
+        disConnectEvent(mySession.id)
+      }
       await web3ModalService.disconnectWallet()
       clearState()
     }

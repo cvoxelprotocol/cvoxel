@@ -1,3 +1,4 @@
+import { GATracking } from "@/components/common/GATracking";
 import Head from "next/head";
 import { FC } from "react";
 
@@ -66,6 +67,7 @@ export const Meta: FC<MetaData> = ({
         content="summary_large_image"
         key="twittercard"
       />
+      <GATracking trackingId={process.env.NEXT_PUBLIC_GA_ID} />
     </Head>
   );
 };

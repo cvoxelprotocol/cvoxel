@@ -22,6 +22,9 @@ import { TileDoc, useTileDoc } from "./useTileDoc";
 import { useToast } from "./useToast";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useStateIssueStatus } from "@/recoilstate";
+import { useGAEvent } from "./useGAEvent";
+import { useContext } from "react";
+import { DIDContext } from "@/context/DIDContext";
 
 export function useWorkCredentialRecord(id?: string): TileDoc<WorkCredential> {
   return useTileDoc<WorkCredential>(id);
@@ -78,6 +81,8 @@ export const useWorkCredential = () => {
   const [issueStatus, setIssueStatus] = useStateIssueStatus();
   const workCredentialService = getWorkCredentialService();
   const queryClient = useQueryClient();
+  const { did } = useContext(DIDContext);
+  const { issueCRDLEvent, issuingCRDLEvent, issuedCRDLEvent } = useGAEvent();
 
   const {
     mutateAsync: issueCRDL,
@@ -91,6 +96,7 @@ export const useWorkCredential = () => {
           closeLoading();
           lancInfo(CVOXEL_CREATION_SUCCEED);
           setIssueStatus("completed");
+          issuedCRDLEvent(did);
         } else {
           setIssueStatus("failed");
           closeLoading();
@@ -122,6 +128,7 @@ export const useWorkCredential = () => {
     tags?: string[],
     existedItem?: WorkCredentialWithId
   ) => {
+    issueCRDLEvent(did);
     if (isLoading || !summary) {
       return null;
     }
@@ -149,6 +156,7 @@ export const useWorkCredential = () => {
       tags,
       existedItem,
     };
+    issuingCRDLEvent(did);
     return await issueCRDL(param);
   };
 
