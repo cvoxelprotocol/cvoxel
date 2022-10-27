@@ -22,8 +22,6 @@ import { TileDoc, useTileDoc } from "./useTileDoc";
 import { useToast } from "./useToast";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useStateIssueStatus } from "@/recoilstate";
-import { useContext } from "react";
-import { DIDContext } from "@/context/DIDContext";
 
 export function useWorkCredentialRecord(id?: string): TileDoc<WorkCredential> {
   return useTileDoc<WorkCredential>(id);
@@ -80,7 +78,6 @@ export const useWorkCredential = () => {
   const [issueStatus, setIssueStatus] = useStateIssueStatus();
   const workCredentialService = getWorkCredentialService();
   const queryClient = useQueryClient();
-  const { did } = useContext(DIDContext);
 
   const {
     mutateAsync: issueCRDL,
