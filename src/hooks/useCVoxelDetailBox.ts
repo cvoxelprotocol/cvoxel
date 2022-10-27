@@ -4,7 +4,6 @@ import { WorkCredentialWithId } from "@/interfaces";
 
 export const useWorkCredentialDetailBox = () => {
   const [_, setBox] = useStateCredentialDetailBox();
-
   const showDetailBox = useCallback(
     ({
       item,

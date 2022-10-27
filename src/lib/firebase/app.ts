@@ -5,6 +5,7 @@ import {
 } from "firebase/firestore/lite";
 import { getFunctions, connectFunctionsEmulator } from "firebase/functions";
 import { getAuth } from "firebase/auth";
+import { Analytics, getAnalytics } from "firebase/analytics";
 
 let app: firebase.FirebaseApp;
 
@@ -15,6 +16,7 @@ const config = {
   storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
   messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_SENDER_ID,
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
 const apps = getApps();
@@ -29,9 +31,14 @@ const functions = getFunctions();
 const auth = getAuth(app);
 functions.region = "us-central1";
 
+let analytics: Analytics | undefined = undefined;
+if (app.name && typeof window !== "undefined") {
+  analytics = getAnalytics(app);
+}
+
 if (process.env.NODE_ENV !== "production") {
   connectFunctionsEmulator(functions, "localhost", 5111);
   connectFirestoreEmulator(firestore, "localhost", 8081);
 }
 
-export { firestore, functions, auth, config, app };
+export { firestore, functions, auth, config, analytics, app };
