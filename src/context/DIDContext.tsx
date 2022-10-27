@@ -46,7 +46,7 @@ export const DIDContextProvider = ({ children }: { children: any }) => {
     const web3ModalService = getWeb3ModalService();
     const {loginDework} = useDework()
     const { lancError } = useToast();
-    const {connectEvent,disConnectEvent} = useGAEvent()
+    const {connectEvent} = useGAEvent()
 
   
     // clear all state
@@ -95,9 +95,6 @@ export const DIDContextProvider = ({ children }: { children: any }) => {
     };
 
     const disConnectDID = async ():Promise<void> => {
-      if(mySession?.id) {
-        disConnectEvent(mySession.id)
-      }
       await web3ModalService.disconnectWallet()
       clearState()
     }
