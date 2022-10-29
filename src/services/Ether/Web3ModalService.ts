@@ -55,7 +55,7 @@ export class Web3ModalService {
             chainId: 1,
             qrcodeModalOptions: {
               desktopLinks: [],
-              mobileLinks: ["rainbow", "metamask", "trust"],
+              mobileLinks: ["metamask"],
             },
           },
         },
