@@ -2,17 +2,14 @@ import { createContext, useState } from "react";
 import { useStateMySession } from "@/recoilstate/ceramic";
 import { getEtherService } from "@/services/Ether/EtherService";
 import { getDeworkService } from "@/services/Dework/DeworkService";
-import { getWorkCredentialService } from "@/services/workCredential/WorkCredentialService";
 import { useDework } from "@/hooks/useDework";
-import { CeramicClient } from "@ceramicnetwork/http-client";
-import { CERAMIC_URL } from "@/constants/common";
 import { DIDSession } from 'did-session'
-import { EthereumWebAuth, getAccountId } from '@didtools/pkh-ethereum'
 import { getWeb3ModalService } from "@/services/Ether/Web3ModalService";
 import type { AuthMethod } from '@didtools/cacao'
 import { connectionStatusType, useStateConnectionStatus } from "@/recoilstate/account";
 import { useToast } from "@/hooks/useToast";
 import { useGAEvent } from "@/hooks/useGAEvent";
+import { getVESS} from "vess-sdk"
 
 export interface UserContextState {
     loggedIn: boolean;
@@ -42,11 +39,12 @@ export const DIDContextProvider = ({ children }: { children: any }) => {
     const [connectionStatus, setConnectionStatus] = useStateConnectionStatus()
     const etherService = getEtherService();
     const deworkService = getDeworkService();
-    const workCredentialService = getWorkCredentialService()
     const web3ModalService = getWeb3ModalService();
     const {loginDework} = useDework()
     const { lancError } = useToast();
     const {connectEvent} = useGAEvent()
+    // const vess = getVESS()
+    const vess = getVESS(true)
 
   
     // clear all state
@@ -61,25 +59,20 @@ export const DIDContextProvider = ({ children }: { children: any }) => {
       setConnectionStatus("connecting")
       try {
         const {account, provider} = await web3ModalService.connectWallet()
-        if (account && provider && !loggedIn && !mySession) {
-            etherService.setProvider(web3ModalService.provider);
-            deworkService.setProvider(web3ModalService.provider);
-            const accountId = await getAccountId(provider.provider, account)
-            const authMethod = await EthereumWebAuth.getAuthMethod(provider.provider, accountId)
-            const session = await loadSession(authMethod)
+        if (account && provider && !loggedIn) {
+            // connect vess sdk
+            const session = await vess.connect(provider.provider, "testnet-clay")
+            console.log({session})
             setMySession(session)
-            const ceramic = new CeramicClient(CERAMIC_URL)
-            ceramic.did = session.did
-            workCredentialService.setProvider(session.did, provider, ceramic)
-    
+            etherService.setProvider(provider);
+            deworkService.setProvider(provider);
             setLoggedIn(true);
             setConnectionStatus("connected")
             connectEvent(session.id)
-    
-            //execute v1 data
-            workCredentialService.executeMigration(account)
-            //set dework user auth
             loginDework(account) 
+            //execute v1 data
+            // workCredentialService.executeMigration(account)
+            //set dework user auth
         } else {
           setConnectionStatus("disconnected")
         }
@@ -98,13 +91,6 @@ export const DIDContextProvider = ({ children }: { children: any }) => {
       await web3ModalService.disconnectWallet()
       clearState()
     }
-
-    // useEffect(() => {
-    //   const sessionStr = localStorage.getItem('didsession')
-    //   if(sessionStr) {
-    //     connectDID()
-    //   }
-    // },[])
 
     const loadSession = async(authMethod: AuthMethod):Promise<DIDSession> => {
       const sessionStr = localStorage.getItem('didsession')

@@ -29,7 +29,7 @@ export const WorkspaceDetailContainer:FC<Props> =({orgId}) => {
     const router = useRouter()
 
     const goToUserPage = (item: MembershipSubjectWithId) => {
-        router.push(`/${item.id}`)
+        router.push(`/${item.credentialSubject.id}`)
     }
 
     const goToEventPage = (item: EventWithId) => {

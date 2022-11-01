@@ -1,6 +1,6 @@
 {
-  "name": "cvoxel",
-  "version": "0.0.0",
+  "name": "vess",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
     "create-model-old": "node --experimental-json-modules ./scripts/create-model.mjs",
@@ -58,6 +58,7 @@
     "styled-components": "^5.3.5",
     "superjson": "^1.8.1",
     "three": "^0.138.3",
+    "vess-sdk": "^0.1.5",
     "web3": "^1.8.0",
     "web3.storage": "4.2.0",
     "web3modal": "^1.9.9"

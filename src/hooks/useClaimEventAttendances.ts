@@ -1,15 +1,16 @@
-import { getWorkCredentialService } from "@/services/workCredential/WorkCredentialService";
 import { useQuery } from "react-query";
 import { EventAttendanceWithId } from "@/interfaces";
+import { getVESS } from "vess-sdk";
 
 export const useClaimedEventAttendances = (attendanceId?: string) => {
-  const workCredentialService = getWorkCredentialService();
+  // const vess = getVESS()
+  const vess = getVESS(true);
 
   const { data: eventAttendance, isLoading } = useQuery<
     EventAttendanceWithId | undefined
   >(
     ["EventAttendance", attendanceId],
-    () => workCredentialService.fetchEventAttendance(attendanceId),
+    () => vess.getEventAttendance(attendanceId),
     {
       enabled: !!attendanceId,
       staleTime: Infinity,

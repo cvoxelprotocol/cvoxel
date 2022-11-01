@@ -37,7 +37,7 @@ export const IssueEventAttendanceCard:FC<Props> = ({event}) => {
         const arr: string[] = []
         for(const did of dids) {
             const res = await issueEventAttendance(event, did)
-            if(res) arr.push(res)
+            if(res && res.streamId) arr.push(res.streamId)
         }
         if(arr.length>0){
             setShowEventAttendanceModal(false)

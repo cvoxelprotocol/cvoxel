@@ -1,8 +1,5 @@
 import { useQuery } from "react-query";
-import {
-  fetchOrbisProfile,
-  OrbisProfileDetail,
-} from "@/services/workCredential/OrbisHelper";
+import { fetchOrbisProfile, OrbisProfileDetail } from "@/services/OrbisHelper";
 import { useMemo } from "react";
 import { DisplayProfile } from "@/interfaces";
 import { formatDID } from "@/utils/ceramicUtils";

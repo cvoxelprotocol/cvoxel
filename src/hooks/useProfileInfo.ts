@@ -1,11 +1,12 @@
-import { getWorkCredentialService } from "@/services/workCredential/WorkCredentialService";
 import { useQuery } from "react-query";
 import { getProfileInfo } from "@/utils/ceramicUtils";
 import { Client } from "@/__generated__/types/WorkCredential";
 import { DisplayProfile } from "@/interfaces";
+import { getVESS } from "vess-sdk";
 
 export const useProfileInfo = (client?: Client) => {
-  const workCredentialService = getWorkCredentialService();
+  // const vess = getVESS()
+  const vess = getVESS(true);
 
   const { data: profile, isLoading } = useQuery<DisplayProfile>(
     ["Client", client],
@@ -21,7 +22,7 @@ export const useProfileInfo = (client?: Client) => {
     if (client?.format === "DID") {
       return getProfileInfo(client.value);
     } else if (client?.format === "orgId") {
-      const org = await workCredentialService.fetchOrganization(client.value);
+      const org = await vess.getOrganization(client.value);
       return {
         displayName: org?.name || "",
         bio: org?.desc || "",

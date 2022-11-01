@@ -1,4 +1,3 @@
-import { getWorkCredentialService } from "@/services/workCredential/WorkCredentialService";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useToast } from "./useToast";
 import {
@@ -22,6 +21,7 @@ import {
   issueEventAttendancesFromProxy,
   issueEventAttendancesParam,
 } from "@/lib/firebase/functions/workCredential";
+import { CustomResponse, getVESS } from "vess-sdk";
 
 type issueEventAttendanceFromProxyProps = {
   param: issueEventAttendancesParam;
@@ -30,7 +30,8 @@ type issueEventAttendanceFromProxyProps = {
 
 export const useEventAttendance = (eventId?: string) => {
   const { did } = useContext(DIDContext);
-  const workCredentialService = getWorkCredentialService();
+  // const vess = getVESS()
+  const vess = getVESS(true);
   const queryClient = useQueryClient();
   const { lancInfo, lancError } = useToast();
   const { showLoading, closeLoading } = useModal();
@@ -43,10 +44,10 @@ export const useEventAttendance = (eventId?: string) => {
   ] = useStateIssueEventAttendanceFromProxyModal();
 
   const { mutateAsync: issueEvent, isLoading: isIssuingEvent } = useMutation<
-    string | undefined,
+    CustomResponse<{ streamId: string | undefined }>,
     unknown,
     Event
-  >((param) => workCredentialService.createEvent(param), {
+  >((param) => vess.createEvent(param), {
     onMutate() {
       showLoading();
     },
@@ -71,7 +72,7 @@ export const useEventAttendance = (eventId?: string) => {
 
   const { data: issuedEvent, isLoading } = useQuery<EventWithId[] | null>(
     ["issuedEvent", did],
-    () => workCredentialService.fetchIssuedEvents(did),
+    () => vess.getIssuedEvents(did),
     {
       enabled: !!did && did !== "",
       staleTime: Infinity,
@@ -82,41 +83,41 @@ export const useEventAttendance = (eventId?: string) => {
   const {
     mutateAsync: issueEventAttendanceCredential,
     isLoading: isCreatingSubject,
-  } = useMutation<string | undefined, unknown, EventAttendance>(
-    (param) => workCredentialService.issueEventAttendanceCredential(param),
-    {
-      onMutate() {
-        showLoading();
-      },
-      onSuccess(data) {
-        if (data) {
-          closeLoading();
-          lancInfo(EVENT_ATTENDANCE_CREATION_SUCCEED);
-        } else {
-          closeLoading();
-          lancError(EVENT_ATTENDANCE_CREATION_FAILED);
-        }
-      },
-      onError(error) {
-        console.log("error", error);
+  } = useMutation<
+    CustomResponse<{ streamId: string | undefined }>,
+    unknown,
+    EventAttendance
+  >((param) => vess.issueEventAttendanceCredential(param), {
+    onMutate() {
+      showLoading();
+    },
+    onSuccess(data) {
+      if (data) {
+        closeLoading();
+        lancInfo(EVENT_ATTENDANCE_CREATION_SUCCEED);
+      } else {
         closeLoading();
         lancError(EVENT_ATTENDANCE_CREATION_FAILED);
-      },
-      onSettled: () => {
-        queryClient.invalidateQueries(
-          "IssuedEventAttendanceVerifiableCredentials"
-        );
-      },
-    }
-  );
+      }
+    },
+    onError(error) {
+      console.log("error", error);
+      closeLoading();
+      lancError(EVENT_ATTENDANCE_CREATION_FAILED);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries(
+        "IssuedEventAttendanceVerifiableCredentials"
+      );
+    },
+  });
 
   const {
     data: IssuedEventAttendanceVerifiableCredentials,
     isLoading: isLoadingIssuedEventAttendance,
   } = useQuery<EventAttendanceWithId[] | null>(
     ["IssuedEventAttendanceVerifiableCredentials", did],
-    () =>
-      workCredentialService.fetchIssuedEventAttendanceVerifiableCredentials(),
+    () => vess.getIssuedEventAttendanceVerifiableCredentials(),
     {
       enabled: !!did && did !== "",
       staleTime: Infinity,
@@ -129,7 +130,7 @@ export const useEventAttendance = (eventId?: string) => {
     isLoading: isFetchingHeldMembershipSubjects,
   } = useQuery<EventAttendanceWithId[] | null>(
     ["HeldEventAttendanceVerifiableCredentials", did],
-    () => workCredentialService.fetchHeldEventAttendanceVerifiableCredentials(),
+    () => vess.getHeldEventAttendanceVerifiableCredentials(),
     {
       enabled: !!did && did !== "",
       staleTime: Infinity,
@@ -230,7 +231,7 @@ export const useEventAttendance = (eventId?: string) => {
 
   const { data: eventDetail, isLoading: isLoadingEventDetail } = useQuery<
     EventWithId | undefined
-  >(["eventDetail", eventId], () => workCredentialService.fetchEvent(eventId), {
+  >(["eventDetail", eventId], () => vess.getEvent(eventId), {
     enabled: !!eventId,
     staleTime: Infinity,
     cacheTime: 30000,

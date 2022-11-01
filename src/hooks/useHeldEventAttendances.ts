@@ -1,4 +1,3 @@
-import { getWorkCredentialService } from "@/services/workCredential/WorkCredentialService";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { EventAttendanceWithId } from "@/interfaces";
 import { useContext } from "react";
@@ -10,9 +9,11 @@ import {
   EVENT_ATTENDANCE_HELD_FAILED,
   EVENT_ATTENDANCE_HELD_SUCCEED,
 } from "@/constants/toastMessage";
+import { getVESS } from "vess-sdk";
 
 export const useHeldEventAttendances = (did?: string, eventId?: string) => {
-  const workCredentialService = getWorkCredentialService();
+  // const vess = getVESS()
+  const vess = getVESS(true);
   const queryClient = useQueryClient();
   const { did: myDid } = useContext(DIDContext);
   const { lancInfo, lancError } = useToast();
@@ -22,35 +23,30 @@ export const useHeldEventAttendances = (did?: string, eventId?: string) => {
     void,
     unknown,
     string[]
-  >(
-    (param) =>
-      workCredentialService.setHeldEventAttendanceVerifiableCredentials(param),
-    {
-      onMutate() {
-        showLoading();
-      },
-      onSuccess() {
-        closeLoading();
-        lancInfo(EVENT_ATTENDANCE_HELD_SUCCEED);
-      },
-      onError(error) {
-        console.log("error", error);
-        closeLoading();
-        lancError(EVENT_ATTENDANCE_HELD_FAILED);
-      },
-      onSettled: () => {
-        queryClient.invalidateQueries("HeldEventAttendances");
-      },
-    }
-  );
+  >((param) => vess.setHeldEventAttendanceVerifiableCredentials(param), {
+    onMutate() {
+      showLoading();
+    },
+    onSuccess() {
+      closeLoading();
+      lancInfo(EVENT_ATTENDANCE_HELD_SUCCEED);
+    },
+    onError(error) {
+      console.log("error", error);
+      closeLoading();
+      lancError(EVENT_ATTENDANCE_HELD_FAILED);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries("HeldEventAttendances");
+    },
+  });
 
   const {
     data: HeldEventAttendances,
     isLoading: isFetchingHeldEventAttendances,
   } = useQuery<EventAttendanceWithId[] | null>(
     ["HeldEventAttendances", did],
-    () =>
-      workCredentialService.fetchHeldEventAttendanceVerifiableCredentials(did),
+    () => vess.getHeldEventAttendanceVerifiableCredentials(did),
     {
       enabled: !!did && did !== "",
       staleTime: Infinity,
