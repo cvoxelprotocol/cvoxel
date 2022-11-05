@@ -79,7 +79,7 @@ export default function AccountButton() {
     </>
 
     const content = (
-      <div className="border-gray-200 rounded-lg w-64 mt-12 p-4 text-primary bg-gray-100 dark:bg-card dark:text-oncard">
+      <div className="border-gray-200 rounded-lg w-64 mt-2 p-4 text-primary bg-gray-100 dark:bg-card dark:text-oncard">
         <div className="space-y-4 text-center p-2">
           <div className="flex items-center justify-center">
             {profile.avatarSrc ? (

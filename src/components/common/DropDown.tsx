@@ -28,7 +28,7 @@ export const DropDown:FC<DropDownProps> = ({btnContent, content}) => {
               <button className="" type="button" onClick={() => setMenuOpen(v => !v)}>     
                   {btnContent}
               </button>  
-              <div className={clsx("absolute top-12",isMenuOpen ? "block" : "hidden")}>
+              <div className={clsx("absolute top-12 -right-0",isMenuOpen ? "block" : "hidden")}>
                 {content}
               </div>
           </div>
