@@ -1,6 +1,6 @@
 import { FC, useMemo } from "react";
 import Select, { ActionMeta, OnChangeValue } from "react-select";
-import { MembershipWithId } from "@/interfaces";
+import { MembershipWithId } from "vess-sdk";
 
 type Props = {
   handleMembership: (membership: MembershipWithId) => void;

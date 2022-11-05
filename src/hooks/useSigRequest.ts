@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { DIDContext } from "@/context/DIDContext";
-import { WorkCredentialWithId } from "@/interfaces";
+import { WorkCredentialWithId } from "vess-sdk";
 import { useQuery } from "react-query";
 import { getSigRequestList } from "@/lib/firebase/store/meta";
 

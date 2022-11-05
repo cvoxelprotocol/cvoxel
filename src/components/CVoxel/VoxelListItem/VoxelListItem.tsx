@@ -6,10 +6,9 @@ import { shortenStr } from "@/utils/objectUtil";
 import { Canvas } from "@react-three/fiber";
 import { OneVoxelVisualizerPresenter } from "../OneVoxelVisualizerPresenter";
 import { convertTimestampToDateStr } from "@/utils/dateUtil";
-import clsx from "clsx";
 import Link from "next/link";
 import { useRouter } from "next/dist/client/router";
-import { WorkCredentialWithId } from "@/interfaces";
+import { WorkCredentialWithId } from "vess-sdk";
 import { CredentialDirection } from "@/components/common/CredentialDirection";
 
 type Props = {

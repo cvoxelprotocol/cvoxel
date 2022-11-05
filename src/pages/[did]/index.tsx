@@ -1,7 +1,4 @@
 import type { GetServerSideProps } from "next";
-import { isDIDstring, isEthereumAddress } from "@/utils/ceramicUtils";
-import { ETH_CHAIN_ID } from "@/constants/common";
-import { getRequestState } from "@/lib/ceramic/server";
 import { CeramicProps, CeramicSupport } from "@/interfaces/ceramic";
 import { NextPage } from "next";
 import { HomeContainer } from "@/components/containers/home";
@@ -9,6 +6,7 @@ import { ProfileContainer } from "@/components/containers/profile/ProfileContain
 import { NoProfileContainer } from "@/components/containers/profile/NoProfileContainer";
 import { useContext } from "react";
 import { DIDContext } from "@/context/DIDContext";
+import { getPkhDIDFromAddress, isDIDstring, isEthereumAddress } from "vess-sdk";
 
 export const getServerSideProps: GetServerSideProps<
   CeramicProps,
@@ -26,16 +24,16 @@ export const getServerSideProps: GetServerSideProps<
   if (isDIDstring(did)) {
     support = "supported";
     return {
-      props: { did, state: await getRequestState(ctx, did), support },
+      props: { did, support },
     };
   } else if (isEthereumAddress(did)) {
     // If an Ethereum address is provided, redirect to CAIP-10 URL
     return {
-      redirect: { destination: `/did:pkh:${ETH_CHAIN_ID}${did}`, permanent: false },
+      redirect: { destination: `${getPkhDIDFromAddress(did)}`, permanent: false },
     };
   } 
   return {
-    props: { did, state: await getRequestState(ctx), support },
+    props: { did, support },
   };
 };
 
@@ -46,7 +44,7 @@ const ProfilePage: NextPage<CeramicProps> = (props: CeramicProps) => {
     return (
       <>
         {(myDID && myDID === props.did) ||
-        (account && `/did:pkh:${ETH_CHAIN_ID}${account}` === props.did) ? (
+        (account && `${getPkhDIDFromAddress(account)}` === props.did) ? (
           <HomeContainer />
         ) : (
           <ProfileContainer {...props} />
@@ -58,7 +56,7 @@ const ProfilePage: NextPage<CeramicProps> = (props: CeramicProps) => {
   if (props.support === "unlinked") {
     return (
       <>
-        {account && `${account}${ETH_CHAIN_ID}` === props.did ? (
+        {account && `${getPkhDIDFromAddress(account)}` === props.did ? (
           <HomeContainer />
         ) : (
           <NoProfileContainer />

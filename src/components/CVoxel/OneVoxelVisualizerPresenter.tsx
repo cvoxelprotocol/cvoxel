@@ -4,7 +4,7 @@ import { useFrame } from "@react-three/fiber";
 import { OrbitControls, PerspectiveCamera, Plane } from "@react-three/drei";
 import CVoxelPresenter from "./CVoxelPresenter";
 import { CVoxelThreeWithId, useVoxelStyler } from "@/hooks/useVoxStyler";
-import { WorkCredentialWithId } from "@/interfaces";
+import { WorkCredentialWithId } from "vess-sdk";
 
 // NOTE: useCVoxelDetailBox cannot be called by VisualPresenter, so it is passed by props.
 type OneVoxelVisualizerPresenterProps = {

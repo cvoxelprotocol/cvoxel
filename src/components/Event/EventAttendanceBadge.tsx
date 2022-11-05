@@ -1,6 +1,6 @@
 import { FC } from "react";
 import Image from "next/image";
-import { EventAttendanceWithId } from "@/interfaces";
+import { EventAttendanceWithId } from "vess-sdk";
 
 type WorkspaceItemProps = {
     item: EventAttendanceWithId

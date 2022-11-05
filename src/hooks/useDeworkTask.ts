@@ -1,3 +1,4 @@
+import { CERAMIC_NETWORK } from "@/constants/common";
 import { DIDContext } from "@/context/DIDContext";
 import { WorkSubjectFromDework } from "@/interfaces";
 import { getDeworkTaskListFromFB } from "@/lib/firebase/store/dework";
@@ -14,7 +15,7 @@ export const useDeworkTask = () => {
   const { account } = useContext(DIDContext);
   const deworkService = getDeworkService();
   // const vess = getVESS()
-  const vess = getVESS(true);
+  const vess = getVESS(CERAMIC_NETWORK !== "mainnet");
 
   const queryClient = useQueryClient();
 

@@ -1,15 +1,13 @@
 import { createContext, useState } from "react";
-import { useStateMySession } from "@/recoilstate/ceramic";
 import { getEtherService } from "@/services/Ether/EtherService";
 import { getDeworkService } from "@/services/Dework/DeworkService";
 import { useDework } from "@/hooks/useDework";
-import { DIDSession } from 'did-session'
 import { getWeb3ModalService } from "@/services/Ether/Web3ModalService";
-import type { AuthMethod } from '@didtools/cacao'
-import { connectionStatusType, useStateConnectionStatus } from "@/recoilstate/account";
+import { connectionStatusType, useStateConnectionStatus,useStateMyDid } from "@/recoilstate/account";
 import { useToast } from "@/hooks/useToast";
 import { useGAEvent } from "@/hooks/useGAEvent";
 import { getVESS} from "vess-sdk"
+import { CERAMIC_NETWORK } from "@/constants/common";
 
 export interface UserContextState {
     loggedIn: boolean;
@@ -35,7 +33,7 @@ export const DIDContext = createContext(startingState);
 
 export const DIDContextProvider = ({ children }: { children: any }) => {
     const [loggedIn, setLoggedIn] = useState(false);
-    const [mySession, setMySession] = useStateMySession();
+    const [myDid, setMyDid] = useStateMyDid();
     const [connectionStatus, setConnectionStatus] = useStateConnectionStatus()
     const etherService = getEtherService();
     const deworkService = getDeworkService();
@@ -44,12 +42,12 @@ export const DIDContextProvider = ({ children }: { children: any }) => {
     const { lancError } = useToast();
     const {connectEvent} = useGAEvent()
     // const vess = getVESS()
-    const vess = getVESS(true)
+    const vess = getVESS(CERAMIC_NETWORK !== "mainnet")
 
   
     // clear all state
     const clearState = (): void => {
-      setMySession(null);
+      setMyDid(undefined);
       setLoggedIn(false)
       localStorage.removeItem('didsession')
       setConnectionStatus("disconnected")
@@ -62,8 +60,7 @@ export const DIDContextProvider = ({ children }: { children: any }) => {
         if (account && provider && !loggedIn) {
             // connect vess sdk
             const session = await vess.connect(provider.provider, "testnet-clay")
-            console.log({session})
-            setMySession(session)
+            setMyDid(session.did.parent)
             etherService.setProvider(provider);
             deworkService.setProvider(provider);
             setLoggedIn(true);
@@ -89,22 +86,8 @@ export const DIDContextProvider = ({ children }: { children: any }) => {
 
     const disConnectDID = async ():Promise<void> => {
       await web3ModalService.disconnectWallet()
+      vess.disconnect()
       clearState()
-    }
-
-    const loadSession = async(authMethod: AuthMethod):Promise<DIDSession> => {
-      const sessionStr = localStorage.getItem('didsession')
-      let session
-    
-      if (sessionStr) {
-        session = await DIDSession.fromSession(sessionStr)
-      }
-    
-      if (!session || (session.hasSession && session.isExpired)) {
-        session = await DIDSession.authorize(authMethod, {resources: ["ceramic://*"]})
-        localStorage.setItem('didsession', session.serialize())
-      }
-      return session
     }
   
     // use props as a way to pass configuration values
@@ -112,7 +95,7 @@ export const DIDContextProvider = ({ children }: { children: any }) => {
       loggedIn,
       connection: connectionStatus,
       account: web3ModalService.account,
-      did: mySession?.id,
+      did: myDid,
       chainId: web3ModalService.chainId,
       connectDID: connectDID,
       disConnectDID: disConnectDID

@@ -2,13 +2,11 @@ import VisualizerPresenter from "@/components/CVoxel/visualizerPresenter";
 import { useWorkCredentialDetailBox } from "@/hooks/useCVoxelDetailBox";
 import { Canvas } from "@react-three/fiber";
 import { FC, useMemo, ReactNode } from "react";
-import { NamePlate } from "@/components/common/NamePlate";
 import Router from "next/router";
 import { SearchData } from "@/components/common/search/Search";
-import { UserSearch } from "@/components/common/search/UserSearch";
 import { NoCRDLItem } from "./NoCRDLItem";
 import { Button } from "@/components/common/button/Button";
-import { WorkCredentialWithId } from "@/interfaces";
+import { WorkCredentialWithId } from "vess-sdk";
 import { MainProfileCard } from "@/components/Profile/MainProfileCard";
 import { UserSearchWithProfile } from "@/components/common/search/UserSearchWithProfile";
 

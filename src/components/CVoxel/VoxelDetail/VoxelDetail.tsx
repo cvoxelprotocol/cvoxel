@@ -19,8 +19,7 @@ import { formatBigNumber } from "@/utils/ethersUtil";
 import { DIDContext } from "@/context/DIDContext";
 import { CopyRequestURLButton } from "./CopyRequestURLButton";
 import { useWorkCredential } from "@/hooks/useWorkCredential";
-import { WorkCredentialWithId } from "@/interfaces";
-import { WorkCredential } from "@/__generated__/types/WorkCredential";
+import { WorkCredentialWithId,WorkCredential } from "vess-sdk";
 import { useOffchainItem } from "@/hooks/useOffchainList";
 import { UserPlate } from "@/components/common/UserPlate";
 

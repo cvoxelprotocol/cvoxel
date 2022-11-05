@@ -2,7 +2,7 @@ import { FC, useEffect } from "react";
 import { GenreBadge } from "@/components/common/badge/GenreBadge";
 import { getGenre } from "@/utils/genreUtil";
 import { TagBadge } from "@/components/common/badge/TagBadge";
-import { WorkCredentialWithId } from "@/interfaces";
+import { WorkCredentialWithId } from "vess-sdk";
 import { shortenStr } from "@/utils/objectUtil";
 import { Canvas } from "@react-three/fiber";
 import { OneVoxelVisualizerPresenter } from "@/components/CVoxel/OneVoxelVisualizerPresenter";

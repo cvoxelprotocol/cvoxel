@@ -1,5 +1,5 @@
-import { FC, useCallback, useContext, useEffect, useMemo } from "react";
-import { WorkCredentialWithId } from "@/interfaces";
+import { FC, useCallback, useContext, useMemo } from "react";
+import { WorkCredentialWithId } from "vess-sdk";
 import { Canvas } from "@react-three/fiber";
 import { OneVoxelVisualizerPresenter } from "@/components/CVoxel/OneVoxelVisualizerPresenter";
 import {

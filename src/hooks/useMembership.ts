@@ -6,16 +6,17 @@ import {
 } from "@/constants/toastMessage";
 import { useModal } from "./useModal";
 import { useStateMembershipCreateModal } from "@/recoilstate";
-import { MembershipWithId } from "@/interfaces";
+import { MembershipWithId } from "vess-sdk";
 import { useContext, useMemo } from "react";
 import { DIDContext } from "@/context/DIDContext";
-import { Membership } from "@/__generated__/types/MemberShip";
+import { Membership } from "vess-sdk";
 import { CustomResponse, getVESS } from "vess-sdk";
+import { CERAMIC_NETWORK } from "@/constants/common";
 
 export const useMembership = (orgId?: string) => {
   const { did } = useContext(DIDContext);
   // const vess = getVESS()
-  const vess = getVESS(true);
+  const vess = getVESS(CERAMIC_NETWORK !== "mainnet");
   const queryClient = useQueryClient();
   const { lancInfo, lancError } = useToast();
   const { showLoading, closeLoading } = useModal();

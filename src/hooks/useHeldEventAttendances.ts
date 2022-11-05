@@ -1,7 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import { EventAttendanceWithId } from "@/interfaces";
-import { useContext } from "react";
-import { DIDContext } from "@/context/DIDContext";
+import { EventAttendanceWithId } from "vess-sdk";
 import { getHeldEventAttendanceFromDB } from "@/lib/firebase/store/event";
 import { useToast } from "./useToast";
 import { useModal } from "./useModal";
@@ -10,12 +8,12 @@ import {
   EVENT_ATTENDANCE_HELD_SUCCEED,
 } from "@/constants/toastMessage";
 import { getVESS } from "vess-sdk";
+import { CERAMIC_NETWORK } from "@/constants/common";
 
-export const useHeldEventAttendances = (did?: string, eventId?: string) => {
+export const useHeldEventAttendances = (did?: string) => {
   // const vess = getVESS()
-  const vess = getVESS(true);
+  const vess = getVESS(CERAMIC_NETWORK !== "mainnet");
   const queryClient = useQueryClient();
-  const { did: myDid } = useContext(DIDContext);
   const { lancInfo, lancError } = useToast();
   const { showLoading, closeLoading } = useModal();
 

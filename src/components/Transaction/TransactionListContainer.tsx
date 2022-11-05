@@ -8,7 +8,6 @@ import { useMyPageScreen, useTab } from "@/hooks/useTab";
 import type {
   TransactionLogWithChainId,
   WorkCredentialForm,
-  WorkCredentialWithId,
 } from "@/interfaces";
 import { useFileUpload } from "@/hooks/useFileUpload";
 import { useStateForceUpdate, useStateSelectedTx } from "@/recoilstate";
@@ -16,7 +15,7 @@ import { useThemeMode } from "@/hooks/useThemeMode";
 import { DIDContext } from "@/context/DIDContext";
 import { useRouter } from "next/router";
 import { useWorkCredential, useWorkCredentials } from "@/hooks/useWorkCredential";
-import { DeliverableItem } from "@/__generated__/types/WorkCredential";
+import { DeliverableItem, WorkCredentialWithId } from "vess-sdk";
 
 type TransactionListContainerProps = {
   txList: TransactionLogWithChainId[];

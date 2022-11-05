@@ -1,5 +1,5 @@
 import { useEventAttendance } from "@/hooks/useEventAttendance";
-import { EventWithId} from "@/interfaces";
+import { EventWithId} from "vess-sdk";
 import { faClose, faMinusCircle, faPlusCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { FC } from "react";

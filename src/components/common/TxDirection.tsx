@@ -1,12 +1,12 @@
-import { FC, useEffect, useMemo, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { IconAvatar } from "@/components/common/IconAvatar";
 import { AvatarPlaceholder } from "@/components/common/avatar/AvatarPlaceholder";
 import RightArrow from "@/components/CVoxel/VoxelListItem/right-arrow.svg";
 import { CommonSpinner } from "@/components/common/CommonSpinner";
 import LeftArrow from "@/components/CVoxel/VoxelListItem/left-arrow.svg";
 import { useENS } from "@/hooks/useENS";
-import { getPkhDIDFromAddress } from "@/utils/ceramicUtils";
-import { getProfileInfo } from "@/utils/ceramicUtils";
+import { getPkhDIDFromAddress } from "vess-sdk";
+import { useSocialAccount } from "@/hooks/useSocialAccount";
 
 type Props = {
   from?: string;
@@ -21,46 +21,28 @@ export const TxDirection: FC<Props> = ({ from, to, isPayer }) => {
   const [toDid, setToDid] = useState<string>();
   useEffect(() => {
     if (toDid == undefined && !!to) {
-      const f = async () => {
-        const did = await getPkhDIDFromAddress(to);
-        setToDid(did);
-      };
-      f();
+      setToDid(getPkhDIDFromAddress(to));
     }
   }, [to]);
 
   const [fromDid, setFromDid] = useState<string>();
   useEffect(() => {
     if (fromDid == undefined && !!from) {
-      const f = async () => {
-        const did = await getPkhDIDFromAddress(from);
-        setFromDid(did);
-      };
-      f();
+      setFromDid(getPkhDIDFromAddress(from));
     }
   }, [from]);
 
-  const displayProfile = useMemo(() => {
-    if (isPayer && fromDid == undefined) {
-      return undefined;
-    }
-
-    if (!isPayer && toDid == undefined) {
-      return undefined;
-    }
-
-    return getProfileInfo((isPayer ? fromDid : toDid) ?? "");
-  }, [isPayer, fromDid, toDid]);
+  const {profile} = useSocialAccount(isPayer ? fromDid : toDid)
 
   return isPayer ? (
     <div className="flex items-center space-x-2">
       <div className="hidden lg:block">
-        {!!displayProfile ? (
+        {!!profile ? (
           <>
-            {displayProfile.avatarSrc ? (
+            {profile.avatarSrc ? (
               <IconAvatar
                 size={"sm"}
-                src={displayProfile.avatarSrc}
+                src={profile.avatarSrc}
                 flex={false}
               />
             ) : (
@@ -84,8 +66,8 @@ export const TxDirection: FC<Props> = ({ from, to, isPayer }) => {
   ) : (
     <div className="flex items-center space-x-2">
       <div className="hidden lg:block">
-        {displayProfile && displayProfile.avatarSrc ? (
-          <IconAvatar size={"sm"} src={displayProfile.avatarSrc} flex={false} />
+        {profile && profile.avatarSrc ? (
+          <IconAvatar size={"sm"} src={profile.avatarSrc} flex={false} />
         ) : (
           <AvatarPlaceholder did={toDid} size={32} />
         )}

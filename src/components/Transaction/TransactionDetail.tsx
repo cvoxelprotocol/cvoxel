@@ -1,8 +1,5 @@
 import { FC, useMemo, useState } from "react";
-import {
-  TransactionLogWithChainId,
-  WorkCredentialWithId,
-} from "@/interfaces";
+import {TransactionLogWithChainId} from "@/interfaces";
 import { Button } from "../common/button/Button";
 import { CommonSpinner } from "../common/CommonSpinner";
 import { InternalTransactionContainer } from "./InternalTransactionContainer";
@@ -13,7 +10,7 @@ import { GenreBadge } from "../common/badge/GenreBadge";
 import { useStateSelectedGenre } from "@/recoilstate/genre";
 import { TagBadge } from "../common/badge/TagBadge";
 import { TagForm } from "./TagForm";
-import { getPkhDIDFromAddress } from "@/utils/ceramicUtils";
+import { getPkhDIDFromAddress,WorkCredentialWithId } from "vess-sdk";
 import { connectionStatusType } from "@/recoilstate/account";
 
 type TransactionDetailProps = {

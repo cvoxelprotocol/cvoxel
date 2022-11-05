@@ -1,7 +1,7 @@
 import { FC, useMemo } from "react";
 import Router from "next/router";
 import { DisplayAvatar } from "../common/DisplayAvatar";
-import { formatDID } from "@self.id/framework";
+import { formatDID } from "vess-sdk";
 
 type Props = {
   name?: string;

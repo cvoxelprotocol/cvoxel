@@ -6,10 +6,8 @@ import {
   CVOXEL_VERIFY_FAILED,
   CVOXEL_VERIFY_SUCCEED,
 } from "@/constants/toastMessage";
-import { TransactionLogWithChainId, WorkCredentialWithId } from "@/interfaces";
-import { VerifiableWorkCredential } from "@/__generated__/types/VerifiableWorkCredential";
+import { TransactionLogWithChainId } from "@/interfaces";
 import { useModal } from "./useModal";
-import { TileDoc, useTileDoc } from "./useTileDoc";
 import { useToast } from "./useToast";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useStateIssueStatus } from "@/recoilstate";
@@ -20,31 +18,36 @@ import {
   formatClient,
   formatWork,
   CustomResponse,
+  DeliverableItem,
+  WorkCredential,
+  WorkSubject,
+  WorkCredentialWithId,
 } from "vess-sdk";
 import { getFiat } from "@/lib/firebase/functions/fiat";
 import { getNetworkSymbol } from "@/utils/networkUtil";
 import { convertDateToTimestampStr } from "@/utils/dateUtil";
 import { convertValidworkSubjectTypedData } from "@/utils/workCredentialUtil";
-import { getPkhDIDFromAddress } from "@/utils/ceramicUtils";
-import {
-  DeliverableItem,
-  WorkCredential,
-  WorkSubject,
-} from "vess-sdk/dist/__generated__/types/WorkCredential";
+import { getPkhDIDFromAddress } from "vess-sdk";
+import { CERAMIC_NETWORK } from "@/constants/common";
 
-export function useWorkCredentialRecord(id?: string): TileDoc<WorkCredential> {
-  return useTileDoc<WorkCredential>(id);
-}
-
-export function useVerifiableWorkCredentialRecord(
-  id?: string
-): TileDoc<VerifiableWorkCredential> {
-  return useTileDoc<VerifiableWorkCredential>(id);
-}
+export const useFetchWorkCredential = (streamId?: string) => {
+  // const vess = getVESS()
+  const vess = getVESS(CERAMIC_NETWORK !== "mainnet");
+  const { data: workCredential, isLoading } = useQuery<WorkCredential | null>(
+    ["useFetchWorkCredential", streamId],
+    () => vess.getWorkCredential(streamId),
+    {
+      enabled: !!streamId && streamId !== "",
+      staleTime: Infinity,
+      cacheTime: 30000,
+    }
+  );
+  return { workCredential, isLoading };
+};
 
 export const useWorkCredentials = (did?: string) => {
   // const vess = getVESS()
-  const vess = getVESS(true);
+  const vess = getVESS(CERAMIC_NETWORK !== "mainnet");
   const queryClient = useQueryClient();
 
   const {
@@ -88,7 +91,7 @@ export const useWorkCredential = () => {
   const { lancInfo, lancError } = useToast();
   const [issueStatus, setIssueStatus] = useStateIssueStatus();
   // const vess = getVESS()
-  const vess = getVESS(true);
+  const vess = getVESS(CERAMIC_NETWORK !== "mainnet");
   const queryClient = useQueryClient();
 
   const {

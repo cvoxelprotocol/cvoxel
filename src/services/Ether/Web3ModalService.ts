@@ -2,7 +2,6 @@ import { Web3Provider } from "@ethersproject/providers";
 import Web3Modal from "web3modal";
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { ethers } from "ethers";
-import Web3 from "web3";
 import { isMobile } from "react-device-detect";
 
 export type connectWalletProps = {
@@ -97,7 +96,7 @@ export class Web3ModalService {
       try {
         await (window as any).ethereum.request({
           method: "wallet_switchEthereumChain",
-          params: [{ chainId: Web3.utils.toHex(1) }],
+          params: [{ chainId: "0x1" }],
         });
         return true;
       } catch (error) {

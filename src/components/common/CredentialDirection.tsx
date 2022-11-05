@@ -4,7 +4,8 @@ import { AvatarPlaceholder } from "@/components/common/avatar/AvatarPlaceholder"
 import RightArrow from "@/components/CVoxel/VoxelListItem/right-arrow.svg";
 import { CommonSpinner } from "@/components/common/CommonSpinner";
 import { useProfileInfo } from "@/hooks/useProfileInfo";
-import { Client } from "@/__generated__/types/WorkCredential";
+import { Client } from "vess-sdk";
+import { useSocialAccount } from "@/hooks/useSocialAccount";
 
 type Props = {
   holder?: string;
@@ -13,7 +14,7 @@ type Props = {
 
 export const CredentialDirection: FC<Props> = ({ holder, client }) => {
 
-  const {profile, isLoading} = useProfileInfo({format: "DID", value: holder})
+  const {profile, isLoading} = useSocialAccount(holder)
   const {profile: clientProfile, isLoading: isLoadingClient} = useProfileInfo(client)
 
   return (

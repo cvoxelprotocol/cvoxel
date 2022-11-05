@@ -1,7 +1,7 @@
 import { FC, useCallback, useContext } from "react";
 import { useRouter } from "next/router";
 import { DIDContext } from "@/context/DIDContext";
-import { WorkCredentialWithId } from "@/interfaces";
+import { WorkCredentialWithId } from "vess-sdk";
 import { SigRequestDetail } from "@/components/SigRequest/SigRequestDetail/SigRequestDetail";
 import { NoItemPresenter } from "@/components/common/NoItemPresenter";
 import { CommonLoading } from "@/components/common/CommonLoading";

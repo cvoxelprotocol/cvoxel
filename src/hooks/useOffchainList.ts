@@ -1,6 +1,6 @@
 import { TransactionLogWithChainId } from "@/interfaces/explore";
 import { etherscanTxListFetcher } from "@/services/fetcher/EtherscanFetcher";
-import { WorkCredentialWithId } from "@/interfaces";
+import { WorkCredentialWithId } from "vess-sdk";
 import { useMemo, useContext, useCallback } from "react";
 import { useQuery } from "react-query";
 import { uniqueList } from "@/utils/etherscanUtils";

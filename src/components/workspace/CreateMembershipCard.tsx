@@ -1,10 +1,10 @@
 import { useMembership } from "@/hooks/useMembership";
 import { convertDateToTimestampStr } from "@/utils/dateUtil";
-import { Membership } from "@/__generated__/types/MemberShip";
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { FC } from "react";
 import { useForm } from "react-hook-form";
+import { Membership } from "vess-sdk";
 import { Button } from "../common/button/Button";
 
 type Props = {

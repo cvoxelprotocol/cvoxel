@@ -1,18 +1,15 @@
 import { shortHash } from "@/utils/objectUtil";
 import { Web3Provider } from "@ethersproject/providers";
-import Web3 from "web3";
 
 export class EtherService {
   provider = undefined as Web3Provider | undefined;
-  web3 = undefined as Web3 | undefined;
 
-  constructor(provider?: Web3Provider, token?: string) {
+  constructor(provider?: Web3Provider) {
     this.provider = provider;
   }
 
   setProvider(provider?: Web3Provider) {
     this.provider = provider;
-    this.web3 = new Web3(Web3.givenProvider);
   }
 
   async getDisplayENS(address?: string, count: number = 8): Promise<string> {
@@ -31,7 +28,7 @@ export class EtherService {
   async isContract(address?: string): Promise<boolean> {
     if (!address) return false;
     try {
-      const code = await this.web3?.eth.getCode(address);
+      const code = await this.provider?.getCode(address);
       return code !== "0x" && code !== "0x0";
     } catch (error) {
       console.log("error", error);

@@ -12,16 +12,18 @@ import {
   useStateIssueEventAttendanceModal,
   useStateIssueEventModal,
 } from "@/recoilstate";
-import { EventAttendanceWithId, EventWithId } from "@/interfaces";
 import { useContext } from "react";
 import { DIDContext } from "@/context/DIDContext";
-import { EventAttendance } from "@/__generated__/types/EventAttendanceVerifiableCredential";
-import { Event } from "@/__generated__/types/Event";
 import {
-  issueEventAttendancesFromProxy,
+  EventAttendanceWithId,
+  EventWithId,
+  CustomResponse,
+  Event,
+  EventAttendance,
+  getVESS,
   issueEventAttendancesParam,
-} from "@/lib/firebase/functions/workCredential";
-import { CustomResponse, getVESS } from "vess-sdk";
+} from "vess-sdk";
+import { CERAMIC_NETWORK } from "@/constants/common";
 
 type issueEventAttendanceFromProxyProps = {
   param: issueEventAttendancesParam;
@@ -31,7 +33,7 @@ type issueEventAttendanceFromProxyProps = {
 export const useEventAttendance = (eventId?: string) => {
   const { did } = useContext(DIDContext);
   // const vess = getVESS()
-  const vess = getVESS(true);
+  const vess = getVESS(CERAMIC_NETWORK !== "mainnet");
   const queryClient = useQueryClient();
   const { lancInfo, lancError } = useToast();
   const { showLoading, closeLoading } = useModal();
@@ -162,7 +164,7 @@ export const useEventAttendance = (eventId?: string) => {
     { [x: string]: string | string[] },
     unknown,
     issueEventAttendanceFromProxyProps
-  >((param) => issueEventAttendancesFromProxy(param.param), {
+  >((param) => vess.issueEventAttendancesFromProxy(param.param), {
     onMutate() {
       showLoading();
     },
@@ -202,10 +204,7 @@ export const useEventAttendance = (eventId?: string) => {
     };
 
     //issue
-    const res = await issueEventAttendanceFromProxy(paramForProxy);
-    console.log({ res });
-
-    return res;
+    return await issueEventAttendanceFromProxy(paramForProxy);
   };
 
   const claimEventAttendance = async (
@@ -224,8 +223,6 @@ export const useEventAttendance = (eventId?: string) => {
 
     //issue
     const res = await issueEventAttendanceFromProxy(paramForProxy);
-    console.log({ res });
-
     return res.vcs as string[];
   };
 

@@ -8,3 +8,10 @@ export const connectionStatus = atom<connectionStatusType>({
 });
 
 export const useStateConnectionStatus = () => useRecoilState(connectionStatus);
+
+export const myDid = atom<string | undefined>({
+  key: "myDid",
+  default: undefined,
+});
+
+export const useStateMyDid = () => useRecoilState(myDid);

@@ -2,7 +2,7 @@ import { useQuery } from "react-query";
 import { fetchOrbisProfile, OrbisProfileDetail } from "@/services/OrbisHelper";
 import { useMemo } from "react";
 import { DisplayProfile } from "@/interfaces";
-import { formatDID } from "@/utils/ceramicUtils";
+import { formatDID } from "vess-sdk";
 
 export const useSocialAccount = (did?: string) => {
   const { data: orbisProfile, isLoading } = useQuery<
@@ -13,7 +13,7 @@ export const useSocialAccount = (did?: string) => {
     cacheTime: 30000,
   });
 
-  const socialProfile = useMemo<DisplayProfile>(() => {
+  const profile = useMemo<DisplayProfile>(() => {
     return {
       avatarSrc: orbisProfile?.pfp,
       displayName: orbisProfile?.username || (!!did ? formatDID(did, 12) : ""),
@@ -22,7 +22,7 @@ export const useSocialAccount = (did?: string) => {
   }, [orbisProfile, did]);
 
   return {
-    socialProfile,
+    profile,
     isLoading,
   };
 };

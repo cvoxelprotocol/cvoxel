@@ -4,8 +4,8 @@ import { CommonSpinner } from "@/components/common/CommonSpinner";
 import { IconAvatar } from "@/components/common/IconAvatar";
 import { AvatarPlaceholder } from "@/components/common/avatar/AvatarPlaceholder";
 import SearchIcon from "@/components/common/search/search.svg";
-import { Client } from "@/__generated__/types/WorkCredential";
 import { useProfileInfo } from "@/hooks/useProfileInfo";
+import { Client } from "vess-sdk";
 
 type Props = {
   client?: Client;

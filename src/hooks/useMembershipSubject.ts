@@ -10,20 +10,22 @@ import {
   MembershipSubjectWithId,
   MembershipWithId,
   OrganizationWIthId,
-} from "@/interfaces";
+  CustomResponse,
+  getVESS,
+  VerifiableMembershipSubject,
+} from "vess-sdk";
 import { useContext } from "react";
 import { DIDContext } from "@/context/DIDContext";
 import {
   getHeldMembershipSubjectsFromDB,
   getMembershipSUbjectsFromDB,
 } from "@/lib/firebase/store/workspace";
-import { VerifiableMembershipSubject } from "@/__generated__/types/VerifiableMembershipSubjectCredential";
-import { CustomResponse, getVESS } from "vess-sdk";
+import { CERAMIC_NETWORK } from "@/constants/common";
 
 export const useMembershipSubject = (orgId?: string) => {
   const { did } = useContext(DIDContext);
   // const vess = getVESS()
-  const vess = getVESS(true);
+  const vess = getVESS(CERAMIC_NETWORK !== "mainnet");
   const queryClient = useQueryClient();
   const { lancInfo, lancError } = useToast();
   const { showLoading, closeLoading } = useModal();

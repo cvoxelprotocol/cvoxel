@@ -1,5 +1,3 @@
-import type { RequestState } from "@self.id/framework";
-
 export type CeramicSupport =
   | "invalid" // not a DID or CAIP-10
   | "unlinked" // supported CAIP-10 but no DID
@@ -8,6 +6,5 @@ export type CeramicSupport =
 
 export type CeramicProps = {
   did: string;
-  state: RequestState;
   support: CeramicSupport;
 };

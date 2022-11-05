@@ -3,7 +3,7 @@ import { CVoxelThree, CVoxelVisType } from "@/interfaces/cVoxelType";
 import * as THREE from "three";
 import { getGenreColor } from "@/utils/genreUtil";
 import chroma from "chroma-js";
-import { WorkCredentialWithId } from "@/interfaces";
+import { WorkCredentialWithId } from "vess-sdk";
 
 type RoomType = {
   position: THREE.Vector3;

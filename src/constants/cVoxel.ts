@@ -1,4 +1,4 @@
-import { WorkCredentialWithId } from "@/interfaces";
+import { WorkCredentialWithId } from "vess-sdk";
 
 export const initCVoxel: WorkCredentialWithId[] = [
   {
