@@ -7,8 +7,8 @@ import { VoxelDetail } from "@/components/CVoxel/VoxelDetail/VoxelDetail";
 import { useOffchainList } from "@/hooks/useOffchainList";
 import { useStateForceUpdate } from "@/recoilstate";
 import { useWorkCredentials } from "@/hooks/useWorkCredential";
-import { useIsTabletOrMobile } from "@/hooks/useIsTabletOrMobile";
 import { useVirtualizer } from "@tanstack/react-virtual";
+import { isMobile, isTablet } from "react-device-detect";
 
 type UserCVoxelContainerProps = {
   did: string;
@@ -43,12 +43,10 @@ export const UserCVoxelContainer: FC<UserCVoxelContainerProps> = ({
 
   const parentRef: LegacyRef<any> = useRef();
 
-  const { isTabletOrMobile } = useIsTabletOrMobile();
-
   const rowVirtualizer = useVirtualizer({
     count: sortCredentials.length,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => ((isTabletOrMobile ? 15 : 13) + 1) * 16, // NOTE: (item + margin) * rem
+    estimateSize: () => (((isMobile || isTablet) ? 15 : 13) + 1) * 16, // NOTE: (item + margin) * rem
   });
 
   return useMemo(

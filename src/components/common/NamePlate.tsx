@@ -139,7 +139,7 @@ export const NamePlate: FC<Props> = ({
     </div>
   );
 
-  const {socialProfile} = useSocialAccount(did);
+  const {profile} = useSocialAccount(did);
 
   return (
     <div
@@ -163,12 +163,12 @@ export const NamePlate: FC<Props> = ({
       )}
       {!withoutIcon && (
         <div className="md:mr-2">
-          {!!socialProfile ? (
+          {!!profile ? (
             <>
-              {socialProfile.avatarSrc ? (
+              {profile.avatarSrc ? (
                 <IconAvatar
                   size={avatarSize}
-                  src={socialProfile.avatarSrc}
+                  src={profile.avatarSrc}
                   flex={false}
                 />
               ) : (
