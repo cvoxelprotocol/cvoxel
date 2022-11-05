@@ -29,7 +29,7 @@ export const getServerSideProps: GetServerSideProps<
   } else if (isEthereumAddress(did)) {
     // If an Ethereum address is provided, redirect to CAIP-10 URL
     return {
-      redirect: { destination: `${getPkhDIDFromAddress(did)}`, permanent: false },
+      redirect: { destination: `/${getPkhDIDFromAddress(did)}`, permanent: false },
     };
   } 
   return {
