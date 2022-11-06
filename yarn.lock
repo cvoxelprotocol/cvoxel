@@ -8088,7 +8088,7 @@ react-copy-to-clipboard@^5.1.0:
     copy-to-clipboard "^3.3.1"
     prop-types "^15.8.1"
 
-react-device-detect@^2.1.2:
+react-device-detect@^2.1.2, react-device-detect@^2.2.2:
   version "2.2.2"
   resolved "https://registry.yarnpkg.com/react-device-detect/-/react-device-detect-2.2.2.tgz#dbabbce798ec359c83f574c3edb24cf1cca641a5"
   integrity sha512-zSN1gIAztUekp5qUT/ybHwQ9fmOqVT1psxpSlTn1pe0CO+fnJHKRLOWWac5nKxOxvOpD/w84hk1I+EydrJp7SA==
@@ -9439,10 +9439,10 @@ verror@1.10.0:
     core-util-is "1.0.2"
     extsprintf "^1.2.0"
 
-vess-sdk@^0.1.7:
-  version "0.1.7"
-  resolved "https://registry.yarnpkg.com/vess-sdk/-/vess-sdk-0.1.7.tgz#11b51408a4af2b1c4b4cc6ab8aaed7c4e4e2068b"
-  integrity sha512-fY5i4PKZxPQJD+pABN5vMrUOQPsh1t2dmZljimfIBQGlEOUvfw07EfM31RtQDwS4620Pty6pWibINnqokx09og==
+vess-sdk@^0.1.8:
+  version "0.1.8"
+  resolved "https://registry.yarnpkg.com/vess-sdk/-/vess-sdk-0.1.8.tgz#0620c24e43895c7ce5a96cd28ee2dbbce9964dcb"
+  integrity sha512-f0ChlgemP0BddjCtmy50VA5CaQqiqEARFHnhYQ3hbR6pNGnsYwg7eQka8W+SF6OGGA3vFw9IJwy4rYeu2+Bbqw==
   dependencies:
     "@ceramicnetwork/http-client" "^2.7.0"
     "@ceramicnetwork/stream-tile" "^2.6.0"
@@ -9452,6 +9452,7 @@ vess-sdk@^0.1.7:
     did-session "^1.0.0"
     ethers "^5.7.2"
     firebase "^9.13.0"
+    react-device-detect "^2.2.2"
 
 web-encoding@1.1.5:
   version "1.1.5"

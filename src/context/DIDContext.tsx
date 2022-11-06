@@ -59,7 +59,8 @@ export const DIDContextProvider = ({ children }: { children: any }) => {
         const {account, provider} = await web3ModalService.connectWallet()
         if (account && provider && !loggedIn) {
             // connect vess sdk
-            const session = await vess.connect(provider.provider, "testnet-clay")
+            const env = CERAMIC_NETWORK == "mainnet" ? "mainnet" : "testnet-clay"
+            const session = await vess.connect(provider.provider, env)
             setMyDid(session.did.parent)
             etherService.setProvider(provider);
             deworkService.setProvider(provider);
