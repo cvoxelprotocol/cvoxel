@@ -9,8 +9,7 @@ type Props = {
     }) => void,
     content?: WorkCredentialWithId[] | null
 }
-export default function VisualizerPresenterWrapper(props: Props)  {
-
+export default function VisualizerPresenterWrapper(props: Props) {
     return (
         <Canvas shadows>
             <VisualizerPresenter
@@ -19,5 +18,4 @@ export default function VisualizerPresenterWrapper(props: Props)  {
             />
           </Canvas>
     )
-
 }

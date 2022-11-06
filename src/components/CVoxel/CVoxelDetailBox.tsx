@@ -7,13 +7,19 @@ import { TagBadge } from "@/components/common/badge/TagBadge";
 import { shortenStr } from "@/utils/objectUtil";
 import { convertTimestampToDateStr } from "@/utils/dateUtil";
 import { useStateCredentialDetailBox } from "@/recoilstate";
-import { Canvas } from "@react-three/fiber";
 import clsx from "clsx";
 import { ShareButton } from "@/components/common/button/shareButton/ShareButton";
-import { OneVoxelVisualizerPresenter } from "./OneVoxelVisualizerPresenter";
 import { CredentialDirection } from "../common/CredentialDirection";
 import { DIDContext } from "@/context/DIDContext";
 import { useFetchWorkCredential } from "@/hooks/useWorkCredential";
+import dynamic from "next/dynamic";
+
+const OneVoxelVisualizerPresenterWrapper = dynamic(
+  () => import("@/components/CVoxel/OneVoxelVisualizerPresenterWrapper"),
+  {
+    ssr: false,
+  }
+);
 
 export const CVoxelDetailBox: FC<{}> = () => {
   const [box] = useStateCredentialDetailBox();
@@ -104,13 +110,11 @@ export const CVoxelDetailBox: FC<{}> = () => {
 
           <div className="h-52">
             {(box && box.item.id && workCredential) &&  (
-              <Canvas className="!touch-auto">
-                <OneVoxelVisualizerPresenter
-                  workCredential={{...workCredential, backupId:box.item.id}}
-                  zoom={5}
-                  disableHover
-                />
-              </Canvas>
+              <OneVoxelVisualizerPresenterWrapper
+                workCredential={{...workCredential, backupId:box.item.id}}
+                zoom={5}
+                disableHover
+              />
             )}
           </div>
 
