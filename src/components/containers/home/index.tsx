@@ -40,7 +40,7 @@ export const HomeContainer: FC = () => {
         ref={visualContainerRef}
       >
         <CVoxelsContainer did={did || ""} content={workCredentials} isMe moveToCreateSection={handleCreateNewVoxel}>
-          <div className="absolute bottom-0 pb-12">
+          <div className="absolute bottom-6 pb-12">
             <div className="relative mx-auto cursor-pointer hidden sm:block">
               <button onClick={() => scrollToInfo()}>
                 <Arrow size="lg" direction="down" />

@@ -81,7 +81,7 @@ export const ProfileContainer: FC<Props> = ({ did }) => {
           did={did}
           onClearUser={handleClearUser}
         >
-          <div className="absolute bottom-0 pb-12">
+          <div className="absolute bottom-6 pb-12">
             <div className="relative mx-auto cursor-pointer hidden sm:block">
               <button onClick={() => scrollToInfo()}>
                 <Arrow size="lg" direction="down" />
