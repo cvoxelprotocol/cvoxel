@@ -1,6 +1,4 @@
-import VisualizerPresenter from "@/components/CVoxel/visualizerPresenter";
 import { useWorkCredentialDetailBox } from "@/hooks/useCVoxelDetailBox";
-import { Canvas } from "@react-three/fiber";
 import { FC, useMemo, ReactNode } from "react";
 import Router from "next/router";
 import { SearchData } from "@/components/common/search/Search";
@@ -9,6 +7,14 @@ import { Button } from "@/components/common/button/Button";
 import { WorkCredentialWithId } from "vess-sdk";
 import { MainProfileCard } from "@/components/Profile/MainProfileCard";
 import { UserSearchWithProfile } from "@/components/common/search/UserSearchWithProfile";
+import dynamic from "next/dynamic";
+
+const VisualizerPresenterWrapper = dynamic(
+  () => import("@/components/CVoxel/VisualizerPresenterWrapper"),
+  {
+    ssr: false,
+  }
+);
 
 type props = {
   did: string;
@@ -33,20 +39,10 @@ export const CVoxelsContainer: FC<props> = ({
 
   const VisualizerPresenterMemo = useMemo(
     () => (
-      <Canvas shadows>
-        <VisualizerPresenter
-          workCredentials={content}
-          showDetailBox={showDetailBox}
-        />
-      </Canvas>
+      <VisualizerPresenterWrapper content={content} showDetailBox={showDetailBox} />
     ),
     [content,showDetailBox]
   );
-
-  const handleClickNamePlate = () => {
-    if (!did) return;
-    Router.push(`/${did}`);
-  };
 
   const handleSearch = (data: SearchData) => {
     if (!data.value) return;

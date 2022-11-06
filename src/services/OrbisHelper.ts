@@ -1,17 +1,5 @@
 import { Orbis } from "@orbisclub/orbis-sdk";
 
-export const fetchOrbisProfile = async (
-  did?: string
-): Promise<OrbisProfileDetail | undefined> => {
-  if (!did) return undefined;
-  let orbis = new Orbis();
-  const res = await orbis.getProfile(did.toLowerCase());
-  const profile: OrbisProfile = res.data as OrbisProfile;
-  if (!profile || !profile.details || !profile.details.profile)
-    return undefined;
-  return profile.details.profile;
-};
-
 export type OrbisProfile = {
   did: string;
   details: OrbisDetails;
@@ -29,4 +17,33 @@ export type OrbisProfileDetail = {
   username: string;
   description: string;
   pfp: string;
+};
+
+export class OrbisHelper {
+  orbis = undefined as Orbis | undefined;
+
+  constructor() {
+    this.orbis = new Orbis();
+  }
+
+  async fetchOrbisProfile(
+    did?: string
+  ): Promise<OrbisProfileDetail | undefined> {
+    if (!did || !this.orbis) return undefined;
+    const res = await this.orbis.getProfile(did.toLowerCase());
+    const profile: OrbisProfile = res.data as OrbisProfile;
+    if (!profile || !profile.details || !profile.details.profile)
+      return undefined;
+    return profile.details.profile;
+  }
+}
+
+let orbisHelper: OrbisHelper;
+
+export const getOrbisHelper = (): OrbisHelper => {
+  if (orbisHelper) {
+    return orbisHelper;
+  }
+  orbisHelper = new OrbisHelper();
+  return orbisHelper;
 };
