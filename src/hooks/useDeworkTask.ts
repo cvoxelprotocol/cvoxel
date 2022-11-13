@@ -21,7 +21,7 @@ export const useDeworkTask = () => {
 
   const { data, isLoading } = useQuery<WorkSubjectFromDework[]>(
     ["getDeworkTaskListFromFB", account],
-    () => getDeworkTaskListFromFB(account),
+    () => getDeworkTaskListFromFB(account?.toLowerCase()),
     {
       enabled: !!account,
       staleTime: Infinity,
@@ -72,7 +72,7 @@ export const useDeworkTask = () => {
 
   const refetchDeworkTasks = async () => {
     if (!account) return;
-    const res = await deworkService.refetchDeworkTasks(account);
+    const res = await deworkService.refetchDeworkTasks(account.toLowerCase());
     if (res) {
       queryClient.setQueryData<WorkSubjectFromDework[]>(
         "getDeworkTaskListFromFB",
@@ -84,7 +84,11 @@ export const useDeworkTask = () => {
 
   const updateGenre = async (id: string, genre: string) => {
     if (!account) return;
-    await updateGenreofDeworkTask({ account, id, genre });
+    await updateGenreofDeworkTask({
+      account: account.toLowerCase(),
+      id,
+      genre,
+    });
   };
 
   const issueCRDLsFromDework = async (param: issueCRDLFromDeworkParam) => {

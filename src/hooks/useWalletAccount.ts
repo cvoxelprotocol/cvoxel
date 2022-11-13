@@ -4,17 +4,21 @@ import { DIDContext } from "@/context/DIDContext";
 export const useWalletAccount = () => {
   const { connectDID, disConnectDID } = useContext(DIDContext);
 
-  const connectWallet = async () => {
+  const connect = async () => {
     if (!connectDID) return;
-    await connectDID();
+    try {
+      await connectDID();
+    } catch (error) {
+      console.log("error:", error);
+    }
   };
 
-  const disconnectWallet = async () => {
+  const disconnect = async () => {
     if (!disConnectDID) return;
     await disConnectDID();
   };
   return {
-    connectWallet,
-    disconnectWallet,
+    connect,
+    disconnect,
   };
 };

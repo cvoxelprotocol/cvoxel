@@ -111,7 +111,9 @@ export const convertV1DataToCRDLOnCeramic = (
   const isPayee = address.toLowerCase() === v1.to.toLowerCase();
   const holderSig = isPayee ? v1.toSig || "" : v1.fromSig || "";
   const partnerSig = isPayee ? v1.fromSig || "" : v1.toSig || "";
-  const partnerSigner = isPayee ? v1.fromSigner || "" : v1.toSigner || "";
+  const partnerSigner = isPayee
+    ? v1.fromSigner?.toLowerCase() || ""
+    : v1.toSigner?.toLowerCase() || "";
 
   if (!holderSig) return null;
 

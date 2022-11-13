@@ -22,13 +22,17 @@ import {
   WorkCredential,
   WorkSubject,
   WorkCredentialWithId,
+  verifyWorkCredential,
+  getPkhDIDFromAddress,
+  getAddressFromPkh,
 } from "vess-sdk";
 import { getFiat } from "@/lib/firebase/functions/fiat";
 import { getNetworkSymbol } from "@/utils/networkUtil";
 import { convertDateToTimestampStr } from "@/utils/dateUtil";
 import { convertValidworkSubjectTypedData } from "@/utils/workCredentialUtil";
-import { getPkhDIDFromAddress } from "vess-sdk";
 import { CERAMIC_NETWORK } from "@/constants/common";
+import { useContext, useState } from "react";
+import { DIDContext } from "@/context/DIDContext";
 
 export const useFetchWorkCredential = (streamId?: string) => {
   // const vess = getVESS()
@@ -49,6 +53,7 @@ export const useWorkCredentials = (did?: string) => {
   // const vess = getVESS()
   const vess = getVESS(CERAMIC_NETWORK !== "mainnet");
   const queryClient = useQueryClient();
+  const { did: myDid, originalAddress } = useContext(DIDContext);
 
   const {
     data: workCredentials,
@@ -78,8 +83,23 @@ export const useWorkCredentials = (did?: string) => {
     },
   });
 
+  const migrateAccount = async (): Promise<void> => {
+    console.log("migrateAccount func");
+    if (myDid !== did || !originalAddress) return;
+    if (!workCredentials || workCredentials.length > 0) return;
+    const oldDid = `did:pkh:eip155:1:${originalAddress}`;
+    const oldCRDLs = await vess.getHeldWorkCredentialStreamIds(oldDid);
+    if (oldCRDLs.length > 0) {
+      console.log("start to migrate");
+      await vess.setHeldWorkCredentials(oldCRDLs);
+    }
+    console.log("migrateAccount end");
+    queryClient.invalidateQueries("heldWorkCredentials");
+  };
+
   return {
     workCredentials,
+    migrateAccount,
     isLoading,
     deleteCRDLs,
     refetch,
@@ -248,7 +268,7 @@ export const useWorkCredential = () => {
 
       showLoading();
 
-      await vess.signWorkCredential(id, crdl, address);
+      await vess.signWorkCredential(id, crdl, getPkhDIDFromAddress(address));
 
       closeLoading();
       lancInfo(CVOXEL_VERIFY_SUCCEED);
@@ -297,5 +317,35 @@ export const useWorkCredential = () => {
     }
   };
 
-  return { publish, signCredential, update, updateWithoutNotify, issueStatus };
+  const verify = async (work: WorkCredential) => {
+    if (work.signature?.agentSig && work.signature.agentSigner) {
+      console.log("verify agent sig");
+      const address = getAddressFromPkh(work.signature.agentSigner);
+      const res = await verifyWorkCredential(
+        work,
+        address,
+        work.signature?.agentSig
+      );
+      console.log(`verify: ${res}`);
+    } else if (work.signature?.holderSig) {
+      console.log("verify holder sig");
+      const address = getAddressFromPkh(work.id);
+      if (!address) return;
+      const res = await verifyWorkCredential(
+        work,
+        address,
+        work.signature?.holderSig
+      );
+      console.log(`verify: ${res}`);
+    }
+  };
+
+  return {
+    publish,
+    signCredential,
+    update,
+    updateWithoutNotify,
+    issueStatus,
+    verify,
+  };
 };

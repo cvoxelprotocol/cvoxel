@@ -19,10 +19,10 @@ export const MainProfileCard: FC<Props> = ({did, type = "voxel", showNav = true}
 
 
   return (
-    <div className="flex items-center space-x-0.5 max-w-[380px]">
+    <div className="flex items-center max-w-[380px]">
       <div
-        className={clsx("bg-light-surface-1 dark:bg-dark-surface-1 border rounded-2xl w-80 sm:w-96 overflow-scroll border-light-primary", showNav && "min-h-[120px]")}>
-          <div className={clsx("w-full", showNav && "grid grid-cols-5")}>
+        className={clsx("bg-light-surface-1 dark:bg-dark-surface-1 border rounded-2xl overflow-hidden border-light-primary w-full", showNav && "min-h-[120px]")}>
+          <div className={clsx("w-full h-full", showNav && "grid grid-cols-5")}>
             <div className={clsx("py-5 px-4 sm:px-6", showNav && "col-span-4 space-y-1")}>
               <div className="w-full flex items-center space-x-2">
                 <div
@@ -59,7 +59,7 @@ export const MainProfileCard: FC<Props> = ({did, type = "voxel", showNav = true}
               </div>
           </div>
           {showNav && (
-            <div className={clsx("col-span-1 bg-light-surface-3 dark:bg-dark-surface-3 flex flex-col items-center justify-center space-y-2 min-h-[120px]", showNav && "min-h-[120px]")}>
+            <div className={clsx("col-span-1 bg-light-surface-3 dark:bg-dark-surface-3 flex flex-col items-center justify-center space-y-2", showNav && "min-h-[120px]")}>
               <Link href={`/${did}`}>
                 <div className={clsx("p-2 flex items-center justify-center w-11 h-11 rounded-full", type==="voxel" ? "bg-light-primary dark:bg-dark-primary" : "bg-transparent")}>
                     <div

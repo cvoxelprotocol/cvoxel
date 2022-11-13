@@ -11,15 +11,19 @@ import {
 } from "@/lib/firebase/store/meta";
 
 export const useOffchainList = () => {
-  const { chainId, account } = useContext(DIDContext);
+  const { chainId, account, originalAddress } = useContext(DIDContext);
 
   const { data: txes, isLoading: txLoading } = useQuery<
     TransactionLogWithChainId[]
-  >(["etherscan", account], () => etherscanTxListFetcher(chainId, account), {
-    enabled: !!account,
-    staleTime: Infinity,
-    cacheTime: 3000000,
-  });
+  >(
+    ["etherscan", originalAddress],
+    () => etherscanTxListFetcher(chainId, originalAddress),
+    {
+      enabled: !!originalAddress,
+      staleTime: Infinity,
+      cacheTime: 3000000,
+    }
+  );
 
   const {
     data: offchainMetaList,
@@ -27,7 +31,7 @@ export const useOffchainList = () => {
     refetch: refetchMeta,
   } = useQuery<WorkCredentialWithId[]>(
     ["offchainCVoxelMeta", account],
-    () => getOffchainDataList(account),
+    () => getOffchainDataList(account?.toLowerCase()),
     {
       enabled: !!account,
       staleTime: Infinity,

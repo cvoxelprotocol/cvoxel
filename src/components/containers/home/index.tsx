@@ -8,7 +8,7 @@ import { useWorkCredentials } from "@/hooks/useWorkCredential";
 
 export const HomeContainer: FC = () => {
   const {did} = useContext(DIDContext)
-  const {workCredentials} = useWorkCredentials(did)
+  const {workCredentials, migrateAccount} = useWorkCredentials(did)
   const myPageContainerRef = useRef<HTMLDivElement>(null);
   const visualContainerRef = useRef<HTMLDivElement>(null);
   const { setTabState } = useTab();
@@ -27,6 +27,12 @@ export const HomeContainer: FC = () => {
       setScreenState("visual")
     }
   },[screenState])
+
+  useEffect(() => {
+    if(workCredentials?.length===0 && did){
+      migrateAccount()
+    }
+  },[workCredentials, did])
 
   const handleCreateNewVoxel = useCallback(() => {
     scrollToInfo()

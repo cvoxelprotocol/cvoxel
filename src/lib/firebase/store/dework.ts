@@ -14,7 +14,11 @@ import { DeworkUser } from "@/interfaces/dework";
 export const getDeworkAuth = (address?: string): Promise<DeworkUser> =>
   new Promise((resolve, reject) => {
     if (!address) return [];
-    getDoc(doc(firestore, "connections", address).withConverter(userConverter))
+    getDoc(
+      doc(firestore, "connections", address?.toLowerCase()).withConverter(
+        userConverter
+      )
+    )
       .then((result) => {
         const doc = result.data() as DeworkUser;
         resolve(doc);
@@ -29,7 +33,7 @@ export const getDeworkTaskListFromFB = (
   new Promise((resolve, reject) => {
     if (!address) return [];
     const q = query(
-      collection(firestore, "deworkTasks", address, "tasks"),
+      collection(firestore, "deworkTasks", address?.toLowerCase(), "tasks"),
       where("streamId", "==", null)
     ).withConverter(converter);
     getDocs(q)
@@ -67,10 +71,12 @@ const isValid = (data: any): data is WorkSubjectFromDework => {
 
 const userConverter = {
   toFirestore(item: DeworkUser): DocumentData {
+    const usr: DeworkUser = { ...item, address: item.address.toLowerCase() };
     return { ...item };
   },
   fromFirestore(snapshot: QueryDocumentSnapshot): DeworkUser {
     let data = snapshot.data();
+    data.address = data.address.toLowerCase();
     if (!isValiduser(data)) {
       console.error(data);
       throw new Error("invalid data");

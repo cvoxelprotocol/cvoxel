@@ -46,7 +46,7 @@ export const ProfileContainer: FC<Props> = ({ did }) => {
   };
 
   const {did:myDid, account} = useContext(DIDContext)
-  const { connectWallet } = useWalletAccount();
+  const { connect } = useWalletAccount();
 
   const handleSearch = (data: SearchData) => {
     if (!data.value) return;
@@ -54,13 +54,6 @@ export const ProfileContainer: FC<Props> = ({ did }) => {
     router.push(`/${link}`);
   };
 
-  const connect = async () => {
-    try {
-      await connectWallet();
-    } catch (error) {
-      console.log("error:", error);
-    }
-  };
   const handleClickNavBackButton = useCallback(() => {
     router.push(router.asPath.split("?")[0]);
   }, [router]);

@@ -10,6 +10,17 @@ import Router from "next/router";
 import { DIDContextProvider } from "@/context/DIDContext";
 import type { DehydratedState } from 'react-query';
 import dynamic from "next/dynamic";
+import "@orbisclub/modules/dist/index.modern.css";
+import "@/styles/orbis.css"
+
+
+
+const OrbisChatWrapper = dynamic(
+  () => import("@/components/orbis/OrbisChatWrapper"),
+  {
+    ssr: false,
+  }
+);
 
 const LoadingModal = dynamic(
   () => import("@/components/common/LoadingModal"),
@@ -60,6 +71,7 @@ export default function App({ Component, pageProps }: AppProps<{ dehydratedState
                     <BaseLayout>
                       <Component {...props} />
                     </BaseLayout>
+                    <OrbisChatWrapper />
                   </DIDContextProvider>
                   {isLoading && <LoadingModal />}
                 </ThemeProvider>

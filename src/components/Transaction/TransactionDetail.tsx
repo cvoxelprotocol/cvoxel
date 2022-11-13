@@ -48,8 +48,8 @@ export const TransactionDetail: FC<TransactionDetailProps> = ({
 
   const claimable = useMemo(() => {
     if (!account || !offchainItem.subject.tx) return false;
-    const myDID = getPkhDIDFromAddress(account)
-    return myDID != offchainItem.subject.work?.id && (account === offchainItem.subject.tx.from?.toLowerCase() || account === offchainItem.subject.tx.to?.toLowerCase())
+    const myDID = getPkhDIDFromAddress(account.toLowerCase())
+    return myDID != offchainItem.subject.work?.id && (account.toLowerCase() === offchainItem.subject.tx.from?.toLowerCase() || account.toLowerCase() === offchainItem.subject.tx.to?.toLowerCase())
       
   }, [account, offchainItem.subject.tx]);
 

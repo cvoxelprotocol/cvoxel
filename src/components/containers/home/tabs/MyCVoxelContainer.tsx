@@ -29,8 +29,8 @@ import { isMobile, isTablet } from "react-device-detect";
 
 export const MyCVoxelContainer: FC = () => {
   const {did, account} = useContext(DIDContext)
-  const { offchainMetaList, txLoading } = useOffchainList();
-  const {workCredentials} = useWorkCredentials(did)
+  const { offchainMetaList } = useOffchainList();
+  const {workCredentials, isLoading} = useWorkCredentials(did)
   const { setTabState } = useTab();
 
   // TODO: This is temporary solution because of useTileDoc bug
@@ -127,7 +127,7 @@ export const MyCVoxelContainer: FC = () => {
           </div>
         ) : (
           <CVoxelsPresenter>
-            {!txLoading && (!sortCredentials || sortCredentials.length === 0) && (
+            {!isLoading && (!sortCredentials || sortCredentials.length === 0) && (
               <div className="mx-auto">
                 <NoItemPresenter text="No Voxels yet" />
                 {account && (
@@ -140,8 +140,8 @@ export const MyCVoxelContainer: FC = () => {
               </div>
             )}
 
-            {txLoading && <CommonLoading />}
-            {!txLoading && filteredVoxels && (
+            {isLoading && <CommonLoading />}
+            {!isLoading && filteredVoxels && (
               <div ref={parentRef} className={"overflow-auto h-full w-full"}>
                 <div
                   style={{
@@ -178,7 +178,7 @@ export const MyCVoxelContainer: FC = () => {
       </>
     ),
     [
-      txLoading,
+      isLoading,
       filteredVoxels,
       account,
       offchainMetaList,

@@ -9,6 +9,8 @@ import {
 } from "@/constants/toastMessage";
 import { getVESS } from "vess-sdk";
 import { CERAMIC_NETWORK } from "@/constants/common";
+import { useContext } from "react";
+import { DIDContext } from "@/context/DIDContext";
 
 export const useHeldEventAttendances = (did?: string) => {
   // const vess = getVESS()
@@ -16,6 +18,7 @@ export const useHeldEventAttendances = (did?: string) => {
   const queryClient = useQueryClient();
   const { lancInfo, lancError } = useToast();
   const { showLoading, closeLoading } = useModal();
+  const { did: myDid, originalAddress } = useContext(DIDContext);
 
   const { mutateAsync: setHeldEventAttendances } = useMutation<
     void,
@@ -52,6 +55,20 @@ export const useHeldEventAttendances = (did?: string) => {
     }
   );
 
+  const migrateHeldEvent = async (): Promise<void> => {
+    if (myDid !== did || !originalAddress) return;
+    if (!HeldEventAttendances || HeldEventAttendances.length > 0) return;
+    const oldDid = `did:pkh:eip155:1:${originalAddress}`;
+    const oldCRDLs =
+      await vess.getHeldEventAttendanceVerifiableCredentialStreamIds(oldDid);
+    if (oldCRDLs.length > 0) {
+      console.log("migrateHeldEvent func");
+      await vess.setHeldEventAttendanceVerifiableCredentials(oldCRDLs);
+      console.log("migrateAccount end");
+    }
+    queryClient.invalidateQueries("HeldEventAttendances");
+  };
+
   const { data: HeldEventAttendancesFromDB } = useQuery<
     EventAttendanceWithId[] | null
   >(
@@ -64,6 +81,7 @@ export const useHeldEventAttendances = (did?: string) => {
     }
   );
   return {
+    migrateHeldEvent,
     HeldEventAttendances,
     isFetchingHeldEventAttendances,
     setHeldEventAttendances,

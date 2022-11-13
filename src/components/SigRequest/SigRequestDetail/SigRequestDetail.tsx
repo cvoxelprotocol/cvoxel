@@ -40,7 +40,7 @@ export const SigRequestDetail: FC<Props> = ({
   isSinglePageForVerify = false
 }) => {
   const {did, account} = useContext(DIDContext)
-  const { connectWallet } = useWalletAccount();
+  const { connect } = useWalletAccount();
   const subject = useMemo(() => {
     return offchainItem.subject
   },[offchainItem])
@@ -69,14 +69,6 @@ export const SigRequestDetail: FC<Props> = ({
     return getExploreLink(offchainItem.subject.tx?.txHash, offchainItem.subject.tx?.networkId);
   }, [offchainItem.subject.tx?.txHash, offchainItem.subject.tx?.networkId]);
 
-  const connect = async () => {
-    try {
-      await connectWallet();
-    } catch (error) {
-      console.log("error:", error);
-    }
-  };
-
 
   // convert display
   const { displayVoxel } = useVoxelStyler(offchainItem);
@@ -90,15 +82,15 @@ export const SigRequestDetail: FC<Props> = ({
   const PcDirection = () => {
     return isPayer ? (
       <div className="flex items-center space-x-3">
-        <NamePlate address={offchainItem.subject.tx?.from ?? ""} isMe={isMe(offchainItem.subject.tx?.from)} hasBackgroundColor />
+        <NamePlate address={offchainItem.subject.tx?.from?.toLowerCase() ?? ""} isMe={isMe(offchainItem.subject.tx?.from?.toLowerCase())} hasBackgroundColor />
         <RightArrow />
-        <NamePlate address={offchainItem.subject.tx?.to ?? ""} />
+        <NamePlate address={offchainItem.subject.tx?.to?.toLowerCase() ?? ""} />
       </div>
     ) : (
       <div className="flex items-center space-x-3">
-        <NamePlate address={offchainItem.subject.tx?.to ?? ""} isMe={isMe(offchainItem.subject.tx?.to)} hasBackgroundColor />
+        <NamePlate address={offchainItem.subject.tx?.to?.toLowerCase() ?? ""} isMe={isMe(offchainItem.subject.tx?.to?.toLowerCase())} hasBackgroundColor />
         <LeftArrow />
-        <NamePlate address={offchainItem.subject.tx?.from ?? ""} />
+        <NamePlate address={offchainItem.subject.tx?.from?.toLowerCase() ?? ""} />
       </div>
     );
   };
@@ -108,13 +100,13 @@ export const SigRequestDetail: FC<Props> = ({
       <div className="flex items-center space-x-3">
         <NamePlate did={did} isMe hasBackgroundColor withoutIcon />
         <RightArrow />
-        <NamePlate address={offchainItem.subject.tx?.to ?? ""} withoutIcon />
+        <NamePlate address={offchainItem.subject.tx?.to?.toLowerCase() ?? ""} withoutIcon />
       </div>
     ) : (
       <div className="flex items-center space-x-3">
         <NamePlate did={did} isMe hasBackgroundColor withoutIcon />
         <LeftArrow />
-        <NamePlate address={offchainItem.subject.tx?.from ?? ""} withoutIcon />
+        <NamePlate address={offchainItem.subject.tx?.from?.toLowerCase() ?? ""} withoutIcon />
       </div>
     );
   };

@@ -24,7 +24,7 @@ export const getServerSideProps: GetServerSideProps<
   if (isDIDstring(did)) {
     support = "supported";
     return {
-      props: { did, support },
+      props: { did: did.toLowerCase(), support },
     };
   } else if (isEthereumAddress(did)) {
     // If an Ethereum address is provided, redirect to CAIP-10 URL
