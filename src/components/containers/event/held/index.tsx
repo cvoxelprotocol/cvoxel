@@ -36,7 +36,7 @@ export const HeldEventContainer: FC<HeldEventContainerProps> = ({did}) => {
                         {!HeldEventAttendances || HeldEventAttendances.length===0 ? (
                             <div className="w-full text-center flex flex-col items-center">
                                 <AttendanceIcon />
-                                <p className="py-2 font-bold text-xl">Your Event Attendance Credentials</p>
+                                <p className="py-2 font-bold text-xl">Event Attendance Credentials</p>
                             </div>
                         ): (
                             <div className="w-full flex justify-center flex-wrap">

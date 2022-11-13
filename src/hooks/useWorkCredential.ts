@@ -54,12 +54,12 @@ export const useWorkCredentials = (did?: string) => {
   const vess = getVESS(CERAMIC_NETWORK !== "mainnet");
   const queryClient = useQueryClient();
   const { did: myDid, originalAddress } = useContext(DIDContext);
-
+  const { showLoading, closeLoading } = useModal();
   const {
     data: workCredentials,
     isLoading,
     refetch,
-  } = useQuery<WorkCredentialWithId[] | null>(
+  } = useQuery<WorkCredentialWithId[]>(
     ["heldWorkCredentials", did],
     () => vess.getHeldWorkCredentials(did),
     {
@@ -91,10 +91,12 @@ export const useWorkCredentials = (did?: string) => {
     const oldCRDLs = await vess.getHeldWorkCredentialStreamIds(oldDid);
     if (oldCRDLs.length > 0) {
       console.log("start to migrate");
+      showLoading();
       await vess.setHeldWorkCredentials(oldCRDLs);
+      closeLoading();
+      queryClient.invalidateQueries("heldWorkCredentials");
+      console.log("migrateAccount end");
     }
-    console.log("migrateAccount end");
-    queryClient.invalidateQueries("heldWorkCredentials");
   };
 
   return {

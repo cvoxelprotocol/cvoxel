@@ -8,6 +8,7 @@ import { WorkCredentialWithId } from "vess-sdk";
 import { MainProfileCard } from "@/components/Profile/MainProfileCard";
 import { UserSearchWithProfile } from "@/components/common/search/UserSearchWithProfile";
 import dynamic from "next/dynamic";
+import { CommonLoading } from "@/components/common/CommonLoading";
 
 const VisualizerPresenterWrapper = dynamic(
   () => import("@/components/CVoxel/VisualizerPresenterWrapper"),
@@ -18,7 +19,8 @@ const VisualizerPresenterWrapper = dynamic(
 
 type props = {
   did: string;
-  content?: WorkCredentialWithId[] | null;
+  isLoading: boolean
+  content: WorkCredentialWithId[]
   children?: ReactNode;
   mode?: "nameplate" | "search";
   isMe?: boolean
@@ -27,6 +29,7 @@ type props = {
 };
 export const CVoxelsContainer: FC<props> = ({
   did,
+  isLoading = false,
   content,
   children,
   mode = "nameplate",
@@ -52,19 +55,25 @@ export const CVoxelsContainer: FC<props> = ({
 
   return (
     <div className="flex flex-col items-center justify-center w-full h-screen md:pb-12">
-      <div className="flex w-full items-center justify-center h-[350px] sm:h-[450px] relative max-w-[720px]">
-        {isMe && (!content || content.length===0) ? (
-          <div className="w-full">
-            <NoCRDLItem />
-              <Button
-                text="Create New Voxel"
-                color="primary"
-                onClick={moveToCreateSection}
-              />
-          </div>
+      <div className="flex w-full items-center justify-center h-[350px] sm:h-[450px] relative max-w-[280px] sm:max-w-[720px] ">
+        {(isLoading) ? (
+          <CommonLoading />
         ): (
           <>
-            {VisualizerPresenterMemo}
+            {isMe && content.length===0 ? (
+              <div className="w-full">
+                <NoCRDLItem />
+                  <Button
+                    text="Create New Voxel"
+                    color="primary"
+                    onClick={moveToCreateSection}
+                  />
+              </div>
+            ): (
+              <>
+                {VisualizerPresenterMemo}
+              </>
+            )}
           </>
         )}
       </div>

@@ -8,7 +8,7 @@ import { useWorkCredentials } from "@/hooks/useWorkCredential";
 
 export const HomeContainer: FC = () => {
   const {did} = useContext(DIDContext)
-  const {workCredentials, migrateAccount} = useWorkCredentials(did)
+  const {workCredentials, migrateAccount, isLoading} = useWorkCredentials(did)
   const myPageContainerRef = useRef<HTMLDivElement>(null);
   const visualContainerRef = useRef<HTMLDivElement>(null);
   const { setTabState } = useTab();
@@ -45,7 +45,7 @@ export const HomeContainer: FC = () => {
         className="relative snap-start snap-always min-h-screen"
         ref={visualContainerRef}
       >
-        <CVoxelsContainer did={did || ""} content={workCredentials} isMe moveToCreateSection={handleCreateNewVoxel}>
+        <CVoxelsContainer did={did || ""} content={workCredentials || []} isLoading={isLoading} isMe moveToCreateSection={handleCreateNewVoxel}>
           <div className="absolute bottom-10 pb-12">
             <div className="relative mx-auto cursor-pointer hidden sm:block">
               <button onClick={() => scrollToInfo()}>

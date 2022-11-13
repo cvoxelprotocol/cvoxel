@@ -62,11 +62,13 @@ export const useHeldEventAttendances = (did?: string) => {
     const oldCRDLs =
       await vess.getHeldEventAttendanceVerifiableCredentialStreamIds(oldDid);
     if (oldCRDLs.length > 0) {
+      showLoading();
       console.log("migrateHeldEvent func");
       await vess.setHeldEventAttendanceVerifiableCredentials(oldCRDLs);
+      closeLoading();
+      queryClient.invalidateQueries("HeldEventAttendances");
       console.log("migrateAccount end");
     }
-    queryClient.invalidateQueries("HeldEventAttendances");
   };
 
   const { data: HeldEventAttendancesFromDB } = useQuery<

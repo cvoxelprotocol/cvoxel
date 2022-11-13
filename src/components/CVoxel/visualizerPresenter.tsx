@@ -17,7 +17,7 @@ type ShowDetailBox = ({
 
 // NOTE: useCVoxelDetailBox cannot be called by VisualPresenter, so it is passed by props.
 type VisualizerPresenterProps = {
-  workCredentials?: WorkCredentialWithId[] | null
+  workCredentials: WorkCredentialWithId[]
   showDetailBox?: ShowDetailBox;
   zoom?: number;
   disableHover?: boolean;
@@ -30,7 +30,7 @@ const VisualizerPresenter: FC<VisualizerPresenterProps> = ({
   disableHover = false,
   workCredentials
 }) => {
-  const { displayVoxels } = useMultipleVoxelStyler(workCredentials && workCredentials.length>0 ? workCredentials : initCVoxel);
+  const { displayVoxels } = useMultipleVoxelStyler(workCredentials.length>0 ? workCredentials : initCVoxel);
 
   const cCollectionRef = useRef<THREE.Group>(new THREE.Group());
 

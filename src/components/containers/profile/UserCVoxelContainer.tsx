@@ -46,7 +46,7 @@ export const UserCVoxelContainer: FC<UserCVoxelContainerProps> = ({
   const rowVirtualizer = useVirtualizer({
     count: sortCredentials.length,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => (((isMobile || isTablet) ? 15 : 13) + 1) * 16, // NOTE: (item + margin) * rem
+    estimateSize: () => (((isMobile || isTablet) ? 15 : 12) + 1) * 16, // NOTE: (item + margin) * rem
   });
 
   return useMemo(

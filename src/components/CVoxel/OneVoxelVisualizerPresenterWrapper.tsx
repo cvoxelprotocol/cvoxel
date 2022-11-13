@@ -19,6 +19,6 @@ export default function OneVoxelVisualizerPresenterWrapper(props: OneVoxelVisual
               disableHover={props.disableHover}
               voxelForDisplay={props.voxelForDisplay}
             />
-          </Canvas>
+        </Canvas>
     )
 }

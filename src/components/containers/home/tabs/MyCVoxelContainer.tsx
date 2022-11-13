@@ -103,7 +103,7 @@ export const MyCVoxelContainer: FC = () => {
   const rowVirtualizer = useVirtualizer({
     count: filteredVoxels.length,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => (((isMobile || isTablet) ? 15 : 13) + 1) * 16, // NOTE: (item + margin) * rem
+    estimateSize: () => (((isMobile || isTablet) ? 15 : 12) + 1) * 16, // NOTE: (item + margin) * rem
   });
 
   return useMemo(

@@ -43,7 +43,7 @@ const VoxelListItem: FC<Props> = ({ workCredential }) => {
           {detailItem && (
             <OneVoxelVisualizerPresenterWrapper zoom={6} disableHover workCredential={workCredential} />
           )}
-
+          
           {/* TODO: show voxel state */}
           {/*<div className="absolute bottom-2 left-0 right-0">*/}
           {/*  <div className="text-sm text-light-on-primary-container dark:text-dark-on-primary-container bg-light-primary-container dark:bg-dark-primary-container inline-block px-2 py-0.5 rounded-full border border-light-secondary font-medium">*/}
@@ -114,6 +114,7 @@ const VoxelListItem: FC<Props> = ({ workCredential }) => {
         {detailItem && (
           <OneVoxelVisualizerPresenterWrapper zoom={6} disableHover workCredential={workCredential} />
           )}
+          <div className="absolute top-0 right-0 left-0 bottom-0 z-10"></div>
 
           {/* TODO: show voxel state */}
           {/*<div className="absolute top-2 left-2">*/}
@@ -130,7 +131,7 @@ const VoxelListItem: FC<Props> = ({ workCredential }) => {
           </div>
         </div>
 
-        <div className="text-left px-8 py-3">
+        <div className="text-left px-8 pt-3 h-[120px]">
           {subject?.work?.issuedAt && (
             <div className="text-light-on-surface dark:text-dark-on-surface text-sm">
               {convertTimestampToDateStr(subject?.work?.issuedAt)}

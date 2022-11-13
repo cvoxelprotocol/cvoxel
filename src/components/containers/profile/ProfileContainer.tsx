@@ -17,7 +17,7 @@ type Props = {
 };
 
 export const ProfileContainer: FC<Props> = ({ did }) => {
-  const {workCredentials} = useWorkCredentials(did)
+  const {workCredentials, isLoading} = useWorkCredentials(did)
   const router = useRouter();
 
   const isTopPage = useMemo(() => {
@@ -69,8 +69,9 @@ export const ProfileContainer: FC<Props> = ({ did }) => {
         ref={visualContainerRef}
       >
         <CVoxelsContainer
+          isLoading={isLoading}
           mode="search"
-          content={workCredentials}
+          content={workCredentials || []}
           did={did}
           onClearUser={handleClearUser}
         >

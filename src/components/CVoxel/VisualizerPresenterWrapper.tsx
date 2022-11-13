@@ -7,7 +7,7 @@ type Props = {
         item: WorkCredentialWithId;
         offchainItems?: WorkCredentialWithId[] | undefined;
     }) => void,
-    content?: WorkCredentialWithId[] | null
+    content: WorkCredentialWithId[]
 }
 export default function VisualizerPresenterWrapper(props: Props) {
     return (
