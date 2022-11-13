@@ -67,6 +67,7 @@ export const Meta: FC<MetaData> = ({
         content="summary_large_image"
         key="twittercard"
       />
+      <meta name='viewport' content='initial-scale=1, viewport-fit=cover' />
       <GATracking trackingId={process.env.NEXT_PUBLIC_GA_ID} />
     </Head>
   );

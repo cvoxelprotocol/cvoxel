@@ -53,7 +53,7 @@ export const HeldEventContainer: FC<HeldEventContainerProps> = ({did}) => {
                 )}
             </div>
             {did && (
-                <div className="flex-none mt-6 w-full max-w-[720px]">
+                <div className="flex-none mt-6 w-full max-w-[720px] mb-14">
                     <div className="w-fit mx-auto">
                         <MainProfileCard did={did} type="event"/>
                     </div>

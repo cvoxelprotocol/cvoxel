@@ -36,9 +36,9 @@ if (app.name && typeof window !== "undefined") {
   analytics = getAnalytics(app);
 }
 
-if (process.env.NODE_ENV !== "production") {
-  connectFunctionsEmulator(functions, "localhost", 5111);
-  connectFirestoreEmulator(firestore, "localhost", 8081);
-}
+// if (process.env.NODE_ENV !== "production") {
+//   connectFunctionsEmulator(functions, "localhost", 5111);
+//   connectFirestoreEmulator(firestore, "localhost", 8081);
+// }
 
 export { firestore, functions, auth, config, analytics, app };
