@@ -16,8 +16,8 @@ type MenuButtonProps = {
   onClick: () => void;
 };
 
-const PROXY_DID = "did:pkh:eip155:1:0x1Cd36a9e09575d7ca3660763990F082D3A7e4919"
-const ADMIN_DID = "did:pkh:eip155:1:0xdE695CBb6ec0CF3f4C9564070bAeB032552C5111"
+const PROXY_DID = "did:pkh:eip155:1:0x1cd36a9e09575d7ca3660763990f082d3a7e4919"
+const ADMIN_DID = "did:pkh:eip155:1:0xde695cbb6ec0cf3f4c9564070baeb032552c5111"
 
 function MenuButton({ label, ...props }: MenuButtonProps) {
   return (
