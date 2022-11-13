@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import AttendanceIcon from "@/components/common/event/attendance-icon.svg"
 import { MainProfileCard } from "@/components/Profile/MainProfileCard";
 import { useHeldEventAttendances } from "@/hooks/useHeldEventAttendances";
@@ -11,8 +11,14 @@ type HeldEventContainerProps = {
     did: string
 }
 export const HeldEventContainer: FC<HeldEventContainerProps> = ({did}) => {
-  const {HeldEventAttendances, isFetchingHeldEventAttendances} = useHeldEventAttendances(did)
+  const {HeldEventAttendances, isFetchingHeldEventAttendances, migrateHeldEvent} = useHeldEventAttendances(did)
   const router = useRouter()
+
+  useEffect(() => {
+    if(HeldEventAttendances?.length===0 && did){
+        migrateHeldEvent()
+    }
+  },[HeldEventAttendances, did])
 
   const goToAttendancePage = (item:EventAttendanceWithId) => {
     router.push(`/event/attendance/${removeCeramicPrefix(item.ceramicId)}`)

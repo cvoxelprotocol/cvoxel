@@ -20,14 +20,18 @@ export const useDework = () => {
   const [deworkAuth, setDeworkAuth] = useStateDeworkAuth();
 
   const loginDework = async (address: string) => {
-    const auth = await getDeworkAuth(address);
+    const auth = await getDeworkAuth(address?.toLowerCase());
     setDeworkAuth(auth);
   };
 
   const execDeworkAuth = async (name: string) => {
     if (!account) return null;
     const nonce = Date.now().toString();
-    const auth = await deworkService.exexAuth(name, nonce, account);
+    const auth = await deworkService.exexAuth(
+      name,
+      nonce,
+      account.toLowerCase()
+    );
     setDeworkAuth(auth);
     return auth;
   };
@@ -36,7 +40,10 @@ export const useDework = () => {
     if (!account) return null;
     try {
       showLoading();
-      const subjects = await deworkService.getDeworkTasks(account, id);
+      const subjects = await deworkService.getDeworkTasks(
+        account.toLowerCase(),
+        id
+      );
       return subjects;
     } catch (error) {
       closeLoading();

@@ -6,7 +6,7 @@ export const useENS = (address?: string) => {
 
   const { data: ens, isLoading: ensLoading } = useQuery<string>(
     ["ENS", address],
-    () => etherService.getDisplayENS(address),
+    () => etherService.getDisplayENS(address?.toLowerCase()),
     {
       enabled: !!address,
       staleTime: Infinity,

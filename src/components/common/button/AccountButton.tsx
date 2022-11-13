@@ -32,7 +32,7 @@ function MenuButton({ label, ...props }: MenuButtonProps) {
 export default function AccountButton() {
   const {did, account, connection} = useContext(DIDContext)
   const {profile} = useSocialAccount(did);
-  const { connectWallet, disconnectWallet } = useWalletAccount();
+  const { connect, disconnect } = useWalletAccount();
   
   const router = useRouter();
   const {deworkAuth,setDeworkConnectOpen, setDeworkTaskListOpen} = useDework()
@@ -48,9 +48,9 @@ export default function AccountButton() {
   };
 
   const [isConnect, setIsConnect] = useState<boolean>(false);
-  const connect = async () => {
+  const handleConnect = async () => {
     try {
-      await connectWallet();
+      await connect();
       setIsConnect(true);
     } catch (error) {
       console.log("error:", error);
@@ -59,7 +59,7 @@ export default function AccountButton() {
 
   useEffect(() => {
     if (isConnect && !!account && router.asPath==="/") {
-      router.push(`/${account}`);
+      router.push(`/${account.toLowerCase()}`);
     }
   }, [isConnect, account]);
 
@@ -75,7 +75,7 @@ export default function AccountButton() {
       {did && (did === PROXY_DID || did === ADMIN_DID) && (
         <MenuButton label="Workspace" onClick={() => goToWorkSpaceList()} />
       )}
-      <MenuButton label="Disconnect" onClick={() => disconnectWallet()} />
+      <MenuButton label="Disconnect" onClick={() => disconnect()} />
     </>
 
     const content = (
@@ -115,6 +115,6 @@ export default function AccountButton() {
   return connection === "connecting" ? (
     <DisplayAvatar label="Connecting..." loading hiddenLabelOnSp={true} />
   ) : (
-    <Button text="Connect Wallet" onClick={() => connect()} color="primary" />
+    <Button text="Connect Wallet" onClick={() => handleConnect()} color="primary" />
   );
 }

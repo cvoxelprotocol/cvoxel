@@ -7,11 +7,13 @@ import { isMobile } from "react-device-detect";
 export type connectWalletProps = {
   account?: string;
   chainId?: number;
+  originalAddress?: string;
   provider?: Web3Provider;
 };
 export class Web3ModalService {
   provider = undefined as Web3Provider | undefined;
   account = undefined as string | undefined;
+  originalAddress = undefined as string | undefined;
   chainId = undefined as number | undefined;
   web3Modal = undefined as Web3Modal | undefined;
 
@@ -24,7 +26,8 @@ export class Web3ModalService {
     web3Modal?: Web3Modal
   ) {
     this.provider = provider;
-    this.account = account;
+    this.originalAddress = account;
+    this.account = account?.toLowerCase();
     this.web3Modal = web3Modal;
     this.chainId = chainId;
   }
@@ -40,6 +43,7 @@ export class Web3ModalService {
     if (this.provider && this.account && this.chainId && this.web3Modal) {
       return {
         account: this.account,
+        originalAddress: this.originalAddress,
         chainId: this.chainId,
         provider: this.provider,
       };
@@ -74,10 +78,11 @@ export class Web3ModalService {
       const network = await this.provider.getNetwork();
       this.chainId = network.chainId;
       const signer = this.provider.getSigner();
-      this.account = await signer.getAddress();
-      console.log("this.account", this.account);
+      this.originalAddress = await signer.getAddress();
+      this.account = this.originalAddress.toLowerCase();
       return {
         account: this.account,
+        originalAddress: this.originalAddress,
         chainId: this.chainId,
         provider: this.provider,
       };

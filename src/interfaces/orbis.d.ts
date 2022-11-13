@@ -1,3 +1,4 @@
+declare module "@orbisclub/modules";
 declare module "@orbisclub/orbis-sdk" {
   export class Orbis {
     /**

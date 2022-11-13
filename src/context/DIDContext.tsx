@@ -13,6 +13,7 @@ export interface UserContextState {
     loggedIn: boolean;
     connection: connectionStatusType,
     account: string | undefined;
+    originalAddress: string | undefined
     did: string | undefined
     chainId: number | undefined
     connectDID: (() => Promise<void>) | undefined
@@ -23,6 +24,7 @@ export interface UserContextState {
     loggedIn: false,
     connection: "disconnected",
     account: undefined,
+    originalAddress: undefined,
     did: undefined,
     chainId: undefined,
     connectDID: undefined,
@@ -60,7 +62,7 @@ export const DIDContextProvider = ({ children }: { children: any }) => {
         if (account && provider && !loggedIn) {
             // connect vess sdk
             const env = CERAMIC_NETWORK == "mainnet" ? "mainnet" : "testnet-clay"
-            const session = await vess.connect(provider.provider, env)
+            const {session} = await vess.connect(provider.provider, env)
             setMyDid(session.did.parent)
             etherService.setProvider(provider);
             deworkService.setProvider(provider);
@@ -68,9 +70,6 @@ export const DIDContextProvider = ({ children }: { children: any }) => {
             setConnectionStatus("connected")
             connectEvent(session.id)
             loginDework(account) 
-            //execute v1 data
-            // workCredentialService.executeMigration(account)
-            //set dework user auth
         } else {
           setConnectionStatus("disconnected")
         }
@@ -96,6 +95,7 @@ export const DIDContextProvider = ({ children }: { children: any }) => {
       loggedIn,
       connection: connectionStatus,
       account: web3ModalService.account,
+      originalAddress: web3ModalService.originalAddress,
       did: myDid,
       chainId: web3ModalService.chainId,
       connectDID: connectDID,
