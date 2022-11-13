@@ -3,8 +3,7 @@ import AttendanceIcon from "@/components/common/event/attendance-icon.svg"
 import { MainProfileCard } from "@/components/Profile/MainProfileCard";
 import { useHeldEventAttendances } from "@/hooks/useHeldEventAttendances";
 import { EventAttendanceBadge } from "@/components/Event/EventAttendanceBadge";
-import { removeCeramicPrefix } from "@/utils/workCredentialUtil";
-import { EventAttendanceWithId } from "@/interfaces";
+import { removeCeramicPrefix,EventAttendanceWithId } from "vess-sdk";
 import { useRouter } from "next/router";
 import { CommonLoading } from "@/components/common/CommonLoading";
 
@@ -48,7 +47,7 @@ export const HeldEventContainer: FC<HeldEventContainerProps> = ({did}) => {
                 )}
             </div>
             {did && (
-                <div className="flex-none mt-12 w-full max-w-[720px]">
+                <div className="flex-none mt-6 w-full max-w-[720px]">
                     <div className="w-fit mx-auto">
                         <MainProfileCard did={did} type="event"/>
                     </div>

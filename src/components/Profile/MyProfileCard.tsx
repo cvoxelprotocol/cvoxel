@@ -8,9 +8,9 @@ type MyProfileCardProps = {
 };
 export const MyProfileCard: FC<MyProfileCardProps> = ({ handleClick }) => {
   const {did, account, connection} = useContext(DIDContext)
-  const { socialProfile } = useSocialAccount(did);
+  const { profile } = useSocialAccount(did);
   const getLabel = useMemo(() => {
-    if (socialProfile.displayName !== "") return socialProfile.displayName;
+    if (profile.displayName !== "") return profile.displayName;
     return account || "No DID Found";
   }, [name, did, account]);
 
@@ -26,7 +26,7 @@ export const MyProfileCard: FC<MyProfileCardProps> = ({ handleClick }) => {
       }
       onClick={handleClick}
     >
-      <DisplayAvatar did={did} label={getLabel} src={socialProfile.avatarSrc} />
+      <DisplayAvatar did={did} label={getLabel} src={profile.avatarSrc} />
     </div>
   );
 };

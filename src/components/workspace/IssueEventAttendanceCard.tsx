@@ -1,5 +1,5 @@
 import { useEventAttendance } from "@/hooks/useEventAttendance";
-import { EventWithId} from "@/interfaces";
+import { EventWithId} from "vess-sdk";
 import { faClose, faMinusCircle, faPlusCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { FC } from "react";
@@ -37,7 +37,7 @@ export const IssueEventAttendanceCard:FC<Props> = ({event}) => {
         const arr: string[] = []
         for(const did of dids) {
             const res = await issueEventAttendance(event, did)
-            if(res) arr.push(res)
+            if(res && res.streamId) arr.push(res.streamId)
         }
         if(arr.length>0){
             setShowEventAttendanceModal(false)

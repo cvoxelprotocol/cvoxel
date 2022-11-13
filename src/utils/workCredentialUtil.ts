@@ -1,11 +1,4 @@
-import { CVoxel, CVoxelMetaDraft, WorkCredentialWithId } from "@/interfaces";
-import {
-  CLIENT_EIP712_TYPE,
-  DELIVERABLES_EIP712_TYPE,
-  TX_EIP712_TYPE,
-  TypedData,
-  WORK_EIP712_TYPE,
-} from "@/interfaces/eip712";
+import { CVoxel, CVoxelMetaDraft } from "@/interfaces";
 import {
   Client,
   DeliverableItem,
@@ -14,18 +7,15 @@ import {
   Work,
   WorkCredential,
   WorkSubject,
-} from "@/__generated__/types/WorkCredential";
-import { getPkhDIDFromAddress } from "./ceramicUtils";
-
+  WorkCredentialWithId,
+  TypedData,
+  DELIVERABLES_EIP712_TYPE,
+  WORK_EIP712_TYPE,
+  TX_EIP712_TYPE,
+  CLIENT_EIP712_TYPE,
+  getPkhDIDFromAddress,
+} from "vess-sdk";
 import { removeUndefined } from "./objectUtil";
-
-export const removeCeramicPrefix = (docUrl?: string) => {
-  if (!docUrl) return "";
-  return docUrl.replace(`ceramic://`, "");
-};
-export const addCeramicPrefix = (backupId: string) => {
-  return `ceramic://${backupId}`;
-};
 
 export const convertV1DataToCRDL = (
   v1: CVoxelMetaDraft,

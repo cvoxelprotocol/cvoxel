@@ -1,21 +1,22 @@
-import type { ModelTypesToAliases } from "@glazed/types";
 import type { AppProps } from "next/app";
-import { dataModel } from "@/lib/ceramic/dataModel";
-import type { ModelTypes } from "../interfaces";
 import "tailwindcss/tailwind.css";
 import { RecoilRoot } from "recoil";
 import { Hydrate, QueryClient, QueryClientProvider } from "react-query";
 import { useState } from "react";
 import { BaseLayout } from "@/components/layout/BaseLayout";
-import { Web3Provider } from "@ethersproject/providers";
 import { ThemeProvider } from "next-themes";
 import { useEffect } from "react";
 import Router from "next/router";
-import { LoadingModal } from "@/components/common/LoadingModal";
 import { DIDContextProvider } from "@/context/DIDContext";
 import type { DehydratedState } from 'react-query';
+import dynamic from "next/dynamic";
 
-const aliases: ModelTypesToAliases<ModelTypes> = dataModel;
+const LoadingModal = dynamic(
+  () => import("@/components/common/LoadingModal"),
+  {
+    ssr: false,
+  }
+);
 
 export default function App({ Component, pageProps }: AppProps<{ dehydratedState: DehydratedState }>) {
   const [queryClient] = useState(

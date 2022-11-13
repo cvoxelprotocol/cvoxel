@@ -1,5 +1,4 @@
 import { AvatarPlaceholder } from "@/components/common/avatar/AvatarPlaceholder";
-import { DropButton } from "grommet";
 import { useContext, useState,useEffect } from "react";
 import { DisplayAvatar } from "../DisplayAvatar";
 import { IconAvatar } from "../IconAvatar";
@@ -10,6 +9,7 @@ import { useWalletAccount } from "@/hooks/useWalletAccount";
 import { DIDContext } from "@/context/DIDContext";
 import { useDework } from "@/hooks/useDework";
 import { useSocialAccount } from "@/hooks/useSocialAccount";
+import { DropDown } from "../DropDown";
 
 type MenuButtonProps = {
   label: string;
@@ -31,9 +31,8 @@ function MenuButton({ label, ...props }: MenuButtonProps) {
 
 export default function AccountButton() {
   const {did, account, connection} = useContext(DIDContext)
-  const {socialProfile} = useSocialAccount(did);
+  const {profile} = useSocialAccount(did);
   const { connectWallet, disconnectWallet } = useWalletAccount();
-  const [isMenuOpen, setMenuOpen] = useState(false);
   
   const router = useRouter();
   const {deworkAuth,setDeworkConnectOpen, setDeworkTaskListOpen} = useDework()
@@ -80,46 +79,36 @@ export default function AccountButton() {
     </>
 
     const content = (
-      <div className="border-gray-200 rounded-lg w-64 mt-12 p-4 text-primary bg-gray-100 dark:bg-card dark:text-oncard">
+      <div className="border-gray-200 rounded-lg w-64 mt-2 p-4 text-primary bg-gray-100 dark:bg-card dark:text-oncard">
         <div className="space-y-4 text-center p-2">
           <div className="flex items-center justify-center">
-            {socialProfile.avatarSrc ? (
-              <IconAvatar src={socialProfile.avatarSrc} size={"lg"} />
+            {profile.avatarSrc ? (
+              <IconAvatar src={profile.avatarSrc} size={"lg"} />
             ) : (
               <AvatarPlaceholder did={did} size={60} />
             )}
           </div>
           <p className="font-bold text-sm">
-            {socialProfile.displayName}
+            {profile.displayName}
           </p>
         </div>
-        <div className="rounded-lg space-y-2">{buttons}</div>
+        <div className="rounded-lg space-y-2 text-left">{buttons}</div>
       </div>
     );
 
-    return (
+    const btn = (
       <>
-        <DropButton
-          dropAlign={{ top: "bottom", right: "right" }}
-          dropContent={content}
-          dropProps={{ plain: true }}
-          onClose={() => {
-            setMenuOpen(false);
-          }}
-          onOpen={() => {
-            setMenuOpen(true);
-          }}
-          open={isMenuOpen}
-        >
-          <div className="hidden md:block">
+        <div className="hidden md:block">
             <NamePlate did={did} isMe size="lg" />
-          </div>
-          <div className="block md:hidden">
+        </div>
+        <div className="block md:hidden">
             <NamePlate did={did} isMe iconOnly />
-          </div>
-        </DropButton>
-        
+        </div> 
       </>
+    )
+
+    return (
+      <DropDown btnContent={btn} content={content} />
     );
   }
 

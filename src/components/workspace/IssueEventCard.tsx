@@ -2,11 +2,11 @@ import { DIDContext } from "@/context/DIDContext";
 import { useEventAttendance } from "@/hooks/useEventAttendance";
 import { useFileUpload } from "@/hooks/useFileUpload";
 import { convertDateToTimestampStr } from "@/utils/dateUtil";
-import { Event } from "@/__generated__/types/Event";
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { FC, useContext } from "react";
 import { useForm } from "react-hook-form";
+import { Event } from "vess-sdk";
 import { Button } from "../common/button/Button";
 import { IconUploader } from "../Transaction/IconUploader";
 

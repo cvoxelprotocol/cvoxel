@@ -1,6 +1,4 @@
 import { FC, useContext, useEffect, useMemo, useState } from "react";
-import { Canvas } from "@react-three/fiber";
-import { OneVoxelVisualizerPresenter } from "../OneVoxelVisualizerPresenter";
 import {
   convertTimestampToDateStr,
   convertTimestampToDateStrLocaleUS,
@@ -19,10 +17,17 @@ import { formatBigNumber } from "@/utils/ethersUtil";
 import { DIDContext } from "@/context/DIDContext";
 import { CopyRequestURLButton } from "./CopyRequestURLButton";
 import { useWorkCredential } from "@/hooks/useWorkCredential";
-import { WorkCredentialWithId } from "@/interfaces";
-import { WorkCredential } from "@/__generated__/types/WorkCredential";
+import { WorkCredentialWithId,WorkCredential } from "vess-sdk";
 import { useOffchainItem } from "@/hooks/useOffchainList";
 import { UserPlate } from "@/components/common/UserPlate";
+import dynamic from "next/dynamic";
+
+const OneVoxelVisualizerPresenterWrapper = dynamic(
+  () => import("@/components/CVoxel/OneVoxelVisualizerPresenterWrapper"),
+  {
+    ssr: false,
+  }
+);
 
 
 type Props = {
@@ -149,9 +154,7 @@ export const VoxelDetail: FC<Props> = ({
       <div className="lg:flex w-full">
         <div className="flex-initial w-full lg:w-52 h-52 relative bg-light-surface dark:bg-dark-surface rounded-br-2xl rounded-bl-2xl lg:rounded-bl-none">
           {crdl && (
-            <Canvas className="!touch-auto">
-              <OneVoxelVisualizerPresenter zoom={6} disableHover workCredential={crdl} />
-            </Canvas>
+            <OneVoxelVisualizerPresenterWrapper zoom={6} disableHover workCredential={crdl} />
           )}
 
           <div className="absolute right-4 bottom-4">

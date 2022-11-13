@@ -1,9 +1,9 @@
 
 
-import { EventAttendanceWithId } from "@/interfaces";
 import { shortenStrWithEndDots } from "@/utils/objectUtil";
 import Image from "next/image";
 import { FC } from "react";
+import { EventAttendanceWithId } from "vess-sdk";
 
 type Props = {
   item: EventAttendanceWithId;

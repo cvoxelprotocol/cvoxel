@@ -1,17 +1,23 @@
-import { FC, useEffect } from "react";
+import { FC } from "react";
 import { GenreBadge } from "@/components/common/badge/GenreBadge";
 import { getGenre } from "@/utils/genreUtil";
 import { TagBadge } from "@/components/common/badge/TagBadge";
-import { WorkCredentialWithId } from "@/interfaces";
+import { WorkCredentialWithId } from "vess-sdk";
 import { shortenStr } from "@/utils/objectUtil";
-import { Canvas } from "@react-three/fiber";
-import { OneVoxelVisualizerPresenter } from "@/components/CVoxel/OneVoxelVisualizerPresenter";
 import { convertTimestampToDateStr } from "@/utils/dateUtil";
 import clsx from "clsx";
 import Link from "next/link";
 import { useRouter } from "next/dist/client/router";
 import { useVoxelStyler } from "@/hooks/useVoxStyler";
 import { TxDirection } from "@/components/common/TxDirection";
+import dynamic from "next/dynamic";
+
+const OneVoxelVisualizerPresenterWrapper = dynamic(
+  () => import("@/components/CVoxel/OneVoxelVisualizerPresenterWrapper"),
+  {
+    ssr: false,
+  }
+);
 
 type Props = {
   item: WorkCredentialWithId;
@@ -33,13 +39,11 @@ export const SigRequestListItem: FC<Props> = ({ item }) => {
             false && "pb-6"
           )}
         >
-          <Canvas>
-            <OneVoxelVisualizerPresenter
-                zoom={6}
-                disableHover
-                voxelForDisplay={displayVoxel}
-            />
-          </Canvas>
+          <OneVoxelVisualizerPresenterWrapper
+              zoom={6}
+              disableHover
+              voxelForDisplay={displayVoxel}
+          />
 
           <div className="absolute bg-light-sig-request-layer dark:bg-dark-sig-request-layer top-0 bottom-0 left-0 right-0 opacity-70">
             <div className="h-full flex items-center p-3 justify-center">
@@ -123,13 +127,11 @@ export const SigRequestListItem: FC<Props> = ({ item }) => {
     return (
       <div className="w-full">
         <div className="w-full h-32 relative bg-light-surface dark:bg-dark-surface rounded-b-lg">
-          <Canvas className="!touch-auto">
-            <OneVoxelVisualizerPresenter
-              zoom={6}
-              disableHover
-              voxelForDisplay={displayVoxel}
-            />
-          </Canvas>
+          <OneVoxelVisualizerPresenterWrapper
+            zoom={6}
+            disableHover
+            voxelForDisplay={displayVoxel}
+          />
 
           {/* TODO: show voxel state */}
           {/*<div className="absolute top-2 left-2">*/}

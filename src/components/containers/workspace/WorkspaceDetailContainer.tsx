@@ -10,8 +10,7 @@ import { useEventAttendance } from "@/hooks/useEventAttendance";
 import { useMembership } from "@/hooks/useMembership";
 import { useMembershipSubject } from "@/hooks/useMembershipSubject";
 import { useOrganization } from "@/hooks/useOrganization";
-import { EventWithId, MembershipSubjectWithId } from "@/interfaces";
-import { removeCeramicPrefix } from "@/utils/workCredentialUtil";
+import { EventWithId, MembershipSubjectWithId,removeCeramicPrefix } from "vess-sdk";
 import clsx from "clsx";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -29,7 +28,7 @@ export const WorkspaceDetailContainer:FC<Props> =({orgId}) => {
     const router = useRouter()
 
     const goToUserPage = (item: MembershipSubjectWithId) => {
-        router.push(`/${item.id}`)
+        router.push(`/${item.credentialSubject.id}`)
     }
 
     const goToEventPage = (item: EventWithId) => {

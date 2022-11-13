@@ -22,9 +22,10 @@ import { Button } from "@/components/common/button/Button";
 import { DIDContext } from "@/context/DIDContext";
 import { useWorkCredentials } from "@/hooks/useWorkCredential";
 import Router from "next/router";
-import { WorkCredential } from "@/__generated__/types/WorkCredential";
+
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { useIsTabletOrMobile } from "@/hooks/useIsTabletOrMobile";
+import { WorkCredential } from "vess-sdk";
+import { isMobile, isTablet } from "react-device-detect";
 
 export const MyCVoxelContainer: FC = () => {
   const {did, account} = useContext(DIDContext)
@@ -99,12 +100,10 @@ export const MyCVoxelContainer: FC = () => {
 
   const parentRef: LegacyRef<any> = useRef();
 
-  const { isTabletOrMobile } = useIsTabletOrMobile();
-
   const rowVirtualizer = useVirtualizer({
     count: filteredVoxels.length,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => ((isTabletOrMobile ? 15 : 13) + 1) * 16, // NOTE: (item + margin) * rem
+    estimateSize: () => (((isMobile || isTablet) ? 15 : 13) + 1) * 16, // NOTE: (item + margin) * rem
   });
 
   return useMemo(
@@ -188,7 +187,8 @@ export const MyCVoxelContainer: FC = () => {
       currentCredential,
       keyword,
       rowVirtualizer,
-      isTabletOrMobile,
+      isMobile,
+      isTablet
     ]
   );
 };

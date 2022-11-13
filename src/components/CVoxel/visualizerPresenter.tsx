@@ -5,7 +5,7 @@ import { OrbitControls, PerspectiveCamera, Plane } from "@react-three/drei";
 import CVoxelPresenter from "./CVoxelPresenter";
 import { CVoxelThreeWithId, useMultipleVoxelStyler } from "@/hooks/useVoxStyler";
 import { initCVoxel } from "@/constants/cVoxel";
-import {  WorkCredentialWithId } from "@/interfaces";
+import {  WorkCredentialWithId } from "vess-sdk";
 
 type ShowDetailBox = ({
   item,

@@ -1,5 +1,5 @@
 import { useMembershipSubject } from "@/hooks/useMembershipSubject";
-import { MembershipWithId, OrganizationWIthId } from "@/interfaces";
+import { MembershipWithId, OrganizationWIthId } from "vess-sdk";
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { FC } from "react";

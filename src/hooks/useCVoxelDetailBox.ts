@@ -1,6 +1,6 @@
 import { useStateCredentialDetailBox } from "@/recoilstate";
 import { useCallback } from "react";
-import { WorkCredentialWithId } from "@/interfaces";
+import { WorkCredentialWithId } from "vess-sdk";
 
 export const useWorkCredentialDetailBox = () => {
   const [_, setBox] = useStateCredentialDetailBox();

@@ -1,4 +1,4 @@
-import { DeliverableItem } from "@/__generated__/types/WorkCredential";
+import { DeliverableItem } from "vess-sdk";
 
 export type CVoxel = {
   to: string; // payee address. maybe contract address

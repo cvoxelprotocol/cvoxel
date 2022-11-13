@@ -1,14 +1,13 @@
 import { useMyPageScreen } from "@/hooks/useTab";
 import { FC, useCallback, useContext, useMemo } from "react";
 import { NoItemPresenter } from "../../../common/NoItemPresenter";
-import type { WorkCredentialWithId } from "@/interfaces";
+import { WorkCredentialWithId,removeCeramicPrefix } from "vess-sdk";
 import { useSigRequest } from "@/hooks/useSigRequest";
 import { SigRequestListItem } from "@/components/SigRequest/SigRequestListItem/SigRequestListItem";
 import { useRouter } from "next/router";
 import { NavBar } from "@/components/SigRequest/NavBar/NavBar";
 import { SigRequestDetail } from "@/components/SigRequest/SigRequestDetail/SigRequestDetail";
 import { DIDContext } from "@/context/DIDContext";
-import { removeCeramicPrefix } from "@/utils/workCredentialUtil";
 import { useWorkCredential } from "@/hooks/useWorkCredential";
 import { CommonLoading } from "@/components/common/CommonLoading";
 

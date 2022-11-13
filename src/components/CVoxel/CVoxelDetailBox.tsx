@@ -7,33 +7,33 @@ import { TagBadge } from "@/components/common/badge/TagBadge";
 import { shortenStr } from "@/utils/objectUtil";
 import { convertTimestampToDateStr } from "@/utils/dateUtil";
 import { useStateCredentialDetailBox } from "@/recoilstate";
-import { Canvas } from "@react-three/fiber";
 import clsx from "clsx";
 import { ShareButton } from "@/components/common/button/shareButton/ShareButton";
-import { OneVoxelVisualizerPresenter } from "./OneVoxelVisualizerPresenter";
-import { useWorkCredentialRecord } from "@/hooks/useWorkCredential";
 import { CredentialDirection } from "../common/CredentialDirection";
 import { DIDContext } from "@/context/DIDContext";
+import { useFetchWorkCredential } from "@/hooks/useWorkCredential";
+import dynamic from "next/dynamic";
+
+const OneVoxelVisualizerPresenterWrapper = dynamic(
+  () => import("@/components/CVoxel/OneVoxelVisualizerPresenterWrapper"),
+  {
+    ssr: false,
+  }
+);
 
 export const CVoxelDetailBox: FC<{}> = () => {
   const [box] = useStateCredentialDetailBox();
   const { account } = useContext(DIDContext);
 
-  const workCredential = useWorkCredentialRecord(box?.item.backupId)
+  const {workCredential} = useFetchWorkCredential(box?.item.backupId)
 
-  const detailItem = useMemo(() => {
-    if (workCredential.isError) {
-      return null;
-    }
-    return workCredential.content || null;
-  }, [workCredential.content]);
 
   const isOwner = useMemo(() => {
     if(!account) return false
-    if(!detailItem) return false
-    const {tx} = detailItem.subject
+    if(!workCredential) return false
+    const {tx} = workCredential.subject
     return tx?.from?.toLowerCase() === account.toLowerCase() || tx?.to?.toLowerCase() === account.toLowerCase()
-  },[account,detailItem])
+  },[account,workCredential])
 
   const [isShow, setIsShow] = useState<boolean>(false);
   const [isMount, setIsMount] = useState<boolean>(false);
@@ -109,46 +109,44 @@ export const CVoxelDetailBox: FC<{}> = () => {
           </div>
 
           <div className="h-52">
-            {(box && box.item.id && detailItem) &&  (
-              <Canvas className="!touch-auto">
-                <OneVoxelVisualizerPresenter
-                  workCredential={{...detailItem, backupId:box.item.id}}
-                  zoom={5}
-                  disableHover
-                />
-              </Canvas>
+            {(box && box.item.id && workCredential) &&  (
+              <OneVoxelVisualizerPresenterWrapper
+                workCredential={{...workCredential, backupId:box.item.id}}
+                zoom={5}
+                disableHover
+              />
             )}
           </div>
 
           <div className="absolute bottom-2 right-0 left-0 flex justify-center">
           <CredentialDirection
-              holder={detailItem?.subject.work?.id}
-              client={detailItem?.subject.client}
+              holder={workCredential?.subject.work?.id}
+              client={workCredential?.subject.client}
             />
           </div>
         </div>
 
         <div className="px-8 py-6 space-y-3">
           <div className="text-left w-full py-3 dark:border-b-dark-inverse-primary">
-            {detailItem?.createdAt && (
+            {workCredential?.createdAt && (
               <div className="text-light-on-surface dark:text-dark-on-surface text-base">
-                {convertTimestampToDateStr(detailItem.createdAt)}
+                {convertTimestampToDateStr(workCredential.createdAt)}
               </div>
             )}
 
-            {detailItem?.subject.work?.summary && (
+            {workCredential?.subject.work?.summary && (
               <div className="text-light-on-primary-container dark:text-dark-on-error-container text-2xl font-medium line-clamp-3">
-                {detailItem?.subject.work?.summary}
+                {workCredential?.subject.work?.summary}
               </div>
             )}
 
             <div className="flex mt-2">
-              {detailItem?.subject.work?.genre ? (
+              {workCredential?.subject.work?.genre ? (
                 <div className="mr-2">
                   <GenreBadge
-                    text={detailItem.subject.work?.genre || "Other"}
+                    text={workCredential.subject.work?.genre || "Other"}
                     baseColor={
-                      getGenre(detailItem.subject.work?.genre)?.bgColor || "bg-[#b7b7b7]"
+                      getGenre(workCredential.subject.work?.genre)?.bgColor || "bg-[#b7b7b7]"
                     }
                     isSelected={true}
                   />
@@ -156,21 +154,21 @@ export const CVoxelDetailBox: FC<{}> = () => {
               ) : (
                 <></>
               )}
-              {detailItem?.subject.work?.tags &&
-                detailItem.subject.work?.tags.map((tag) => {
+              {workCredential?.subject.work?.tags &&
+                workCredential.subject.work?.tags.map((tag) => {
                   return <TagBadge key={tag} text={tag} />;
                 })}
             </div>
           </div>
 
           {/*deliverables*/}
-          {detailItem?.subject.deliverables && detailItem.subject.deliverables.length > 0 && (
+          {workCredential?.subject.deliverables && workCredential.subject.deliverables.length > 0 && (
             <div>
               <p className="mb-2 text-light-on-surface-variant dark:text-light-on-surface-variant font-medium">
                 DELIVERABLES
               </p>
 
-              {detailItem?.subject.deliverables.map((deliverable) =>
+              {workCredential?.subject.deliverables.map((deliverable) =>
                 <a
                   className="flex items-center flex-wrap"
                   href={`${deliverable.format==="url" ? deliverable.value : `https://dweb.link/ipfs/${deliverable.value}`}`}
@@ -187,14 +185,14 @@ export const CVoxelDetailBox: FC<{}> = () => {
           )}
 
           {/*description*/}
-          {detailItem?.subject.work?.detail && (
+          {workCredential?.subject.work?.detail && (
             <div>
               <p className="mb-2 text-light-on-surface-variant dark:text-light-on-surface-variant font-medium">
                 DESCRIPTION
               </p>
 
               <div className="text-light-on-surface dark:text-dark-on-surface font-medium">
-                {detailItem?.subject.work?.detail}
+                {workCredential?.subject.work?.detail}
               </div>
             </div>
           )}

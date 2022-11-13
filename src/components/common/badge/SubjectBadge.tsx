@@ -1,8 +1,8 @@
 
 
-import { MembershipSubjectWithId } from "@/interfaces";
 import Image from "next/image";
 import { FC } from "react";
+import { MembershipSubjectWithId } from "vess-sdk";
 
 type Props = {
   item: MembershipSubjectWithId;

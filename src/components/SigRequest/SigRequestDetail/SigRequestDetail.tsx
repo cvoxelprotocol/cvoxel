@@ -1,7 +1,5 @@
-import { FC, useCallback, useContext, useEffect, useMemo } from "react";
-import { WorkCredentialWithId } from "@/interfaces";
-import { Canvas } from "@react-three/fiber";
-import { OneVoxelVisualizerPresenter } from "@/components/CVoxel/OneVoxelVisualizerPresenter";
+import { FC, useCallback, useContext, useMemo } from "react";
+import { WorkCredentialWithId } from "vess-sdk";
 import {
   convertTimestampToDateStr,
   convertTimestampToDateStrLocaleUS,
@@ -21,6 +19,14 @@ import { formatBigNumber } from "@/utils/ethersUtil";
 import { useVoxelStyler } from "@/hooks/useVoxStyler";
 import { DIDContext } from "@/context/DIDContext";
 import { useWalletAccount } from "@/hooks/useWalletAccount";
+import dynamic from "next/dynamic";
+
+const OneVoxelVisualizerPresenterWrapper = dynamic(
+  () => import("@/components/CVoxel/OneVoxelVisualizerPresenterWrapper"),
+  {
+    ssr: false,
+  }
+);
 
 type Props = {
   offchainItem: WorkCredentialWithId;
@@ -117,13 +123,11 @@ export const SigRequestDetail: FC<Props> = ({
     <div className="w-full border border-light-on-primary-container dark:border-dark-on-primary-container rounded-2xl overflow-hidden bg-light-surface-1 dark:bg-dark-surface-1">
       <div className="lg:flex w-full">
         <div className="flex-initial w-full lg:w-52 h-52 relative bg-light-surface dark:bg-dark-surface rounded-br-2xl rounded-bl-2xl lg:rounded-bl-none">
-          <Canvas className="!touch-auto">
-            <OneVoxelVisualizerPresenter
-              zoom={6}
-              disableHover
-              voxelForDisplay={displayVoxel}
-            />
-          </Canvas>
+          <OneVoxelVisualizerPresenterWrapper
+            zoom={6}
+            disableHover
+            voxelForDisplay={displayVoxel}
+          />
 
           <div className="absolute bg-light-sig-request-layer dark:bg-dark-sig-request-layer top-0 bottom-0 left-0 right-0 opacity-70">
             <div className="h-full flex items-center p-3 justify-center">

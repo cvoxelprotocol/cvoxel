@@ -4,12 +4,10 @@ import { IssueEventAttendanceCard } from "@/components/workspace/IssueEventAtten
 import { IssueEventAttendanceFromProxyCard } from "@/components/workspace/IssueEventAttendanceFromProxyCard";
 import { WorkspaceModal } from "@/components/workspace/WorkspaceModal";
 import { useEventAttendance } from "@/hooks/useEventAttendance";
-import { EventAttendanceWithId } from "@/interfaces";
-import { verifyEventAttendanceCredential } from "@/utils/providerUtils";
-import { removeCeramicPrefix } from "@/utils/workCredentialUtil";
 import Image from "next/image";
 import Link from "next/link";
 import { FC, useMemo } from "react";
+import { EventAttendanceWithId, removeCeramicPrefix, verifyEventAttendanceCredential } from "vess-sdk";
 
 const PROXY_WORKSPACE = "ceramic://kjzl6cwe1jw148904dvpnhwxhu3nps59702ufd4tpz9v6l0mfphgqn1df24op09"
 

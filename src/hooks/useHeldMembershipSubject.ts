@@ -1,12 +1,14 @@
-import { getWorkCredentialService } from "@/services/workCredential/WorkCredentialService";
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import { MembershipSubjectWithId } from "@/interfaces";
+import { MembershipSubjectWithId } from "vess-sdk";
 import { useContext, useEffect } from "react";
 import { getHeldMembershipSubjectsFromDB } from "@/lib/firebase/store/workspace";
 import { DIDContext } from "@/context/DIDContext";
+import { getVESS } from "vess-sdk";
+import { CERAMIC_NETWORK } from "@/constants/common";
 
 export const useHeldMembershipSubject = (did?: string) => {
-  const workCredentialService = getWorkCredentialService();
+  // const vess = getVESS()
+  const vess = getVESS(CERAMIC_NETWORK !== "mainnet");
   const queryClient = useQueryClient();
   const { did: myDid } = useContext(DIDContext);
 
@@ -14,7 +16,7 @@ export const useHeldMembershipSubject = (did?: string) => {
     void,
     unknown,
     string[]
-  >((param) => workCredentialService.setHeldMembershipSubjects(param), {
+  >((param) => vess.setHeldMembershipSubjects(param), {
     onSuccess() {
       console.log("mirgate succeeded");
     },
@@ -31,7 +33,7 @@ export const useHeldMembershipSubject = (did?: string) => {
     isLoading: isFetchingHeldMembershipSubjects,
   } = useQuery<MembershipSubjectWithId[] | null>(
     ["HeldMembershipSubjects", did],
-    () => workCredentialService.fetchHeldMembershipSubjects(did),
+    () => vess.getHeldMembershipSubjects(did),
     {
       enabled: !!did && did !== "",
       staleTime: Infinity,

@@ -1,11 +1,15 @@
-import { getWorkCredentialService } from "@/services/workCredential/WorkCredentialService";
 import { useQuery } from "react-query";
-import { getProfileInfo } from "@/utils/ceramicUtils";
-import { Client } from "@/__generated__/types/WorkCredential";
 import { DisplayProfile } from "@/interfaces";
+import { getVESS, Client } from "vess-sdk";
+import { useSocialAccount } from "./useSocialAccount";
+import { CERAMIC_NETWORK } from "@/constants/common";
 
 export const useProfileInfo = (client?: Client) => {
-  const workCredentialService = getWorkCredentialService();
+  // const vess = getVESS()
+  const vess = getVESS(CERAMIC_NETWORK !== "mainnet");
+  const { profile: socialProfile } = useSocialAccount(
+    client?.format === "DID" ? client.value : undefined
+  );
 
   const { data: profile, isLoading } = useQuery<DisplayProfile>(
     ["Client", client],
@@ -19,9 +23,9 @@ export const useProfileInfo = (client?: Client) => {
 
   const fetchProfile = async (client?: Client): Promise<DisplayProfile> => {
     if (client?.format === "DID") {
-      return getProfileInfo(client.value);
+      return socialProfile;
     } else if (client?.format === "orgId") {
-      const org = await workCredentialService.fetchOrganization(client.value);
+      const org = await vess.getOrganization(client.value);
       return {
         displayName: org?.name || "",
         bio: org?.desc || "",

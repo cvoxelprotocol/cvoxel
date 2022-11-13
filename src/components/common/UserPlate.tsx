@@ -4,8 +4,8 @@ import { CommonSpinner } from "@/components/common/CommonSpinner";
 import { IconAvatar } from "@/components/common/IconAvatar";
 import { AvatarPlaceholder } from "@/components/common/avatar/AvatarPlaceholder";
 import SearchIcon from "@/components/common/search/search.svg";
-import { Client } from "@/__generated__/types/WorkCredential";
 import { useProfileInfo } from "@/hooks/useProfileInfo";
+import { Client } from "vess-sdk";
 
 type Props = {
   client?: Client;
@@ -99,7 +99,9 @@ export const UserPlate: FC<Props> = ({
 
   const DidContent = () => (
     <div className="flex items-center space-x-0.5">
-      <div
+      {profile?.displayName.startsWith("did:") ? (
+        <>
+          <div
         className={clsx(
           "rounded bg-light-primary dark:bg-dark-primary text-light-on-primary dark:text-dark-on-primary font-medium px-1 text-xs",
           badgeTextSize
@@ -112,6 +114,15 @@ export const UserPlate: FC<Props> = ({
       >
         {profile?.displayName?.replace("did:", "")}
       </div>
+        </>
+      ): (
+        <div
+        className={clsx("text-light-primary dark:text-dark-primary whitespace-nowrap text-ellipsis pl-1", textSize)}
+      >
+        {profile?.displayName}
+      </div>
+      )}
+      
     </div>
   );
 

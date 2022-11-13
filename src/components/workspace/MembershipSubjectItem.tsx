@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { MembershipSubjectWithId } from "@/interfaces";
+import { MembershipSubjectWithId } from "vess-sdk";
 
 type Props = {
     item: MembershipSubjectWithId

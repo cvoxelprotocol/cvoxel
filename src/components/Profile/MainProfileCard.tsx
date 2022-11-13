@@ -15,7 +15,7 @@ type Props = {
 }
 export const MainProfileCard: FC<Props> = ({did, type = "voxel", showNav = true}) => {
   const {HeldMembershipSubjects} = useHeldMembershipSubject(did)
-  const { socialProfile } = useSocialAccount(did);
+  const { profile } = useSocialAccount(did);
 
 
   return (
@@ -27,22 +27,22 @@ export const MainProfileCard: FC<Props> = ({did, type = "voxel", showNav = true}
               <div className="w-full flex items-center space-x-2">
                 <div
                   className={"flex justify-center items-center rounded-full border w-[32px] h-[32px] border-secondary"}>
-                  {socialProfile?.avatarSrc ? (
-                    <img src={socialProfile.avatarSrc} alt={socialProfile?.displayName} className={"rounded-full w-full"}/>
+                  {profile?.avatarSrc ? (
+                    <img src={profile.avatarSrc} alt={profile?.displayName} className={"rounded-full w-full"}/>
                   ) : (
                     <AvatarPlaceholder did={did} size={32} />
                   )}
                 </div>
                 <div className="text-light-on-primary-container dark:text-dark-on-error-container text-lg sm:text-2xl font-medium line-clamp-3">
-                  {socialProfile?.displayName}
+                  {profile?.displayName}
                 </div>
               </div>
               <div className="w-full dark:border-b-dark-inverse-primary px-1">
                 {/*description*/}
-                {socialProfile && socialProfile.bio &&  (
+                {profile && profile.bio &&  (
                   <div>
                     <div className=" text-light-on-surface dark:text-dark-on-surface font-normal text-ellipsis whitespace-nowrap text-sm">
-                      {socialProfile.bio}
+                      {profile.bio}
                     </div>
                   </div>
                 )}

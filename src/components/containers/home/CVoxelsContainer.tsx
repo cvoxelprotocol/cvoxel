@@ -1,16 +1,20 @@
-import VisualizerPresenter from "@/components/CVoxel/visualizerPresenter";
 import { useWorkCredentialDetailBox } from "@/hooks/useCVoxelDetailBox";
-import { Canvas } from "@react-three/fiber";
 import { FC, useMemo, ReactNode } from "react";
-import { NamePlate } from "@/components/common/NamePlate";
 import Router from "next/router";
 import { SearchData } from "@/components/common/search/Search";
-import { UserSearch } from "@/components/common/search/UserSearch";
 import { NoCRDLItem } from "./NoCRDLItem";
 import { Button } from "@/components/common/button/Button";
-import { WorkCredentialWithId } from "@/interfaces";
+import { WorkCredentialWithId } from "vess-sdk";
 import { MainProfileCard } from "@/components/Profile/MainProfileCard";
 import { UserSearchWithProfile } from "@/components/common/search/UserSearchWithProfile";
+import dynamic from "next/dynamic";
+
+const VisualizerPresenterWrapper = dynamic(
+  () => import("@/components/CVoxel/VisualizerPresenterWrapper"),
+  {
+    ssr: false,
+  }
+);
 
 type props = {
   did: string;
@@ -35,20 +39,10 @@ export const CVoxelsContainer: FC<props> = ({
 
   const VisualizerPresenterMemo = useMemo(
     () => (
-      <Canvas shadows>
-        <VisualizerPresenter
-          workCredentials={content}
-          showDetailBox={showDetailBox}
-        />
-      </Canvas>
+      <VisualizerPresenterWrapper content={content} showDetailBox={showDetailBox} />
     ),
     [content,showDetailBox]
   );
-
-  const handleClickNamePlate = () => {
-    if (!did) return;
-    Router.push(`/${did}`);
-  };
 
   const handleSearch = (data: SearchData) => {
     if (!data.value) return;
@@ -58,7 +52,7 @@ export const CVoxelsContainer: FC<props> = ({
 
   return (
     <div className="flex flex-col items-center justify-center w-full h-screen md:pb-12">
-      <div className="flex w-full items-center justify-center h-[300px] sm:h-[450px] relative max-w-[720px]">
+      <div className="flex w-full items-center justify-center h-[350px] sm:h-[450px] relative max-w-[720px]">
         {isMe && (!content || content.length===0) ? (
           <div className="w-full">
             <NoCRDLItem />
@@ -75,7 +69,7 @@ export const CVoxelsContainer: FC<props> = ({
         )}
       </div>
       {mode == "nameplate" && (
-        <div className="flex-none mt-12 w-full max-w-[720px]">
+        <div className="flex-none mt-6 w-full max-w-[720px]">
           <div className="w-fit mx-auto">
             <MainProfileCard did={did} />
           </div>

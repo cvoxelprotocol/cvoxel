@@ -1,3 +1,4 @@
+import { CERAMIC_NETWORK } from "@/constants/common";
 import { DIDContext } from "@/context/DIDContext";
 import { WorkSubjectFromDework } from "@/interfaces";
 import { getDeworkTaskListFromFB } from "@/lib/firebase/store/dework";
@@ -6,14 +7,15 @@ import {
   issueCRDLFromDeworkParam,
   updateGenreParam,
 } from "@/services/Dework/DeworkService";
-import { getWorkCredentialService } from "@/services/workCredential/WorkCredentialService";
 import { useContext } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
+import { getVESS } from "vess-sdk";
 
 export const useDeworkTask = () => {
   const { account } = useContext(DIDContext);
   const deworkService = getDeworkService();
-  const workCredentialService = getWorkCredentialService();
+  // const vess = getVESS()
+  const vess = getVESS(CERAMIC_NETWORK !== "mainnet");
 
   const queryClient = useQueryClient();
 
@@ -89,7 +91,7 @@ export const useDeworkTask = () => {
     try {
       const streamIds = await deworkService.issueCRDLs(param);
       if (streamIds && streamIds.length > 0) {
-        await workCredentialService.setMultipleHeldWorkCredentials(streamIds);
+        await vess.setHeldWorkCredentials(streamIds);
       }
     } catch (error) {
       console.log(error);

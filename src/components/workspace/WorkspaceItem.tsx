@@ -1,7 +1,7 @@
 import { FC } from "react";
 import clsx from "clsx";
-import { Organization } from "@/__generated__/types/Organization";
 import Image from "next/image";
+import { Organization } from "vess-sdk";
 
 type WorkspaceItemProps = {
     item: Organization

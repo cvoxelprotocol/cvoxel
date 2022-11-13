@@ -1,5 +1,5 @@
 import { FC } from "react";
-import { EventAttendanceWithId } from "@/interfaces";
+import { EventAttendanceWithId } from "vess-sdk";
 
 type Props = {
     item: EventAttendanceWithId

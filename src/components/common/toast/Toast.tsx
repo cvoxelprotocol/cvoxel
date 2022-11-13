@@ -50,7 +50,7 @@ const Presenter = ({ voxel }: { voxel: CVoxelThree }) => {
   );
 };
 
-export const Toast: FC<{}> = () => {
+export default function Toast() {
   const { toast } = useCVoxelToast();
   const [isMount, setIsMount] = useState<boolean>(false);
 

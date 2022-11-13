@@ -3,14 +3,19 @@ import { GenreBadge } from "@/components/common/badge/GenreBadge";
 import { getGenre } from "@/utils/genreUtil";
 import { TagBadge } from "@/components/common/badge/TagBadge";
 import { shortenStr } from "@/utils/objectUtil";
-import { Canvas } from "@react-three/fiber";
-import { OneVoxelVisualizerPresenter } from "../OneVoxelVisualizerPresenter";
 import { convertTimestampToDateStr } from "@/utils/dateUtil";
-import clsx from "clsx";
 import Link from "next/link";
 import { useRouter } from "next/dist/client/router";
-import { WorkCredentialWithId } from "@/interfaces";
+import { WorkCredentialWithId } from "vess-sdk";
 import { CredentialDirection } from "@/components/common/CredentialDirection";
+import dynamic from "next/dynamic";
+
+const OneVoxelVisualizerPresenterWrapper = dynamic(
+  () => import("@/components/CVoxel/OneVoxelVisualizerPresenterWrapper"),
+  {
+    ssr: false,
+  }
+);
 
 type Props = {
   workCredential: WorkCredentialWithId;
@@ -36,9 +41,7 @@ const VoxelListItem: FC<Props> = ({ workCredential }) => {
           className={"rounded-r-lg w-40 relative bg-light-surface dark:bg-dark-surface"}
         >
           {detailItem && (
-            <Canvas> 
-              <OneVoxelVisualizerPresenter zoom={6} disableHover workCredential={workCredential} />
-            </Canvas>
+            <OneVoxelVisualizerPresenterWrapper zoom={6} disableHover workCredential={workCredential} />
           )}
 
           {/* TODO: show voxel state */}
@@ -109,9 +112,7 @@ const VoxelListItem: FC<Props> = ({ workCredential }) => {
       <div className="w-full">
         <div className="w-full h-32 relative bg-light-surface dark:bg-dark-surface rounded-b-lg">
         {detailItem && (
-          <Canvas className="!touch-auto">
-              <OneVoxelVisualizerPresenter zoom={6} disableHover workCredential={workCredential} />
-            </Canvas>
+          <OneVoxelVisualizerPresenterWrapper zoom={6} disableHover workCredential={workCredential} />
           )}
 
           {/* TODO: show voxel state */}

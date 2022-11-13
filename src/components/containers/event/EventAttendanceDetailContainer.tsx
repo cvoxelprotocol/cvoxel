@@ -3,7 +3,7 @@ import { Button } from "@/components/common/button/Button";
 import { CommonLoading } from "@/components/common/CommonLoading";
 import { MainProfileCard } from "@/components/Profile/MainProfileCard";
 import { useClaimedEventAttendances } from "@/hooks/useClaimEventAttendances";
-import { removeCeramicPrefix } from "@/utils/workCredentialUtil";
+import { removeCeramicPrefix } from "vess-sdk";
 import Image from "next/image";
 import { FC } from "react";
 

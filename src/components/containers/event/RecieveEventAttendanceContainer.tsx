@@ -28,7 +28,7 @@ export const RecieveEventAttendanceContainer:FC<Props> =({eventId}) => {
         if(!did || !eventDetail) return
         const vcs = await claimEventAttendance(eventDetail, [did])
         if(vcs && vcs.length>0) {
-            setHeldEventAttendances(vcs)
+            await setHeldEventAttendances(vcs)
         } else {
             console.log("Error: No vcs")
         }
