@@ -30,7 +30,7 @@ export const useHeldMembershipSubject = (did?: string) => {
 
   const {
     data: HeldMembershipSubjects,
-    isLoading: isFetchingHeldMembershipSubjects,
+    isInitialLoading: isFetchingHeldMembershipSubjects,
   } = useQuery<MembershipSubjectWithId[] | null>(
     ["HeldMembershipSubjects", did],
     () => vess.getHeldMembershipSubjects(did),
@@ -43,7 +43,7 @@ export const useHeldMembershipSubject = (did?: string) => {
 
   const {
     data: heldMembershipSubjectsFromDB,
-    isLoading: isLoadingHeldSubjectsFromDB,
+    isInitialLoading: isLoadingHeldSubjectsFromDB,
   } = useQuery<MembershipSubjectWithId[] | null>(
     ["heldMembershipSubjectsFromDB", did],
     () => getHeldMembershipSubjectsFromDB(did),

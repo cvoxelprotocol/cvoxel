@@ -17,7 +17,7 @@ export const UserCVoxelContainer: FC<UserCVoxelContainerProps> = ({
   did,
   currentVoxelID,
 }) => {
-  const {workCredentials, isLoading} = useWorkCredentials(did)
+  const {workCredentials, isInitialLoading} = useWorkCredentials(did)
 
   const sortCredentials = useMemo(() => {
     if (!workCredentials) return [];
@@ -58,14 +58,14 @@ export const UserCVoxelContainer: FC<UserCVoxelContainerProps> = ({
           </div>
         ) : (
           <CVoxelsPresenter>
-            {isLoading && <CommonLoading />}
-            {!isLoading && !sortCredentials && (
+            {isInitialLoading && <CommonLoading />}
+            {!isInitialLoading && !sortCredentials && (
               <div className="mx-auto">
                 <NoItemPresenter text="No Voxels yet" />
               </div>
             )}
 
-            {!isLoading && sortCredentials && (
+            {!isInitialLoading && sortCredentials && (
               <div ref={parentRef} className={"overflow-auto h-full w-full"}>
                 <div
                   style={{
@@ -105,7 +105,7 @@ export const UserCVoxelContainer: FC<UserCVoxelContainerProps> = ({
     [
       currentVoxelID,
       offchainMetaList,
-      isLoading,
+      isInitialLoading,
       sortCredentials,
       did,
       rowVirtualizer

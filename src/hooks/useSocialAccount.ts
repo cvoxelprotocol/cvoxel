@@ -6,15 +6,16 @@ import { formatDID } from "vess-sdk";
 
 export const useSocialAccount = (did?: string) => {
   const orbisHelper = getOrbisHelper();
-  const { data: orbisProfile, isLoading } = useQuery<OrbisProfileDetail | null>(
-    ["fetchOrbisProfile", did],
-    () => orbisHelper.fetchOrbisProfile(did),
-    {
-      enabled: !!did && did !== "",
-      staleTime: Infinity,
-      cacheTime: 1000000,
-    }
-  );
+  const { data: orbisProfile, isInitialLoading } =
+    useQuery<OrbisProfileDetail | null>(
+      ["fetchOrbisProfile", did],
+      () => orbisHelper.fetchOrbisProfile(did),
+      {
+        enabled: !!did && did !== "",
+        staleTime: Infinity,
+        cacheTime: 1000000,
+      }
+    );
 
   const profile = useMemo<DisplayProfile>(() => {
     return {
@@ -26,6 +27,6 @@ export const useSocialAccount = (did?: string) => {
 
   return {
     profile,
-    isLoading,
+    isInitialLoading,
   };
 };

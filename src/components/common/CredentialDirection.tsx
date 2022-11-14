@@ -13,13 +13,13 @@ type Props = {
 
 export default function CredentialDirection ({ holder, client }:Props) {
 
-  const {profile, isLoading} = useSocialAccount(holder)
-  const {profile: clientProfile, isLoading: isLoadingClient} = useProfileInfo(client)
+  const {profile, isInitialLoading} = useSocialAccount(holder)
+  const {profile: clientProfile, isInitialLoading: isLoadingClient} = useProfileInfo(client)
 
   return (
     <div className="flex items-center space-x-2">
       <div className="hidden lg:block">
-      {isLoading ? (
+      {isInitialLoading ? (
           <CommonSpinner size="sm" />
         ) : (
           <>

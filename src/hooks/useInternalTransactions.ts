@@ -14,17 +14,18 @@ export const useInternalTransactions = (tx: TransactionLogWithChainId) => {
     return account?.toLowerCase() === tx.to.toLowerCase();
   }, [account, tx]);
 
-  const { data: isContract, isLoading: isContractLoading } = useQuery<boolean>(
-    ["isContract", tx.hash],
-    () => etherService.isContract(isPayee ? tx.from : tx.to),
-    {
-      enabled: !!isPayee && !!tx,
-      staleTime: Infinity,
-      cacheTime: 3000000,
-    }
-  );
+  const { data: isContract, isInitialLoading: isContractLoading } =
+    useQuery<boolean>(
+      ["isContract", tx.hash],
+      () => etherService.isContract(isPayee ? tx.from : tx.to),
+      {
+        enabled: !!isPayee && !!tx,
+        staleTime: Infinity,
+        cacheTime: 3000000,
+      }
+    );
 
-  const { data: internalTxs, isLoading: internalTxLoading } = useQuery<
+  const { data: internalTxs, isInitialLoading: internalTxLoading } = useQuery<
     TransactionLogWithChainId[]
   >(
     ["internal", tx.hash],

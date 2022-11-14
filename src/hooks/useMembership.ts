@@ -52,7 +52,7 @@ export const useMembership = (orgId?: string) => {
       },
     });
 
-  const { data: createdMemberships, isLoading } = useQuery<
+  const { data: createdMemberships, isInitialLoading } = useQuery<
     MembershipWithId[] | null
   >(["createdMemberships", did], () => vess.getCreatedMemberships(), {
     enabled: !!did && did !== "",
@@ -68,7 +68,7 @@ export const useMembership = (orgId?: string) => {
   return {
     createdMemberships,
     createdMembershipsOfOrg,
-    isLoading,
+    isInitialLoading,
     createMembership,
     isCreatingOrg,
     setShowModal,

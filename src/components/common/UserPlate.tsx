@@ -29,7 +29,7 @@ export default function UserPlate({
   withSearchIcon = false,
 }:Props) {
 
-  const {profile, isLoading} = useProfileInfo(client)
+  const {profile, isInitialLoading} = useProfileInfo(client)
 
   const textSize = useMemo(() => {
     switch (size) {
@@ -81,7 +81,7 @@ export default function UserPlate({
   const OrganizationContent = () => {
     return (
       <div className="flex items-center space-x-0.5">
-        {isLoading ? (
+        {isInitialLoading ? (
           <CommonSpinner size="sm" />
         ) : (
           <div

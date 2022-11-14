@@ -28,7 +28,7 @@ import { isMobile, isTablet } from "react-device-detect";
 export const MyCVoxelContainer: FC = () => {
   const {did, account} = useDIDAccount()
   const { offchainMetaList } = useOffchainList();
-  const {workCredentials, isLoading} = useWorkCredentials(did)
+  const {workCredentials, isInitialLoading} = useWorkCredentials(did)
   const { setTabState } = useTab();
 
   const forceReload = () => {
@@ -121,7 +121,7 @@ export const MyCVoxelContainer: FC = () => {
           </div>
         ) : (
           <CVoxelsPresenter>
-            {!isLoading && (!sortCredentials || sortCredentials.length === 0) && (
+            {!isInitialLoading && (!sortCredentials || sortCredentials.length === 0) && (
               <div className="mx-auto">
                 <NoItemPresenter text="No Voxels yet" />
                 {account && (
@@ -134,8 +134,8 @@ export const MyCVoxelContainer: FC = () => {
               </div>
             )}
 
-            {isLoading && <CommonLoading />}
-            {!isLoading && filteredVoxels && (
+            {isInitialLoading && <CommonLoading />}
+            {!isInitialLoading && filteredVoxels && (
               <div ref={parentRef} className={"overflow-auto h-full w-full"}>
                 <div
                   style={{
@@ -172,7 +172,7 @@ export const MyCVoxelContainer: FC = () => {
       </>
     ),
     [
-      isLoading,
+      isInitialLoading,
       filteredVoxels,
       account,
       offchainMetaList,

@@ -36,16 +36,17 @@ import { useDIDAccount } from "@/hooks/useDIDAccount";
 export const useFetchWorkCredential = (streamId?: string) => {
   // const vess = getVESS()
   const vess = getVESS(CERAMIC_NETWORK !== "mainnet");
-  const { data: workCredential, isLoading } = useQuery<WorkCredential | null>(
-    ["useFetchWorkCredential", streamId],
-    () => vess.getWorkCredential(streamId),
-    {
-      enabled: !!streamId && streamId !== "",
-      staleTime: Infinity,
-      cacheTime: 300000,
-    }
-  );
-  return { workCredential, isLoading };
+  const { data: workCredential, isInitialLoading } =
+    useQuery<WorkCredential | null>(
+      ["useFetchWorkCredential", streamId],
+      () => vess.getWorkCredential(streamId),
+      {
+        enabled: !!streamId && streamId !== "",
+        staleTime: Infinity,
+        cacheTime: 300000,
+      }
+    );
+  return { workCredential, isInitialLoading };
 };
 
 export const useWorkCredentials = (did?: string) => {
@@ -54,15 +55,13 @@ export const useWorkCredentials = (did?: string) => {
   const queryClient = useQueryClient();
   const { did: myDid, originalAddress } = useDIDAccount();
   const { showLoading, closeLoading } = useModal();
-  const { data: workCredentials, isLoading } = useQuery<WorkCredentialWithId[]>(
-    ["heldWorkCredentials", did],
-    () => vess.getHeldWorkCredentials(did),
-    {
-      enabled: !!did && did !== "",
-      staleTime: Infinity,
-      cacheTime: 300000,
-    }
-  );
+  const { data: workCredentials, isInitialLoading } = useQuery<
+    WorkCredentialWithId[]
+  >(["heldWorkCredentials", did], () => vess.getHeldWorkCredentials(did), {
+    enabled: !!did && did !== "",
+    staleTime: Infinity,
+    cacheTime: 300000,
+  });
 
   const { mutateAsync: deleteCRDLs } = useMutation<
     BaseResponse,
@@ -97,7 +96,7 @@ export const useWorkCredentials = (did?: string) => {
   return {
     workCredentials,
     migrateAccount,
-    isLoading,
+    isInitialLoading,
     deleteCRDLs,
   };
 };
@@ -110,11 +109,7 @@ export const useWorkCredential = () => {
   const vess = getVESS(CERAMIC_NETWORK !== "mainnet");
   const queryClient = useQueryClient();
 
-  const {
-    mutateAsync: issueCRDL,
-    isLoading: isIssuingCRDL,
-    isSuccess,
-  } = useMutation<
+  const { mutateAsync: issueCRDL } = useMutation<
     CustomResponse<{
       streamId: string | undefined;
     }>,

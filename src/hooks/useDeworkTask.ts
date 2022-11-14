@@ -18,7 +18,7 @@ export const useDeworkTask = () => {
 
   const queryClient = useQueryClient();
 
-  const { data, isLoading } = useQuery<WorkSubjectFromDework[]>(
+  const { data } = useQuery<WorkSubjectFromDework[]>(
     ["getDeworkTaskListFromFB", account],
     () => getDeworkTaskListFromFB(account?.toLowerCase()),
     {

@@ -15,7 +15,7 @@ const MyPageContainer = dynamic(
 
 export const HomeContainer: FC = () => {
   const {did} = useDIDAccount()
-  const {workCredentials, migrateAccount, isLoading} = useWorkCredentials(did)
+  const {workCredentials, migrateAccount, isInitialLoading} = useWorkCredentials(did)
   const myPageContainerRef = useRef<HTMLDivElement>(null);
   const visualContainerRef = useRef<HTMLDivElement>(null);
   const { setTabState } = useTab();
@@ -52,7 +52,7 @@ export const HomeContainer: FC = () => {
         className="relative snap-start snap-always min-h-screen"
         ref={visualContainerRef}
       >
-        <CVoxelsContainer did={did || ""} content={workCredentials || []} isLoading={isLoading} isMe moveToCreateSection={handleCreateNewVoxel}>
+        <CVoxelsContainer did={did || ""} content={workCredentials || []} isLoading={isInitialLoading} isMe moveToCreateSection={handleCreateNewVoxel}>
           <div className="absolute bottom-10 pb-12">
             <div className="relative mx-auto cursor-pointer hidden sm:block">
               <button onClick={() => scrollToInfo()}>

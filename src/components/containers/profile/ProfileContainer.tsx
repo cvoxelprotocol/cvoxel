@@ -17,7 +17,7 @@ type Props = {
 };
 
 export default function ProfileContainer({did}: Props) {
-  const {workCredentials, isLoading} = useWorkCredentials(did)
+  const {workCredentials, isInitialLoading} = useWorkCredentials(did)
   const router = useRouter();
 
   const isTopPage = useMemo(() => {
@@ -69,7 +69,7 @@ export default function ProfileContainer({did}: Props) {
         ref={visualContainerRef}
       >
         <CVoxelsContainer
-          isLoading={isLoading}
+          isLoading={isInitialLoading}
           mode="search"
           content={workCredentials || []}
           did={did}

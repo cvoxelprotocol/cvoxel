@@ -44,7 +44,7 @@ export const useEventAttendance = (eventId?: string) => {
     setShowEventAttendanceFromProxyModal,
   ] = useStateIssueEventAttendanceFromProxyModal();
 
-  const { mutateAsync: issueEvent, isLoading: isIssuingEvent } = useMutation<
+  const { mutateAsync: issueEvent } = useMutation<
     CustomResponse<{ streamId: string | undefined }>,
     unknown,
     Event
@@ -71,15 +71,13 @@ export const useEventAttendance = (eventId?: string) => {
     },
   });
 
-  const { data: issuedEvent, isLoading } = useQuery<EventWithId[] | null>(
-    ["issuedEvent", did],
-    () => vess.getIssuedEvents(did),
-    {
-      enabled: !!did && did !== "",
-      staleTime: Infinity,
-      cacheTime: 300000,
-    }
-  );
+  const { data: issuedEvent, isInitialLoading } = useQuery<
+    EventWithId[] | null
+  >(["issuedEvent", did], () => vess.getIssuedEvents(did), {
+    enabled: !!did && did !== "",
+    staleTime: Infinity,
+    cacheTime: 300000,
+  });
 
   const {
     mutateAsync: issueEventAttendanceCredential,
@@ -113,10 +111,9 @@ export const useEventAttendance = (eventId?: string) => {
     },
   });
 
-  const {
-    data: IssuedEventAttendanceVerifiableCredentials,
-    isLoading: isLoadingIssuedEventAttendance,
-  } = useQuery<EventAttendanceWithId[] | null>(
+  const { data: IssuedEventAttendanceVerifiableCredentials } = useQuery<
+    EventAttendanceWithId[] | null
+  >(
     ["IssuedEventAttendanceVerifiableCredentials", did],
     () => vess.getIssuedEventAttendanceVerifiableCredentials(),
     {
@@ -128,7 +125,7 @@ export const useEventAttendance = (eventId?: string) => {
 
   const {
     data: HeldEventAttendanceVerifiableCredentials,
-    isLoading: isFetchingHeldMembershipSubjects,
+    isInitialLoading: isFetchingHeldMembershipSubjects,
   } = useQuery<EventAttendanceWithId[] | null>(
     ["HeldEventAttendanceVerifiableCredentials", did],
     () => vess.getHeldEventAttendanceVerifiableCredentials(),
@@ -156,10 +153,7 @@ export const useEventAttendance = (eventId?: string) => {
     return res;
   };
 
-  const {
-    mutateAsync: issueEventAttendanceFromProxy,
-    isLoading: isIssuingFromProxy,
-  } = useMutation<
+  const { mutateAsync: issueEventAttendanceFromProxy } = useMutation<
     { [x: string]: string | string[] },
     unknown,
     issueEventAttendanceFromProxyProps
@@ -225,17 +219,20 @@ export const useEventAttendance = (eventId?: string) => {
     return res.vcs as string[];
   };
 
-  const { data: eventDetail, isLoading: isLoadingEventDetail } = useQuery<
-    EventWithId | undefined
-  >(["eventDetail", eventId], () => vess.getEvent(eventId), {
-    enabled: !!eventId,
-    staleTime: Infinity,
-    cacheTime: 300000,
-  });
+  const { data: eventDetail, isInitialLoading: isLoadingEventDetail } =
+    useQuery<EventWithId | undefined>(
+      ["eventDetail", eventId],
+      () => vess.getEvent(eventId),
+      {
+        enabled: !!eventId,
+        staleTime: Infinity,
+        cacheTime: 300000,
+      }
+    );
 
   return {
     IssuedEventAttendanceVerifiableCredentials,
-    isLoading,
+    isInitialLoading,
     issueEventAttendance,
     isCreatingSubject,
     setShowEventModal,

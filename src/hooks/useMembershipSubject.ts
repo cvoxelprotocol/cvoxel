@@ -59,7 +59,7 @@ export const useMembershipSubject = (orgId?: string) => {
       },
     });
 
-  const { data: IssuedMembershipSubjects, isLoading } = useQuery<
+  const { data: IssuedMembershipSubjects, isInitialLoading } = useQuery<
     MembershipSubjectWithId[] | null
   >(
     ["IssuedMembershipSubjects", did],
@@ -73,7 +73,7 @@ export const useMembershipSubject = (orgId?: string) => {
 
   const {
     data: HeldMembershipSubjects,
-    isLoading: isFetchingHeldMembershipSubjects,
+    isInitialLoading: isFetchingHeldMembershipSubjects,
   } = useQuery<MembershipSubjectWithId[] | null>(
     ["IssuedMembershipSubjects", did],
     () => vess.getHeldMembershipSubjects(),
@@ -86,7 +86,7 @@ export const useMembershipSubject = (orgId?: string) => {
 
   const {
     data: heldMembershipSubjectsFromDB,
-    isLoading: isLoadingHeldSubjectsFromDB,
+    isInitialLoading: isLoadingHeldSubjectsFromDB,
   } = useQuery<MembershipSubjectWithId[] | null>(
     ["IssuedMembershipSubjects", did],
     () => getHeldMembershipSubjectsFromDB(did),
@@ -97,16 +97,18 @@ export const useMembershipSubject = (orgId?: string) => {
     }
   );
 
-  const { data: membershipSubjectsFromDB, isLoading: isLoadingSubjectsFromDB } =
-    useQuery<MembershipSubjectWithId[] | null>(
-      ["CreatedMembershipSubjects", orgId],
-      () => getMembershipSUbjectsFromDB(orgId),
-      {
-        enabled: !!orgId,
-        staleTime: Infinity,
-        cacheTime: 300000,
-      }
-    );
+  const {
+    data: membershipSubjectsFromDB,
+    isInitialLoading: isLoadingSubjectsFromDB,
+  } = useQuery<MembershipSubjectWithId[] | null>(
+    ["CreatedMembershipSubjects", orgId],
+    () => getMembershipSUbjectsFromDB(orgId),
+    {
+      enabled: !!orgId,
+      staleTime: Infinity,
+      cacheTime: 300000,
+    }
+  );
 
   const issue = async (
     org: OrganizationWIthId,
@@ -134,7 +136,7 @@ export const useMembershipSubject = (orgId?: string) => {
 
   return {
     IssuedMembershipSubjects,
-    isLoading,
+    isInitialLoading,
     issue,
     isCreatingSubject,
     setShowSubjectModal,

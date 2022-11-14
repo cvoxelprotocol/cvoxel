@@ -18,7 +18,7 @@ type Props = {
 };
 
 export const EventAttendanceDetailContainer:FC<Props> =({attendanceId}) => {
-    const {eventAttendance, isLoading} = useClaimedEventAttendances(attendanceId)
+    const {eventAttendance, isInitialLoading} = useClaimedEventAttendances(attendanceId)
 
     const goToCerscan = () => {
         if(!eventAttendance) return
@@ -28,7 +28,7 @@ export const EventAttendanceDetailContainer:FC<Props> =({attendanceId}) => {
     return (
         <main className="text-center">
             <div className="relative w-full max-w-5xl min-h-screen lg:min-h-screen mx-auto pt-20 sm:pt-32 px-4">
-                {isLoading ? (
+                {isInitialLoading ? (
                     <CommonLoading />
                 ): (
                     <>

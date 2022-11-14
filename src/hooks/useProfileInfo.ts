@@ -11,7 +11,7 @@ export const useProfileInfo = (client?: Client) => {
     client?.format === "DID" ? client.value : undefined
   );
 
-  const { data: profile, isLoading } = useQuery<DisplayProfile>(
+  const { data: profile, isInitialLoading } = useQuery<DisplayProfile>(
     ["Client", client],
     () => fetchProfile(client),
     {
@@ -39,6 +39,6 @@ export const useProfileInfo = (client?: Client) => {
   };
   return {
     profile,
-    isLoading,
+    isInitialLoading,
   };
 };

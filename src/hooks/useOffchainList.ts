@@ -13,7 +13,7 @@ import {
 export const useOffchainList = () => {
   const { chainId, account, originalAddress } = useDIDAccount();
 
-  const { data: txes, isLoading: txLoading } = useQuery<
+  const { data: txes, isInitialLoading: txLoading } = useQuery<
     TransactionLogWithChainId[]
   >(
     ["etherscan", originalAddress],
@@ -27,7 +27,7 @@ export const useOffchainList = () => {
 
   const {
     data: offchainMetaList,
-    isLoading: offchainLoading,
+    isInitialLoading: offchainLoading,
     refetch: refetchMeta,
   } = useQuery<WorkCredentialWithId[]>(
     ["offchainCVoxelMeta", account],
@@ -66,15 +66,16 @@ export const useOffchainList = () => {
 };
 
 export const useOffchainItem = (id?: string) => {
-  const { data: offchainItem, isLoading } = useQuery<WorkCredentialWithId>(
-    ["offchainItem", id],
-    () => getOffchainData(id),
-    {
-      enabled: !!id,
-      staleTime: Infinity,
-      cacheTime: 3000000,
-    }
-  );
+  const { data: offchainItem, isInitialLoading } =
+    useQuery<WorkCredentialWithId>(
+      ["offchainItem", id],
+      () => getOffchainData(id),
+      {
+        enabled: !!id,
+        staleTime: Infinity,
+        cacheTime: 3000000,
+      }
+    );
 
   const getOffchainItem = useCallback(
     async (offchainId: string): Promise<WorkCredentialWithId | null> => {
@@ -90,7 +91,7 @@ export const useOffchainItem = (id?: string) => {
   );
 
   return {
-    isLoading,
+    isInitialLoading,
     offchainItem,
     getOffchainItem,
   };

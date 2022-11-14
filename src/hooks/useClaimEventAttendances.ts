@@ -7,7 +7,7 @@ export const useClaimedEventAttendances = (attendanceId?: string) => {
   // const vess = getVESS()
   const vess = getVESS(CERAMIC_NETWORK !== "mainnet");
 
-  const { data: eventAttendance, isLoading } = useQuery<
+  const { data: eventAttendance, isInitialLoading } = useQuery<
     EventAttendanceWithId | undefined
   >(
     ["EventAttendance", attendanceId],
@@ -21,6 +21,6 @@ export const useClaimedEventAttendances = (attendanceId?: string) => {
 
   return {
     eventAttendance,
-    isLoading,
+    isInitialLoading,
   };
 };

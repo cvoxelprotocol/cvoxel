@@ -9,7 +9,7 @@ export function useSigRequest() {
 
   const {
     data: sigRequests,
-    isLoading: isLoading,
+    isInitialLoading,
     refetch: updateMetaList,
   } = useQuery<WorkCredentialWithId[]>(
     ["getSigRequestList", account],
@@ -26,5 +26,5 @@ export function useSigRequest() {
     return sigRequests.filter((s) => s.holderDid?.toLowerCase() !== did);
   }, [sigRequests, did]);
 
-  return { sigRequestList, updateMetaList, isLoading };
+  return { sigRequestList, updateMetaList, isInitialLoading };
 }

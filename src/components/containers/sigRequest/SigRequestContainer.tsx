@@ -21,7 +21,7 @@ type Props = {
 
 export const SigRequestContainer: FC<Props> = ({ txId }) => {
   const {did} = useDIDAccount()
-  const {isLoading, offchainItem} = useOffchainItem(txId)
+  const {isInitialLoading, offchainItem} = useOffchainItem(txId)
   const {signCredential} = useWorkCredential()
   const router = useRouter()
   const {setScreenState} = useMyPageScreen()
@@ -43,7 +43,7 @@ export const SigRequestContainer: FC<Props> = ({ txId }) => {
       <div
         className="md:pt-12 md:overflow-hidden w-full">
         <div className="max-w-[820px] mx-auto mt-20 px-4">
-            {isLoading ? (<CommonLoading />): (
+            {isInitialLoading ? (<CommonLoading />): (
               <>
                 {offchainItem ? (
                   <div className="mt-6 sm:px-6">

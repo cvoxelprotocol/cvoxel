@@ -51,7 +51,7 @@ export const useOrganization = (orgId?: string) => {
     },
   });
 
-  const { data: createdOrganizations, isLoading } = useQuery<
+  const { data: createdOrganizations, isInitialLoading } = useQuery<
     OrganizationWIthId[]
   >(["createdOrganizations", did], () => vess.getCreatedOrganization(), {
     enabled: !!did && did !== "",
@@ -59,17 +59,19 @@ export const useOrganization = (orgId?: string) => {
     cacheTime: 300000,
   });
 
-  const { data: organization, isLoading: isFetchingOrg } = useQuery<
-    OrganizationWIthId | undefined
-  >(["organization", orgId], () => vess.getOrganization(orgId), {
-    enabled: !!orgId,
-    staleTime: Infinity,
-    cacheTime: 300000,
-  });
+  const { data: organization } = useQuery<OrganizationWIthId | undefined>(
+    ["organization", orgId],
+    () => vess.getOrganization(orgId),
+    {
+      enabled: !!orgId,
+      staleTime: Infinity,
+      cacheTime: 300000,
+    }
+  );
 
   return {
     createdOrganizations,
-    isLoading,
+    isInitialLoading,
     createOrganization,
     isCreatingOrg,
     setShowCreateModal,
