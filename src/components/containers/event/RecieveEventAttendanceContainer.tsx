@@ -1,14 +1,20 @@
 import { Button } from "@/components/common/button/Button";
-import { DIDContext } from "@/context/DIDContext";
 import { useEventAttendance } from "@/hooks/useEventAttendance";
 import Image from "next/image";
-import { FC, useContext, useMemo } from "react";
+import { FC, useMemo } from "react";
 import { shortenStr } from "@/utils/objectUtil";
-import AccountButton from "@/components/common/button/AccountButton";
 import { useHeldEventAttendances } from "@/hooks/useHeldEventAttendances";
 import Router from "next/router";
 import { CommonLoading } from "@/components/common/CommonLoading";
+import { useDIDAccount } from "@/hooks/useDIDAccount";
+import dynamic from "next/dynamic";
 
+const AccountButton = dynamic(
+    () => import("@/components/common/button/AccountButton"),
+    {
+      ssr: false,
+    }
+  );
 
 // const EVENT_1025_CRYPTOBASE = "kjzl6cwe1jw148tidx4xe1cxh9vtwo1tn9cfbt0i6t38i7703yo8z107gfjnfpo"
 // const EVENT_1025_SUPERLOCAL = "ceramic://kjzl6cwe1jw148904dvpnhwxhu3nps59702ufd4tpz9v6l0mfphgqn1df24op09"
@@ -19,7 +25,7 @@ type Props = {
 
 export const RecieveEventAttendanceContainer:FC<Props> =({eventId}) => {
     const {eventDetail, isLoadingEventDetail} = useEventAttendance(eventId)
-    const {did} = useContext(DIDContext)
+    const {did} = useDIDAccount()
     const {claimEventAttendance} = useEventAttendance()
     const {HeldEventAttendances,setHeldEventAttendances } = useHeldEventAttendances(did)
     

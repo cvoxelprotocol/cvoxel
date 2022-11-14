@@ -13,7 +13,7 @@ type Props = {
   type?: "voxel" | "event"
   showNav?: boolean
 }
-export const MainProfileCard: FC<Props> = ({did, type = "voxel", showNav = true}) => {
+export default function MainProfileCard({did, type = "voxel", showNav = true}:Props) {
   const {HeldMembershipSubjects} = useHeldMembershipSubject(did)
   const { profile } = useSocialAccount(did);
 

@@ -1,12 +1,18 @@
 
 import { Button } from "@/components/common/button/Button";
 import { CommonLoading } from "@/components/common/CommonLoading";
-import { MainProfileCard } from "@/components/Profile/MainProfileCard";
 import { useClaimedEventAttendances } from "@/hooks/useClaimEventAttendances";
 import { removeCeramicPrefix } from "vess-sdk";
 import Image from "next/image";
 import { FC } from "react";
+import dynamic from "next/dynamic";
 
+const MainProfileCard = dynamic(
+  () => import("@/components/Profile/MainProfileCard"),
+  {
+    ssr: false,
+  }
+);
 type Props = {
     attendanceId?: string;
 };

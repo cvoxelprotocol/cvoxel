@@ -1,18 +1,25 @@
 import { useMyPageScreen } from "@/hooks/useTab";
-import { FC, useCallback, useContext, useMemo } from "react";
+import { FC, useCallback, useMemo } from "react";
 import { NoItemPresenter } from "../../../common/NoItemPresenter";
 import { WorkCredentialWithId,removeCeramicPrefix } from "vess-sdk";
 import { useSigRequest } from "@/hooks/useSigRequest";
 import { SigRequestListItem } from "@/components/SigRequest/SigRequestListItem/SigRequestListItem";
 import { useRouter } from "next/router";
 import { NavBar } from "@/components/SigRequest/NavBar/NavBar";
-import { SigRequestDetail } from "@/components/SigRequest/SigRequestDetail/SigRequestDetail";
-import { DIDContext } from "@/context/DIDContext";
+import { useDIDAccount } from "@/hooks/useDIDAccount";
 import { useWorkCredential } from "@/hooks/useWorkCredential";
 import { CommonLoading } from "@/components/common/CommonLoading";
+import dynamic from "next/dynamic";
+
+const SigRequestDetail = dynamic(
+  () => import("@/components/SigRequest/SigRequestDetail/SigRequestDetail"),
+  {
+    ssr: false,
+  }
+);
 
 export const MyNotificationContainer: FC = () => {
-  const {did, account} = useContext(DIDContext)
+  const {did, account} = useDIDAccount()
   const {setScreenState} = useMyPageScreen()
   const { sigRequestList, isLoading, updateMetaList } = useSigRequest();
   const {signCredential} = useWorkCredential()

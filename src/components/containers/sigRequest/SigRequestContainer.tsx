@@ -1,20 +1,26 @@
-import { FC, useCallback, useContext } from "react";
+import { FC, useCallback } from "react";
 import { useRouter } from "next/router";
-import { DIDContext } from "@/context/DIDContext";
+import { useDIDAccount } from "@/hooks/useDIDAccount";
 import { WorkCredentialWithId } from "vess-sdk";
-import { SigRequestDetail } from "@/components/SigRequest/SigRequestDetail/SigRequestDetail";
 import { NoItemPresenter } from "@/components/common/NoItemPresenter";
 import { CommonLoading } from "@/components/common/CommonLoading";
 import { useMyPageScreen } from "@/hooks/useTab";
 import { useWorkCredential } from "@/hooks/useWorkCredential";
 import { useOffchainItem } from "@/hooks/useOffchainList";
+import dynamic from "next/dynamic";
 
+const SigRequestDetail = dynamic(
+  () => import("@/components/SigRequest/SigRequestDetail/SigRequestDetail"),
+  {
+    ssr: false,
+  }
+);
 type Props = {
   txId?: string;
 };
 
 export const SigRequestContainer: FC<Props> = ({ txId }) => {
-  const {did} = useContext(DIDContext)
+  const {did} = useDIDAccount()
   const {isLoading, offchainItem} = useOffchainItem(txId)
   const {signCredential} = useWorkCredential()
   const router = useRouter()

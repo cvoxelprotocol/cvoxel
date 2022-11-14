@@ -1,17 +1,17 @@
 import { TransactionLogWithChainId } from "@/interfaces/explore";
 import { etherscanTxListFetcher } from "@/services/fetcher/EtherscanFetcher";
 import { WorkCredentialWithId } from "vess-sdk";
-import { useMemo, useContext, useCallback } from "react";
+import { useMemo, useCallback } from "react";
 import { useQuery } from "react-query";
 import { uniqueList } from "@/utils/etherscanUtils";
-import { DIDContext } from "@/context/DIDContext";
+import { useDIDAccount } from "@/hooks/useDIDAccount";
 import {
   getOffchainData,
   getOffchainDataList,
 } from "@/lib/firebase/store/meta";
 
 export const useOffchainList = () => {
-  const { chainId, account, originalAddress } = useContext(DIDContext);
+  const { chainId, account, originalAddress } = useDIDAccount();
 
   const { data: txes, isLoading: txLoading } = useQuery<
     TransactionLogWithChainId[]

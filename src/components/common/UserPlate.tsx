@@ -1,4 +1,4 @@
-import { FC, useMemo } from "react";
+import { useMemo } from "react";
 import clsx from "clsx";
 import { CommonSpinner } from "@/components/common/CommonSpinner";
 import { IconAvatar } from "@/components/common/IconAvatar";
@@ -18,7 +18,7 @@ type Props = {
   withSearchIcon?: boolean;
 };
 
-export const UserPlate: FC<Props> = ({
+export default function UserPlate({
   client,
   size = "md",
   isMe = false,
@@ -27,7 +27,7 @@ export const UserPlate: FC<Props> = ({
   iconOnly = false,
   withoutIcon = false,
   withSearchIcon = false,
-}) => {
+}:Props) {
 
   const {profile, isLoading} = useProfileInfo(client)
 

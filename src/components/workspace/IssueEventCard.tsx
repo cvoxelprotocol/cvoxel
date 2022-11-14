@@ -1,10 +1,10 @@
-import { DIDContext } from "@/context/DIDContext";
+import { useDIDAccount } from "@/hooks/useDIDAccount";
 import { useEventAttendance } from "@/hooks/useEventAttendance";
 import { useFileUpload } from "@/hooks/useFileUpload";
 import { convertDateToTimestampStr } from "@/utils/dateUtil";
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { FC, useContext } from "react";
+import { FC } from "react";
 import { useForm } from "react-hook-form";
 import { Event } from "vess-sdk";
 import { Button } from "../common/button/Button";
@@ -21,7 +21,7 @@ type EventInput = {
 }
 export const IssueEventCard:FC<Props> = ({orgId}) => {
     const {issueEvent, setShowEventModal} = useEventAttendance()
-    const {did} = useContext(DIDContext)
+    const {did} = useDIDAccount()
     const { icon, setIcon } = useFileUpload();
 
     const {

@@ -12,8 +12,7 @@ import {
   useStateIssueEventAttendanceModal,
   useStateIssueEventModal,
 } from "@/recoilstate";
-import { useContext } from "react";
-import { DIDContext } from "@/context/DIDContext";
+import { useDIDAccount } from "@/hooks/useDIDAccount";
 import {
   EventAttendanceWithId,
   EventWithId,
@@ -31,7 +30,7 @@ type issueEventAttendanceFromProxyProps = {
 };
 
 export const useEventAttendance = (eventId?: string) => {
-  const { did } = useContext(DIDContext);
+  const { did } = useDIDAccount();
   // const vess = getVESS()
   const vess = getVESS(CERAMIC_NETWORK !== "mainnet");
   const queryClient = useQueryClient();

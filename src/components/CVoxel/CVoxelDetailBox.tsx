@@ -1,4 +1,4 @@
-import { FC, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { GenreBadge } from "@/components/common/badge/GenreBadge";
@@ -9,10 +9,16 @@ import { convertTimestampToDateStr } from "@/utils/dateUtil";
 import { useStateCredentialDetailBox } from "@/recoilstate";
 import clsx from "clsx";
 import { ShareButton } from "@/components/common/button/shareButton/ShareButton";
-import { CredentialDirection } from "../common/CredentialDirection";
-import { DIDContext } from "@/context/DIDContext";
+import { useDIDAccount } from "@/hooks/useDIDAccount";
 import { useFetchWorkCredential } from "@/hooks/useWorkCredential";
 import dynamic from "next/dynamic";
+
+const CredentialDirection = dynamic(
+  () => import("@/components/common/CredentialDirection"),
+  {
+    ssr: false,
+  }
+);
 
 const OneVoxelVisualizerPresenterWrapper = dynamic(
   () => import("@/components/CVoxel/OneVoxelVisualizerPresenterWrapper"),
@@ -23,7 +29,7 @@ const OneVoxelVisualizerPresenterWrapper = dynamic(
 
 export const CVoxelDetailBox: FC<{}> = () => {
   const [box] = useStateCredentialDetailBox();
-  const { account } = useContext(DIDContext);
+  const { account } = useDIDAccount();
 
   const {workCredential} = useFetchWorkCredential(box?.item.backupId)
 

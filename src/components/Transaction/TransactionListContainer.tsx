@@ -1,4 +1,4 @@
-import { FC, useContext, useMemo } from "react";
+import { FC, useMemo } from "react";
 import { CommonLoading } from "../common/CommonLoading";
 import { NoItemPresenter } from "../common/NoItemPresenter";
 import { TransactionDetail } from "./TransactionDetail";
@@ -12,7 +12,7 @@ import type {
 import { useFileUpload } from "@/hooks/useFileUpload";
 import { useStateForceUpdate, useStateSelectedTx } from "@/recoilstate";
 import { useThemeMode } from "@/hooks/useThemeMode";
-import { DIDContext } from "@/context/DIDContext";
+import { useDIDAccount } from "@/hooks/useDIDAccount";
 import { useRouter } from "next/router";
 import { useWorkCredential, useWorkCredentials } from "@/hooks/useWorkCredential";
 import { DeliverableItem, WorkCredentialWithId } from "vess-sdk";
@@ -27,7 +27,7 @@ export const TransactionListContainer: FC<TransactionListContainerProps> = ({
   offchainLoading,
   offchainMetaList,
 }) => {
-  const {did, account, connection} = useContext(DIDContext)
+  const {did, account, connection} = useDIDAccount()
   const {workCredentials, refetch} = useWorkCredentials(did)
   const [selectedTx, selectTx] = useStateSelectedTx();
   const { setTabState } = useTab();

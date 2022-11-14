@@ -1,12 +1,18 @@
 import { FC, useEffect } from "react";
 import AttendanceIcon from "@/components/common/event/attendance-icon.svg"
-import { MainProfileCard } from "@/components/Profile/MainProfileCard";
 import { useHeldEventAttendances } from "@/hooks/useHeldEventAttendances";
 import { EventAttendanceBadge } from "@/components/Event/EventAttendanceBadge";
 import { removeCeramicPrefix,EventAttendanceWithId } from "vess-sdk";
 import { useRouter } from "next/router";
 import { CommonLoading } from "@/components/common/CommonLoading";
+import dynamic from "next/dynamic";
 
+const MainProfileCard = dynamic(
+  () => import("@/components/Profile/MainProfileCard"),
+  {
+    ssr: false,
+  }
+);
 type HeldEventContainerProps = {
     did: string
 }

@@ -7,7 +7,6 @@ import { BaseLayout } from "@/components/layout/BaseLayout";
 import { ThemeProvider } from "next-themes";
 import { useEffect } from "react";
 import Router from "next/router";
-import { DIDContextProvider } from "@/context/DIDContext";
 import type { DehydratedState } from 'react-query';
 import dynamic from "next/dynamic";
 import "@orbisclub/modules/dist/index.modern.css";
@@ -67,14 +66,12 @@ export default function App({ Component, pageProps }: AppProps<{ dehydratedState
       <QueryClientProvider client={queryClient}>
           <Hydrate state={pageProps.dehydratedState}>
           <ThemeProvider attribute="class" defaultTheme={"light"}>
-                  <DIDContextProvider >
-                    <BaseLayout>
-                      <Component {...props} />
-                    </BaseLayout>
-                    <OrbisChatWrapper />
-                  </DIDContextProvider>
-                  {isLoading && <LoadingModal />}
-                </ThemeProvider>
+            <BaseLayout>
+                <Component {...props} />
+            </BaseLayout>
+            <OrbisChatWrapper />
+            {isLoading && <LoadingModal />}
+          </ThemeProvider>
           </Hydrate>
         </QueryClientProvider>
     </RecoilRoot>

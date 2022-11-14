@@ -2,11 +2,17 @@ import type { GetServerSideProps } from "next";
 import { CeramicProps, CeramicSupport } from "@/interfaces/ceramic";
 import { NextPage } from "next";
 import { HomeContainer } from "@/components/containers/home";
-import { ProfileContainer } from "@/components/containers/profile/ProfileContainer";
 import { NoProfileContainer } from "@/components/containers/profile/NoProfileContainer";
-import { useContext } from "react";
-import { DIDContext } from "@/context/DIDContext";
+import { useDIDAccount } from "@/hooks/useDIDAccount";
 import { getPkhDIDFromAddress, isDIDstring, isEthereumAddress } from "vess-sdk";
+import dynamic from "next/dynamic";
+
+const ProfileContainer = dynamic(
+  () => import("@/components/containers/profile/ProfileContainer"),
+  {
+    ssr: false,
+  }
+);
 
 export const getServerSideProps: GetServerSideProps<
   CeramicProps,
@@ -38,7 +44,7 @@ export const getServerSideProps: GetServerSideProps<
 };
 
 const ProfilePage: NextPage<CeramicProps> = (props: CeramicProps) => {
-  const {did: myDID, account} = useContext(DIDContext)
+  const {did: myDID, account} = useDIDAccount()
 
   if (props.support === "supported") {
     return (

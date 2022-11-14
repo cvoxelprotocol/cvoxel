@@ -1,16 +1,22 @@
 import { AvatarPlaceholder } from "@/components/common/avatar/AvatarPlaceholder";
-import { useContext, useState,useEffect } from "react";
+import { useState,useEffect } from "react";
 import { DisplayAvatar } from "../DisplayAvatar";
 import { IconAvatar } from "../IconAvatar";
-import { NamePlate } from "@/components/common/NamePlate";
 import { Button } from "@/components/common/button/Button";
 import { useRouter } from "next/router";
-import { useWalletAccount } from "@/hooks/useWalletAccount";
-import { DIDContext } from "@/context/DIDContext";
 import { useDework } from "@/hooks/useDework";
 import { useSocialAccount } from "@/hooks/useSocialAccount";
 import { DropDown } from "../DropDown";
+import { useConnectDID } from "@/hooks/useConnectDID";
+import { useDIDAccount } from "@/hooks/useDIDAccount";
+import dynamic from "next/dynamic";
 
+const NamePlate = dynamic(
+  () => import("@/components/common/NamePlate"),
+  {
+    ssr: false,
+  }
+);
 type MenuButtonProps = {
   label: string;
   onClick: () => void;
@@ -30,9 +36,9 @@ function MenuButton({ label, ...props }: MenuButtonProps) {
 }
 
 export default function AccountButton() {
-  const {did, account, connection} = useContext(DIDContext)
+  const {did, account, connection} = useDIDAccount()
   const {profile} = useSocialAccount(did);
-  const { connect, disconnect } = useWalletAccount();
+  const { connectDID, disConnectDID } = useConnectDID();
   
   const router = useRouter();
   const {deworkAuth,setDeworkConnectOpen, setDeworkTaskListOpen} = useDework()
@@ -50,7 +56,7 @@ export default function AccountButton() {
   const [isConnect, setIsConnect] = useState<boolean>(false);
   const handleConnect = async () => {
     try {
-      await connect();
+      await connectDID();
       setIsConnect(true);
     } catch (error) {
       console.log("error:", error);
@@ -75,7 +81,7 @@ export default function AccountButton() {
       {did && (did === PROXY_DID || did === ADMIN_DID) && (
         <MenuButton label="Workspace" onClick={() => goToWorkSpaceList()} />
       )}
-      <MenuButton label="Disconnect" onClick={() => disconnect()} />
+      <MenuButton label="Disconnect" onClick={() => disConnectDID()} />
     </>
 
     const content = (

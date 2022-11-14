@@ -5,11 +5,16 @@ import { SearchData } from "@/components/common/search/Search";
 import { NoCRDLItem } from "./NoCRDLItem";
 import { Button } from "@/components/common/button/Button";
 import { WorkCredentialWithId } from "vess-sdk";
-import { MainProfileCard } from "@/components/Profile/MainProfileCard";
 import { UserSearchWithProfile } from "@/components/common/search/UserSearchWithProfile";
-import dynamic from "next/dynamic";
 import { CommonLoading } from "@/components/common/CommonLoading";
+import dynamic from "next/dynamic";
 
+const MainProfileCard = dynamic(
+  () => import("@/components/Profile/MainProfileCard"),
+  {
+    ssr: false,
+  }
+);
 const VisualizerPresenterWrapper = dynamic(
   () => import("@/components/CVoxel/VisualizerPresenterWrapper"),
   {

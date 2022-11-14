@@ -1,4 +1,4 @@
-import { FC, useCallback, useContext, useEffect, useMemo, useRef } from "react";
+import { FC, useCallback, useEffect, useMemo, useRef } from "react";
 import { CVoxelsContainer } from "@/components/containers/home/CVoxelsContainer";
 import { Arrow } from "@/components/common/arrow/Arrow";
 import { SearchData } from "@/components/common/search/Search";
@@ -7,16 +7,16 @@ import { useRouter } from "next/router";
 import LeftArrow from "@/components/CVoxel/NavBar/left-arrow.svg";
 import { UserSearch } from "@/components/common/search/UserSearch";
 import { UserCVoxelContainer } from "@/components/containers/profile/UserCVoxelContainer";
-import { useWalletAccount } from "@/hooks/useWalletAccount";
-import { DIDContext } from "@/context/DIDContext";
+import { useDIDAccount } from "@/hooks/useDIDAccount";
 import Image from "next/image";
 import { useWorkCredentials } from "@/hooks/useWorkCredential";
+import { useConnectDID } from "@/hooks/useConnectDID";
 
 type Props = {
   did: string;
 };
 
-export const ProfileContainer: FC<Props> = ({ did }) => {
+export default function ProfileContainer({did}: Props) {
   const {workCredentials, isLoading} = useWorkCredentials(did)
   const router = useRouter();
 
@@ -45,8 +45,8 @@ export const ProfileContainer: FC<Props> = ({ did }) => {
     visualContainerRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const {did:myDid, account} = useContext(DIDContext)
-  const { connect } = useWalletAccount();
+  const {did:myDid, account} = useDIDAccount()
+  const { connectDID } = useConnectDID();
 
   const handleSearch = (data: SearchData) => {
     if (!data.value) return;
@@ -145,7 +145,7 @@ export const ProfileContainer: FC<Props> = ({ did }) => {
                   ) : (
                     <Button
                       text="Connect"
-                      onClick={() => connect()}
+                      onClick={() => connectDID()}
                       color="primary"
                       className="text-sm sm:text-base"
                     />

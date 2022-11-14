@@ -1,8 +1,15 @@
 import { FC } from "react";
 import { Search, SearchProps } from "@/components/common/search/Search";
-import { NamePlate } from "@/components/common/NamePlate";
 import CloseIcon from "@/components/common/search/close.svg";
 import clsx from "clsx";
+import dynamic from "next/dynamic";
+
+const NamePlate = dynamic(
+  () => import("@/components/common/NamePlate"),
+  {
+    ssr: false,
+  }
+);
 
 type Props = {
   did: string;

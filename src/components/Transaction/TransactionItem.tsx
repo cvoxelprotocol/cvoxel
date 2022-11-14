@@ -6,9 +6,16 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faExternalLink } from "@fortawesome/free-solid-svg-icons";
 import { convertTimestampToDateStrLocaleUS } from "@/utils/dateUtil";
 import { getNetworkSymbol } from "@/utils/networkUtil";
-import { TxDirection } from "@/components/common/TxDirection";
 import { Arrow } from "@/components/common/arrow/Arrow";
 import clsx from "clsx";
+import dynamic from "next/dynamic";
+
+const TxDirection = dynamic(
+  () => import("@/components/common/TxDirection"),
+  {
+    ssr: false,
+  }
+);
 
 type TransactionItemProps = {
   index: number;

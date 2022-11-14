@@ -92,7 +92,6 @@ export const colourStyles = (
       };
     },
     multiValue: (styles, { data }) => {
-      const color = chroma(data.color || "#8E477F");
       return {
         ...styles,
         backgroundColor: "#F6F6F6",

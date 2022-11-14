@@ -1,9 +1,7 @@
 import { CERAMIC_NETWORK } from '@/constants/common';
-import { DIDContext } from '@/context/DIDContext';
+import { useDIDAccount } from '@/hooks/useDIDAccount';
 import { getOrbisHelper } from '@/services/OrbisHelper';
 import { ChatBox } from '@orbisclub/modules'
-import { Orbis } from '@orbisclub/orbis-sdk';
-import { useContext } from 'react';
 import { getVESS } from 'vess-sdk';
 
 const chat_theme = {
@@ -59,7 +57,7 @@ const chat_theme = {
 
 export default function OrbisChatWrapper () {
     const vess = getVESS(CERAMIC_NETWORK !== "mainnet")
-    const {did} = useContext(DIDContext)
+    const {did} = useDIDAccount()
     const orbisHelper = getOrbisHelper()
     if(!did || !vess.ceramic) {
         return <></>

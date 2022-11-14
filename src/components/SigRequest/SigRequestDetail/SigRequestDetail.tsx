@@ -1,4 +1,4 @@
-import { FC, useCallback, useContext, useMemo } from "react";
+import { FC, useCallback, useMemo } from "react";
 import { WorkCredentialWithId } from "vess-sdk";
 import {
   convertTimestampToDateStr,
@@ -7,7 +7,6 @@ import {
 import { GenreBadge } from "@/components/common/badge/GenreBadge";
 import { getGenre } from "@/utils/genreUtil";
 import { TagBadge } from "@/components/common/badge/TagBadge";
-import { NamePlate } from "@/components/common/NamePlate";
 import LeftArrow from "@/components/CVoxel/VoxelListItem/left-arrow.svg";
 import RightArrow from "@/components/CVoxel/VoxelListItem/right-arrow.svg";
 import { shortenStr } from "@/utils/objectUtil";
@@ -17,9 +16,16 @@ import { faExternalLink } from "@fortawesome/free-solid-svg-icons";
 import { getExploreLink } from "@/utils/etherscanUtils";
 import { formatBigNumber } from "@/utils/ethersUtil";
 import { useVoxelStyler } from "@/hooks/useVoxStyler";
-import { DIDContext } from "@/context/DIDContext";
-import { useWalletAccount } from "@/hooks/useWalletAccount";
+import { useDIDAccount } from "@/hooks/useDIDAccount";
+import { useConnectDID } from "@/hooks/useConnectDID";
 import dynamic from "next/dynamic";
+
+const NamePlate = dynamic(
+  () => import("@/components/common/NamePlate"),
+  {
+    ssr: false,
+  }
+);
 
 const OneVoxelVisualizerPresenterWrapper = dynamic(
   () => import("@/components/CVoxel/OneVoxelVisualizerPresenterWrapper"),
@@ -34,13 +40,9 @@ type Props = {
   isSinglePageForVerify?: boolean
 };
 
-export const SigRequestDetail: FC<Props> = ({
-  offchainItem,
-  onVerify,
-  isSinglePageForVerify = false
-}) => {
-  const {did, account} = useContext(DIDContext)
-  const { connect } = useWalletAccount();
+export default function SigRequestDetail({offchainItem, onVerify,isSinglePageForVerify}: Props){
+  const {did, account} = useDIDAccount()
+  const { connectDID } = useConnectDID();
   const subject = useMemo(() => {
     return offchainItem.subject
   },[offchainItem])
@@ -227,7 +229,7 @@ export const SigRequestDetail: FC<Props> = ({
                   text="Connect Wallet"
                   color="primary"
                   buttonType="button"
-                  onClick={connect}
+                  onClick={connectDID}
                 />
             ): (
               <>

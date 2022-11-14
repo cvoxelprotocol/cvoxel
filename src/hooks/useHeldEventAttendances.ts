@@ -9,8 +9,7 @@ import {
 } from "@/constants/toastMessage";
 import { getVESS } from "vess-sdk";
 import { CERAMIC_NETWORK } from "@/constants/common";
-import { useContext } from "react";
-import { DIDContext } from "@/context/DIDContext";
+import { useDIDAccount } from "@/hooks/useDIDAccount";
 
 export const useHeldEventAttendances = (did?: string) => {
   // const vess = getVESS()
@@ -18,7 +17,7 @@ export const useHeldEventAttendances = (did?: string) => {
   const queryClient = useQueryClient();
   const { lancInfo, lancError } = useToast();
   const { showLoading, closeLoading } = useModal();
-  const { did: myDid, originalAddress } = useContext(DIDContext);
+  const { did: myDid, originalAddress } = useDIDAccount();
 
   const { mutateAsync: setHeldEventAttendances } = useMutation<
     void,

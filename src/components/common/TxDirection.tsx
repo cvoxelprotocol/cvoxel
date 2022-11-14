@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { IconAvatar } from "@/components/common/IconAvatar";
 import { AvatarPlaceholder } from "@/components/common/avatar/AvatarPlaceholder";
 import RightArrow from "@/components/CVoxel/VoxelListItem/right-arrow.svg";
@@ -14,7 +14,7 @@ type Props = {
   isPayer: boolean;
 };
 
-export const TxDirection: FC<Props> = ({ from, to, isPayer }) => {
+export default function TxDirection({ from, to, isPayer }:Props) {
   const { ens: fromEns, ensLoading: fromEnsLoading } = useENS(from);
   const { ens: toEns, ensLoading: toEnsLoading } = useENS(to);
 

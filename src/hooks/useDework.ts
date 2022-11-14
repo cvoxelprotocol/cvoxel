@@ -1,4 +1,4 @@
-import { DIDContext } from "@/context/DIDContext";
+import { useDIDAccount } from "@/hooks/useDIDAccount";
 import { getDeworkAuth } from "@/lib/firebase/store/dework";
 import {
   useStateDeworkConnectModal,
@@ -6,7 +6,6 @@ import {
 } from "@/recoilstate";
 import { useStateDeworkAuth } from "@/recoilstate/dework";
 import { getDeworkService } from "@/services/Dework/DeworkService";
-import { useContext } from "react";
 import { useModal } from "./useModal";
 
 export const useDework = () => {
@@ -14,7 +13,7 @@ export const useDework = () => {
     useStateDeworkConnectModal();
   const [isDeworkTaskListOpen, setDeworkTaskListOpen] =
     useStateDeworkTaskListModal();
-  const { account } = useContext(DIDContext);
+  const { account } = useDIDAccount();
   const deworkService = getDeworkService();
   const { showLoading, closeLoading } = useModal();
   const [deworkAuth, setDeworkAuth] = useStateDeworkAuth();

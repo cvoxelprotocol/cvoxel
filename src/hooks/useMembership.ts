@@ -7,14 +7,14 @@ import {
 import { useModal } from "./useModal";
 import { useStateMembershipCreateModal } from "@/recoilstate";
 import { MembershipWithId } from "vess-sdk";
-import { useContext, useMemo } from "react";
-import { DIDContext } from "@/context/DIDContext";
+import { useMemo } from "react";
+import { useDIDAccount } from "@/hooks/useDIDAccount";
 import { Membership } from "vess-sdk";
 import { CustomResponse, getVESS } from "vess-sdk";
 import { CERAMIC_NETWORK } from "@/constants/common";
 
 export const useMembership = (orgId?: string) => {
-  const { did } = useContext(DIDContext);
+  const { did } = useDIDAccount();
   // const vess = getVESS()
   const vess = getVESS(CERAMIC_NETWORK !== "mainnet");
   const queryClient = useQueryClient();

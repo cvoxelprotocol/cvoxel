@@ -1,4 +1,3 @@
-import { FC } from "react";
 import { IconAvatar } from "@/components/common/IconAvatar";
 import { AvatarPlaceholder } from "@/components/common/avatar/AvatarPlaceholder";
 import RightArrow from "@/components/CVoxel/VoxelListItem/right-arrow.svg";
@@ -12,7 +11,7 @@ type Props = {
   client?: Client;
 };
 
-export const CredentialDirection: FC<Props> = ({ holder, client }) => {
+export default function CredentialDirection ({ holder, client }:Props) {
 
   const {profile, isLoading} = useSocialAccount(holder)
   const {profile: clientProfile, isLoading: isLoadingClient} = useProfileInfo(client)

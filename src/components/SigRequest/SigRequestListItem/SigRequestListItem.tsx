@@ -9,8 +9,14 @@ import clsx from "clsx";
 import Link from "next/link";
 import { useRouter } from "next/dist/client/router";
 import { useVoxelStyler } from "@/hooks/useVoxStyler";
-import { TxDirection } from "@/components/common/TxDirection";
 import dynamic from "next/dynamic";
+
+const TxDirection = dynamic(
+  () => import("@/components/common/TxDirection"),
+  {
+    ssr: false,
+  }
+);
 
 const OneVoxelVisualizerPresenterWrapper = dynamic(
   () => import("@/components/CVoxel/OneVoxelVisualizerPresenterWrapper"),

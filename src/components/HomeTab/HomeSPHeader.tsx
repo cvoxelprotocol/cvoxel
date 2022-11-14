@@ -1,14 +1,21 @@
-import { FC, RefObject, useCallback, useContext, useMemo } from "react";
+import { FC, RefObject, useCallback, useMemo } from "react";
 import { HomeTabsHeader } from "./HomeTabsHeader";
 import { useStateShowDrawer } from "@/recoilstate";
 import { Drawer } from "../common/Drawer";
 import { useTab } from "@/hooks/useTab";
 import { TAB_NAME } from "@/interfaces";
-import { NamePlate } from "@/components/common/NamePlate";
 import { useRouter } from "next/router";
 import LeftArrow from "@/components/CVoxel/NavBar/left-arrow.svg";
 import { Arrow } from "@/components/common/arrow/Arrow";
-import { DIDContext } from "@/context/DIDContext";
+import { useDIDAccount } from "@/hooks/useDIDAccount";
+import dynamic from "next/dynamic";
+
+const NamePlate = dynamic(
+  () => import("@/components/common/NamePlate"),
+  {
+    ssr: false,
+  }
+);
 
 type Props = {
   visualContainerRef: RefObject<HTMLDivElement>;
@@ -17,7 +24,7 @@ type Props = {
 export const HomeSPHeader: FC<Props> = ({ visualContainerRef }) => {
   const [_, setOpen] = useStateShowDrawer();
   const { tabState } = useTab();
-  const {did} = useContext(DIDContext)
+  const {did} = useDIDAccount()
 
   const title = useMemo(() => {
     return TAB_NAME[tabState];

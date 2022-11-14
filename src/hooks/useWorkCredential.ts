@@ -31,8 +31,7 @@ import { getNetworkSymbol } from "@/utils/networkUtil";
 import { convertDateToTimestampStr } from "@/utils/dateUtil";
 import { convertValidworkSubjectTypedData } from "@/utils/workCredentialUtil";
 import { CERAMIC_NETWORK } from "@/constants/common";
-import { useContext, useState } from "react";
-import { DIDContext } from "@/context/DIDContext";
+import { useDIDAccount } from "@/hooks/useDIDAccount";
 
 export const useFetchWorkCredential = (streamId?: string) => {
   // const vess = getVESS()
@@ -53,7 +52,7 @@ export const useWorkCredentials = (did?: string) => {
   // const vess = getVESS()
   const vess = getVESS(CERAMIC_NETWORK !== "mainnet");
   const queryClient = useQueryClient();
-  const { did: myDid, originalAddress } = useContext(DIDContext);
+  const { did: myDid, originalAddress } = useDIDAccount();
   const { showLoading, closeLoading } = useModal();
   const {
     data: workCredentials,

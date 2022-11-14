@@ -1,4 +1,4 @@
-import { FC, useMemo } from "react";
+import { useMemo } from "react";
 import clsx from "clsx";
 import { useENS } from "@/hooks/useENS";
 import { CommonSpinner } from "@/components/common/CommonSpinner";
@@ -20,7 +20,7 @@ type Props = {
   withSearchIcon?: boolean;
 };
 
-export const NamePlate: FC<Props> = ({
+export default function NamePlate ({
   address,
   did,
   size = "md",
@@ -30,7 +30,7 @@ export const NamePlate: FC<Props> = ({
   iconOnly = false,
   withoutIcon = false,
   withSearchIcon = false,
-}) => {
+}:Props) {
   const { ens, ensLoading } = useENS(address);
   const {profile} = useSocialAccount(did);
 

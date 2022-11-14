@@ -1,5 +1,5 @@
 import { CERAMIC_NETWORK } from "@/constants/common";
-import { DIDContext } from "@/context/DIDContext";
+import { useDIDAccount } from "@/hooks/useDIDAccount";
 import { WorkSubjectFromDework } from "@/interfaces";
 import { getDeworkTaskListFromFB } from "@/lib/firebase/store/dework";
 import {
@@ -7,12 +7,11 @@ import {
   issueCRDLFromDeworkParam,
   updateGenreParam,
 } from "@/services/Dework/DeworkService";
-import { useContext } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { getVESS } from "vess-sdk";
 
 export const useDeworkTask = () => {
-  const { account } = useContext(DIDContext);
+  const { account } = useDIDAccount();
   const deworkService = getDeworkService();
   // const vess = getVESS()
   const vess = getVESS(CERAMIC_NETWORK !== "mainnet");

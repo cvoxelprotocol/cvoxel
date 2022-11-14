@@ -1,11 +1,11 @@
-import { useContext, useMemo } from "react";
-import { DIDContext } from "@/context/DIDContext";
+import { useMemo } from "react";
+import { useDIDAccount } from "@/hooks/useDIDAccount";
 import { WorkCredentialWithId } from "vess-sdk";
 import { useQuery } from "react-query";
 import { getSigRequestList } from "@/lib/firebase/store/meta";
 
 export function useSigRequest() {
-  const { account, did } = useContext(DIDContext);
+  const { account, did } = useDIDAccount();
 
   const {
     data: sigRequests,

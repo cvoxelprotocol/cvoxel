@@ -7,13 +7,12 @@ import {
 import { useModal } from "./useModal";
 import { useStateWorkspaceCreateModal } from "@/recoilstate";
 import { OrganizationWIthId } from "vess-sdk";
-import { useContext } from "react";
-import { DIDContext } from "@/context/DIDContext";
+import { useDIDAccount } from "@/hooks/useDIDAccount";
 import { CustomResponse, getVESS, Organization } from "vess-sdk";
 import { CERAMIC_NETWORK } from "@/constants/common";
 
 export const useOrganization = (orgId?: string) => {
-  const { did } = useContext(DIDContext);
+  const { did } = useDIDAccount();
   // const vess = getVESS()
   const vess = getVESS(CERAMIC_NETWORK !== "mainnet");
   const queryClient = useQueryClient();

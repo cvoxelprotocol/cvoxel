@@ -7,9 +7,14 @@ import { convertTimestampToDateStr } from "@/utils/dateUtil";
 import Link from "next/link";
 import { useRouter } from "next/dist/client/router";
 import { WorkCredentialWithId } from "vess-sdk";
-import { CredentialDirection } from "@/components/common/CredentialDirection";
 import dynamic from "next/dynamic";
 
+const CredentialDirection = dynamic(
+  () => import("@/components/common/CredentialDirection"),
+  {
+    ssr: false,
+  }
+);
 const OneVoxelVisualizerPresenterWrapper = dynamic(
   () => import("@/components/CVoxel/OneVoxelVisualizerPresenterWrapper"),
   {

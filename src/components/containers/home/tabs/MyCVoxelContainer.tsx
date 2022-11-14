@@ -3,7 +3,6 @@ import {
   FC,
   LegacyRef,
   useCallback,
-  useContext,
   useMemo,
   useRef,
   useState,
@@ -19,7 +18,7 @@ import { NavBar } from "@/components/CVoxel/NavBar/NavBar";
 import { VoxelDetail } from "@/components/CVoxel/VoxelDetail/VoxelDetail";
 import { SearchData } from "@/components/common/search/Search";
 import { Button } from "@/components/common/button/Button";
-import { DIDContext } from "@/context/DIDContext";
+import { useDIDAccount } from "@/hooks/useDIDAccount";
 import { useWorkCredentials } from "@/hooks/useWorkCredential";
 import Router from "next/router";
 
@@ -28,7 +27,7 @@ import { WorkCredential } from "vess-sdk";
 import { isMobile, isTablet } from "react-device-detect";
 
 export const MyCVoxelContainer: FC = () => {
-  const {did, account} = useContext(DIDContext)
+  const {did, account} = useDIDAccount()
   const { offchainMetaList } = useOffchainList();
   const {workCredentials, isLoading} = useWorkCredentials(did)
   const { setTabState } = useTab();

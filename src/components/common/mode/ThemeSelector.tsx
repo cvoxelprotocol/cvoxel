@@ -1,14 +1,14 @@
-import React, { FC, useContext, useMemo } from "react";
+import { FC, useMemo } from "react";
 import Light from "@/components/common/mode/light.svg";
 import Dark from "@/components/common/mode/dark.svg";
 import { useThemeMode } from "@/hooks/useThemeMode";
 import { ShareButton } from "../button/shareButton/ShareButton";
-import { DIDContext } from "@/context/DIDContext";
 import { useRouter } from "next/router";
+import { useDIDAccount } from "@/hooks/useDIDAccount";
 
 type Props = {};
 export const ThemeModeSelector: FC<Props> = () => {
-  const {did} = useContext(DIDContext)
+  const {did} = useDIDAccount()
   const router = useRouter()
   const { setLightMode, setDarkMode } = useThemeMode();
 

@@ -2,12 +2,12 @@ import { FC, useCallback, useContext, useEffect, useRef } from "react";
 import { CVoxelsContainer } from "./CVoxelsContainer";
 import { MyPageContainer } from "./MyPageContainer";
 import { Arrow } from "@/components/common/arrow/Arrow";
-import { DIDContext } from "@/context/DIDContext";
+import { useDIDAccount } from "@/hooks/useDIDAccount";
 import { useMyPageScreen, useTab } from "@/hooks/useTab";
 import { useWorkCredentials } from "@/hooks/useWorkCredential";
 
 export const HomeContainer: FC = () => {
-  const {did} = useContext(DIDContext)
+  const {did} = useDIDAccount()
   const {workCredentials, migrateAccount, isLoading} = useWorkCredentials(did)
   const myPageContainerRef = useRef<HTMLDivElement>(null);
   const visualContainerRef = useRef<HTMLDivElement>(null);

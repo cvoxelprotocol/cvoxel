@@ -1,4 +1,4 @@
-import { FC, useContext, useEffect, useMemo, useState } from "react";
+import { FC, useEffect, useMemo, useState } from "react";
 import {
   convertTimestampToDateStr,
   convertTimestampToDateStrLocaleUS,
@@ -14,13 +14,19 @@ import { faExternalLink } from "@fortawesome/free-solid-svg-icons";
 import { getExploreLink } from "@/utils/etherscanUtils";
 import { ShareButton } from "@/components/common/button/shareButton/ShareButton";
 import { formatBigNumber } from "@/utils/ethersUtil";
-import { DIDContext } from "@/context/DIDContext";
+import { useDIDAccount } from "@/hooks/useDIDAccount";
 import { CopyRequestURLButton } from "./CopyRequestURLButton";
 import { useWorkCredential } from "@/hooks/useWorkCredential";
 import { WorkCredentialWithId,WorkCredential } from "vess-sdk";
 import { useOffchainItem } from "@/hooks/useOffchainList";
-import { UserPlate } from "@/components/common/UserPlate";
 import dynamic from "next/dynamic";
+
+const UserPlate = dynamic(
+  () => import("@/components/common/UserPlate"),
+  {
+    ssr: false,
+  }
+);
 
 const OneVoxelVisualizerPresenterWrapper = dynamic(
   () => import("@/components/CVoxel/OneVoxelVisualizerPresenterWrapper"),
@@ -104,7 +110,7 @@ export const VoxelDetail: FC<Props> = ({
     return getExploreLink(crdl.subject.tx?.txHash, crdl.subject.tx?.networkId);
   }, [crdl?.subject.tx?.txHash, crdl?.subject.tx?.networkId]);
 
-  const {did: myDid} = useContext(DIDContext)
+  const {did: myDid} = useDIDAccount()
 
   const holderDID = useMemo(() => {
     if(!crdl) return ""

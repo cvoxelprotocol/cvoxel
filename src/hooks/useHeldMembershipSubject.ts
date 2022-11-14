@@ -1,8 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { MembershipSubjectWithId } from "vess-sdk";
-import { useContext, useEffect } from "react";
+import { useEffect } from "react";
 import { getHeldMembershipSubjectsFromDB } from "@/lib/firebase/store/workspace";
-import { DIDContext } from "@/context/DIDContext";
+import { useDIDAccount } from "@/hooks/useDIDAccount";
 import { getVESS } from "vess-sdk";
 import { CERAMIC_NETWORK } from "@/constants/common";
 
@@ -10,7 +10,7 @@ export const useHeldMembershipSubject = (did?: string) => {
   // const vess = getVESS()
   const vess = getVESS(CERAMIC_NETWORK !== "mainnet");
   const queryClient = useQueryClient();
-  const { did: myDid } = useContext(DIDContext);
+  const { did: myDid } = useDIDAccount();
 
   const { mutateAsync: setHeldMembershipSubjects } = useMutation<
     void,
