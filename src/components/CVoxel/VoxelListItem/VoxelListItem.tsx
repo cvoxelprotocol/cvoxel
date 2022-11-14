@@ -40,7 +40,7 @@ const VoxelListItem: FC<Props> = ({ workCredential }) => {
 
   const PcContent = () => {
     return (
-      <div className="flex h-48 overflow-y-scroll">
+      <div className="flex h-48 overflow-y-hidden">
         {/* NOTE: if voxel state exist, add padding bottom*/}
         <div
           className={"rounded-r-lg w-40 relative bg-light-surface dark:bg-dark-surface"}

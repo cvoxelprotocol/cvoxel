@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { EventAttendanceWithId } from "vess-sdk";
 import { getHeldEventAttendanceFromDB } from "@/lib/firebase/store/event";
 import { useToast } from "./useToast";
@@ -37,7 +37,7 @@ export const useHeldEventAttendances = (did?: string) => {
       lancError(EVENT_ATTENDANCE_HELD_FAILED);
     },
     onSettled: () => {
-      queryClient.invalidateQueries("HeldEventAttendances");
+      queryClient.invalidateQueries(["HeldEventAttendances"]);
     },
   });
 
@@ -50,7 +50,7 @@ export const useHeldEventAttendances = (did?: string) => {
     {
       enabled: !!did && did !== "",
       staleTime: Infinity,
-      cacheTime: 30000,
+      cacheTime: 300000,
     }
   );
 
@@ -65,7 +65,7 @@ export const useHeldEventAttendances = (did?: string) => {
       console.log("migrateHeldEvent func");
       await vess.setHeldEventAttendanceVerifiableCredentials(oldCRDLs);
       closeLoading();
-      queryClient.invalidateQueries("HeldEventAttendances");
+      queryClient.invalidateQueries(["HeldEventAttendances"]);
       console.log("migrateAccount end");
     }
   };
@@ -78,7 +78,7 @@ export const useHeldEventAttendances = (did?: string) => {
     {
       enabled: !!did && did !== "",
       staleTime: Infinity,
-      cacheTime: 30000,
+      cacheTime: 300000,
     }
   );
   return {

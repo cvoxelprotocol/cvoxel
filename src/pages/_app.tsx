@@ -1,18 +1,16 @@
 import type { AppProps } from "next/app";
 import "tailwindcss/tailwind.css";
 import { RecoilRoot } from "recoil";
-import { Hydrate, QueryClient, QueryClientProvider } from "react-query";
+import { Hydrate, QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState } from "react";
 import { BaseLayout } from "@/components/layout/BaseLayout";
 import { ThemeProvider } from "next-themes";
 import { useEffect } from "react";
 import Router from "next/router";
-import type { DehydratedState } from 'react-query';
+import type { DehydratedState } from '@tanstack/react-query';
 import dynamic from "next/dynamic";
 import "@orbisclub/modules/dist/index.modern.css";
 import "@/styles/orbis.css"
-
-
 
 const OrbisChatWrapper = dynamic(
   () => import("@/components/orbis/OrbisChatWrapper"),

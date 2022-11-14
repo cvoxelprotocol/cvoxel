@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { MembershipSubjectWithId } from "vess-sdk";
 import { useEffect } from "react";
 import { getHeldMembershipSubjectsFromDB } from "@/lib/firebase/store/workspace";
@@ -24,7 +24,7 @@ export const useHeldMembershipSubject = (did?: string) => {
       console.log("error", error);
     },
     onSettled: () => {
-      queryClient.invalidateQueries("HeldMembershipSubjects");
+      queryClient.invalidateQueries(["HeldMembershipSubjects"]);
     },
   });
 
@@ -37,7 +37,7 @@ export const useHeldMembershipSubject = (did?: string) => {
     {
       enabled: !!did && did !== "",
       staleTime: Infinity,
-      cacheTime: 30000,
+      cacheTime: 300000,
     }
   );
 
@@ -50,7 +50,7 @@ export const useHeldMembershipSubject = (did?: string) => {
     {
       enabled: !!did && did !== "",
       staleTime: Infinity,
-      cacheTime: 30000,
+      cacheTime: 300000,
     }
   );
 

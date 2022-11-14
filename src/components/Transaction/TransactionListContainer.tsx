@@ -10,7 +10,7 @@ import type {
   WorkCredentialForm,
 } from "@/interfaces";
 import { useFileUpload } from "@/hooks/useFileUpload";
-import { useStateForceUpdate, useStateSelectedTx } from "@/recoilstate";
+import { useStateSelectedTx } from "@/recoilstate";
 import { useThemeMode } from "@/hooks/useThemeMode";
 import { useDIDAccount } from "@/hooks/useDIDAccount";
 import { useRouter } from "next/router";
@@ -28,13 +28,11 @@ export const TransactionListContainer: FC<TransactionListContainerProps> = ({
   offchainMetaList,
 }) => {
   const {did, account, connection} = useDIDAccount()
-  const {workCredentials, refetch} = useWorkCredentials(did)
+  const {workCredentials} = useWorkCredentials(did)
   const [selectedTx, selectTx] = useStateSelectedTx();
   const { setTabState } = useTab();
   const {publish} = useWorkCredential();
   const { resetUploadStatus } = useFileUpload();
-  // TODO: This is temporary solution because of useTileDoc bug
-  const [_, setForceUpdateCVoxelList] = useStateForceUpdate();
   const router = useRouter();
   const {setScreenState} = useMyPageScreen()
 
@@ -100,8 +98,6 @@ export const TransactionListContainer: FC<TransactionListContainerProps> = ({
       selectTx(null);
       setTabState("cvoxels");
       setScreenState("info")
-      setForceUpdateCVoxelList(v => !v);
-      refetch()
       router.push(`/${did}/?voxel=${result}`)
     }
   };
@@ -129,8 +125,6 @@ export const TransactionListContainer: FC<TransactionListContainerProps> = ({
       selectTx(null);
       setTabState("cvoxels");
       setScreenState("info")
-      setForceUpdateCVoxelList(v => !v);
-      refetch()
       router.push(`/${did}/?voxel=${result}`)
     }
   };

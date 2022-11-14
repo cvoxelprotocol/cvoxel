@@ -1,3 +1,5 @@
+import { DehydratedState } from "@tanstack/react-query";
+
 export type CeramicSupport =
   | "invalid" // not a DID or CAIP-10
   | "unlinked" // supported CAIP-10 but no DID
@@ -7,4 +9,5 @@ export type CeramicSupport =
 export type CeramicProps = {
   did: string;
   support: CeramicSupport;
+  DehydratedState?: DehydratedState;
 };

@@ -9,7 +9,6 @@ import {
 } from "react";
 import { NoItemPresenter } from "../../../common/NoItemPresenter";
 import CVoxelsPresenter from "../../../CVoxel/CVoxelsPresenter";
-import { useStateForceUpdate } from "@/recoilstate";;
 import { CommonLoading } from "../../../common/CommonLoading";
 import { useOffchainList } from "@/hooks/useOffchainList";
 import { VoxelListItemMemo } from "@/components/CVoxel/VoxelListItem/VoxelListItem";
@@ -32,10 +31,6 @@ export const MyCVoxelContainer: FC = () => {
   const {workCredentials, isLoading} = useWorkCredentials(did)
   const { setTabState } = useTab();
 
-  // TODO: This is temporary solution because of useTileDoc bug
-  const [forceUpdateCVoxelList, setForceUpdateCVoxelList] =
-    useStateForceUpdate();
-
   const forceReload = () => {
     if(did) Router.push(`/${did}`)
   };
@@ -45,7 +40,7 @@ export const MyCVoxelContainer: FC = () => {
     return workCredentials.sort((a, b) => {
       return Number(a.updatedAt) > Number(b.updatedAt) ? -1 : 1;
     });
-  }, [workCredentials,forceUpdateCVoxelList]);
+  }, [workCredentials]);
 
   const router = useRouter();
   const handleClickNavBackButton = useCallback(() => {
@@ -182,7 +177,6 @@ export const MyCVoxelContainer: FC = () => {
       account,
       offchainMetaList,
       did,
-      forceUpdateCVoxelList,
       currentCredential,
       keyword,
       rowVirtualizer,

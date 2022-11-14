@@ -26,14 +26,11 @@ export class OrbisHelper {
     this.orbis = new Orbis();
   }
 
-  async fetchOrbisProfile(
-    did?: string
-  ): Promise<OrbisProfileDetail | undefined> {
-    if (!did || !this.orbis) return undefined;
+  async fetchOrbisProfile(did?: string): Promise<OrbisProfileDetail | null> {
+    if (!did || !this.orbis) return null;
     const res = await this.orbis.getProfile(did.toLowerCase());
     const profile: OrbisProfile = res.data as OrbisProfile;
-    if (!profile || !profile.details || !profile.details.profile)
-      return undefined;
+    if (!profile || !profile.details || !profile.details.profile) return null;
     return profile.details.profile;
   }
 }

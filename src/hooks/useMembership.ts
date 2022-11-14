@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "./useToast";
 import {
   MEMBERSHIP_CREATION_FAILED,
@@ -48,7 +48,7 @@ export const useMembership = (orgId?: string) => {
         lancError(MEMBERSHIP_CREATION_FAILED);
       },
       onSettled: () => {
-        queryClient.invalidateQueries("createdMemberships");
+        queryClient.invalidateQueries(["createdMemberships"]);
       },
     });
 
@@ -57,7 +57,7 @@ export const useMembership = (orgId?: string) => {
   >(["createdMemberships", did], () => vess.getCreatedMemberships(), {
     enabled: !!did && did !== "",
     staleTime: Infinity,
-    cacheTime: 30000,
+    cacheTime: 300000,
   });
 
   const createdMembershipsOfOrg = useMemo<MembershipWithId[]>(() => {

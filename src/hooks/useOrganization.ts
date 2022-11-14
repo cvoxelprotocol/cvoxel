@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "./useToast";
 import {
   ORGANIZATION_CREATION_FAILED,
@@ -47,16 +47,16 @@ export const useOrganization = (orgId?: string) => {
       lancError(ORGANIZATION_CREATION_FAILED);
     },
     onSettled: () => {
-      queryClient.invalidateQueries("createdOrganizations");
+      queryClient.invalidateQueries(["createdOrganizations"]);
     },
   });
 
   const { data: createdOrganizations, isLoading } = useQuery<
-    OrganizationWIthId[] | null
+    OrganizationWIthId[]
   >(["createdOrganizations", did], () => vess.getCreatedOrganization(), {
     enabled: !!did && did !== "",
     staleTime: Infinity,
-    cacheTime: 30000,
+    cacheTime: 300000,
   });
 
   const { data: organization, isLoading: isFetchingOrg } = useQuery<
@@ -64,7 +64,7 @@ export const useOrganization = (orgId?: string) => {
   >(["organization", orgId], () => vess.getOrganization(orgId), {
     enabled: !!orgId,
     staleTime: Infinity,
-    cacheTime: 30000,
+    cacheTime: 300000,
   });
 
   return {

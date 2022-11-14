@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "./useToast";
 import {
   MEMBERSHIP_SUBJECT_CREATION_FAILED,
@@ -55,7 +55,7 @@ export const useMembershipSubject = (orgId?: string) => {
         lancError(MEMBERSHIP_SUBJECT_CREATION_FAILED);
       },
       onSettled: () => {
-        queryClient.invalidateQueries("IssuedMembershipSubjects");
+        queryClient.invalidateQueries(["IssuedMembershipSubjects"]);
       },
     });
 
@@ -67,7 +67,7 @@ export const useMembershipSubject = (orgId?: string) => {
     {
       enabled: !!did && did !== "",
       staleTime: Infinity,
-      cacheTime: 30000,
+      cacheTime: 300000,
     }
   );
 
@@ -80,7 +80,7 @@ export const useMembershipSubject = (orgId?: string) => {
     {
       enabled: !!did && did !== "",
       staleTime: Infinity,
-      cacheTime: 30000,
+      cacheTime: 300000,
     }
   );
 
@@ -93,7 +93,7 @@ export const useMembershipSubject = (orgId?: string) => {
     {
       enabled: !!did && did !== "",
       staleTime: Infinity,
-      cacheTime: 30000,
+      cacheTime: 300000,
     }
   );
 
@@ -104,7 +104,7 @@ export const useMembershipSubject = (orgId?: string) => {
       {
         enabled: !!orgId,
         staleTime: Infinity,
-        cacheTime: 30000,
+        cacheTime: 300000,
       }
     );
 

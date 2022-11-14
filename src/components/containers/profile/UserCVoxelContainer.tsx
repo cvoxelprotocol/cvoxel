@@ -5,7 +5,6 @@ import { CommonLoading } from "../../common/CommonLoading";
 import { VoxelListItemMemo } from "@/components/CVoxel/VoxelListItem/VoxelListItem";
 import { VoxelDetail } from "@/components/CVoxel/VoxelDetail/VoxelDetail";
 import { useOffchainList } from "@/hooks/useOffchainList";
-import { useStateForceUpdate } from "@/recoilstate";
 import { useWorkCredentials } from "@/hooks/useWorkCredential";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { isMobile, isTablet } from "react-device-detect";
@@ -34,13 +33,6 @@ export const UserCVoxelContainer: FC<UserCVoxelContainerProps> = ({
 
   const { offchainMetaList } = useOffchainList();
 
-  // TODO: This is temporary solution because of useTileDoc bug
-  const [forceUpdateCVoxelList, setForceUpdateCVoxelList] =
-    useStateForceUpdate();
-  const forceReload = () => {
-    setForceUpdateCVoxelList((v) => !v);
-  };
-
   const parentRef: LegacyRef<any> = useRef();
 
   const rowVirtualizer = useVirtualizer({
@@ -58,7 +50,6 @@ export const UserCVoxelContainer: FC<UserCVoxelContainerProps> = ({
               crdl={currentCredential}
               offchainItems={offchainMetaList}
               isOwner={false}
-              notifyUpdated={forceReload}
             />
           </div>
         ) : did == "" ? (
@@ -117,8 +108,6 @@ export const UserCVoxelContainer: FC<UserCVoxelContainerProps> = ({
       isLoading,
       sortCredentials,
       did,
-      forceUpdateCVoxelList,
-      forceReload,
       rowVirtualizer
     ]
   );

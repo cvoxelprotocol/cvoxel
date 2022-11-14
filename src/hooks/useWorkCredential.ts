@@ -9,7 +9,7 @@ import {
 import { TransactionLogWithChainId } from "@/interfaces";
 import { useModal } from "./useModal";
 import { useToast } from "./useToast";
-import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useStateIssueStatus } from "@/recoilstate";
 import {
   BaseResponse,
@@ -42,7 +42,7 @@ export const useFetchWorkCredential = (streamId?: string) => {
     {
       enabled: !!streamId && streamId !== "",
       staleTime: Infinity,
-      cacheTime: 30000,
+      cacheTime: 300000,
     }
   );
   return { workCredential, isLoading };
@@ -54,17 +54,13 @@ export const useWorkCredentials = (did?: string) => {
   const queryClient = useQueryClient();
   const { did: myDid, originalAddress } = useDIDAccount();
   const { showLoading, closeLoading } = useModal();
-  const {
-    data: workCredentials,
-    isLoading,
-    refetch,
-  } = useQuery<WorkCredentialWithId[]>(
+  const { data: workCredentials, isLoading } = useQuery<WorkCredentialWithId[]>(
     ["heldWorkCredentials", did],
     () => vess.getHeldWorkCredentials(did),
     {
       enabled: !!did && did !== "",
       staleTime: Infinity,
-      cacheTime: 30000,
+      cacheTime: 300000,
     }
   );
 
@@ -78,7 +74,7 @@ export const useWorkCredentials = (did?: string) => {
       console.log(error);
     },
     onSettled: () => {
-      queryClient.invalidateQueries("heldWorkCredentials");
+      queryClient.invalidateQueries(["heldWorkCredentials"]);
     },
   });
 
@@ -93,7 +89,7 @@ export const useWorkCredentials = (did?: string) => {
       showLoading();
       await vess.setHeldWorkCredentials(oldCRDLs);
       closeLoading();
-      queryClient.invalidateQueries("heldWorkCredentials");
+      queryClient.invalidateQueries(["heldWorkCredentials"]);
       console.log("migrateAccount end");
     }
   };
@@ -103,7 +99,6 @@ export const useWorkCredentials = (did?: string) => {
     migrateAccount,
     isLoading,
     deleteCRDLs,
-    refetch,
   };
 };
 
@@ -144,9 +139,9 @@ export const useWorkCredential = () => {
       lancError(CVOXEL_CREATION_FAILED);
     },
     onSettled: () => {
-      queryClient.invalidateQueries("heldWorkCredentials");
+      queryClient.invalidateQueries(["heldWorkCredentials"]);
       // refetch  offchain DB
-      queryClient.invalidateQueries("offchainCVoxelMeta");
+      queryClient.invalidateQueries(["offchainCVoxelMeta"]);
     },
   });
 
@@ -191,12 +186,10 @@ export const useWorkCredential = () => {
     const usr = address.toLowerCase();
     const did = getPkhDIDFromAddress(address);
     const isPayer = from === usr;
-
-    let crdl: WorkCredential;
     const nowTimestamp = convertDateToTimestampStr(new Date());
 
     if (existedItem) {
-      const { id, subject, signature } = existedItem;
+      const { subject } = existedItem;
       const subjectWithDefaultValue = convertValidworkSubjectTypedData(subject);
       return await issueCRDL(subjectWithDefaultValue);
     } else {

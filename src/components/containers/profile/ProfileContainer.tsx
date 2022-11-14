@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { CVoxelsContainer } from "@/components/containers/home/CVoxelsContainer";
 import { Arrow } from "@/components/common/arrow/Arrow";
 import { SearchData } from "@/components/common/search/Search";

@@ -1,5 +1,5 @@
 import { CERAMIC_NETWORK } from "@/constants/common";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 import { EventAttendanceWithId } from "vess-sdk";
 import { getVESS } from "vess-sdk";
 
@@ -15,7 +15,7 @@ export const useClaimedEventAttendances = (attendanceId?: string) => {
     {
       enabled: !!attendanceId,
       staleTime: Infinity,
-      cacheTime: 30000,
+      cacheTime: 300000,
     }
   );
 

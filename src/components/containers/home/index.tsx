@@ -1,10 +1,17 @@
-import { FC, useCallback, useContext, useEffect, useRef } from "react";
+import { FC, useCallback, useEffect, useRef } from "react";
 import { CVoxelsContainer } from "./CVoxelsContainer";
-import { MyPageContainer } from "./MyPageContainer";
 import { Arrow } from "@/components/common/arrow/Arrow";
 import { useDIDAccount } from "@/hooks/useDIDAccount";
 import { useMyPageScreen, useTab } from "@/hooks/useTab";
 import { useWorkCredentials } from "@/hooks/useWorkCredential";
+import dynamic from "next/dynamic";
+
+const MyPageContainer = dynamic(
+  () => import("@/components/containers/home/MyPageContainer"),
+  {
+    ssr: false,
+  }
+);
 
 export const HomeContainer: FC = () => {
   const {did} = useDIDAccount()

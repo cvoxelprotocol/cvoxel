@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "./useToast";
 import {
   EVENT_ATTENDANCE_CREATION_FAILED,
@@ -67,7 +67,7 @@ export const useEventAttendance = (eventId?: string) => {
       lancError(EVENT_CREATION_FAILED);
     },
     onSettled: () => {
-      queryClient.invalidateQueries("issuedEvent");
+      queryClient.invalidateQueries(["issuedEvent"]);
     },
   });
 
@@ -77,7 +77,7 @@ export const useEventAttendance = (eventId?: string) => {
     {
       enabled: !!did && did !== "",
       staleTime: Infinity,
-      cacheTime: 30000,
+      cacheTime: 300000,
     }
   );
 
@@ -107,9 +107,9 @@ export const useEventAttendance = (eventId?: string) => {
       lancError(EVENT_ATTENDANCE_CREATION_FAILED);
     },
     onSettled: () => {
-      queryClient.invalidateQueries(
-        "IssuedEventAttendanceVerifiableCredentials"
-      );
+      queryClient.invalidateQueries([
+        "IssuedEventAttendanceVerifiableCredentials",
+      ]);
     },
   });
 
@@ -122,7 +122,7 @@ export const useEventAttendance = (eventId?: string) => {
     {
       enabled: !!did && did !== "",
       staleTime: Infinity,
-      cacheTime: 30000,
+      cacheTime: 300000,
     }
   );
 
@@ -135,7 +135,7 @@ export const useEventAttendance = (eventId?: string) => {
     {
       enabled: !!did && did !== "",
       staleTime: Infinity,
-      cacheTime: 30000,
+      cacheTime: 300000,
     }
   );
 
@@ -186,9 +186,9 @@ export const useEventAttendance = (eventId?: string) => {
       lancError(EVENT_ATTENDANCE_CREATION_FAILED);
     },
     onSettled: () => {
-      queryClient.invalidateQueries(
-        "IssuedEventAttendanceVerifiableCredentials"
-      );
+      queryClient.invalidateQueries([
+        "IssuedEventAttendanceVerifiableCredentials",
+      ]);
     },
   });
 
@@ -230,7 +230,7 @@ export const useEventAttendance = (eventId?: string) => {
   >(["eventDetail", eventId], () => vess.getEvent(eventId), {
     enabled: !!eventId,
     staleTime: Infinity,
-    cacheTime: 30000,
+    cacheTime: 300000,
   });
 
   return {

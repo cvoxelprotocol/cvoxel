@@ -1,4 +1,4 @@
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 import { getEtherService } from "@/services/Ether/EtherService";
 
 export const useENS = (address?: string) => {

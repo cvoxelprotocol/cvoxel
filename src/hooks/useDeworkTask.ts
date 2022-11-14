@@ -7,7 +7,7 @@ import {
   issueCRDLFromDeworkParam,
   updateGenreParam,
 } from "@/services/Dework/DeworkService";
-import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getVESS } from "vess-sdk";
 
 export const useDeworkTask = () => {
@@ -34,15 +34,15 @@ export const useDeworkTask = () => {
       {
         onSuccess(data) {
           if (!data) return;
-          const old = queryClient.getQueryData<WorkSubjectFromDework[]>(
-            "getDeworkTaskListFromFB"
-          );
+          const old = queryClient.getQueryData<WorkSubjectFromDework[]>([
+            "getDeworkTaskListFromFB",
+          ]);
           if (old) {
             const oldWithoutTargetTask = old.filter(
               (o) => o.taskId !== data.taskId
             );
             queryClient.setQueryData<WorkSubjectFromDework[]>(
-              "getDeworkTaskListFromFB",
+              ["getDeworkTaskListFromFB"],
               [...oldWithoutTargetTask, data]
             );
           }
@@ -51,7 +51,7 @@ export const useDeworkTask = () => {
           console.log(error);
         },
         onSettled: () => {
-          queryClient.invalidateQueries("getDeworkTaskListFromFB");
+          queryClient.invalidateQueries(["getDeworkTaskListFromFB"]);
         },
       }
     );
@@ -65,7 +65,7 @@ export const useDeworkTask = () => {
       console.log(error);
     },
     onSettled: () => {
-      queryClient.invalidateQueries("heldWorkCredentials");
+      queryClient.invalidateQueries(["heldWorkCredentials"]);
     },
   });
 
@@ -74,10 +74,10 @@ export const useDeworkTask = () => {
     const res = await deworkService.refetchDeworkTasks(account.toLowerCase());
     if (res) {
       queryClient.setQueryData<WorkSubjectFromDework[]>(
-        "getDeworkTaskListFromFB",
+        ["getDeworkTaskListFromFB"],
         res
       );
-      queryClient.invalidateQueries("getDeworkTaskListFromFB");
+      queryClient.invalidateQueries(["getDeworkTaskListFromFB"]);
     }
   };
 

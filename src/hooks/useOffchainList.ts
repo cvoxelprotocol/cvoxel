@@ -2,7 +2,7 @@ import { TransactionLogWithChainId } from "@/interfaces/explore";
 import { etherscanTxListFetcher } from "@/services/fetcher/EtherscanFetcher";
 import { WorkCredentialWithId } from "vess-sdk";
 import { useMemo, useCallback } from "react";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 import { uniqueList } from "@/utils/etherscanUtils";
 import { useDIDAccount } from "@/hooks/useDIDAccount";
 import {

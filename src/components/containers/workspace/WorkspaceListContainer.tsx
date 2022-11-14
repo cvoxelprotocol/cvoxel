@@ -36,8 +36,6 @@ export const WorkspaceListContainer:FC =() => {
                 </div>
             </div>
 
-
-
             {showCreateModal && (
                 <WorkspaceModal>
                     <CreateWorkspaceCard />

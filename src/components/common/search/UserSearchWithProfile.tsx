@@ -25,7 +25,6 @@ export const UserSearchWithProfile: FC<Props> = ({
   placeholder,
   onClear,
   className,
-  size = "lg",
 }) => {
   return (
     <>

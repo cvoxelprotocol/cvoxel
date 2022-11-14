@@ -1,4 +1,4 @@
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 import { DisplayProfile } from "@/interfaces";
 import { getVESS, Client } from "vess-sdk";
 import { useSocialAccount } from "./useSocialAccount";
@@ -17,7 +17,7 @@ export const useProfileInfo = (client?: Client) => {
     {
       enabled: !!client,
       staleTime: Infinity,
-      cacheTime: 30000,
+      cacheTime: 300000,
     }
   );
 

@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useDIDAccount } from "@/hooks/useDIDAccount";
 import { WorkCredentialWithId } from "vess-sdk";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 import { getSigRequestList } from "@/lib/firebase/store/meta";
 
 export function useSigRequest() {

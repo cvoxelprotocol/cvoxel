@@ -3,7 +3,7 @@ import { TransactionLogWithChainId } from "@/interfaces/explore";
 import { getEtherService } from "@/services/Ether/EtherService";
 import { internalTxListFetcher } from "@/services/fetcher/EtherscanFetcher";
 import { useMemo } from "react";
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 
 export const useInternalTransactions = (tx: TransactionLogWithChainId) => {
   const etherService = getEtherService();
