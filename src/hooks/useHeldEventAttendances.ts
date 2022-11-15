@@ -55,18 +55,19 @@ export const useHeldEventAttendances = (did?: string) => {
   );
 
   const migrateHeldEvent = async (): Promise<void> => {
+    console.log("migrateHeldEvent: check");
     if (myDid !== did || !originalAddress) return;
-    if (!HeldEventAttendances || HeldEventAttendances.length > 0) return;
+    if (HeldEventAttendances && HeldEventAttendances.length > 0) return;
     const oldDid = `did:pkh:eip155:1:${originalAddress}`;
     const oldCRDLs =
       await vess.getHeldEventAttendanceVerifiableCredentialStreamIds(oldDid);
     if (oldCRDLs.length > 0) {
       showLoading();
-      console.log("migrateHeldEvent func");
+      console.log("migrateHeldEvent: execute");
       await vess.setHeldEventAttendanceVerifiableCredentials(oldCRDLs);
       closeLoading();
       queryClient.invalidateQueries(["HeldEventAttendances"]);
-      console.log("migrateAccount end");
+      console.log("migrateHeldEvent: end");
     }
   };
 
