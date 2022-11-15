@@ -2,8 +2,7 @@ import { TransactionLogWithChainId } from "@/interfaces";
 import { formatBigNumber } from "@/utils/ethersUtil";
 import { shortHash } from "@/utils/objectUtil";
 import { FC } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import RightArrow from "@/components/CVoxel/VoxelListItem/right-arrow.svg";
 import { getNetworkSymbol } from "@/utils/networkUtil";
 
 type TransactionItemProps = {
@@ -26,11 +25,7 @@ export const InternalTransactionItem: FC<TransactionItemProps> = ({
             </p>
           </div>
           <div>
-            <FontAwesomeIcon
-              className="w-3 h-3"
-              icon={faArrowRight}
-              color={"gray"}
-            />
+            <RightArrow />
           </div>
           <div className="px-4 text-left">
             <p className="break-words flex-wrap">

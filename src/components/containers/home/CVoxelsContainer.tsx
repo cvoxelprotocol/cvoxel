@@ -32,7 +32,7 @@ type props = {
   onClearUser?: () => void;
   moveToCreateSection?: () => void
 };
-export const CVoxelsContainer: FC<props> = ({
+export default function CVoxelsContainer({
   did,
   isLoading = false,
   content,
@@ -41,7 +41,7 @@ export const CVoxelsContainer: FC<props> = ({
   isMe = false,
   onClearUser,
   moveToCreateSection
-}) => {
+}:props) {
   // NOTE: Cannot be called by VisualPresenter, so call it here
   const { showDetailBox } = useWorkCredentialDetailBox();
 

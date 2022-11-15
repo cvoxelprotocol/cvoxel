@@ -1,6 +1,4 @@
 import { FC, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { GenreBadge } from "@/components/common/badge/GenreBadge";
 import { getGenre } from "@/utils/genreUtil";
 import { TagBadge } from "@/components/common/badge/TagBadge";
@@ -9,6 +7,7 @@ import { convertTimestampToDateStr } from "@/utils/dateUtil";
 import { useStateCredentialDetailBox } from "@/recoilstate";
 import clsx from "clsx";
 import { ShareButton } from "@/components/common/button/shareButton/ShareButton";
+import CloseIcon from "@/components/common/button/close.svg";
 import { useDIDAccount } from "@/hooks/useDIDAccount";
 import { useFetchWorkCredential } from "@/hooks/useWorkCredential";
 import dynamic from "next/dynamic";
@@ -106,11 +105,7 @@ export const CVoxelDetailBox: FC<{}> = () => {
 
           <div className="absolute top-4 left-4">
             <button  onClick={handleClose}>
-              <FontAwesomeIcon
-                className="w-6 h-6 text-light-on-surface-variant dark:text-dark-on-surface-variant"
-                icon={faClose}
-                // color={"#A66497"}
-              />
+              <CloseIcon className="w-5 h-5 text-light-on-surface-variant dark:text-dark-on-surface-variant" />
             </button>
           </div>
 

@@ -11,8 +11,7 @@ import LeftArrow from "@/components/CVoxel/VoxelListItem/left-arrow.svg";
 import RightArrow from "@/components/CVoxel/VoxelListItem/right-arrow.svg";
 import { shortenStr } from "@/utils/objectUtil";
 import { Button } from "@/components/common/button/Button";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faExternalLink } from "@fortawesome/free-solid-svg-icons";
+import ExternalLinkIcon from "@/components/common/button/externalLink.svg";
 import { getExploreLink } from "@/utils/etherscanUtils";
 import { formatBigNumber } from "@/utils/ethersUtil";
 import { useVoxelStyler } from "@/hooks/useVoxStyler";
@@ -285,10 +284,7 @@ export default function SigRequestDetail({offchainItem, onVerify,isSinglePageFor
                 <div className="ml-2 lg:ml-0 text-xs text-light-on-surface-variant dark:text-dark-on-surface-variant">
                   Explorer
                 </div>
-                <FontAwesomeIcon
-                  className="w-3 h-3 ml-1 text-light-on-surface-variant dark:text-dark-on-surface-variant"
-                  icon={faExternalLink}
-                />
+                  <ExternalLinkIcon className="w-3 h-3 ml-1 text-light-on-surface-variant dark:text-dark-on-surface-variant" />
               </div>
             </div>
           </a>

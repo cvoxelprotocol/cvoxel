@@ -1,7 +1,6 @@
 import { useDework } from "@/hooks/useDework";
 import { useModal } from "@/hooks/useModal";
-import { faClose } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import CloseIcon from "@/components/common/button/close.svg";
 import { FC } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "../common/button/Button";
@@ -43,10 +42,7 @@ export const ConnectDeworkCard:FC = () => {
             <div className="relative w-full sm:w-[512px] text-primary bg-gray-100 dark:bg-card dark:text-oncard">
                 <div className="absolute top-2 right-2">
                     <button  onClick={() => setDeworkConnectOpen(false)}>
-                    <FontAwesomeIcon
-                        className="w-6 h-6 text-light-on-surface-variant dark:text-dark-on-surface-variant"
-                        icon={faClose}
-                    />
+                        <CloseIcon className="w-5 h-5 text-light-on-surface-variant dark:text-dark-on-surface-variant" />
                     </button>
                 </div>
                 <h2 className="text-center">Connect Dework</h2>

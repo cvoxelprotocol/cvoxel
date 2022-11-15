@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useMemo, useRef } from "react";
-import { CVoxelsContainer } from "@/components/containers/home/CVoxelsContainer";
 import { Arrow } from "@/components/common/arrow/Arrow";
 import { SearchData } from "@/components/common/search/Search";
 import { Button } from "@/components/common/button/Button";
@@ -11,6 +10,14 @@ import { useDIDAccount } from "@/hooks/useDIDAccount";
 import Image from "next/image";
 import { useWorkCredentials } from "@/hooks/useWorkCredential";
 import { useConnectDID } from "@/hooks/useConnectDID";
+import dynamic from "next/dynamic";
+
+const CVoxelsContainer = dynamic(
+  () => import("@/components/containers/home/CVoxelsContainer"),
+  {
+    ssr: false,
+  }
+);
 
 type Props = {
   did: string;

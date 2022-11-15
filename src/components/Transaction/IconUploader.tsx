@@ -1,11 +1,10 @@
 import { FC, useEffect, useState, useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 import type { FileRejection } from "react-dropzone";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCloudUploadAlt, faFileAlt } from "@fortawesome/free-solid-svg-icons";
 import { useFileUpload } from "@/hooks/useFileUpload";
 import { CommonSpinner } from "../common/CommonSpinner";
 import FilePlus from "@/components/Transaction/file-plus.svg";
+import File from "@/components/common/button/file.svg";
 
 const MAX_SIZE = 5242880;
 
@@ -65,73 +64,44 @@ export const IconUploader: FC = () => {
             {...getRootProps()}
           >
             <input {...getInputProps()} />
-            {isDragActive ? (
-              <FontAwesomeIcon icon={faCloudUploadAlt} />
-            ) : (
-              <>
-                {files ? (
-                  <>
-                    <div className="absolute top-0 bottom-0 right-0 left-0 w-full flex flex-wrap justify-center items-center text-center">
-                      {files.map((file) => {
-                        return (
-                          <div key={file.file.name} className="text-center">
-                            <div className="overflow-hidden border border-gray-100 rounded-lg w-1/4 h-auto md:w-32 md:h-32 p-1 m-1 mx-auto">
-                              <div className="flex min-w-0">
-                                {file.file.type.indexOf("image") != -1 ? (
-                                  <img
-                                    src={file.preview}
-                                    className="block w-auto h-full"
-                                  />
-                                ) : (
-                                  <FontAwesomeIcon
-                                    icon={faFileAlt}
-                                    size={"2x"}
-                                    className="block w-auto h-full mx-auto justify-center items-center text-center"
-                                  />
-                                )}
-                              </div>
+            {files ? (
+                <>
+                  <div className="absolute top-0 bottom-0 right-0 left-0 w-full flex flex-wrap justify-center items-center text-center">
+                    {files.map((file) => {
+                      return (
+                        <div key={file.file.name} className="text-center">
+                          <div className="overflow-hidden border border-gray-100 rounded-lg w-1/4 h-auto md:w-32 md:h-32 p-1 m-1 mx-auto">
+                            <div className="flex min-w-0">
+                              {file.file.type.indexOf("image") != -1 ? (
+                                <img
+                                  src={file.preview}
+                                  className="block w-auto h-full"
+                                />
+                              ) : (
+                                  <File className="block w-full h-auto mx-auto justify-center items-center text-center text-light-on-surface-variant dark:text-dark-on-surface-variant" />
+                              )}
                             </div>
                           </div>
-                        );
-                      })}
-                    </div>
-                    {status === "uploading" && (
-                      <div className="absolute top-0 bottom-0 right-0 left-0">
-                        <div className="flex w-full h-full items-center justify-center bg-black opacity-40">
-                          <CommonSpinner />
                         </div>
-                      </div>
-                    )}
-                    {/* {(status !== "uploading" && status !== "completed") && (
-                      <button
-                        type="button"
-                        onClick={() => handleUpload()}
-                        className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded inline-flex items-center mt-8"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="16"
-                          height="16"
-                          fill="currentColor"
-                          viewBox="0 0 16 16"
-                        >
-                          <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z" />
-                          <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z" />
-                        </svg>
-                        <span>Upload</span>
-                      </button>
-                    )} */}
-                  </>
-                ): (
-                  <div className="flex flex-col justify-center items-center space-y-2">
-                    <FilePlus />
-                    <span className="font-medium block text-light-on-secondary-container dark:text-dark-on-secondary-container">
-                      Add Icon
-                    </span>
+                      );
+                    })}
                   </div>
-                )}
-              </>
-            )}
+                  {status === "uploading" && (
+                    <div className="absolute top-0 bottom-0 right-0 left-0">
+                      <div className="flex w-full h-full items-center justify-center bg-black opacity-40">
+                        <CommonSpinner />
+                      </div>
+                    </div>
+                  )}
+                </>
+              ): (
+                <div className="flex flex-col justify-center items-center space-y-2">
+                  <FilePlus />
+                  <span className="font-medium block text-light-on-secondary-container dark:text-dark-on-secondary-container">
+                    Add Icon
+                  </span>
+                </div>
+              )}
           </div>
         </div>
         {errors && <p className="text-xs text-red-600">{errors}</p>}

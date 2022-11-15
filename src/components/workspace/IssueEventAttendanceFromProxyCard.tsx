@@ -1,7 +1,9 @@
 import { useEventAttendance } from "@/hooks/useEventAttendance";
 import { EventWithId} from "vess-sdk";
-import { faClose, faMinusCircle, faPlusCircle } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import CloseIcon from "@/components/common/button/close.svg";
+import PlusIcon from "@/components/common/button/plus.svg";
+import MinusIcon from "@/components/common/button/minus.svg";
+
 import { FC } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { Button } from "../common/button/Button";
@@ -55,10 +57,7 @@ export const IssueEventAttendanceFromProxyCard:FC<Props> = ({event}) => {
             <div className="relative w-full sm:w-[512px] text-primary bg-gray-100 dark:bg-card dark:text-oncard">
                 <div className="absolute top-2 right-2">
                     <button  onClick={() => setShowEventAttendanceFromProxyModal(false)}>
-                    <FontAwesomeIcon
-                        className="w-6 h-6 text-light-on-surface-variant dark:text-dark-on-surface-variant"
-                        icon={faClose}
-                    />
+                        <CloseIcon className="w-5 h-5 text-light-on-surface-variant dark:text-dark-on-surface-variant" />
                     </button>
                 </div>
                 <h2 className="text-center text-2xl font-bold">Issue Event Attendance From Proxy</h2>
@@ -76,20 +75,14 @@ export const IssueEventAttendanceFromProxyCard:FC<Props> = ({event}) => {
                                 {...register(`dids.${index}.did`)} 
                             />
                             {index !== 0 && (
-                                <button  onClick={() => removeRow(index)} type={"button"}>
-                                    <FontAwesomeIcon
-                                        className="w-6 h-6 text-light-on-surface-variant dark:text-dark-on-surface-variant"
-                                        icon={faMinusCircle}
-                                    />
+                                <button  onClick={() => removeRow(index)} type={"button"} className={"w-6 h-6 bg-light-on-surface dark:bg-dark-on-surface rounded-full flex items-center justify-center"}>
+                                    <MinusIcon className="w-5 h-5 text-dark-on-surface-variant dark:text-light-on-surface-variant" />
                                 </button>
                             )}
                         </div>
                     ))}
-                    <button  onClick={() => addRow()} type={"button"}>
-                        <FontAwesomeIcon
-                            className="w-6 h-6 text-light-on-surface-variant dark:text-dark-on-surface-variant"
-                            icon={faPlusCircle}
-                        />
+                    <button  onClick={() => addRow()} type={"button"} className={"w-6 h-6 bg-light-on-surface dark:bg-dark-on-surface rounded-full flex items-center justify-center"}>
+                        <PlusIcon className="w-5 h-5 text-dark-on-surface-variant dark:text-light-on-surface-variant" />
                     </button>
                     
                     

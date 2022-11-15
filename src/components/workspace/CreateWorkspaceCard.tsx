@@ -2,8 +2,7 @@ import { useDIDAccount } from "@/hooks/useDIDAccount";
 import { useFileUpload } from "@/hooks/useFileUpload";
 import { useOrganization } from "@/hooks/useOrganization";
 import { convertDateToTimestampStr } from "@/utils/dateUtil";
-import { faClose } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import CloseIcon from "@/components/common/button/close.svg";
 import { FC } from "react";
 import { useForm } from "react-hook-form";
 import { Organization } from "vess-sdk";
@@ -54,10 +53,7 @@ export const CreateWorkspaceCard:FC = () => {
             <div className="relative w-full sm:w-[512px] text-primary bg-gray-100 dark:bg-card dark:text-oncard">
                 <div className="absolute top-2 right-2">
                     <button  onClick={() => setShowCreateModal(false)}>
-                    <FontAwesomeIcon
-                        className="w-6 h-6 text-light-on-surface-variant dark:text-dark-on-surface-variant"
-                        icon={faClose}
-                    />
+                        <CloseIcon className="w-5 h-5 text-light-on-surface-variant dark:text-dark-on-surface-variant" />
                     </button>
                 </div>
                 <h2 className="text-center text-2xl font-bold">Create Workspace</h2>

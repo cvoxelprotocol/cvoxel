@@ -1,8 +1,8 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { CVoxelThree, CVoxelVisType } from "@/interfaces/cVoxelType";
 import * as THREE from "three";
 import { getGenreColor } from "@/utils/genreUtil";
-import chroma from "chroma-js";
+import color from "color";
 import { WorkCredentialWithId } from "vess-sdk";
 
 type RoomType = {
@@ -60,7 +60,7 @@ export const useMultipleVoxelStyler = (crdls: WorkCredentialWithId[]) => {
 
         /* Set hue from hoge (unassinged yet) */
         const hexColor = getGenreColor(genre);
-        const genreHue = hexColor ? chroma(hexColor).hsl()[0] : 330;
+        const genreHue = hexColor ? color(hexColor).hsl().hue() : 330;
         hue = genreHue || 330;
         voxelTemp[
           "color"
@@ -217,7 +217,7 @@ export const useVoxelStyler = (crdl?: WorkCredentialWithId) => {
 
     /* Set hue from hoge (unassinged yet) */
     const hexColor = getGenreColor(genre);
-    const genreHue = hexColor ? chroma(hexColor).hsl()[0] : 330;
+    const genreHue = hexColor ? color(hexColor).hsl().hue() : 330;
     hue = genreHue || 330;
 
     const styledVoxel: CVoxelThreeWithId = {

@@ -2,12 +2,11 @@ import { TransactionLogWithChainId } from "@/interfaces";
 import { getExploreLink } from "@/utils/etherscanUtils";
 import { formatBigNumber } from "@/utils/ethersUtil";
 import { FC, useMemo } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faExternalLink } from "@fortawesome/free-solid-svg-icons";
 import { convertTimestampToDateStrLocaleUS } from "@/utils/dateUtil";
 import { getNetworkSymbol } from "@/utils/networkUtil";
 import { Arrow } from "@/components/common/arrow/Arrow";
 import clsx from "clsx";
+import ExternalLinkIcon from "@/components/common/button/externalLink.svg";
 import dynamic from "next/dynamic";
 
 const TxDirection = dynamic(
@@ -68,10 +67,10 @@ export const TransactionItem: FC<TransactionItemProps> = ({
 
           <div className="w-1/2 lg:w-full lg:flex-none text-xl font-medium flex-auto flex flex-col justify-center text-left lg:text-center h-full lg:h-fit overflow-hidden">
             <div className="flex lg:block overflow-hidden items-end space-x-1 text-start">
-              <span className="text-light-on-secondary-container dark:text-light-on-secondary-container font-semibold text-ellipsis overflow-hidden whitespace-nowrap text-left">
+              <span className="text-light-on-secondary-container dark:text-dark-on-secondary-container font-semibold text-ellipsis overflow-hidden whitespace-nowrap text-left">
                 {formatBigNumber(tx.value, 6, tx.tokenDecimal)}{" "}
               </span>
-              <span className="text-light-on-secondary-container dark:text-light-on-secondary-container text-sm">
+              <span className="text-light-on-secondary-container dark:text-dark-on-secondary-container text-sm">
                 {tx.tokenSymbol || getNetworkSymbol(tx.chainId)}
               </span>
             </div>
@@ -113,10 +112,7 @@ export const TransactionItem: FC<TransactionItemProps> = ({
           >
             <div className="flex items-center px-2 py-0.5 text-light-on-surface-variant dark:text-dark-on-surface-variant">
               <div>Explorer</div>
-              <FontAwesomeIcon
-                className="w-4 h-4 ml-1"
-                icon={faExternalLink}
-              />
+                <ExternalLinkIcon className="w-3 h-3 ml-1 text-light-on-surface-variant dark:text-dark-on-surface-variant" />
             </div>
           </a>
         </div>
@@ -140,10 +136,7 @@ export const TransactionItem: FC<TransactionItemProps> = ({
           target="_blank"
           rel="noreferrer"
         >
-          <FontAwesomeIcon
-            className="w-4 h-4 ml-1 text-gray-400 hover:text-gray-300"
-            icon={faExternalLink}
-          />
+          <ExternalLinkIcon className="w-4 h-4 ml-1 text-light-on-surface-variant dark:text-dark-on-surface-variant" />
         </a>
       </div>
     </div>

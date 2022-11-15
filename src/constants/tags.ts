@@ -1,5 +1,5 @@
 import { StylesConfig } from "react-select";
-import chroma from "chroma-js";
+import color from "color";
 
 export type TagOption = {
   value: string;
@@ -67,16 +67,16 @@ export const colourStyles = (
       display: "none",
     }),
     option: (styles, { data, isDisabled, isFocused, isSelected }) => {
-      const color = chroma(data.color || "#8E477F");
+      const _color = color(data.color || "#8E477F");
       return {
         ...styles,
         backgroundColor: isSelected
           ? data.color
           : isFocused
-          ? color.alpha(0.1).css()
+          ? _color.lighten(0.1).hex()
           : undefined,
-        color: isSelected
-          ? chroma.contrast(color, "white") > 2
+        color: isFocused
+          ? _color.contrast(_color) < 12
             ? "white"
             : "black"
           : data.color,
@@ -86,7 +86,7 @@ export const colourStyles = (
           backgroundColor: !isDisabled
             ? isSelected
               ? data.color
-              : color.alpha(0.3).css()
+              : _color.lighten(0.3).hex()
             : undefined,
         },
       };

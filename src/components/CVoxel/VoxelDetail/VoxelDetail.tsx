@@ -9,8 +9,7 @@ import { TagBadge } from "@/components/common/badge/TagBadge";
 import RightArrow from "@/components/CVoxel/VoxelListItem/right-arrow.svg";
 import { shortenStr } from "@/utils/objectUtil";
 import { Button } from "@/components/common/button/Button";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faExternalLink } from "@fortawesome/free-solid-svg-icons";
+
 import { getExploreLink } from "@/utils/etherscanUtils";
 import { ShareButton } from "@/components/common/button/shareButton/ShareButton";
 import { formatBigNumber } from "@/utils/ethersUtil";
@@ -19,6 +18,7 @@ import { CopyRequestURLButton } from "./CopyRequestURLButton";
 import { useWorkCredential } from "@/hooks/useWorkCredential";
 import { WorkCredentialWithId,WorkCredential } from "vess-sdk";
 import { useOffchainItem } from "@/hooks/useOffchainList";
+import ExternalLinkIcon from "@/components/common/button/externalLink.svg";
 import dynamic from "next/dynamic";
 
 const UserPlate = dynamic(
@@ -311,10 +311,7 @@ export const VoxelDetail: FC<Props> = ({
                   <div className="ml-2 lg:ml-0 text-xs text-light-on-surface-variant dark:text-dark-on-surface-variant">
                     Explorer
                   </div>
-                  <FontAwesomeIcon
-                    className="w-3 h-3 ml-1 text-light-on-surface-variant dark:text-dark-on-surface-variant"
-                    icon={faExternalLink}
-                  />
+                  <ExternalLinkIcon className="w-3 h-3 ml-1 text-light-on-surface-variant dark:text-dark-on-surface-variant" />
                 </div>
               </div>
             </a>
