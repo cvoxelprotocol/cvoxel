@@ -2,7 +2,14 @@ import { FC } from "react";
 import { Search, SearchProps } from "@/components/common/search/Search";
 import CloseIcon from "@/components/common/search/close.svg";
 import clsx from "clsx";
-import { MainProfileCard } from "@/components/Profile/MainProfileCard";
+import dynamic from "next/dynamic";
+
+const MainProfileCard = dynamic(
+  () => import("@/components/Profile/MainProfileCard"),
+  {
+    ssr: false,
+  }
+);
 
 type Props = {
   did: string;
@@ -18,7 +25,6 @@ export const UserSearchWithProfile: FC<Props> = ({
   placeholder,
   onClear,
   className,
-  size = "lg",
 }) => {
   return (
     <>

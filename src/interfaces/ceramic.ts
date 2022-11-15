@@ -1,4 +1,4 @@
-import type { RequestState } from "@self.id/framework";
+import { DehydratedState } from "@tanstack/react-query";
 
 export type CeramicSupport =
   | "invalid" // not a DID or CAIP-10
@@ -8,6 +8,6 @@ export type CeramicSupport =
 
 export type CeramicProps = {
   did: string;
-  state: RequestState;
   support: CeramicSupport;
+  DehydratedState?: DehydratedState;
 };

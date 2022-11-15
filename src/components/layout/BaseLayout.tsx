@@ -1,11 +1,9 @@
 import React, { ReactNode, useEffect } from "react";
 import { Header } from "./Header";
 import { useModal } from "@/hooks/useModal";
-import { LoadingModal } from "@/components/common/LoadingModal";
 import { Toaster } from "react-hot-toast";
 import { Meta } from "./parts/Meta";
-import { useRouter } from "next/dist/client/router";
-import { Toast } from "@/components/common/toast/Toast";
+import { useRouter } from "next/dist/client/router";;
 import { CVoxelDetailBox } from "@/components/CVoxel/CVoxelDetailBox";
 import { useIsClient } from "@/hooks/useIsClient";
 import { useThemeMode } from "@/hooks/useThemeMode";
@@ -14,6 +12,18 @@ import { DeworkModal } from "../Dework/DeworkModal";
 import { ConnectDeworkCard } from "../Dework/ConnectDeworkCard";
 import { DeworkTaskList } from "../Dework/DeworkTaskList";
 import { useDework } from "@/hooks/useDework";
+import dynamic from "next/dynamic";
+
+const LoadingModal = dynamic(
+  () => import("@/components/common/LoadingModal"),
+);
+
+const Toast = dynamic(
+  () => import("@/components/common/toast/Toast"),
+  {
+    ssr: false,
+  }
+);
 
 type Props = {
   children?: ReactNode;
@@ -25,7 +35,6 @@ type Props = {
 export const BaseLayout = ({ children }: Props) => {
   const router = useRouter();
   const { isLoading } = useModal();
-
   const { isClient } = useIsClient();
   const { setThemeMode } = useThemeMode();
   const {isDeworkConnectOpen,isDeworkTaskListOpen } = useDework()

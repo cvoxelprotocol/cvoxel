@@ -1,33 +1,37 @@
 import { TransactionLogWithChainId } from "@/interfaces/explore";
 import { etherscanTxListFetcher } from "@/services/fetcher/EtherscanFetcher";
-import { WorkCredentialWithId } from "@/interfaces";
-import { useMemo, useContext, useCallback } from "react";
-import { useQuery } from "react-query";
+import { WorkCredentialWithId } from "vess-sdk";
+import { useMemo, useCallback } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { uniqueList } from "@/utils/etherscanUtils";
-import { DIDContext } from "@/context/DIDContext";
+import { useDIDAccount } from "@/hooks/useDIDAccount";
 import {
   getOffchainData,
   getOffchainDataList,
 } from "@/lib/firebase/store/meta";
 
 export const useOffchainList = () => {
-  const { chainId, account } = useContext(DIDContext);
+  const { chainId, account, originalAddress } = useDIDAccount();
 
-  const { data: txes, isLoading: txLoading } = useQuery<
+  const { data: txes, isInitialLoading: txLoading } = useQuery<
     TransactionLogWithChainId[]
-  >(["etherscan", account], () => etherscanTxListFetcher(chainId, account), {
-    enabled: !!account,
-    staleTime: Infinity,
-    cacheTime: 3000000,
-  });
+  >(
+    ["etherscan", originalAddress],
+    () => etherscanTxListFetcher(chainId, originalAddress),
+    {
+      enabled: !!originalAddress,
+      staleTime: Infinity,
+      cacheTime: 3000000,
+    }
+  );
 
   const {
     data: offchainMetaList,
-    isLoading: offchainLoading,
+    isInitialLoading: offchainLoading,
     refetch: refetchMeta,
   } = useQuery<WorkCredentialWithId[]>(
     ["offchainCVoxelMeta", account],
-    () => getOffchainDataList(account),
+    () => getOffchainDataList(account?.toLowerCase()),
     {
       enabled: !!account,
       staleTime: Infinity,
@@ -62,15 +66,16 @@ export const useOffchainList = () => {
 };
 
 export const useOffchainItem = (id?: string) => {
-  const { data: offchainItem, isLoading } = useQuery<WorkCredentialWithId>(
-    ["offchainItem", id],
-    () => getOffchainData(id),
-    {
-      enabled: !!id,
-      staleTime: Infinity,
-      cacheTime: 3000000,
-    }
-  );
+  const { data: offchainItem, isInitialLoading } =
+    useQuery<WorkCredentialWithId>(
+      ["offchainItem", id],
+      () => getOffchainData(id),
+      {
+        enabled: !!id,
+        staleTime: Infinity,
+        cacheTime: 3000000,
+      }
+    );
 
   const getOffchainItem = useCallback(
     async (offchainId: string): Promise<WorkCredentialWithId | null> => {
@@ -86,7 +91,7 @@ export const useOffchainItem = (id?: string) => {
   );
 
   return {
-    isLoading,
+    isInitialLoading,
     offchainItem,
     getOffchainItem,
   };

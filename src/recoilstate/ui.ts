@@ -4,8 +4,8 @@ import {
   TabKey,
   TransactionLogWithChainId,
   TxTabKey,
-  WorkCredentialWithId,
 } from "@/interfaces";
+import { WorkCredentialWithId } from "vess-sdk";
 
 //loading
 export const rGlobalLoading = atom({

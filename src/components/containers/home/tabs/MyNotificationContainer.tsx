@@ -1,21 +1,27 @@
 import { useMyPageScreen } from "@/hooks/useTab";
-import { FC, useCallback, useContext, useMemo } from "react";
+import { FC, useCallback, useMemo } from "react";
 import { NoItemPresenter } from "../../../common/NoItemPresenter";
-import type { WorkCredentialWithId } from "@/interfaces";
+import { WorkCredentialWithId,removeCeramicPrefix } from "vess-sdk";
 import { useSigRequest } from "@/hooks/useSigRequest";
 import { SigRequestListItem } from "@/components/SigRequest/SigRequestListItem/SigRequestListItem";
 import { useRouter } from "next/router";
 import { NavBar } from "@/components/SigRequest/NavBar/NavBar";
-import { SigRequestDetail } from "@/components/SigRequest/SigRequestDetail/SigRequestDetail";
-import { DIDContext } from "@/context/DIDContext";
-import { removeCeramicPrefix } from "@/utils/workCredentialUtil";
+import { useDIDAccount } from "@/hooks/useDIDAccount";
 import { useWorkCredential } from "@/hooks/useWorkCredential";
 import { CommonLoading } from "@/components/common/CommonLoading";
+import dynamic from "next/dynamic";
+
+const SigRequestDetail = dynamic(
+  () => import("@/components/SigRequest/SigRequestDetail/SigRequestDetail"),
+  {
+    ssr: false,
+  }
+);
 
 export const MyNotificationContainer: FC = () => {
-  const {did, account} = useContext(DIDContext)
+  const {did, account} = useDIDAccount()
   const {setScreenState} = useMyPageScreen()
-  const { sigRequestList, isLoading, updateMetaList } = useSigRequest();
+  const { sigRequestList, isInitialLoading, updateMetaList } = useSigRequest();
   const {signCredential} = useWorkCredential()
 
   const handleVerify = useCallback(
@@ -65,7 +71,7 @@ export const MyNotificationContainer: FC = () => {
           </div>
         ) : (
           <div className="w-full max-w-[820px] lg:h-[calc(100vh-5rem-2.5rem-3rem)] text-center mx-auto cursor-pointer h-screen overflow-y-scroll py-6 sm:px-6 space-y-6">
-            {isLoading ? (
+            {isInitialLoading ? (
               <CommonLoading />
             ): (
               <>
@@ -87,6 +93,6 @@ export const MyNotificationContainer: FC = () => {
         )}
       </>
     ),
-    [sigRequestList, account, handleVerify, currentCRDL,isLoading]
+    [sigRequestList, account, handleVerify, currentCRDL,isInitialLoading]
   );
 };

@@ -1,15 +1,15 @@
+import clsx from "clsx";
 import { FC } from "react";
-import { AvatarPlaceholder as SelfIDAvatarPlaceholder } from "@self.id/ui";
 
 type Props = {
   did?: string;
   size: string | number;
 };
 
-export const AvatarPlaceholder: FC<Props> = ({ did, size }) => {
+export const AvatarPlaceholder: FC<Props> = ({ size }) => {
   return (
     <div className="rounded-full overflow-hidden">
-      <SelfIDAvatarPlaceholder did={did} size={size} />
+      <div className={clsx("bg-gradient-to-tr from-accent_l to-accent_r", `w-[${size}px] h-[${size}px]`)}></div>
     </div>
   );
 };

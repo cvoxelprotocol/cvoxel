@@ -1,5 +1,4 @@
-import { FC, useCallback, useContext, useEffect, useMemo, useRef } from "react";
-import { CVoxelsContainer } from "@/components/containers/home/CVoxelsContainer";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { Arrow } from "@/components/common/arrow/Arrow";
 import { SearchData } from "@/components/common/search/Search";
 import { Button } from "@/components/common/button/Button";
@@ -7,17 +6,25 @@ import { useRouter } from "next/router";
 import LeftArrow from "@/components/CVoxel/NavBar/left-arrow.svg";
 import { UserSearch } from "@/components/common/search/UserSearch";
 import { UserCVoxelContainer } from "@/components/containers/profile/UserCVoxelContainer";
-import { useWalletAccount } from "@/hooks/useWalletAccount";
-import { DIDContext } from "@/context/DIDContext";
+import { useDIDAccount } from "@/hooks/useDIDAccount";
 import Image from "next/image";
 import { useWorkCredentials } from "@/hooks/useWorkCredential";
+import { useConnectDID } from "@/hooks/useConnectDID";
+import dynamic from "next/dynamic";
+
+const CVoxelsContainer = dynamic(
+  () => import("@/components/containers/home/CVoxelsContainer"),
+  {
+    ssr: false,
+  }
+);
 
 type Props = {
   did: string;
 };
 
-export const ProfileContainer: FC<Props> = ({ did }) => {
-  const {workCredentials} = useWorkCredentials(did)
+export default function ProfileContainer({did}: Props) {
+  const {workCredentials, isInitialLoading} = useWorkCredentials(did)
   const router = useRouter();
 
   const isTopPage = useMemo(() => {
@@ -45,8 +52,8 @@ export const ProfileContainer: FC<Props> = ({ did }) => {
     visualContainerRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  const {did:myDid, account} = useContext(DIDContext)
-  const { connectWallet } = useWalletAccount();
+  const {did:myDid, account} = useDIDAccount()
+  const { connectDID } = useConnectDID();
 
   const handleSearch = (data: SearchData) => {
     if (!data.value) return;
@@ -54,13 +61,6 @@ export const ProfileContainer: FC<Props> = ({ did }) => {
     router.push(`/${link}`);
   };
 
-  const connect = async () => {
-    try {
-      await connectWallet();
-    } catch (error) {
-      console.log("error:", error);
-    }
-  };
   const handleClickNavBackButton = useCallback(() => {
     router.push(router.asPath.split("?")[0]);
   }, [router]);
@@ -76,12 +76,13 @@ export const ProfileContainer: FC<Props> = ({ did }) => {
         ref={visualContainerRef}
       >
         <CVoxelsContainer
+          isLoading={isInitialLoading}
           mode="search"
-          content={workCredentials}
+          content={workCredentials || []}
           did={did}
           onClearUser={handleClearUser}
         >
-          <div className="absolute bottom-0 pb-12">
+          <div className="absolute bottom-10 pb-12">
             <div className="relative mx-auto cursor-pointer hidden sm:block">
               <button onClick={() => scrollToInfo()}>
                 <Arrow size="lg" direction="down" />
@@ -151,7 +152,7 @@ export const ProfileContainer: FC<Props> = ({ did }) => {
                   ) : (
                     <Button
                       text="Connect"
-                      onClick={() => connect()}
+                      onClick={() => connectDID()}
                       color="primary"
                       className="text-sm sm:text-base"
                     />

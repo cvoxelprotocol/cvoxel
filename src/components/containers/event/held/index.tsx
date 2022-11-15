@@ -1,19 +1,30 @@
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import AttendanceIcon from "@/components/common/event/attendance-icon.svg"
-import { MainProfileCard } from "@/components/Profile/MainProfileCard";
 import { useHeldEventAttendances } from "@/hooks/useHeldEventAttendances";
 import { EventAttendanceBadge } from "@/components/Event/EventAttendanceBadge";
-import { removeCeramicPrefix } from "@/utils/workCredentialUtil";
-import { EventAttendanceWithId } from "@/interfaces";
+import { removeCeramicPrefix,EventAttendanceWithId } from "vess-sdk";
 import { useRouter } from "next/router";
 import { CommonLoading } from "@/components/common/CommonLoading";
+import dynamic from "next/dynamic";
 
+const MainProfileCard = dynamic(
+  () => import("@/components/Profile/MainProfileCard"),
+  {
+    ssr: false,
+  }
+);
 type HeldEventContainerProps = {
     did: string
 }
 export const HeldEventContainer: FC<HeldEventContainerProps> = ({did}) => {
-  const {HeldEventAttendances, isFetchingHeldEventAttendances} = useHeldEventAttendances(did)
+  const {HeldEventAttendances, isFetchingHeldEventAttendances, migrateHeldEvent} = useHeldEventAttendances(did)
   const router = useRouter()
+
+  useEffect(() => {
+    if(HeldEventAttendances?.length===0 && did){
+        migrateHeldEvent()
+    }
+  },[HeldEventAttendances, did])
 
   const goToAttendancePage = (item:EventAttendanceWithId) => {
     router.push(`/event/attendance/${removeCeramicPrefix(item.ceramicId)}`)
@@ -31,7 +42,7 @@ export const HeldEventContainer: FC<HeldEventContainerProps> = ({did}) => {
                         {!HeldEventAttendances || HeldEventAttendances.length===0 ? (
                             <div className="w-full text-center flex flex-col items-center">
                                 <AttendanceIcon />
-                                <p className="py-2 font-bold text-xl">Your Event Attendance Credentials</p>
+                                <p className="py-2 font-bold text-xl">Event Attendance Credentials</p>
                             </div>
                         ): (
                             <div className="w-full flex justify-center flex-wrap">
@@ -48,7 +59,7 @@ export const HeldEventContainer: FC<HeldEventContainerProps> = ({did}) => {
                 )}
             </div>
             {did && (
-                <div className="flex-none mt-12 w-full max-w-[720px]">
+                <div className="flex-none mt-6 w-full max-w-[720px] mb-14">
                     <div className="w-fit mx-auto">
                         <MainProfileCard did={did} type="event"/>
                     </div>

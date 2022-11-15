@@ -1,14 +1,29 @@
-import { FC, useCallback, useContext, useEffect, useRef } from "react";
-import { CVoxelsContainer } from "./CVoxelsContainer";
-import { MyPageContainer } from "./MyPageContainer";
+import { FC, useCallback, useEffect, useRef } from "react";
 import { Arrow } from "@/components/common/arrow/Arrow";
-import { DIDContext } from "@/context/DIDContext";
+import { useDIDAccount } from "@/hooks/useDIDAccount";
 import { useMyPageScreen, useTab } from "@/hooks/useTab";
 import { useWorkCredentials } from "@/hooks/useWorkCredential";
+import dynamic from "next/dynamic";
+import { useHeldEventAttendances } from "@/hooks/useHeldEventAttendances";
+
+const CVoxelsContainer = dynamic(
+  () => import("@/components/containers/home/CVoxelsContainer"),
+  {
+    ssr: false,
+  }
+);
+
+const MyPageContainer = dynamic(
+  () => import("@/components/containers/home/MyPageContainer"),
+  {
+    ssr: false,
+  }
+);
 
 export const HomeContainer: FC = () => {
-  const {did} = useContext(DIDContext)
-  const {workCredentials} = useWorkCredentials(did)
+  const {did} = useDIDAccount()
+  const {workCredentials, migrateAccount, isInitialLoading} = useWorkCredentials(did)
+  const {HeldEventAttendances, migrateHeldEvent} = useHeldEventAttendances(did)
   const myPageContainerRef = useRef<HTMLDivElement>(null);
   const visualContainerRef = useRef<HTMLDivElement>(null);
   const { setTabState } = useTab();
@@ -28,6 +43,18 @@ export const HomeContainer: FC = () => {
     }
   },[screenState])
 
+  useEffect(() => {
+    if(workCredentials?.length===0 && did){
+      migrateAccount()
+    }
+  },[workCredentials, did])
+
+  useEffect(() => {
+    if(HeldEventAttendances?.length===0 && did){
+        migrateHeldEvent()
+    }
+  },[HeldEventAttendances, did])
+
   const handleCreateNewVoxel = useCallback(() => {
     scrollToInfo()
     setTabState("transactions");
@@ -39,8 +66,8 @@ export const HomeContainer: FC = () => {
         className="relative snap-start snap-always min-h-screen"
         ref={visualContainerRef}
       >
-        <CVoxelsContainer did={did || ""} content={workCredentials} isMe moveToCreateSection={handleCreateNewVoxel}>
-          <div className="absolute bottom-0 pb-12">
+        <CVoxelsContainer did={did || ""} content={workCredentials || []} isLoading={isInitialLoading} isMe moveToCreateSection={handleCreateNewVoxel}>
+          <div className="absolute bottom-10 pb-12">
             <div className="relative mx-auto cursor-pointer hidden sm:block">
               <button onClick={() => scrollToInfo()}>
                 <Arrow size="lg" direction="down" />

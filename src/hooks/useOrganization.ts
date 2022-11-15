@@ -1,6 +1,4 @@
-import { getWorkCredentialService } from "@/services/workCredential/WorkCredentialService";
-import { useMutation, useQuery, useQueryClient } from "react-query";
-import { Organization } from "@/__generated__/types/Organization";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "./useToast";
 import {
   ORGANIZATION_CREATION_FAILED,
@@ -8,13 +6,15 @@ import {
 } from "@/constants/toastMessage";
 import { useModal } from "./useModal";
 import { useStateWorkspaceCreateModal } from "@/recoilstate";
-import { OrganizationWIthId } from "@/interfaces";
-import { useContext } from "react";
-import { DIDContext } from "@/context/DIDContext";
+import { OrganizationWIthId } from "vess-sdk";
+import { useDIDAccount } from "@/hooks/useDIDAccount";
+import { CustomResponse, getVESS, Organization } from "vess-sdk";
+import { CERAMIC_NETWORK } from "@/constants/common";
 
 export const useOrganization = (orgId?: string) => {
-  const { did } = useContext(DIDContext);
-  const workCredentialService = getWorkCredentialService();
+  const { did } = useDIDAccount();
+  // const vess = getVESS()
+  const vess = getVESS(CERAMIC_NETWORK !== "mainnet");
   const queryClient = useQueryClient();
   const { lancInfo, lancError } = useToast();
   const { showLoading, closeLoading } = useModal();
@@ -24,59 +24,54 @@ export const useOrganization = (orgId?: string) => {
     mutateAsync: createOrganization,
     isLoading: isCreatingOrg,
     isSuccess: creationSucceeded,
-  } = useMutation<string | undefined, unknown, Organization>(
-    (param) => workCredentialService.createOrganization(param),
-    {
-      onMutate() {
-        showLoading();
-      },
-      onSuccess(data) {
-        if (data) {
-          closeLoading();
-          lancInfo(ORGANIZATION_CREATION_SUCCEED);
-        } else {
-          closeLoading();
-          lancError(ORGANIZATION_CREATION_FAILED);
-        }
-      },
-      onError(error) {
-        console.log("error", error);
+  } = useMutation<
+    CustomResponse<{ streamId: string | undefined }>,
+    unknown,
+    Organization
+  >((param) => vess.createOrganization(param), {
+    onMutate() {
+      showLoading();
+    },
+    onSuccess(data) {
+      if (data) {
+        closeLoading();
+        lancInfo(ORGANIZATION_CREATION_SUCCEED);
+      } else {
         closeLoading();
         lancError(ORGANIZATION_CREATION_FAILED);
-      },
-      onSettled: () => {
-        queryClient.invalidateQueries("createdOrganizations");
-      },
-    }
-  );
+      }
+    },
+    onError(error) {
+      console.log("error", error);
+      closeLoading();
+      lancError(ORGANIZATION_CREATION_FAILED);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries(["createdOrganizations"]);
+    },
+  });
 
-  const { data: createdOrganizations, isLoading } = useQuery<
-    OrganizationWIthId[] | null
-  >(
-    ["createdOrganizations", did],
-    () => workCredentialService.fetchCreatedOrganization(),
-    {
-      enabled: !!did && did !== "",
-      staleTime: Infinity,
-      cacheTime: 30000,
-    }
-  );
+  const { data: createdOrganizations, isInitialLoading } = useQuery<
+    OrganizationWIthId[]
+  >(["createdOrganizations", did], () => vess.getCreatedOrganization(), {
+    enabled: !!did && did !== "",
+    staleTime: Infinity,
+    cacheTime: 300000,
+  });
 
-  const { data: organization, isLoading: isFetchingOrg } = useQuery<
-    OrganizationWIthId | undefined
-  >(
+  const { data: organization } = useQuery<OrganizationWIthId | undefined>(
     ["organization", orgId],
-    () => workCredentialService.fetchOrganization(orgId),
+    () => vess.getOrganization(orgId),
     {
       enabled: !!orgId,
       staleTime: Infinity,
-      cacheTime: 30000,
+      cacheTime: 300000,
     }
   );
 
   return {
     createdOrganizations,
-    isLoading,
+    isInitialLoading,
     createOrganization,
     isCreatingOrg,
     setShowCreateModal,

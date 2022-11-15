@@ -1,5 +1,4 @@
-import { getWorkCredentialService } from "@/services/workCredential/WorkCredentialService";
-import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "./useToast";
 import {
   MEMBERSHIP_CREATION_FAILED,
@@ -7,57 +6,59 @@ import {
 } from "@/constants/toastMessage";
 import { useModal } from "./useModal";
 import { useStateMembershipCreateModal } from "@/recoilstate";
-import { MembershipWithId } from "@/interfaces";
-import { useContext, useMemo } from "react";
-import { DIDContext } from "@/context/DIDContext";
-import { Membership } from "@/__generated__/types/MemberShip";
+import { MembershipWithId } from "vess-sdk";
+import { useMemo } from "react";
+import { useDIDAccount } from "@/hooks/useDIDAccount";
+import { Membership } from "vess-sdk";
+import { CustomResponse, getVESS } from "vess-sdk";
+import { CERAMIC_NETWORK } from "@/constants/common";
 
 export const useMembership = (orgId?: string) => {
-  const { did } = useContext(DIDContext);
-  const workCredentialService = getWorkCredentialService();
+  const { did } = useDIDAccount();
+  // const vess = getVESS()
+  const vess = getVESS(CERAMIC_NETWORK !== "mainnet");
   const queryClient = useQueryClient();
   const { lancInfo, lancError } = useToast();
   const { showLoading, closeLoading } = useModal();
   const [showModal, setShowModal] = useStateMembershipCreateModal();
 
   const { mutateAsync: createMembership, isLoading: isCreatingOrg } =
-    useMutation<string | undefined, unknown, Membership>(
-      (param) => workCredentialService.createMembership(param),
-      {
-        onMutate() {
-          showLoading();
-        },
-        onSuccess(data) {
-          if (data) {
-            closeLoading();
-            lancInfo(MEMBERSHIP_CREATION_SUCCEED);
-          } else {
-            closeLoading();
-            lancError(MEMBERSHIP_CREATION_FAILED);
-          }
-        },
-        onError(error) {
-          console.log("error", error);
+    useMutation<
+      CustomResponse<{
+        streamId: string | undefined;
+      }>,
+      unknown,
+      Membership
+    >((param) => vess.createMembership(param), {
+      onMutate() {
+        showLoading();
+      },
+      onSuccess(data) {
+        if (data) {
+          closeLoading();
+          lancInfo(MEMBERSHIP_CREATION_SUCCEED);
+        } else {
           closeLoading();
           lancError(MEMBERSHIP_CREATION_FAILED);
-        },
-        onSettled: () => {
-          queryClient.invalidateQueries("createdMemberships");
-        },
-      }
-    );
+        }
+      },
+      onError(error) {
+        console.log("error", error);
+        closeLoading();
+        lancError(MEMBERSHIP_CREATION_FAILED);
+      },
+      onSettled: () => {
+        queryClient.invalidateQueries(["createdMemberships"]);
+      },
+    });
 
-  const { data: createdMemberships, isLoading } = useQuery<
+  const { data: createdMemberships, isInitialLoading } = useQuery<
     MembershipWithId[] | null
-  >(
-    ["createdMemberships", did],
-    () => workCredentialService.fetchCreatedMemberships(),
-    {
-      enabled: !!did && did !== "",
-      staleTime: Infinity,
-      cacheTime: 30000,
-    }
-  );
+  >(["createdMemberships", did], () => vess.getCreatedMemberships(), {
+    enabled: !!did && did !== "",
+    staleTime: Infinity,
+    cacheTime: 300000,
+  });
 
   const createdMembershipsOfOrg = useMemo<MembershipWithId[]>(() => {
     if (!createdMemberships || !orgId) return [];
@@ -67,7 +68,7 @@ export const useMembership = (orgId?: string) => {
   return {
     createdMemberships,
     createdMembershipsOfOrg,
-    isLoading,
+    isInitialLoading,
     createMembership,
     isCreatingOrg,
     setShowModal,

@@ -1,25 +1,25 @@
-import { FC } from "react";
 import { IconAvatar } from "@/components/common/IconAvatar";
 import { AvatarPlaceholder } from "@/components/common/avatar/AvatarPlaceholder";
 import RightArrow from "@/components/CVoxel/VoxelListItem/right-arrow.svg";
 import { CommonSpinner } from "@/components/common/CommonSpinner";
 import { useProfileInfo } from "@/hooks/useProfileInfo";
-import { Client } from "@/__generated__/types/WorkCredential";
+import { Client } from "vess-sdk";
+import { useSocialAccount } from "@/hooks/useSocialAccount";
 
 type Props = {
   holder?: string;
   client?: Client;
 };
 
-export const CredentialDirection: FC<Props> = ({ holder, client }) => {
+export default function CredentialDirection ({ holder, client }:Props) {
 
-  const {profile, isLoading} = useProfileInfo({format: "DID", value: holder})
-  const {profile: clientProfile, isLoading: isLoadingClient} = useProfileInfo(client)
+  const {profile, isInitialLoading} = useSocialAccount(holder)
+  const {profile: clientProfile, isInitialLoading: isLoadingClient} = useProfileInfo(client)
 
   return (
     <div className="flex items-center space-x-2">
       <div className="hidden lg:block">
-      {isLoading ? (
+      {isInitialLoading ? (
           <CommonSpinner size="sm" />
         ) : (
           <>

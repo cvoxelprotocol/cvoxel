@@ -71,14 +71,14 @@ export class DeworkService {
     param: updateGenreParam
   ): Promise<WorkSubjectFromDework | null> => {
     const { account, id, genre } = param;
-    return await updateGenreOfDeworkTask(account, id, genre);
+    return await updateGenreOfDeworkTask(account.toLowerCase(), id, genre);
   };
 
   issueCRDLs = async (
     param: issueCRDLFromDeworkParam
   ): Promise<string[] | null> => {
     const { address, ids, storeAll } = param;
-    return await issueCRDLFromDework(address, ids, storeAll);
+    return await issueCRDLFromDework(address?.toLowerCase(), ids, storeAll);
   };
 }
 

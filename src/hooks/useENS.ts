@@ -1,12 +1,12 @@
-import { useQuery } from "react-query";
+import { useQuery } from "@tanstack/react-query";
 import { getEtherService } from "@/services/Ether/EtherService";
 
 export const useENS = (address?: string) => {
   const etherService = getEtherService();
 
-  const { data: ens, isLoading: ensLoading } = useQuery<string>(
+  const { data: ens, isInitialLoading: ensLoading } = useQuery<string>(
     ["ENS", address],
-    () => etherService.getDisplayENS(address),
+    () => etherService.getDisplayENS(address?.toLowerCase()),
     {
       enabled: !!address,
       staleTime: Infinity,

@@ -1,4 +1,4 @@
-import { FC, useContext, useMemo } from "react";
+import { FC, useMemo } from "react";
 import { CommonLoading } from "../common/CommonLoading";
 import { NoItemPresenter } from "../common/NoItemPresenter";
 import { TransactionDetail } from "./TransactionDetail";
@@ -8,15 +8,14 @@ import { useMyPageScreen, useTab } from "@/hooks/useTab";
 import type {
   TransactionLogWithChainId,
   WorkCredentialForm,
-  WorkCredentialWithId,
 } from "@/interfaces";
 import { useFileUpload } from "@/hooks/useFileUpload";
-import { useStateForceUpdate, useStateSelectedTx } from "@/recoilstate";
+import { useStateSelectedTx } from "@/recoilstate";
 import { useThemeMode } from "@/hooks/useThemeMode";
-import { DIDContext } from "@/context/DIDContext";
+import { useDIDAccount } from "@/hooks/useDIDAccount";
 import { useRouter } from "next/router";
 import { useWorkCredential, useWorkCredentials } from "@/hooks/useWorkCredential";
-import { DeliverableItem } from "@/__generated__/types/WorkCredential";
+import { DeliverableItem, WorkCredentialWithId } from "vess-sdk";
 
 type TransactionListContainerProps = {
   txList: TransactionLogWithChainId[];
@@ -28,14 +27,12 @@ export const TransactionListContainer: FC<TransactionListContainerProps> = ({
   offchainLoading,
   offchainMetaList,
 }) => {
-  const {did, account, connection} = useContext(DIDContext)
-  const {workCredentials, refetch} = useWorkCredentials(did)
+  const {did, account, connection} = useDIDAccount()
+  const {workCredentials} = useWorkCredentials(did)
   const [selectedTx, selectTx] = useStateSelectedTx();
   const { setTabState } = useTab();
   const {publish} = useWorkCredential();
   const { resetUploadStatus } = useFileUpload();
-  // TODO: This is temporary solution because of useTileDoc bug
-  const [_, setForceUpdateCVoxelList] = useStateForceUpdate();
   const router = useRouter();
   const {setScreenState} = useMyPageScreen()
 
@@ -101,8 +98,6 @@ export const TransactionListContainer: FC<TransactionListContainerProps> = ({
       selectTx(null);
       setTabState("cvoxels");
       setScreenState("info")
-      setForceUpdateCVoxelList(v => !v);
-      refetch()
       router.push(`/${did}/?voxel=${result}`)
     }
   };
@@ -130,8 +125,6 @@ export const TransactionListContainer: FC<TransactionListContainerProps> = ({
       selectTx(null);
       setTabState("cvoxels");
       setScreenState("info")
-      setForceUpdateCVoxelList(v => !v);
-      refetch()
       router.push(`/${did}/?voxel=${result}`)
     }
   };

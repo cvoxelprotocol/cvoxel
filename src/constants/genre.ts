@@ -1,4 +1,4 @@
-import chroma from "chroma-js";
+import color from "color";
 import { StylesConfig } from "react-select";
 
 export type Genre = {
@@ -202,22 +202,22 @@ export const genreColorStyle: StylesConfig<Genre> = {
     },
   }),
   option: (styles, { data, isFocused, isSelected }) => {
-    const color = chroma(data.colorCode);
+    const _color = color(data.colorCode);
     return {
       ...styles,
       ...dot(data.colorCode),
       backgroundColor: isSelected
-        ? color.alpha(0.5).css()
+        ? _color.lighten(0.5).hex()
         : isFocused
-        ? color.alpha(0.1).css()
+        ? _color.lighten(0.1).hex()
         : undefined,
       ":active": {
         ...styles[":active"],
-        backgroundColor: color.alpha(0.3).css(),
+        backgroundColor: _color.lighten(0.3).hex(),
       },
       ":hover": {
         ...styles[":hover"],
-        backgroundColor: color.alpha(0.3).css(),
+        backgroundColor: _color.lighten(0.3).hex(),
       },
       fontWeight: "bold",
       color: "#333333",

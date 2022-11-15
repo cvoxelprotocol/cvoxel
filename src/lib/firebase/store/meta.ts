@@ -5,15 +5,13 @@ import {
   getDoc,
   getDocs,
   query,
-  updateDoc,
   where,
 } from "firebase/firestore/lite";
 import { DocumentData, QueryDocumentSnapshot } from "firebase/firestore/lite";
 import { CVoxelMetaDraft } from "@/interfaces/cVoxelType";
 import { DeliverableItemsFromStr } from "@/utils/workCredentialUtil";
-import { WorkCredentialWithId } from "@/interfaces";
+import { WorkCredentialWithId, getPkhDIDFromAddress } from "vess-sdk";
 import { convertV1DataToCRDL } from "@/utils/workCredentialUtil";
-import { getPkhDIDFromAddress } from "@/utils/ceramicUtils";
 
 export const getSigRequestList = async (
   address?: string
@@ -158,35 +156,6 @@ export const getOffchainData = (id?: string): Promise<WorkCredentialWithId> =>
       .then((result) => {
         const d = result.data() as WorkCredentialWithId;
         resolve(d);
-      })
-      .catch((error) => {
-        reject(error);
-      });
-  });
-
-export const updateSignature = (
-  id: string | undefined,
-  isPayer: boolean,
-  signer: string,
-  sig: string
-): Promise<void> =>
-  new Promise((resolve, reject) => {
-    if (!id) {
-      reject("No Id");
-      return;
-    }
-    const sigObj = isPayer
-      ? {
-          fromSig: sig,
-          fromSigner: signer,
-        }
-      : {
-          toSig: sig,
-          toSigner: signer,
-        };
-    updateDoc(doc(firestore, "cvoxels", id).withConverter(converter), sigObj)
-      .then(() => {
-        resolve();
       })
       .catch((error) => {
         reject(error);

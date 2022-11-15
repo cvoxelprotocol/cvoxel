@@ -1,19 +1,13 @@
 import { useTxTab } from "@/hooks/useTab";
-import { FC, useEffect } from "react";
+import { FC } from "react";
 import { useOffchainList } from "@/hooks/useOffchainList";
 import { TxTabs } from "@/components/Transaction/TxTabs";
 import { TransactionListContainer } from "@/components/Transaction/TransactionListContainer";
-import { useStateForceUpdate } from "@/recoilstate";
 
 
 export const MyTxContainer:FC = () => {
-    const { sentTXList, recievedTXList, offchainMetaList, offchainLoading,updateMetaList } = useOffchainList();
-    const [forceUpdateCVoxelList, _] = useStateForceUpdate();
+    const { sentTXList, recievedTXList, offchainMetaList, offchainLoading } = useOffchainList();
     const {tabState} = useTxTab()
-
-    useEffect(() => {
-      updateMetaList()
-    },[forceUpdateCVoxelList])
   
     return (
       <>

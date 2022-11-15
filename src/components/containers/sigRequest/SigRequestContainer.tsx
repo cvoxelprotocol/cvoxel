@@ -1,21 +1,27 @@
-import { FC, useCallback, useContext } from "react";
+import { FC, useCallback } from "react";
 import { useRouter } from "next/router";
-import { DIDContext } from "@/context/DIDContext";
-import { WorkCredentialWithId } from "@/interfaces";
-import { SigRequestDetail } from "@/components/SigRequest/SigRequestDetail/SigRequestDetail";
+import { useDIDAccount } from "@/hooks/useDIDAccount";
+import { WorkCredentialWithId } from "vess-sdk";
 import { NoItemPresenter } from "@/components/common/NoItemPresenter";
 import { CommonLoading } from "@/components/common/CommonLoading";
 import { useMyPageScreen } from "@/hooks/useTab";
 import { useWorkCredential } from "@/hooks/useWorkCredential";
 import { useOffchainItem } from "@/hooks/useOffchainList";
+import dynamic from "next/dynamic";
 
+const SigRequestDetail = dynamic(
+  () => import("@/components/SigRequest/SigRequestDetail/SigRequestDetail"),
+  {
+    ssr: false,
+  }
+);
 type Props = {
   txId?: string;
 };
 
 export const SigRequestContainer: FC<Props> = ({ txId }) => {
-  const {did} = useContext(DIDContext)
-  const {isLoading, offchainItem} = useOffchainItem(txId)
+  const {did} = useDIDAccount()
+  const {isInitialLoading, offchainItem} = useOffchainItem(txId)
   const {signCredential} = useWorkCredential()
   const router = useRouter()
   const {setScreenState} = useMyPageScreen()
@@ -37,7 +43,7 @@ export const SigRequestContainer: FC<Props> = ({ txId }) => {
       <div
         className="md:pt-12 md:overflow-hidden w-full">
         <div className="max-w-[820px] mx-auto mt-20 px-4">
-            {isLoading ? (<CommonLoading />): (
+            {isInitialLoading ? (<CommonLoading />): (
               <>
                 {offchainItem ? (
                   <div className="mt-6 sm:px-6">

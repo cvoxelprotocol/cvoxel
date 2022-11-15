@@ -1,19 +1,19 @@
-import { useContext } from "react";
-import { DIDContext } from "@/context/DIDContext";
-import { WorkCredentialWithId } from "@/interfaces";
-import { useQuery } from "react-query";
+import { useMemo } from "react";
+import { useDIDAccount } from "@/hooks/useDIDAccount";
+import { WorkCredentialWithId } from "vess-sdk";
+import { useQuery } from "@tanstack/react-query";
 import { getSigRequestList } from "@/lib/firebase/store/meta";
 
 export function useSigRequest() {
-  const { account } = useContext(DIDContext);
+  const { account, did } = useDIDAccount();
 
   const {
-    data: sigRequestList,
-    isLoading: isLoading,
+    data: sigRequests,
+    isInitialLoading,
     refetch: updateMetaList,
   } = useQuery<WorkCredentialWithId[]>(
     ["getSigRequestList", account],
-    () => getSigRequestList(account),
+    () => getSigRequestList(account?.toLowerCase()),
     {
       enabled: !!account,
       staleTime: Infinity,
@@ -21,5 +21,10 @@ export function useSigRequest() {
     }
   );
 
-  return { sigRequestList, updateMetaList, isLoading };
+  const sigRequestList = useMemo(() => {
+    if (!sigRequests) return [];
+    return sigRequests.filter((s) => s.holderDid?.toLowerCase() !== did);
+  }, [sigRequests, did]);
+
+  return { sigRequestList, updateMetaList, isInitialLoading };
 }

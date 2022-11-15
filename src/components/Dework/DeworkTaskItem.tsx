@@ -8,8 +8,15 @@ import { GenreList } from "../Transaction/GenreList";
 import clsx from "clsx";
 import { useStateDeworkTargetIds } from "@/recoilstate/dework";
 import { useDeworkTask } from "@/hooks/useDeworkTask";
-import { UserPlate } from "../common/UserPlate";
 import { CommonSpinner } from "../common/CommonSpinner";
+import dynamic from "next/dynamic";
+
+const UserPlate = dynamic(
+  () => import("@/components/common/UserPlate"),
+  {
+    ssr: false,
+  }
+);
 
 type DeworkTaskItemProps = {
     item: WorkSubjectFromDework

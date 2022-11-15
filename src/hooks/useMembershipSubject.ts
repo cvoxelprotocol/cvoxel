@@ -1,5 +1,4 @@
-import { getWorkCredentialService } from "@/services/workCredential/WorkCredentialService";
-import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "./useToast";
 import {
   MEMBERSHIP_SUBJECT_CREATION_FAILED,
@@ -11,18 +10,21 @@ import {
   MembershipSubjectWithId,
   MembershipWithId,
   OrganizationWIthId,
-} from "@/interfaces";
-import { useContext } from "react";
-import { DIDContext } from "@/context/DIDContext";
+  CustomResponse,
+  getVESS,
+  VerifiableMembershipSubject,
+} from "vess-sdk";
+import { useDIDAccount } from "@/hooks/useDIDAccount";
 import {
   getHeldMembershipSubjectsFromDB,
   getMembershipSUbjectsFromDB,
 } from "@/lib/firebase/store/workspace";
-import { VerifiableMembershipSubject } from "@/__generated__/types/VerifiableMembershipSubjectCredential";
+import { CERAMIC_NETWORK } from "@/constants/common";
 
 export const useMembershipSubject = (orgId?: string) => {
-  const { did } = useContext(DIDContext);
-  const workCredentialService = getWorkCredentialService();
+  const { did } = useDIDAccount();
+  // const vess = getVESS()
+  const vess = getVESS(CERAMIC_NETWORK !== "mainnet");
   const queryClient = useQueryClient();
   const { lancInfo, lancError } = useToast();
   const { showLoading, closeLoading } = useModal();
@@ -30,80 +32,83 @@ export const useMembershipSubject = (orgId?: string) => {
     useStateMembershipSubjectCreateModal();
 
   const { mutateAsync: issueMembershipSubject, isLoading: isCreatingSubject } =
-    useMutation<string | undefined, unknown, VerifiableMembershipSubject>(
-      (param) => workCredentialService.issueMembershipSubject(param),
-      {
-        onMutate() {
-          showLoading();
-        },
-        onSuccess(data) {
-          if (data) {
-            closeLoading();
-            lancInfo(MEMBERSHIP_SUBJECT_CREATION_SUCCEED);
-          } else {
-            closeLoading();
-            lancError(MEMBERSHIP_SUBJECT_CREATION_FAILED);
-          }
-        },
-        onError(error) {
-          console.log("error", error);
+    useMutation<
+      CustomResponse<{ streamId: string | undefined }>,
+      unknown,
+      VerifiableMembershipSubject
+    >((param) => vess.issueMembershipSubject(param), {
+      onMutate() {
+        showLoading();
+      },
+      onSuccess(data) {
+        if (data) {
+          closeLoading();
+          lancInfo(MEMBERSHIP_SUBJECT_CREATION_SUCCEED);
+        } else {
           closeLoading();
           lancError(MEMBERSHIP_SUBJECT_CREATION_FAILED);
-        },
-        onSettled: () => {
-          queryClient.invalidateQueries("IssuedMembershipSubjects");
-        },
-      }
-    );
+        }
+      },
+      onError(error) {
+        console.log("error", error);
+        closeLoading();
+        lancError(MEMBERSHIP_SUBJECT_CREATION_FAILED);
+      },
+      onSettled: () => {
+        queryClient.invalidateQueries(["IssuedMembershipSubjects"]);
+      },
+    });
 
-  const { data: IssuedMembershipSubjects, isLoading } = useQuery<
+  const { data: IssuedMembershipSubjects, isInitialLoading } = useQuery<
     MembershipSubjectWithId[] | null
   >(
     ["IssuedMembershipSubjects", did],
-    () => workCredentialService.fetchIssuedMembershipSubjects(),
+    () => vess.getIssuedMembershipSubjects(did),
     {
       enabled: !!did && did !== "",
       staleTime: Infinity,
-      cacheTime: 30000,
+      cacheTime: 300000,
     }
   );
 
   const {
     data: HeldMembershipSubjects,
-    isLoading: isFetchingHeldMembershipSubjects,
+    isInitialLoading: isFetchingHeldMembershipSubjects,
   } = useQuery<MembershipSubjectWithId[] | null>(
     ["IssuedMembershipSubjects", did],
-    () => workCredentialService.fetchHeldMembershipSubjects(),
+    () => vess.getHeldMembershipSubjects(),
     {
       enabled: !!did && did !== "",
       staleTime: Infinity,
-      cacheTime: 30000,
+      cacheTime: 300000,
     }
   );
 
   const {
     data: heldMembershipSubjectsFromDB,
-    isLoading: isLoadingHeldSubjectsFromDB,
+    isInitialLoading: isLoadingHeldSubjectsFromDB,
   } = useQuery<MembershipSubjectWithId[] | null>(
     ["IssuedMembershipSubjects", did],
     () => getHeldMembershipSubjectsFromDB(did),
     {
       enabled: !!did && did !== "",
       staleTime: Infinity,
-      cacheTime: 30000,
+      cacheTime: 300000,
     }
   );
 
-  const { data: membershipSubjectsFromDB, isLoading: isLoadingSubjectsFromDB } =
-    useQuery<MembershipSubjectWithId[] | null>(
-      ["CreatedMembershipSubjects", orgId],
-      () => getMembershipSUbjectsFromDB(orgId),
-      {
-        enabled: !!orgId,
-        staleTime: Infinity,
-        cacheTime: 30000,
-      }
-    );
+  const {
+    data: membershipSubjectsFromDB,
+    isInitialLoading: isLoadingSubjectsFromDB,
+  } = useQuery<MembershipSubjectWithId[] | null>(
+    ["CreatedMembershipSubjects", orgId],
+    () => getMembershipSUbjectsFromDB(orgId),
+    {
+      enabled: !!orgId,
+      staleTime: Infinity,
+      cacheTime: 300000,
+    }
+  );
 
   const issue = async (
     org: OrganizationWIthId,
@@ -131,7 +136,7 @@ export const useMembershipSubject = (orgId?: string) => {
 
   return {
     IssuedMembershipSubjects,
-    isLoading,
+    isInitialLoading,
     issue,
     isCreatingSubject,
     setShowSubjectModal,

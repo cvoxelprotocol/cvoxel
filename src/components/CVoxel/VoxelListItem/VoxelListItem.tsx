@@ -3,14 +3,24 @@ import { GenreBadge } from "@/components/common/badge/GenreBadge";
 import { getGenre } from "@/utils/genreUtil";
 import { TagBadge } from "@/components/common/badge/TagBadge";
 import { shortenStr } from "@/utils/objectUtil";
-import { Canvas } from "@react-three/fiber";
-import { OneVoxelVisualizerPresenter } from "../OneVoxelVisualizerPresenter";
 import { convertTimestampToDateStr } from "@/utils/dateUtil";
-import clsx from "clsx";
 import Link from "next/link";
 import { useRouter } from "next/dist/client/router";
-import { WorkCredentialWithId } from "@/interfaces";
-import { CredentialDirection } from "@/components/common/CredentialDirection";
+import { WorkCredentialWithId } from "vess-sdk";
+import dynamic from "next/dynamic";
+
+const CredentialDirection = dynamic(
+  () => import("@/components/common/CredentialDirection"),
+  {
+    ssr: false,
+  }
+);
+const OneVoxelVisualizerPresenterWrapper = dynamic(
+  () => import("@/components/CVoxel/OneVoxelVisualizerPresenterWrapper"),
+  {
+    ssr: false,
+  }
+);
 
 type Props = {
   workCredential: WorkCredentialWithId;
@@ -30,17 +40,15 @@ const VoxelListItem: FC<Props> = ({ workCredential }) => {
 
   const PcContent = () => {
     return (
-      <div className="flex h-48 overflow-y-scroll">
+      <div className="flex h-48 overflow-y-hidden">
         {/* NOTE: if voxel state exist, add padding bottom*/}
         <div
           className={"rounded-r-lg w-40 relative bg-light-surface dark:bg-dark-surface"}
         >
           {detailItem && (
-            <Canvas> 
-              <OneVoxelVisualizerPresenter zoom={6} disableHover workCredential={workCredential} />
-            </Canvas>
+            <OneVoxelVisualizerPresenterWrapper zoom={6} disableHover workCredential={workCredential} />
           )}
-
+          
           {/* TODO: show voxel state */}
           {/*<div className="absolute bottom-2 left-0 right-0">*/}
           {/*  <div className="text-sm text-light-on-primary-container dark:text-dark-on-primary-container bg-light-primary-container dark:bg-dark-primary-container inline-block px-2 py-0.5 rounded-full border border-light-secondary font-medium">*/}
@@ -109,10 +117,9 @@ const VoxelListItem: FC<Props> = ({ workCredential }) => {
       <div className="w-full">
         <div className="w-full h-32 relative bg-light-surface dark:bg-dark-surface rounded-b-lg">
         {detailItem && (
-          <Canvas className="!touch-auto">
-              <OneVoxelVisualizerPresenter zoom={6} disableHover workCredential={workCredential} />
-            </Canvas>
+          <OneVoxelVisualizerPresenterWrapper zoom={6} disableHover workCredential={workCredential} />
           )}
+          <div className="absolute top-0 right-0 left-0 bottom-0 z-10"></div>
 
           {/* TODO: show voxel state */}
           {/*<div className="absolute top-2 left-2">*/}
@@ -129,7 +136,7 @@ const VoxelListItem: FC<Props> = ({ workCredential }) => {
           </div>
         </div>
 
-        <div className="text-left px-8 py-3">
+        <div className="text-left px-8 pt-3 h-[120px]">
           {subject?.work?.issuedAt && (
             <div className="text-light-on-surface dark:text-dark-on-surface text-sm">
               {convertTimestampToDateStr(subject?.work?.issuedAt)}

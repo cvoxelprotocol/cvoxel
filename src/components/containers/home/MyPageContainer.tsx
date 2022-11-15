@@ -2,7 +2,7 @@ import { HomeSPHeader } from "@/components/HomeTab/HomeSPHeader";
 import { HomeTabsHeader } from "@/components/HomeTab/HomeTabsHeader";
 import { MyCVoxelContainer } from "@/components/containers/home/tabs/MyCVoxelContainer";
 import { useTab } from "@/hooks/useTab";
-import { FC, RefObject } from "react";
+import { RefObject } from "react";
 import { MyTxContainer } from "./tabs/MyTxContainer";
 import { MyNotificationContainer } from "./tabs/MyNotificationContainer";
 import { Arrow } from "@/components/common/arrow/Arrow";
@@ -11,10 +11,10 @@ type props = {
   scrollToVisual: () => void;
   visualContainerRef: RefObject<HTMLDivElement>;
 };
-export const MyPageContainer: FC<props> = ({
+export default function MyPageContainer({
   scrollToVisual,
   visualContainerRef,
-}) => {
+}:props) {
   const { tabState } = useTab();
 
   return (

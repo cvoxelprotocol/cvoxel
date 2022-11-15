@@ -3,8 +3,7 @@ import { CreateWorkspaceCard } from "@/components/workspace/CreateWorkspaceCard"
 import { WorkspaceItem } from "@/components/workspace/WorkspaceItem";
 import { WorkspaceModal } from "@/components/workspace/WorkspaceModal";
 import { useOrganization } from "@/hooks/useOrganization";
-import { OrganizationWIthId } from "@/interfaces";
-import { removeCeramicPrefix } from "@/utils/workCredentialUtil";
+import { OrganizationWIthId,removeCeramicPrefix } from"vess-sdk";
 import { useRouter } from "next/router";
 import { FC } from "react";
 
@@ -36,8 +35,6 @@ export const WorkspaceListContainer:FC =() => {
                     </div>
                 </div>
             </div>
-
-
 
             {showCreateModal && (
                 <WorkspaceModal>

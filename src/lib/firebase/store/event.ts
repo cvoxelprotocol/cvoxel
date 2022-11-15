@@ -1,7 +1,7 @@
 import { firestore } from "../app";
 import { collection, getDocs, query, where } from "firebase/firestore/lite";
 import { DocumentData, QueryDocumentSnapshot } from "firebase/firestore/lite";
-import { EventAttendanceWithId } from "@/interfaces";
+import { EventAttendanceWithId } from "vess-sdk";
 
 export const getHeldEventAttendanceFromDB = (
   did?: string

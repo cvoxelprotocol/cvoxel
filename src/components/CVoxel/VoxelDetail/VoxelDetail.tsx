@@ -1,6 +1,4 @@
-import { FC, useContext, useEffect, useMemo, useState } from "react";
-import { Canvas } from "@react-three/fiber";
-import { OneVoxelVisualizerPresenter } from "../OneVoxelVisualizerPresenter";
+import { FC, useEffect, useMemo, useState } from "react";
 import {
   convertTimestampToDateStr,
   convertTimestampToDateStrLocaleUS,
@@ -11,18 +9,31 @@ import { TagBadge } from "@/components/common/badge/TagBadge";
 import RightArrow from "@/components/CVoxel/VoxelListItem/right-arrow.svg";
 import { shortenStr } from "@/utils/objectUtil";
 import { Button } from "@/components/common/button/Button";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faExternalLink } from "@fortawesome/free-solid-svg-icons";
+
 import { getExploreLink } from "@/utils/etherscanUtils";
 import { ShareButton } from "@/components/common/button/shareButton/ShareButton";
 import { formatBigNumber } from "@/utils/ethersUtil";
-import { DIDContext } from "@/context/DIDContext";
+import { useDIDAccount } from "@/hooks/useDIDAccount";
 import { CopyRequestURLButton } from "./CopyRequestURLButton";
 import { useWorkCredential } from "@/hooks/useWorkCredential";
-import { WorkCredentialWithId } from "@/interfaces";
-import { WorkCredential } from "@/__generated__/types/WorkCredential";
+import { WorkCredentialWithId,WorkCredential } from "vess-sdk";
 import { useOffchainItem } from "@/hooks/useOffchainList";
-import { UserPlate } from "@/components/common/UserPlate";
+import ExternalLinkIcon from "@/components/common/button/externalLink.svg";
+import dynamic from "next/dynamic";
+
+const UserPlate = dynamic(
+  () => import("@/components/common/UserPlate"),
+  {
+    ssr: false,
+  }
+);
+
+const OneVoxelVisualizerPresenterWrapper = dynamic(
+  () => import("@/components/CVoxel/OneVoxelVisualizerPresenterWrapper"),
+  {
+    ssr: false,
+  }
+);
 
 
 type Props = {
@@ -99,7 +110,7 @@ export const VoxelDetail: FC<Props> = ({
     return getExploreLink(crdl.subject.tx?.txHash, crdl.subject.tx?.networkId);
   }, [crdl?.subject.tx?.txHash, crdl?.subject.tx?.networkId]);
 
-  const {did: myDid} = useContext(DIDContext)
+  const {did: myDid} = useDIDAccount()
 
   const holderDID = useMemo(() => {
     if(!crdl) return ""
@@ -149,9 +160,7 @@ export const VoxelDetail: FC<Props> = ({
       <div className="lg:flex w-full">
         <div className="flex-initial w-full lg:w-52 h-52 relative bg-light-surface dark:bg-dark-surface rounded-br-2xl rounded-bl-2xl lg:rounded-bl-none">
           {crdl && (
-            <Canvas className="!touch-auto">
-              <OneVoxelVisualizerPresenter zoom={6} disableHover workCredential={crdl} />
-            </Canvas>
+            <OneVoxelVisualizerPresenterWrapper zoom={6} disableHover workCredential={crdl} />
           )}
 
           <div className="absolute right-4 bottom-4">
@@ -302,10 +311,7 @@ export const VoxelDetail: FC<Props> = ({
                   <div className="ml-2 lg:ml-0 text-xs text-light-on-surface-variant dark:text-dark-on-surface-variant">
                     Explorer
                   </div>
-                  <FontAwesomeIcon
-                    className="w-3 h-3 ml-1 text-light-on-surface-variant dark:text-dark-on-surface-variant"
-                    icon={faExternalLink}
-                  />
+                  <ExternalLinkIcon className="w-3 h-3 ml-1 text-light-on-surface-variant dark:text-dark-on-surface-variant" />
                 </div>
               </div>
             </a>

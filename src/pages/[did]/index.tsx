@@ -1,20 +1,32 @@
-import type { GetServerSideProps } from "next";
-import { isDIDstring, isEthereumAddress } from "@/utils/ceramicUtils";
-import { ETH_CHAIN_ID } from "@/constants/common";
-import { getRequestState } from "@/lib/ceramic/server";
+import type { GetStaticProps } from "next";
 import { CeramicProps, CeramicSupport } from "@/interfaces/ceramic";
 import { NextPage } from "next";
 import { HomeContainer } from "@/components/containers/home";
-import { ProfileContainer } from "@/components/containers/profile/ProfileContainer";
 import { NoProfileContainer } from "@/components/containers/profile/NoProfileContainer";
-import { useContext } from "react";
-import { DIDContext } from "@/context/DIDContext";
+import { useDIDAccount } from "@/hooks/useDIDAccount";
+import { getPkhDIDFromAddress, getVESS, isDIDstring, isEthereumAddress, MembershipSubjectWithId, WorkCredentialWithId } from "vess-sdk";
+import dynamic from "next/dynamic";
+import { CERAMIC_NETWORK } from "@/constants/common";
+import { dehydrate, QueryClient } from "@tanstack/react-query";
 
-export const getServerSideProps: GetServerSideProps<
-  CeramicProps,
-  { did: string }
-> = async (ctx) => {
-  const did = ctx.params?.did;
+const ProfileContainer = dynamic(
+  () => import("@/components/containers/profile/ProfileContainer"),
+  {
+    ssr: false,
+  }
+);
+
+const queryClient = new QueryClient()
+
+export const getStaticPaths = async () => {
+  return {
+    paths: [],
+    fallback: 'blocking',
+  };
+};
+
+export const getStaticProps:GetStaticProps<CeramicProps,{ did: string }> = async ({params}) => {
+  const did = params?.did;
   let support: CeramicSupport = "invalid";
 
   if (did == null) {
@@ -25,43 +37,43 @@ export const getServerSideProps: GetServerSideProps<
 
   if (isDIDstring(did)) {
     support = "supported";
+    const vess = getVESS(CERAMIC_NETWORK !== "mainnet");
+    const heldWorkCredentials = queryClient.prefetchQuery<WorkCredentialWithId[]>(["heldWorkCredentials", did], () => vess.getHeldWorkCredentials(did),{
+      staleTime: Infinity,
+      cacheTime: 1000000,
+    })
+    const HeldMembershipSubjects = queryClient.prefetchQuery<MembershipSubjectWithId[]>(["HeldMembershipSubjects", did], () => vess.getHeldMembershipSubjects(did),{
+      staleTime: Infinity,
+      cacheTime: 1000000,
+    })
+    await Promise.all([heldWorkCredentials,HeldMembershipSubjects])
     return {
-      props: { did, state: await getRequestState(ctx, did), support },
+      props: { did: did.toLowerCase(), support,dehydratedState: dehydrate(queryClient) },
+      revalidate: 60,
     };
   } else if (isEthereumAddress(did)) {
     // If an Ethereum address is provided, redirect to CAIP-10 URL
     return {
-      redirect: { destination: `/did:pkh:${ETH_CHAIN_ID}${did}`, permanent: false },
+      redirect: { destination: `/${getPkhDIDFromAddress(did)}`, permanent: false },
     };
   } 
   return {
-    props: { did, state: await getRequestState(ctx), support },
+    props: { did, support,dehydratedState: dehydrate(queryClient) },
+    revalidate: 60,
   };
 };
 
 const ProfilePage: NextPage<CeramicProps> = (props: CeramicProps) => {
-  const {did: myDID, account} = useContext(DIDContext)
+  const {did: myDID, account} = useDIDAccount()
 
   if (props.support === "supported") {
     return (
       <>
         {(myDID && myDID === props.did) ||
-        (account && `/did:pkh:${ETH_CHAIN_ID}${account}` === props.did) ? (
+        (account && `${getPkhDIDFromAddress(account)}` === props.did) ? (
           <HomeContainer />
         ) : (
           <ProfileContainer {...props} />
-        )}
-      </>
-    );
-  }
-
-  if (props.support === "unlinked") {
-    return (
-      <>
-        {account && `${account}${ETH_CHAIN_ID}` === props.did ? (
-          <HomeContainer />
-        ) : (
-          <NoProfileContainer />
         )}
       </>
     );

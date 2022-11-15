@@ -1,12 +1,11 @@
-import { DIDContext } from "@/context/DIDContext";
+import { useDIDAccount } from "@/hooks/useDIDAccount";
 import { useEventAttendance } from "@/hooks/useEventAttendance";
 import { useFileUpload } from "@/hooks/useFileUpload";
 import { convertDateToTimestampStr } from "@/utils/dateUtil";
-import { Event } from "@/__generated__/types/Event";
-import { faClose } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { FC, useContext } from "react";
+import CloseIcon from "@/components/common/button/close.svg";
+import { FC } from "react";
 import { useForm } from "react-hook-form";
+import { Event } from "vess-sdk";
 import { Button } from "../common/button/Button";
 import { IconUploader } from "../Transaction/IconUploader";
 
@@ -21,7 +20,7 @@ type EventInput = {
 }
 export const IssueEventCard:FC<Props> = ({orgId}) => {
     const {issueEvent, setShowEventModal} = useEventAttendance()
-    const {did} = useContext(DIDContext)
+    const {did} = useDIDAccount()
     const { icon, setIcon } = useFileUpload();
 
     const {
@@ -64,10 +63,7 @@ export const IssueEventCard:FC<Props> = ({orgId}) => {
             <div className="relative w-full sm:w-[512px] text-primary bg-gray-100 dark:bg-card dark:text-oncard">
                 <div className="absolute top-2 right-2">
                     <button  onClick={() => setShowEventModal(false)}>
-                    <FontAwesomeIcon
-                        className="w-6 h-6 text-light-on-surface-variant dark:text-dark-on-surface-variant"
-                        icon={faClose}
-                    />
+                        <CloseIcon className="w-5 h-5 text-light-on-surface-variant dark:text-dark-on-surface-variant" />
                     </button>
                 </div>
                 <h2 className="text-center text-2xl font-bold">Create Event</h2>

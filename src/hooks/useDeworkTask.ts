@@ -1,4 +1,5 @@
-import { DIDContext } from "@/context/DIDContext";
+import { CERAMIC_NETWORK } from "@/constants/common";
+import { useDIDAccount } from "@/hooks/useDIDAccount";
 import { WorkSubjectFromDework } from "@/interfaces";
 import { getDeworkTaskListFromFB } from "@/lib/firebase/store/dework";
 import {
@@ -6,20 +7,20 @@ import {
   issueCRDLFromDeworkParam,
   updateGenreParam,
 } from "@/services/Dework/DeworkService";
-import { getWorkCredentialService } from "@/services/workCredential/WorkCredentialService";
-import { useContext } from "react";
-import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { getVESS } from "vess-sdk";
 
 export const useDeworkTask = () => {
-  const { account } = useContext(DIDContext);
+  const { account } = useDIDAccount();
   const deworkService = getDeworkService();
-  const workCredentialService = getWorkCredentialService();
+  // const vess = getVESS()
+  const vess = getVESS(CERAMIC_NETWORK !== "mainnet");
 
   const queryClient = useQueryClient();
 
-  const { data, isLoading } = useQuery<WorkSubjectFromDework[]>(
+  const { data } = useQuery<WorkSubjectFromDework[]>(
     ["getDeworkTaskListFromFB", account],
-    () => getDeworkTaskListFromFB(account),
+    () => getDeworkTaskListFromFB(account?.toLowerCase()),
     {
       enabled: !!account,
       staleTime: Infinity,
@@ -33,15 +34,15 @@ export const useDeworkTask = () => {
       {
         onSuccess(data) {
           if (!data) return;
-          const old = queryClient.getQueryData<WorkSubjectFromDework[]>(
-            "getDeworkTaskListFromFB"
-          );
+          const old = queryClient.getQueryData<WorkSubjectFromDework[]>([
+            "getDeworkTaskListFromFB",
+          ]);
           if (old) {
             const oldWithoutTargetTask = old.filter(
               (o) => o.taskId !== data.taskId
             );
             queryClient.setQueryData<WorkSubjectFromDework[]>(
-              "getDeworkTaskListFromFB",
+              ["getDeworkTaskListFromFB"],
               [...oldWithoutTargetTask, data]
             );
           }
@@ -50,7 +51,7 @@ export const useDeworkTask = () => {
           console.log(error);
         },
         onSettled: () => {
-          queryClient.invalidateQueries("getDeworkTaskListFromFB");
+          queryClient.invalidateQueries(["getDeworkTaskListFromFB"]);
         },
       }
     );
@@ -64,32 +65,36 @@ export const useDeworkTask = () => {
       console.log(error);
     },
     onSettled: () => {
-      queryClient.invalidateQueries("heldWorkCredentials");
+      queryClient.invalidateQueries(["heldWorkCredentials"]);
     },
   });
 
   const refetchDeworkTasks = async () => {
     if (!account) return;
-    const res = await deworkService.refetchDeworkTasks(account);
+    const res = await deworkService.refetchDeworkTasks(account.toLowerCase());
     if (res) {
       queryClient.setQueryData<WorkSubjectFromDework[]>(
-        "getDeworkTaskListFromFB",
+        ["getDeworkTaskListFromFB"],
         res
       );
-      queryClient.invalidateQueries("getDeworkTaskListFromFB");
+      queryClient.invalidateQueries(["getDeworkTaskListFromFB"]);
     }
   };
 
   const updateGenre = async (id: string, genre: string) => {
     if (!account) return;
-    await updateGenreofDeworkTask({ account, id, genre });
+    await updateGenreofDeworkTask({
+      account: account.toLowerCase(),
+      id,
+      genre,
+    });
   };
 
   const issueCRDLsFromDework = async (param: issueCRDLFromDeworkParam) => {
     try {
       const streamIds = await deworkService.issueCRDLs(param);
       if (streamIds && streamIds.length > 0) {
-        await workCredentialService.setMultipleHeldWorkCredentials(streamIds);
+        await vess.setHeldWorkCredentials(streamIds);
       }
     } catch (error) {
       console.log(error);

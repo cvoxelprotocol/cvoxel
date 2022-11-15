@@ -1,20 +1,22 @@
-import { getWorkCredentialService } from "@/services/workCredential/WorkCredentialService";
-import { useMutation, useQuery, useQueryClient } from "react-query";
-import { MembershipSubjectWithId } from "@/interfaces";
-import { useContext, useEffect } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { MembershipSubjectWithId } from "vess-sdk";
+import { useEffect } from "react";
 import { getHeldMembershipSubjectsFromDB } from "@/lib/firebase/store/workspace";
-import { DIDContext } from "@/context/DIDContext";
+import { useDIDAccount } from "@/hooks/useDIDAccount";
+import { getVESS } from "vess-sdk";
+import { CERAMIC_NETWORK } from "@/constants/common";
 
 export const useHeldMembershipSubject = (did?: string) => {
-  const workCredentialService = getWorkCredentialService();
+  // const vess = getVESS()
+  const vess = getVESS(CERAMIC_NETWORK !== "mainnet");
   const queryClient = useQueryClient();
-  const { did: myDid } = useContext(DIDContext);
+  const { did: myDid } = useDIDAccount();
 
   const { mutateAsync: setHeldMembershipSubjects } = useMutation<
     void,
     unknown,
     string[]
-  >((param) => workCredentialService.setHeldMembershipSubjects(param), {
+  >((param) => vess.setHeldMembershipSubjects(param), {
     onSuccess() {
       console.log("mirgate succeeded");
     },
@@ -22,33 +24,33 @@ export const useHeldMembershipSubject = (did?: string) => {
       console.log("error", error);
     },
     onSettled: () => {
-      queryClient.invalidateQueries("HeldMembershipSubjects");
+      queryClient.invalidateQueries(["HeldMembershipSubjects"]);
     },
   });
 
   const {
     data: HeldMembershipSubjects,
-    isLoading: isFetchingHeldMembershipSubjects,
+    isInitialLoading: isFetchingHeldMembershipSubjects,
   } = useQuery<MembershipSubjectWithId[] | null>(
     ["HeldMembershipSubjects", did],
-    () => workCredentialService.fetchHeldMembershipSubjects(did),
+    () => vess.getHeldMembershipSubjects(did),
     {
       enabled: !!did && did !== "",
       staleTime: Infinity,
-      cacheTime: 30000,
+      cacheTime: 300000,
     }
   );
 
   const {
     data: heldMembershipSubjectsFromDB,
-    isLoading: isLoadingHeldSubjectsFromDB,
+    isInitialLoading: isLoadingHeldSubjectsFromDB,
   } = useQuery<MembershipSubjectWithId[] | null>(
     ["heldMembershipSubjectsFromDB", did],
     () => getHeldMembershipSubjectsFromDB(did),
     {
       enabled: !!did && did !== "",
       staleTime: Infinity,
-      cacheTime: 30000,
+      cacheTime: 300000,
     }
   );
 

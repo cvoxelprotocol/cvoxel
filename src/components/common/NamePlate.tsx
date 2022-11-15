@@ -1,4 +1,4 @@
-import { FC, useMemo } from "react";
+import { useMemo } from "react";
 import clsx from "clsx";
 import { useENS } from "@/hooks/useENS";
 import { CommonSpinner } from "@/components/common/CommonSpinner";
@@ -20,7 +20,7 @@ type Props = {
   withSearchIcon?: boolean;
 };
 
-export const NamePlate: FC<Props> = ({
+export default function NamePlate ({
   address,
   did,
   size = "md",
@@ -30,8 +30,9 @@ export const NamePlate: FC<Props> = ({
   iconOnly = false,
   withoutIcon = false,
   withSearchIcon = false,
-}) => {
+}:Props) {
   const { ens, ensLoading } = useENS(address);
+  const {profile} = useSocialAccount(did);
 
   const textSize = useMemo(() => {
     switch (size) {
@@ -123,30 +124,41 @@ export const NamePlate: FC<Props> = ({
 
   const DidContent = () => (
     <div className="flex items-center space-x-0.5">
-      <div
+      {profile.displayName.startsWith("did:") ? (
+        <>
+          <div
         className={clsx(
           "rounded bg-light-primary dark:bg-dark-primary text-light-on-primary dark:text-dark-on-primary font-medium px-1 text-xs",
           badgeTextSize
-        )}
+          )}
+        >
+          did:
+        </div>
+        <div
+          className={clsx("text-light-primary dark:text-dark-primary", textSize)}
+        >
+          {shortenStr(did?.replace("did:", ""), 8)}
+        </div>
+        </>
+      ): (
+        <div
+        className={clsx("text-light-primary dark:text-dark-primary whitespace-nowrap text-ellipsis pl-1", textSize)}
       >
-        did:
+        {profile.displayName}
       </div>
-      <div
-        className={clsx("text-light-primary dark:text-dark-primary", textSize)}
-      >
-        {shortenStr(did?.replace("did:", ""), 8)}
-      </div>
+      )}
+      
     </div>
   );
 
-  const {socialProfile} = useSocialAccount(did);
 
   return (
     <div
       className={clsx(
-        "flex rounded-full border border-light-primary dark:border-dark-primary items-center overflow-hidden px-3",
+        "flex rounded-full border border-light-primary dark:border-dark-primary items-center overflow-hidden",
         bg,
         size == "lg" ? "py-1.5" : "py-0.5",
+        iconOnly ? "px-0.5" : "px-3",
         !!onClick && "cursor-pointer"
       )}
       onClick={onClick}
@@ -163,12 +175,12 @@ export const NamePlate: FC<Props> = ({
       )}
       {!withoutIcon && (
         <div className="md:mr-2">
-          {!!socialProfile ? (
+          {!!profile ? (
             <>
-              {socialProfile.avatarSrc ? (
+              {profile.avatarSrc ? (
                 <IconAvatar
                   size={avatarSize}
-                  src={socialProfile.avatarSrc}
+                  src={profile.avatarSrc}
                   flex={false}
                 />
               ) : (

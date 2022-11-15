@@ -1,7 +1,5 @@
-import { FC, useCallback, useContext, useEffect, useMemo } from "react";
-import { WorkCredentialWithId } from "@/interfaces";
-import { Canvas } from "@react-three/fiber";
-import { OneVoxelVisualizerPresenter } from "@/components/CVoxel/OneVoxelVisualizerPresenter";
+import { FC, useCallback, useMemo } from "react";
+import { WorkCredentialWithId } from "vess-sdk";
 import {
   convertTimestampToDateStr,
   convertTimestampToDateStrLocaleUS,
@@ -9,18 +7,31 @@ import {
 import { GenreBadge } from "@/components/common/badge/GenreBadge";
 import { getGenre } from "@/utils/genreUtil";
 import { TagBadge } from "@/components/common/badge/TagBadge";
-import { NamePlate } from "@/components/common/NamePlate";
 import LeftArrow from "@/components/CVoxel/VoxelListItem/left-arrow.svg";
 import RightArrow from "@/components/CVoxel/VoxelListItem/right-arrow.svg";
 import { shortenStr } from "@/utils/objectUtil";
 import { Button } from "@/components/common/button/Button";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faExternalLink } from "@fortawesome/free-solid-svg-icons";
+import ExternalLinkIcon from "@/components/common/button/externalLink.svg";
 import { getExploreLink } from "@/utils/etherscanUtils";
 import { formatBigNumber } from "@/utils/ethersUtil";
 import { useVoxelStyler } from "@/hooks/useVoxStyler";
-import { DIDContext } from "@/context/DIDContext";
-import { useWalletAccount } from "@/hooks/useWalletAccount";
+import { useDIDAccount } from "@/hooks/useDIDAccount";
+import { useConnectDID } from "@/hooks/useConnectDID";
+import dynamic from "next/dynamic";
+
+const NamePlate = dynamic(
+  () => import("@/components/common/NamePlate"),
+  {
+    ssr: false,
+  }
+);
+
+const OneVoxelVisualizerPresenterWrapper = dynamic(
+  () => import("@/components/CVoxel/OneVoxelVisualizerPresenterWrapper"),
+  {
+    ssr: false,
+  }
+);
 
 type Props = {
   offchainItem: WorkCredentialWithId;
@@ -28,13 +39,9 @@ type Props = {
   isSinglePageForVerify?: boolean
 };
 
-export const SigRequestDetail: FC<Props> = ({
-  offchainItem,
-  onVerify,
-  isSinglePageForVerify = false
-}) => {
-  const {did, account} = useContext(DIDContext)
-  const { connectWallet } = useWalletAccount();
+export default function SigRequestDetail({offchainItem, onVerify,isSinglePageForVerify}: Props){
+  const {did, account} = useDIDAccount()
+  const { connectDID } = useConnectDID();
   const subject = useMemo(() => {
     return offchainItem.subject
   },[offchainItem])
@@ -63,14 +70,6 @@ export const SigRequestDetail: FC<Props> = ({
     return getExploreLink(offchainItem.subject.tx?.txHash, offchainItem.subject.tx?.networkId);
   }, [offchainItem.subject.tx?.txHash, offchainItem.subject.tx?.networkId]);
 
-  const connect = async () => {
-    try {
-      await connectWallet();
-    } catch (error) {
-      console.log("error:", error);
-    }
-  };
-
 
   // convert display
   const { displayVoxel } = useVoxelStyler(offchainItem);
@@ -84,15 +83,15 @@ export const SigRequestDetail: FC<Props> = ({
   const PcDirection = () => {
     return isPayer ? (
       <div className="flex items-center space-x-3">
-        <NamePlate address={offchainItem.subject.tx?.from ?? ""} isMe={isMe(offchainItem.subject.tx?.from)} hasBackgroundColor />
+        <NamePlate address={offchainItem.subject.tx?.from?.toLowerCase() ?? ""} isMe={isMe(offchainItem.subject.tx?.from?.toLowerCase())} hasBackgroundColor />
         <RightArrow />
-        <NamePlate address={offchainItem.subject.tx?.to ?? ""} />
+        <NamePlate address={offchainItem.subject.tx?.to?.toLowerCase() ?? ""} />
       </div>
     ) : (
       <div className="flex items-center space-x-3">
-        <NamePlate address={offchainItem.subject.tx?.to ?? ""} isMe={isMe(offchainItem.subject.tx?.to)} hasBackgroundColor />
+        <NamePlate address={offchainItem.subject.tx?.to?.toLowerCase() ?? ""} isMe={isMe(offchainItem.subject.tx?.to?.toLowerCase())} hasBackgroundColor />
         <LeftArrow />
-        <NamePlate address={offchainItem.subject.tx?.from ?? ""} />
+        <NamePlate address={offchainItem.subject.tx?.from?.toLowerCase() ?? ""} />
       </div>
     );
   };
@@ -102,13 +101,13 @@ export const SigRequestDetail: FC<Props> = ({
       <div className="flex items-center space-x-3">
         <NamePlate did={did} isMe hasBackgroundColor withoutIcon />
         <RightArrow />
-        <NamePlate address={offchainItem.subject.tx?.to ?? ""} withoutIcon />
+        <NamePlate address={offchainItem.subject.tx?.to?.toLowerCase() ?? ""} withoutIcon />
       </div>
     ) : (
       <div className="flex items-center space-x-3">
         <NamePlate did={did} isMe hasBackgroundColor withoutIcon />
         <LeftArrow />
-        <NamePlate address={offchainItem.subject.tx?.from ?? ""} withoutIcon />
+        <NamePlate address={offchainItem.subject.tx?.from?.toLowerCase() ?? ""} withoutIcon />
       </div>
     );
   };
@@ -117,13 +116,11 @@ export const SigRequestDetail: FC<Props> = ({
     <div className="w-full border border-light-on-primary-container dark:border-dark-on-primary-container rounded-2xl overflow-hidden bg-light-surface-1 dark:bg-dark-surface-1">
       <div className="lg:flex w-full">
         <div className="flex-initial w-full lg:w-52 h-52 relative bg-light-surface dark:bg-dark-surface rounded-br-2xl rounded-bl-2xl lg:rounded-bl-none">
-          <Canvas className="!touch-auto">
-            <OneVoxelVisualizerPresenter
-              zoom={6}
-              disableHover
-              voxelForDisplay={displayVoxel}
-            />
-          </Canvas>
+          <OneVoxelVisualizerPresenterWrapper
+            zoom={6}
+            disableHover
+            voxelForDisplay={displayVoxel}
+          />
 
           <div className="absolute bg-light-sig-request-layer dark:bg-dark-sig-request-layer top-0 bottom-0 left-0 right-0 opacity-70">
             <div className="h-full flex items-center p-3 justify-center">
@@ -231,7 +228,7 @@ export const SigRequestDetail: FC<Props> = ({
                   text="Connect Wallet"
                   color="primary"
                   buttonType="button"
-                  onClick={connect}
+                  onClick={connectDID}
                 />
             ): (
               <>
@@ -287,10 +284,7 @@ export const SigRequestDetail: FC<Props> = ({
                 <div className="ml-2 lg:ml-0 text-xs text-light-on-surface-variant dark:text-dark-on-surface-variant">
                   Explorer
                 </div>
-                <FontAwesomeIcon
-                  className="w-3 h-3 ml-1 text-light-on-surface-variant dark:text-dark-on-surface-variant"
-                  icon={faExternalLink}
-                />
+                  <ExternalLinkIcon className="w-3 h-3 ml-1 text-light-on-surface-variant dark:text-dark-on-surface-variant" />
               </div>
             </div>
           </a>

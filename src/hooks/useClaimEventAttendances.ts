@@ -1,24 +1,26 @@
-import { getWorkCredentialService } from "@/services/workCredential/WorkCredentialService";
-import { useQuery } from "react-query";
-import { EventAttendanceWithId } from "@/interfaces";
+import { CERAMIC_NETWORK } from "@/constants/common";
+import { useQuery } from "@tanstack/react-query";
+import { EventAttendanceWithId } from "vess-sdk";
+import { getVESS } from "vess-sdk";
 
 export const useClaimedEventAttendances = (attendanceId?: string) => {
-  const workCredentialService = getWorkCredentialService();
+  // const vess = getVESS()
+  const vess = getVESS(CERAMIC_NETWORK !== "mainnet");
 
-  const { data: eventAttendance, isLoading } = useQuery<
+  const { data: eventAttendance, isInitialLoading } = useQuery<
     EventAttendanceWithId | undefined
   >(
     ["EventAttendance", attendanceId],
-    () => workCredentialService.fetchEventAttendance(attendanceId),
+    () => vess.getEventAttendance(attendanceId),
     {
       enabled: !!attendanceId,
       staleTime: Infinity,
-      cacheTime: 30000,
+      cacheTime: 300000,
     }
   );
 
   return {
     eventAttendance,
-    isLoading,
+    isInitialLoading,
   };
 };

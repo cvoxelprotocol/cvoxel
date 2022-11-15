@@ -3,14 +3,12 @@ import {
   FC,
   LegacyRef,
   useCallback,
-  useContext,
   useMemo,
   useRef,
   useState,
 } from "react";
 import { NoItemPresenter } from "../../../common/NoItemPresenter";
 import CVoxelsPresenter from "../../../CVoxel/CVoxelsPresenter";
-import { useStateForceUpdate } from "@/recoilstate";;
 import { CommonLoading } from "../../../common/CommonLoading";
 import { useOffchainList } from "@/hooks/useOffchainList";
 import { VoxelListItemMemo } from "@/components/CVoxel/VoxelListItem/VoxelListItem";
@@ -19,22 +17,19 @@ import { NavBar } from "@/components/CVoxel/NavBar/NavBar";
 import { VoxelDetail } from "@/components/CVoxel/VoxelDetail/VoxelDetail";
 import { SearchData } from "@/components/common/search/Search";
 import { Button } from "@/components/common/button/Button";
-import { DIDContext } from "@/context/DIDContext";
+import { useDIDAccount } from "@/hooks/useDIDAccount";
 import { useWorkCredentials } from "@/hooks/useWorkCredential";
 import Router from "next/router";
-import { WorkCredential } from "@/__generated__/types/WorkCredential";
+
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { useIsTabletOrMobile } from "@/hooks/useIsTabletOrMobile";
+import { WorkCredential } from "vess-sdk";
+import { isMobile, isTablet } from "react-device-detect";
 
 export const MyCVoxelContainer: FC = () => {
-  const {did, account} = useContext(DIDContext)
-  const { offchainMetaList, txLoading } = useOffchainList();
-  const {workCredentials} = useWorkCredentials(did)
+  const {did, account} = useDIDAccount()
+  const { offchainMetaList } = useOffchainList();
+  const {workCredentials, isInitialLoading} = useWorkCredentials(did)
   const { setTabState } = useTab();
-
-  // TODO: This is temporary solution because of useTileDoc bug
-  const [forceUpdateCVoxelList, setForceUpdateCVoxelList] =
-    useStateForceUpdate();
 
   const forceReload = () => {
     if(did) Router.push(`/${did}`)
@@ -45,7 +40,7 @@ export const MyCVoxelContainer: FC = () => {
     return workCredentials.sort((a, b) => {
       return Number(a.updatedAt) > Number(b.updatedAt) ? -1 : 1;
     });
-  }, [workCredentials,forceUpdateCVoxelList]);
+  }, [workCredentials]);
 
   const router = useRouter();
   const handleClickNavBackButton = useCallback(() => {
@@ -99,12 +94,10 @@ export const MyCVoxelContainer: FC = () => {
 
   const parentRef: LegacyRef<any> = useRef();
 
-  const { isTabletOrMobile } = useIsTabletOrMobile();
-
   const rowVirtualizer = useVirtualizer({
     count: filteredVoxels.length,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => ((isTabletOrMobile ? 15 : 13) + 1) * 16, // NOTE: (item + margin) * rem
+    estimateSize: () => (((isMobile || isTablet) ? 15 : 12) + 1) * 16, // NOTE: (item + margin) * rem
   });
 
   return useMemo(
@@ -128,7 +121,7 @@ export const MyCVoxelContainer: FC = () => {
           </div>
         ) : (
           <CVoxelsPresenter>
-            {!txLoading && (!sortCredentials || sortCredentials.length === 0) && (
+            {!isInitialLoading && (!sortCredentials || sortCredentials.length === 0) && (
               <div className="mx-auto">
                 <NoItemPresenter text="No Voxels yet" />
                 {account && (
@@ -141,8 +134,8 @@ export const MyCVoxelContainer: FC = () => {
               </div>
             )}
 
-            {txLoading && <CommonLoading />}
-            {!txLoading && filteredVoxels && (
+            {isInitialLoading && <CommonLoading />}
+            {!isInitialLoading && filteredVoxels && (
               <div ref={parentRef} className={"overflow-auto h-full w-full"}>
                 <div
                   style={{
@@ -179,16 +172,16 @@ export const MyCVoxelContainer: FC = () => {
       </>
     ),
     [
-      txLoading,
+      isInitialLoading,
       filteredVoxels,
       account,
       offchainMetaList,
       did,
-      forceUpdateCVoxelList,
       currentCredential,
       keyword,
       rowVirtualizer,
-      isTabletOrMobile,
+      isMobile,
+      isTablet
     ]
   );
 };

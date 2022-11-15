@@ -1,21 +1,30 @@
-import type { ModelTypesToAliases } from "@glazed/types";
 import type { AppProps } from "next/app";
-import { dataModel } from "@/lib/ceramic/dataModel";
-import type { ModelTypes } from "../interfaces";
 import "tailwindcss/tailwind.css";
 import { RecoilRoot } from "recoil";
-import { Hydrate, QueryClient, QueryClientProvider } from "react-query";
+import { Hydrate, QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState } from "react";
 import { BaseLayout } from "@/components/layout/BaseLayout";
-import { Web3Provider } from "@ethersproject/providers";
 import { ThemeProvider } from "next-themes";
 import { useEffect } from "react";
 import Router from "next/router";
-import { LoadingModal } from "@/components/common/LoadingModal";
-import { DIDContextProvider } from "@/context/DIDContext";
-import type { DehydratedState } from 'react-query';
+import type { DehydratedState } from '@tanstack/react-query';
+import dynamic from "next/dynamic";
+import "@orbisclub/modules/dist/index.modern.css";
+import "@/styles/orbis.css"
 
-const aliases: ModelTypesToAliases<ModelTypes> = dataModel;
+const OrbisChatWrapper = dynamic(
+  () => import("@/components/orbis/OrbisChatWrapper"),
+  {
+    ssr: false,
+  }
+);
+
+const LoadingModal = dynamic(
+  () => import("@/components/common/LoadingModal"),
+  {
+    ssr: false,
+  }
+);
 
 export default function App({ Component, pageProps }: AppProps<{ dehydratedState: DehydratedState }>) {
   const [queryClient] = useState(
@@ -55,13 +64,12 @@ export default function App({ Component, pageProps }: AppProps<{ dehydratedState
       <QueryClientProvider client={queryClient}>
           <Hydrate state={pageProps.dehydratedState}>
           <ThemeProvider attribute="class" defaultTheme={"light"}>
-                  <DIDContextProvider >
-                    <BaseLayout>
-                      <Component {...props} />
-                    </BaseLayout>
-                  </DIDContextProvider>
-                  {isLoading && <LoadingModal />}
-                </ThemeProvider>
+            <BaseLayout>
+                <Component {...props} />
+            </BaseLayout>
+            <OrbisChatWrapper />
+            {isLoading && <LoadingModal />}
+          </ThemeProvider>
           </Hydrate>
         </QueryClientProvider>
     </RecoilRoot>

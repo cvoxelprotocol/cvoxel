@@ -1,12 +1,19 @@
-import { FC, useCallback, useContext } from "react";
+import { FC, useCallback } from "react";
 import { TabListItem } from "@/components/HomeTab/TabListItem";
-import { NamePlate } from "@/components/common/NamePlate";
 import { Button } from "@/components/common/button/Button";
 import { useTab } from "@/hooks/useTab";
-import { DIDContext } from "@/context/DIDContext";
+import { useDIDAccount } from "@/hooks/useDIDAccount";
+import dynamic from "next/dynamic";
+
+const NamePlate = dynamic(
+  () => import("@/components/common/NamePlate"),
+  {
+    ssr: false,
+  }
+);
 
 export const HomeTabsHeader: FC = () => {
-  const {did} = useContext(DIDContext)
+  const {did} = useDIDAccount()
   const { setTabState } = useTab();
 
   const handleCreateNewVoxel = useCallback(() => {

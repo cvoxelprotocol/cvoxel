@@ -1,5 +1,12 @@
 import { NextPage } from "next";
-import { ProfileContainer } from "@/components/containers/profile/ProfileContainer";
+import dynamic from "next/dynamic";
+
+const ProfileContainer = dynamic(
+  () => import("@/components/containers/profile/ProfileContainer"),
+  {
+    ssr: false,
+  }
+);
 
 const HomePage: NextPage = () => {
   return <ProfileContainer did="" />;

@@ -5,10 +5,9 @@ import { CommonLoading } from "../../common/CommonLoading";
 import { VoxelListItemMemo } from "@/components/CVoxel/VoxelListItem/VoxelListItem";
 import { VoxelDetail } from "@/components/CVoxel/VoxelDetail/VoxelDetail";
 import { useOffchainList } from "@/hooks/useOffchainList";
-import { useStateForceUpdate } from "@/recoilstate";
 import { useWorkCredentials } from "@/hooks/useWorkCredential";
-import { useIsTabletOrMobile } from "@/hooks/useIsTabletOrMobile";
 import { useVirtualizer } from "@tanstack/react-virtual";
+import { isMobile, isTablet } from "react-device-detect";
 
 type UserCVoxelContainerProps = {
   did: string;
@@ -18,7 +17,7 @@ export const UserCVoxelContainer: FC<UserCVoxelContainerProps> = ({
   did,
   currentVoxelID,
 }) => {
-  const {workCredentials, isLoading} = useWorkCredentials(did)
+  const {workCredentials, isInitialLoading} = useWorkCredentials(did)
 
   const sortCredentials = useMemo(() => {
     if (!workCredentials) return [];
@@ -34,21 +33,12 @@ export const UserCVoxelContainer: FC<UserCVoxelContainerProps> = ({
 
   const { offchainMetaList } = useOffchainList();
 
-  // TODO: This is temporary solution because of useTileDoc bug
-  const [forceUpdateCVoxelList, setForceUpdateCVoxelList] =
-    useStateForceUpdate();
-  const forceReload = () => {
-    setForceUpdateCVoxelList((v) => !v);
-  };
-
   const parentRef: LegacyRef<any> = useRef();
-
-  const { isTabletOrMobile } = useIsTabletOrMobile();
 
   const rowVirtualizer = useVirtualizer({
     count: sortCredentials.length,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => ((isTabletOrMobile ? 15 : 13) + 1) * 16, // NOTE: (item + margin) * rem
+    estimateSize: () => (((isMobile || isTablet) ? 15 : 12) + 1) * 16, // NOTE: (item + margin) * rem
   });
 
   return useMemo(
@@ -60,7 +50,6 @@ export const UserCVoxelContainer: FC<UserCVoxelContainerProps> = ({
               crdl={currentCredential}
               offchainItems={offchainMetaList}
               isOwner={false}
-              notifyUpdated={forceReload}
             />
           </div>
         ) : did == "" ? (
@@ -69,14 +58,14 @@ export const UserCVoxelContainer: FC<UserCVoxelContainerProps> = ({
           </div>
         ) : (
           <CVoxelsPresenter>
-            {isLoading && <CommonLoading />}
-            {!isLoading && !sortCredentials && (
+            {isInitialLoading && <CommonLoading />}
+            {!isInitialLoading && !sortCredentials && (
               <div className="mx-auto">
                 <NoItemPresenter text="No Voxels yet" />
               </div>
             )}
 
-            {!isLoading && sortCredentials && (
+            {!isInitialLoading && sortCredentials && (
               <div ref={parentRef} className={"overflow-auto h-full w-full"}>
                 <div
                   style={{
@@ -116,11 +105,9 @@ export const UserCVoxelContainer: FC<UserCVoxelContainerProps> = ({
     [
       currentVoxelID,
       offchainMetaList,
-      isLoading,
+      isInitialLoading,
       sortCredentials,
       did,
-      forceUpdateCVoxelList,
-      forceReload,
       rowVirtualizer
     ]
   );

@@ -1,8 +1,5 @@
 import { FC, useMemo, useState } from "react";
-import {
-  TransactionLogWithChainId,
-  WorkCredentialWithId,
-} from "@/interfaces";
+import {TransactionLogWithChainId} from "@/interfaces";
 import { Button } from "../common/button/Button";
 import { CommonSpinner } from "../common/CommonSpinner";
 import { InternalTransactionContainer } from "./InternalTransactionContainer";
@@ -13,7 +10,7 @@ import { GenreBadge } from "../common/badge/GenreBadge";
 import { useStateSelectedGenre } from "@/recoilstate/genre";
 import { TagBadge } from "../common/badge/TagBadge";
 import { TagForm } from "./TagForm";
-import { getPkhDIDFromAddress } from "@/utils/ceramicUtils";
+import { getPkhDIDFromAddress,WorkCredentialWithId } from "vess-sdk";
 import { connectionStatusType } from "@/recoilstate/account";
 
 type TransactionDetailProps = {
@@ -51,8 +48,8 @@ export const TransactionDetail: FC<TransactionDetailProps> = ({
 
   const claimable = useMemo(() => {
     if (!account || !offchainItem.subject.tx) return false;
-    const myDID = getPkhDIDFromAddress(account)
-    return myDID != offchainItem.subject.work?.id && (account === offchainItem.subject.tx.from?.toLowerCase() || account === offchainItem.subject.tx.to?.toLowerCase())
+    const myDID = getPkhDIDFromAddress(account.toLowerCase())
+    return myDID != offchainItem.subject.work?.id && (account.toLowerCase() === offchainItem.subject.tx.from?.toLowerCase() || account.toLowerCase() === offchainItem.subject.tx.to?.toLowerCase())
       
   }, [account, offchainItem.subject.tx]);
 

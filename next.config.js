@@ -1,20 +1,12 @@
 /** @type {import('next').NextConfig} */
+// const withBundleAnalyzer = require('@next/bundle-analyzer')({
+//   enabled: process.env.ANALYZE === 'true',
+// })
 module.exports = {
   reactStrictMode: true,
-  compiler: {
-    styledComponents: true,
-  },
+  swcMinify: true,
   images: {
     domains: ["joeschmoe.io", "ipfs.io", "ipfs.infura.io", "storage.googleapis.com", "arweave.net"],
-  },
-  async redirects() {
-    return [
-      {
-        source: '/intro',
-        destination: 'https://vess.id/',
-        permanent: true,
-      },
-    ]
   },
   webpack: (config) => {
     config.module.rules.push({
@@ -22,7 +14,22 @@ module.exports = {
       issuer: /\.[jt]sx?$/,
       use: ["@svgr/webpack"],
     });
-
     return config;
   },
 };
+
+// module.exports = withBundleAnalyzer({
+//   reactStrictMode: true,
+//   swcMinify: true,
+//   images: {
+//     domains: ["joeschmoe.io", "ipfs.io", "ipfs.infura.io", "storage.googleapis.com", "arweave.net"],
+//   },
+//   webpack: (config) => {
+//     config.module.rules.push({
+//       test: /\.svg$/i,
+//       issuer: /\.[jt]sx?$/,
+//       use: ["@svgr/webpack"],
+//     });
+//     return config;
+//   },
+// });

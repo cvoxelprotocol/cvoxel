@@ -1,5 +1,4 @@
-import { getWorkCredentialService } from "@/services/workCredential/WorkCredentialService";
-import { useMutation, useQuery, useQueryClient } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "./useToast";
 import {
   EVENT_ATTENDANCE_CREATION_FAILED,
@@ -13,15 +12,17 @@ import {
   useStateIssueEventAttendanceModal,
   useStateIssueEventModal,
 } from "@/recoilstate";
-import { EventAttendanceWithId, EventWithId } from "@/interfaces";
-import { useContext } from "react";
-import { DIDContext } from "@/context/DIDContext";
-import { EventAttendance } from "@/__generated__/types/EventAttendanceVerifiableCredential";
-import { Event } from "@/__generated__/types/Event";
+import { useDIDAccount } from "@/hooks/useDIDAccount";
 import {
-  issueEventAttendancesFromProxy,
+  EventAttendanceWithId,
+  EventWithId,
+  CustomResponse,
+  Event,
+  EventAttendance,
+  getVESS,
   issueEventAttendancesParam,
-} from "@/lib/firebase/functions/workCredential";
+} from "vess-sdk";
+import { CERAMIC_NETWORK } from "@/constants/common";
 
 type issueEventAttendanceFromProxyProps = {
   param: issueEventAttendancesParam;
@@ -29,8 +30,9 @@ type issueEventAttendanceFromProxyProps = {
 };
 
 export const useEventAttendance = (eventId?: string) => {
-  const { did } = useContext(DIDContext);
-  const workCredentialService = getWorkCredentialService();
+  const { did } = useDIDAccount();
+  // const vess = getVESS()
+  const vess = getVESS(CERAMIC_NETWORK !== "mainnet");
   const queryClient = useQueryClient();
   const { lancInfo, lancError } = useToast();
   const { showLoading, closeLoading } = useModal();
@@ -42,11 +44,11 @@ export const useEventAttendance = (eventId?: string) => {
     setShowEventAttendanceFromProxyModal,
   ] = useStateIssueEventAttendanceFromProxyModal();
 
-  const { mutateAsync: issueEvent, isLoading: isIssuingEvent } = useMutation<
-    string | undefined,
+  const { mutateAsync: issueEvent } = useMutation<
+    CustomResponse<{ streamId: string | undefined }>,
     unknown,
     Event
-  >((param) => workCredentialService.createEvent(param), {
+  >((param) => vess.createEvent(param), {
     onMutate() {
       showLoading();
     },
@@ -65,75 +67,72 @@ export const useEventAttendance = (eventId?: string) => {
       lancError(EVENT_CREATION_FAILED);
     },
     onSettled: () => {
-      queryClient.invalidateQueries("issuedEvent");
+      queryClient.invalidateQueries(["issuedEvent"]);
     },
   });
 
-  const { data: issuedEvent, isLoading } = useQuery<EventWithId[] | null>(
-    ["issuedEvent", did],
-    () => workCredentialService.fetchIssuedEvents(did),
-    {
-      enabled: !!did && did !== "",
-      staleTime: Infinity,
-      cacheTime: 30000,
-    }
-  );
+  const { data: issuedEvent, isInitialLoading } = useQuery<
+    EventWithId[] | null
+  >(["issuedEvent", did], () => vess.getIssuedEvents(did), {
+    enabled: !!did && did !== "",
+    staleTime: Infinity,
+    cacheTime: 300000,
+  });
 
   const {
     mutateAsync: issueEventAttendanceCredential,
     isLoading: isCreatingSubject,
-  } = useMutation<string | undefined, unknown, EventAttendance>(
-    (param) => workCredentialService.issueEventAttendanceCredential(param),
-    {
-      onMutate() {
-        showLoading();
-      },
-      onSuccess(data) {
-        if (data) {
-          closeLoading();
-          lancInfo(EVENT_ATTENDANCE_CREATION_SUCCEED);
-        } else {
-          closeLoading();
-          lancError(EVENT_ATTENDANCE_CREATION_FAILED);
-        }
-      },
-      onError(error) {
-        console.log("error", error);
+  } = useMutation<
+    CustomResponse<{ streamId: string | undefined }>,
+    unknown,
+    EventAttendance
+  >((param) => vess.issueEventAttendanceCredential(param), {
+    onMutate() {
+      showLoading();
+    },
+    onSuccess(data) {
+      if (data) {
+        closeLoading();
+        lancInfo(EVENT_ATTENDANCE_CREATION_SUCCEED);
+      } else {
         closeLoading();
         lancError(EVENT_ATTENDANCE_CREATION_FAILED);
-      },
-      onSettled: () => {
-        queryClient.invalidateQueries(
-          "IssuedEventAttendanceVerifiableCredentials"
-        );
-      },
-    }
-  );
+      }
+    },
+    onError(error) {
+      console.log("error", error);
+      closeLoading();
+      lancError(EVENT_ATTENDANCE_CREATION_FAILED);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries([
+        "IssuedEventAttendanceVerifiableCredentials",
+      ]);
+    },
+  });
 
-  const {
-    data: IssuedEventAttendanceVerifiableCredentials,
-    isLoading: isLoadingIssuedEventAttendance,
-  } = useQuery<EventAttendanceWithId[] | null>(
+  const { data: IssuedEventAttendanceVerifiableCredentials } = useQuery<
+    EventAttendanceWithId[] | null
+  >(
     ["IssuedEventAttendanceVerifiableCredentials", did],
-    () =>
-      workCredentialService.fetchIssuedEventAttendanceVerifiableCredentials(),
+    () => vess.getIssuedEventAttendanceVerifiableCredentials(),
     {
       enabled: !!did && did !== "",
       staleTime: Infinity,
-      cacheTime: 30000,
+      cacheTime: 300000,
     }
   );
 
   const {
     data: HeldEventAttendanceVerifiableCredentials,
-    isLoading: isFetchingHeldMembershipSubjects,
+    isInitialLoading: isFetchingHeldMembershipSubjects,
   } = useQuery<EventAttendanceWithId[] | null>(
     ["HeldEventAttendanceVerifiableCredentials", did],
-    () => workCredentialService.fetchHeldEventAttendanceVerifiableCredentials(),
+    () => vess.getHeldEventAttendanceVerifiableCredentials(),
     {
       enabled: !!did && did !== "",
       staleTime: Infinity,
-      cacheTime: 30000,
+      cacheTime: 300000,
     }
   );
 
@@ -154,14 +153,11 @@ export const useEventAttendance = (eventId?: string) => {
     return res;
   };
 
-  const {
-    mutateAsync: issueEventAttendanceFromProxy,
-    isLoading: isIssuingFromProxy,
-  } = useMutation<
+  const { mutateAsync: issueEventAttendanceFromProxy } = useMutation<
     { [x: string]: string | string[] },
     unknown,
     issueEventAttendanceFromProxyProps
-  >((param) => issueEventAttendancesFromProxy(param.param), {
+  >((param) => vess.issueEventAttendancesFromProxy(param.param), {
     onMutate() {
       showLoading();
     },
@@ -184,9 +180,9 @@ export const useEventAttendance = (eventId?: string) => {
       lancError(EVENT_ATTENDANCE_CREATION_FAILED);
     },
     onSettled: () => {
-      queryClient.invalidateQueries(
-        "IssuedEventAttendanceVerifiableCredentials"
-      );
+      queryClient.invalidateQueries([
+        "IssuedEventAttendanceVerifiableCredentials",
+      ]);
     },
   });
 
@@ -201,10 +197,7 @@ export const useEventAttendance = (eventId?: string) => {
     };
 
     //issue
-    const res = await issueEventAttendanceFromProxy(paramForProxy);
-    console.log({ res });
-
-    return res;
+    return await issueEventAttendanceFromProxy(paramForProxy);
   };
 
   const claimEventAttendance = async (
@@ -223,22 +216,23 @@ export const useEventAttendance = (eventId?: string) => {
 
     //issue
     const res = await issueEventAttendanceFromProxy(paramForProxy);
-    console.log({ res });
-
     return res.vcs as string[];
   };
 
-  const { data: eventDetail, isLoading: isLoadingEventDetail } = useQuery<
-    EventWithId | undefined
-  >(["eventDetail", eventId], () => workCredentialService.fetchEvent(eventId), {
-    enabled: !!eventId,
-    staleTime: Infinity,
-    cacheTime: 30000,
-  });
+  const { data: eventDetail, isInitialLoading: isLoadingEventDetail } =
+    useQuery<EventWithId | undefined>(
+      ["eventDetail", eventId],
+      () => vess.getEvent(eventId),
+      {
+        enabled: !!eventId,
+        staleTime: Infinity,
+        cacheTime: 300000,
+      }
+    );
 
   return {
     IssuedEventAttendanceVerifiableCredentials,
-    isLoading,
+    isInitialLoading,
     issueEventAttendance,
     isCreatingSubject,
     setShowEventModal,

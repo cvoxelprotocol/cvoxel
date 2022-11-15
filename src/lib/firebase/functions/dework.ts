@@ -37,7 +37,7 @@ export const deworkAuth = (
       name: name,
       sig: sig,
       nonce: nonce,
-      address: address,
+      address: address.toLowerCase(),
     })
       .then((result) => {
         if (result.data.status === "ok") {
@@ -61,7 +61,7 @@ export const getDeworkUserTasks = (
       DeworkTasksResults
     >(functions, "getDeworkUserTasks");
     getDeworkUserTasksFunc({
-      address: address,
+      address: address.toLowerCase(),
       id: id,
     })
       .then((result) => {
@@ -86,7 +86,7 @@ export const reFetchDeworkUserTasks = (
       DeworkTasksResults
     >(functions, "reFetchDeworkUserTasks");
     reFetchDeworkUserTasksFuns({
-      address: address,
+      address: address.toLowerCase(),
       id: id,
     })
       .then((result) => {
@@ -112,7 +112,7 @@ export const updateGenreOfDeworkTask = (
       DeworkTaskUpdateResults
     >(functions, "updateGenreOfDeworkTask");
     getDeworkUserTasksFunc({
-      address: address,
+      address: address.toLowerCase(),
       id: id,
       genre: genre,
     })
@@ -139,7 +139,7 @@ export const issueCRDLFromDework = (
       DeworkCRDLsResults
     >(functions, "issueCRDLFromDework");
     issueCRDLFromDeworkFunc({
-      address: address,
+      address: address.toLowerCase(),
       ids: ids,
       storeAll: storeAll,
     })
