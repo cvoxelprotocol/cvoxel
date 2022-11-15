@@ -44,7 +44,6 @@ export const getHeldMembershipSubjectsFromDB = (
               const d = doc.data() as MembershipSubjectWithId;
               return d;
             });
-        console.log({ docs });
         resolve(docs);
       })
       .catch((error) => {

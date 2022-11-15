@@ -55,6 +55,7 @@ export const useWorkCredentials = (did?: string) => {
   const queryClient = useQueryClient();
   const { did: myDid, originalAddress } = useDIDAccount();
   const { showLoading, closeLoading } = useModal();
+
   const { data: workCredentials, isInitialLoading } = useQuery<
     WorkCredentialWithId[]
   >(["heldWorkCredentials", did], () => vess.getHeldWorkCredentials(did), {
@@ -78,7 +79,6 @@ export const useWorkCredentials = (did?: string) => {
   });
 
   const migrateAccount = async (): Promise<void> => {
-    console.log("migrateAccount func");
     if (myDid !== did || !originalAddress) return;
     if (!workCredentials || workCredentials.length > 0) return;
     const oldDid = `did:pkh:eip155:1:${originalAddress}`;

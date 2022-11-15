@@ -4,6 +4,7 @@ import { useDIDAccount } from "@/hooks/useDIDAccount";
 import { useMyPageScreen, useTab } from "@/hooks/useTab";
 import { useWorkCredentials } from "@/hooks/useWorkCredential";
 import dynamic from "next/dynamic";
+import { useHeldEventAttendances } from "@/hooks/useHeldEventAttendances";
 
 const CVoxelsContainer = dynamic(
   () => import("@/components/containers/home/CVoxelsContainer"),
@@ -22,6 +23,7 @@ const MyPageContainer = dynamic(
 export const HomeContainer: FC = () => {
   const {did} = useDIDAccount()
   const {workCredentials, migrateAccount, isInitialLoading} = useWorkCredentials(did)
+  const {HeldEventAttendances, migrateHeldEvent} = useHeldEventAttendances(did)
   const myPageContainerRef = useRef<HTMLDivElement>(null);
   const visualContainerRef = useRef<HTMLDivElement>(null);
   const { setTabState } = useTab();
@@ -46,6 +48,12 @@ export const HomeContainer: FC = () => {
       migrateAccount()
     }
   },[workCredentials, did])
+
+  useEffect(() => {
+    if(HeldEventAttendances?.length===0 && did){
+        migrateHeldEvent()
+    }
+  },[HeldEventAttendances, did])
 
   const handleCreateNewVoxel = useCallback(() => {
     scrollToInfo()
