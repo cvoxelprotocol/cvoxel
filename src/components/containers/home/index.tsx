@@ -23,7 +23,7 @@ const MyPageContainer = dynamic(
 export const HomeContainer: FC = () => {
   const {did} = useDIDAccount()
   const {workCredentials, migrateAccount, isInitialLoading} = useWorkCredentials(did)
-  const {HeldEventAttendances, migrateHeldEvent} = useHeldEventAttendances(did)
+  const {HeldEventAttendances, migrateHeldEvent, isFetchingHeldEventAttendances} = useHeldEventAttendances(did)
   const myPageContainerRef = useRef<HTMLDivElement>(null);
   const visualContainerRef = useRef<HTMLDivElement>(null);
   const { setTabState } = useTab();
@@ -44,16 +44,17 @@ export const HomeContainer: FC = () => {
   },[screenState])
 
   useEffect(() => {
-    if(workCredentials?.length===0 && did){
+    if(!isInitialLoading && (!workCredentials || workCredentials?.length===0) && did){
       migrateAccount()
     }
-  },[workCredentials, did])
+  },[workCredentials, did,isInitialLoading])
 
   useEffect(() => {
-    if(HeldEventAttendances?.length===0 && did){
+    console.log({ HeldEventAttendances });
+    if(!isFetchingHeldEventAttendances && (!HeldEventAttendances || HeldEventAttendances?.length===0) && did){
         migrateHeldEvent()
     }
-  },[HeldEventAttendances, did])
+  },[HeldEventAttendances, did,isFetchingHeldEventAttendances])
 
   const handleCreateNewVoxel = useCallback(() => {
     scrollToInfo()
