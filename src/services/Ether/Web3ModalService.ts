@@ -58,7 +58,6 @@ export class Web3ModalService {
             chainId: 1,
             qrcodeModalOptions: {
               desktopLinks: [],
-              mobileLinks: ["metamask"],
             },
           },
         },
@@ -109,7 +108,7 @@ export class Web3ModalService {
         return false;
       }
     } else {
-      throw new Error("Please Install Metamask or WalletConnect");
+      return true;
     }
   }
 

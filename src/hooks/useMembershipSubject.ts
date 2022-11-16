@@ -41,7 +41,7 @@ export const useMembershipSubject = (orgId?: string) => {
         showLoading();
       },
       onSuccess(data) {
-        if (data) {
+        if (data.streamId) {
           closeLoading();
           lancInfo(MEMBERSHIP_SUBJECT_CREATION_SUCCEED);
         } else {

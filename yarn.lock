@@ -9224,7 +9224,7 @@ u3@^0.1.1:
   resolved "https://registry.yarnpkg.com/u3/-/u3-0.1.1.tgz#5f52044f42ee76cd8de33148829e14528494b73b"
   integrity sha512-+J5D5ir763y+Am/QY6hXNRlwljIeRMZMGs0cT6qqZVVzzT3X3nFPXVyPOFRMOR4kupB0T8JnCdpWdp6Q/iXn3w==
 
-ua-parser-js@^1.0.2, ua-parser-js@^1.0.32:
+ua-parser-js@^1.0.2:
   version "1.0.32"
   resolved "https://registry.yarnpkg.com/ua-parser-js/-/ua-parser-js-1.0.32.tgz#786bf17df97de159d5b1c9d5e8e9e89806f8a030"
   integrity sha512-dXVsz3M4j+5tTiovFVyVqssXBu5HM47//YSOeZ9fQkdDKkfzv2v3PP1jmH6FUyPW+yCSn7aBVK1fGGKNhowdDA==
@@ -9361,10 +9361,10 @@ verror@1.10.0:
     core-util-is "1.0.2"
     extsprintf "^1.2.0"
 
-vess-sdk@^0.2.1:
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/vess-sdk/-/vess-sdk-0.2.1.tgz#5b369ec382d1f697cee3dc6dccf7047682876c90"
-  integrity sha512-RytVcxCAx2u+Ti8FeHeccPqzLyjmHvo2lQMz1lGUAu/CJpRXzTmispPh03pSKNGv73etHPCR0n0VeV3vs2tSEA==
+vess-sdk@^0.2.3:
+  version "0.2.3"
+  resolved "https://registry.yarnpkg.com/vess-sdk/-/vess-sdk-0.2.3.tgz#9a1424a7b461c325707386799e6fce0b9b9070c2"
+  integrity sha512-hXQtKVFNDhfcC3ok2cck+ZxOejQ+elBrlaeQTHGA3578Dkeu7Q5hZoduPtfhaj6bDbhNhuml5+sqsG9PhuxK+Q==
   dependencies:
     "@ceramicnetwork/http-client" "^2.7.0"
     "@ceramicnetwork/stream-tile" "^2.6.0"
@@ -9374,7 +9374,6 @@ vess-sdk@^0.2.1:
     did-session "^1.0.0"
     ethers "^5.7.2"
     firebase "^9.13.0"
-    ua-parser-js "^1.0.32"
 
 web-encoding@1.1.5:
   version "1.1.5"

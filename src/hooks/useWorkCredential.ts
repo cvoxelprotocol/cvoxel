@@ -118,7 +118,7 @@ export const useWorkCredential = () => {
     WorkSubject
   >((param) => vess.issueWorkCredential(param), {
     onSuccess(data) {
-      if (data) {
+      if (data.streamId) {
         closeLoading();
         lancInfo(CVOXEL_CREATION_SUCCEED);
         setIssueStatus("completed");
@@ -241,6 +241,7 @@ export const useWorkCredential = () => {
         deliverables,
         client,
       };
+      console.log("subject", JSON.stringify(subject));
       return await issueCRDL(subject);
     }
   };
@@ -337,5 +338,6 @@ export const useWorkCredential = () => {
     updateWithoutNotify,
     issueStatus,
     verify,
+    issueCRDL,
   };
 };
