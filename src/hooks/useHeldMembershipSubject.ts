@@ -18,7 +18,7 @@ export const useHeldMembershipSubject = (did?: string) => {
     string[]
   >((param) => vess.setHeldMembershipSubjects(param), {
     onSuccess() {
-      console.log("mirgate succeeded");
+      console.log("MembershipSubjects migration succeeded");
     },
     onError(error) {
       console.log("error", error);

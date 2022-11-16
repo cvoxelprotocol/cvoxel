@@ -3,30 +3,31 @@ import { EventAttendanceItem } from "@/components/workspace/EventAttendanceItem"
 import { IssueEventAttendanceCard } from "@/components/workspace/IssueEventAttendanceCard";
 import { IssueEventAttendanceFromProxyCard } from "@/components/workspace/IssueEventAttendanceFromProxyCard";
 import { WorkspaceModal } from "@/components/workspace/WorkspaceModal";
+import { useDIDAccount } from "@/hooks/useDIDAccount";
 import { useEventAttendance } from "@/hooks/useEventAttendance";
 import Image from "next/image";
 import Link from "next/link";
 import { FC, useMemo } from "react";
 import { EventAttendanceWithId, removeCeramicPrefix, verifyEventAttendanceCredential } from "vess-sdk";
 
-const PROXY_WORKSPACE = "ceramic://kjzl6cwe1jw148904dvpnhwxhu3nps59702ufd4tpz9v6l0mfphgqn1df24op09"
+const PROXY_DID = "did:pkh:eip155:1:0x1cd36a9e09575d7ca3660763990f082d3a7e4919"
+const ADMIN_DID = "did:pkh:eip155:1:0xde695cbb6ec0cf3f4c9564070baeb032552c5111"
 
 type Props = {
     eventId?: string;
 };
 
 export const AdminEventDetailContainer:FC<Props> =({eventId}) => {
+    const {did} = useDIDAccount()
     const {eventDetail, showEventAttendanceModal, setShowEventAttendanceModal,showEventAttendanceFromProxyModal,setShowEventAttendanceFromProxyModal,IssuedEventAttendanceVerifiableCredentials} = useEventAttendance(eventId)
 
     const eventAttendances = useMemo(() => {
         if(!IssuedEventAttendanceVerifiableCredentials || IssuedEventAttendanceVerifiableCredentials.length ===0) return []
-        return IssuedEventAttendanceVerifiableCredentials.filter(crdl => crdl.credentialSubject.eventId===eventId)
+        return IssuedEventAttendanceVerifiableCredentials.filter(crdl => crdl.credentialSubject.eventId===removeCeramicPrefix(eventId))
     },[eventId, IssuedEventAttendanceVerifiableCredentials])
 
     const handleClickAttendance = async (item: EventAttendanceWithId) => {
         const res = await verifyEventAttendanceCredential(item)
-        console.log({item})
-        console.log({res})
     }
 
     if(!eventDetail) {
@@ -75,7 +76,7 @@ export const AdminEventDetailContainer:FC<Props> =({eventId}) => {
                         color={"secondary"}
                         onClick={() => setShowEventAttendanceModal(true)}
                     />
-                    {eventDetail.organizationId === PROXY_WORKSPACE && (
+                    {(did === PROXY_DID || did === ADMIN_DID) && (
                         <Button
                             text={"Issue Event Attendance from proxy"}
                             color={"secondary"}

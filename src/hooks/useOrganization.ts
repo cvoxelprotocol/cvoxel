@@ -33,7 +33,7 @@ export const useOrganization = (orgId?: string) => {
       showLoading();
     },
     onSuccess(data) {
-      if (data) {
+      if (data.streamId) {
         closeLoading();
         lancInfo(ORGANIZATION_CREATION_SUCCEED);
       } else {

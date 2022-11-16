@@ -53,12 +53,12 @@ export const useEventAttendance = (eventId?: string) => {
       showLoading();
     },
     onSuccess(data) {
-      if (data) {
+      if (data.streamId) {
         closeLoading();
         lancInfo(EVENT_CREATION_SUCCEED);
       } else {
         closeLoading();
-        lancError(EVENT_CREATION_FAILED);
+        lancError(`${EVENT_CREATION_FAILED}: ${data.error}`);
       }
     },
     onError(error) {
@@ -91,12 +91,12 @@ export const useEventAttendance = (eventId?: string) => {
       showLoading();
     },
     onSuccess(data) {
-      if (data) {
+      if (data.streamId) {
         closeLoading();
         lancInfo(EVENT_ATTENDANCE_CREATION_SUCCEED);
       } else {
         closeLoading();
-        lancError(EVENT_ATTENDANCE_CREATION_FAILED);
+        lancError(`${EVENT_ATTENDANCE_CREATION_FAILED}: ${data.error}`);
       }
     },
     onError(error) {
