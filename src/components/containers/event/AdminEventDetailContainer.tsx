@@ -66,7 +66,7 @@ export const AdminEventDetailContainer:FC<Props> =({eventId}) => {
                     </div>
                 </div>
                 <div className="p-4 w-full text-left">
-                    <div className="text-light-on-surface dark:text-dark-on-surface font-medium text-lg">
+                    <div className="text-light-on-surface dark:text-dark-on-surface font-medium text-lg whitespace-pre">
                         {eventDetail.desc}
                     </div>
                 </div>
