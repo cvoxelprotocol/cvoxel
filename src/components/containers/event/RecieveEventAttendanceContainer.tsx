@@ -51,7 +51,7 @@ export const RecieveEventAttendanceContainer:FC<Props> =({eventId}) => {
     }
 
 
-    if(!eventDetail) {
+    if(!isLoadingEventDetail && !eventDetail) {
         return (
             <main className="text-center">
                 <div className="relative w-full max-w-5xl min-h-screen lg:min-h-screen mx-auto pt-24 px-4">
@@ -122,7 +122,7 @@ export const RecieveEventAttendanceContainer:FC<Props> =({eventId}) => {
                                 )}
                             </div>
                             <div className="py-2 px-4 w-full text-left">
-                                <div className="text-light-on-surface dark:text-dark-on-surface font-medium text-sm sm:text-base">
+                                <div className="text-light-on-surface dark:text-dark-on-surface font-medium text-sm sm:text-base whitespace-pre">
                                     {eventDetail.desc}
                                 </div>
                                 <div className="py-2 cursor-pointer">
