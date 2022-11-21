@@ -10,6 +10,7 @@ import { DropDown } from "../DropDown";
 import { useConnectDID } from "@/hooks/useConnectDID";
 import { useDIDAccount } from "@/hooks/useDIDAccount";
 import dynamic from "next/dynamic";
+import { isMobile, isTablet } from "react-device-detect";
 
 const NamePlate = dynamic(
   () => import("@/components/common/NamePlate"),
@@ -121,6 +122,6 @@ export default function AccountButton() {
   return connection === "connecting" ? (
     <DisplayAvatar label="Connecting..." loading hiddenLabelOnSp={true} />
   ) : (
-    <Button text="Connect Wallet" onClick={() => handleConnect()} color="primary" />
+    <Button text={(isMobile || isTablet) ? "Connect" : "Connect Wallet"} onClick={() => handleConnect()} color="primary" />
   );
 }

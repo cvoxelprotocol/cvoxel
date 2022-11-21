@@ -179,7 +179,7 @@ export const MyCVoxelContainer: FC = () => {
       did,
       currentCredential,
       keyword,
-      rowVirtualizer,
+      rowVirtualizer.getVirtualItems(),
       isMobile,
       isTablet
     ]
