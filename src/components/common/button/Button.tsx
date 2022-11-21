@@ -67,7 +67,7 @@ export const Button: FC<Props> = ({
 
   return (
     <button
-      className={clsx("w-fit h-fit px-2 py-1.5 sm:px-6 sm:py-3 rounded-full ",  buttonStyle)}
+      className={clsx("w-fit h-fit px-4 py-2 sm:px-6 sm:py-3 rounded-full ",  buttonStyle)}
       onClick={onClick}
       type={buttonType}
       disabled={disabled}

@@ -18,6 +18,7 @@ export const UserCVoxelContainer: FC<UserCVoxelContainerProps> = ({
   currentVoxelID,
 }) => {
   const {workCredentials, isInitialLoading} = useWorkCredentials(did)
+  const { offchainMetaList } = useOffchainList();
 
   const sortCredentials = useMemo(() => {
     if (!workCredentials) return [];
@@ -30,8 +31,6 @@ export const UserCVoxelContainer: FC<UserCVoxelContainerProps> = ({
     () => sortCredentials.find((crdl) => crdl.backupId == currentVoxelID),
     [currentVoxelID, sortCredentials]
   );
-
-  const { offchainMetaList } = useOffchainList();
 
   const parentRef: LegacyRef<any> = useRef();
 
@@ -58,13 +57,13 @@ export const UserCVoxelContainer: FC<UserCVoxelContainerProps> = ({
           </div>
         ) : (
           <CVoxelsPresenter>
-            {isInitialLoading && <CommonLoading />}
-            {!isInitialLoading && !sortCredentials && (
+            {!isInitialLoading && (!sortCredentials || sortCredentials.length === 0) && (
               <div className="mx-auto">
                 <NoItemPresenter text="No Voxels yet" />
               </div>
             )}
 
+            {isInitialLoading && <CommonLoading />}
             {!isInitialLoading && sortCredentials && (
               <div ref={parentRef} className={"overflow-auto h-full w-full"}>
                 <div
@@ -76,7 +75,7 @@ export const UserCVoxelContainer: FC<UserCVoxelContainerProps> = ({
                 >
                   {rowVirtualizer
                     .getVirtualItems()
-                    .map((virtualItem, index) => (
+                    .map((virtualItem) => (
                       <div
                         key={virtualItem.index}
                         style={{
@@ -108,7 +107,9 @@ export const UserCVoxelContainer: FC<UserCVoxelContainerProps> = ({
       isInitialLoading,
       sortCredentials,
       did,
-      rowVirtualizer
+      rowVirtualizer.getVirtualItems(),
+      isMobile,
+      isTablet
     ]
   );
 };

@@ -65,7 +65,7 @@ export const EventDetailContainer:FC<Props> =({eventId}) => {
                     </div>
                 </div>
                 <div className="p-4 w-full text-left">
-                    <div className="text-light-on-surface dark:text-dark-on-surface font-medium text-lg whitespace-pre">
+                    <div className="text-light-on-surface dark:text-dark-on-surface font-medium text-lg whitespace-pre-wrap text-ellipsis break-words">
                         {eventDetail.desc}
                     </div>
                 </div>

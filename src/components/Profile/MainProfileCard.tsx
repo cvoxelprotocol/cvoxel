@@ -41,7 +41,7 @@ export default function MainProfileCard({did, type = "voxel", showNav = true}:Pr
                 {/*description*/}
                 {profile && profile.bio &&  (
                   <div>
-                    <div className=" text-light-on-surface dark:text-dark-on-surface font-normal text-ellipsis whitespace-nowrap text-sm">
+                    <div className=" text-light-on-surface dark:text-dark-on-surface font-normal text-ellipsis overflow-hidden text-sm whitespace-nowrap max-w-[250px]">
                       {profile.bio}
                     </div>
                   </div>
