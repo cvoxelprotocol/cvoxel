@@ -23,6 +23,9 @@ export const MEMBERSHIP_SUBJECT_CREATION_FAILED =
 export const EVENT_CREATION_SUCCEED = "Successfully created new event!";
 export const EVENT_CREATION_FAILED = "Failed to create event...";
 
+export const EVENT_UPDATE_SUCCEED = "Successfully updated the event!";
+export const EVENT_UPDATE_FAILED = "Failed to update the event...";
+
 export const EVENT_ATTENDANCE_CREATION_SUCCEED =
   "Successfully issued event attendance!";
 export const EVENT_ATTENDANCE_CREATION_FAILED =
