@@ -5,6 +5,8 @@ import {
   EVENT_ATTENDANCE_CREATION_SUCCEED,
   EVENT_CREATION_FAILED,
   EVENT_CREATION_SUCCEED,
+  EVENT_UPDATE_FAILED,
+  EVENT_UPDATE_SUCCEED,
 } from "@/constants/toastMessage";
 import { useModal } from "./useModal";
 import {
@@ -21,6 +23,7 @@ import {
   EventAttendance,
   getVESS,
   issueEventAttendancesParam,
+  BaseResponse,
 } from "vess-sdk";
 import { CERAMIC_NETWORK } from "@/constants/common";
 
@@ -68,6 +71,34 @@ export const useEventAttendance = (eventId?: string) => {
     },
     onSettled: () => {
       queryClient.invalidateQueries(["issuedEvent"]);
+    },
+  });
+
+  const { mutateAsync: editEvent } = useMutation<
+    BaseResponse,
+    unknown,
+    { id: string; event: Event }
+  >((param) => vess.updateEvent(param.id, param.event), {
+    onMutate() {
+      showLoading();
+    },
+    onSuccess(data) {
+      if (data.status === 200) {
+        closeLoading();
+        lancInfo(EVENT_UPDATE_SUCCEED);
+      } else {
+        closeLoading();
+        lancError(`${EVENT_UPDATE_FAILED}: ${data.error}`);
+      }
+    },
+    onError(error) {
+      console.log("error", error);
+      closeLoading();
+      lancError(EVENT_CREATION_FAILED);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries(["issuedEvent"]);
+      queryClient.invalidateQueries(["eventDetail"]);
     },
   });
 
@@ -238,6 +269,7 @@ export const useEventAttendance = (eventId?: string) => {
     setShowEventModal,
     showEventModal,
     issueEvent,
+    editEvent,
     issuedEvent,
     HeldEventAttendanceVerifiableCredentials,
     isFetchingHeldMembershipSubjects,

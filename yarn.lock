@@ -9361,10 +9361,10 @@ verror@1.10.0:
     core-util-is "1.0.2"
     extsprintf "^1.2.0"
 
-vess-sdk@^0.2.3:
-  version "0.2.3"
-  resolved "https://registry.yarnpkg.com/vess-sdk/-/vess-sdk-0.2.3.tgz#9a1424a7b461c325707386799e6fce0b9b9070c2"
-  integrity sha512-hXQtKVFNDhfcC3ok2cck+ZxOejQ+elBrlaeQTHGA3578Dkeu7Q5hZoduPtfhaj6bDbhNhuml5+sqsG9PhuxK+Q==
+vess-sdk@^0.2.31:
+  version "0.2.31"
+  resolved "https://registry.yarnpkg.com/vess-sdk/-/vess-sdk-0.2.31.tgz#dab1513b426007b6e6c59e77aafdda9a82d951c3"
+  integrity sha512-dYPcZmb7H4tmRltfQcYIWREHg0H7AbvpKlnnHpcMAdlRd5yW7J1PtWTvNjkXxYpZTLbSdGDR4k6pDBy8/PBRaw==
   dependencies:
     "@ceramicnetwork/http-client" "^2.7.0"
     "@ceramicnetwork/stream-tile" "^2.6.0"
