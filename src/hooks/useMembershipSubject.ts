@@ -139,7 +139,6 @@ export const useMembershipSubject = (orgId?: string) => {
   const IssuedMembershipSubjectsOfOrg = useMemo<
     MembershipSubjectWithId[]
   >(() => {
-    console.log({ IssuedMembershipSubjects });
     if (!IssuedMembershipSubjects || !orgId) return [];
     return IssuedMembershipSubjects.filter(
       (m) => m.credentialSubject.organizationId === removeCeramicPrefix(orgId)

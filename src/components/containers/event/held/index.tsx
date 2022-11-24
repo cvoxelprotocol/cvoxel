@@ -1,4 +1,4 @@
-import { FC, useEffect } from "react";
+import { FC, useMemo } from "react";
 import AttendanceIcon from "@/components/common/event/attendance-icon.svg"
 import { useHeldEventAttendances } from "@/hooks/useHeldEventAttendances";
 import { EventAttendanceBadge } from "@/components/Event/EventAttendanceBadge";
@@ -17,18 +17,20 @@ type HeldEventContainerProps = {
     did: string
 }
 export const HeldEventContainer: FC<HeldEventContainerProps> = ({did}) => {
-  const {HeldEventAttendances, isFetchingHeldEventAttendances, migrateHeldEvent} = useHeldEventAttendances(did)
+  const {HeldEventAttendances, isFetchingHeldEventAttendances} = useHeldEventAttendances(did)
   const router = useRouter()
-
-  useEffect(() => {
-    if(!isFetchingHeldEventAttendances && HeldEventAttendances?.length===0 && did){
-        migrateHeldEvent()
-    }
-  },[HeldEventAttendances, did])
 
   const goToAttendancePage = (item:EventAttendanceWithId) => {
     router.push(`/event/attendance/${removeCeramicPrefix(item.ceramicId)}`)
   }
+
+  // temp solution
+  const uniqueAttendances = useMemo(() => {
+    if(!HeldEventAttendances) return []
+    return Array.from(
+        new Map(HeldEventAttendances.map((e) => [e.id, e])).values()
+      );
+  },[HeldEventAttendances])
 
   return (
     <main className="text-center">
@@ -39,14 +41,14 @@ export const HeldEventContainer: FC<HeldEventContainerProps> = ({did}) => {
                     <CommonLoading />
                 ): (
                     <>
-                        {!HeldEventAttendances || HeldEventAttendances.length===0 ? (
+                        {!uniqueAttendances || uniqueAttendances.length===0 ? (
                             <div className="w-full text-center flex flex-col items-center">
                                 <AttendanceIcon />
                                 <p className="py-2 font-bold text-xl">Event Attendance Credentials</p>
                             </div>
                         ): (
                             <div className="w-full flex justify-center flex-wrap">
-                                {HeldEventAttendances.map((item) => {
+                                {uniqueAttendances.map((item) => {
                                     return (
                                         <div className="cursor-pointer mx-3" key={item.ceramicId} onClick={() => goToAttendancePage(item)}>
                                             <EventAttendanceBadge  item={item} />

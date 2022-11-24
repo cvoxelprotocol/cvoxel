@@ -70,18 +70,6 @@ export const useHeldEventAttendances = (did?: string) => {
       console.log("migrateHeldEvent: end");
     }
   };
-
-  const { data: HeldEventAttendancesFromDB } = useQuery<
-    EventAttendanceWithId[] | null
-  >(
-    ["HeldEventAttendancesFromDB", did],
-    () => getHeldEventAttendanceFromDB(did),
-    {
-      enabled: !!did && did !== "",
-      staleTime: Infinity,
-      cacheTime: 300000,
-    }
-  );
   return {
     migrateHeldEvent,
     HeldEventAttendances,
