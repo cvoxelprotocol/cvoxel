@@ -140,7 +140,9 @@ export const useMembershipSubject = (orgId?: string) => {
   >(() => {
     console.log({ IssuedMembershipSubjects });
     if (!IssuedMembershipSubjects || !orgId) return [];
-    return IssuedMembershipSubjects.filter((m) => m.organizationId === orgId);
+    return IssuedMembershipSubjects.filter(
+      (m) => m.credentialSubject.organizationId === orgId
+    );
   }, [IssuedMembershipSubjects, orgId]);
 
   return {
