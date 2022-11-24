@@ -17,6 +17,8 @@ type EventInput = {
     name: string
     desc?: string;
     url?: string
+    eventStartDate?: string
+    eventEndDate?: string
 }
 export const IssueEventCard:FC<Props> = ({orgId}) => {
     const {issueEvent, setShowEventModal} = useEventAttendance()
@@ -31,10 +33,10 @@ export const IssueEventCard:FC<Props> = ({orgId}) => {
       } = useForm<EventInput>();
 
       const onClickSubmit = async(data: any) => {
-        const {name, desc, url } = data
+        const {name, desc, url, eventStartDate, eventEndDate } = data
         if (!name || !did || !icon || !url) return;
 
-        const eventDate = new Date('25 October 2022 18:00 UTC');
+        const defaultEventDate = new Date('1 January 2022 18:00 UTC');
 
         const event:Event = {
             name,
@@ -42,8 +44,8 @@ export const IssueEventCard:FC<Props> = ({orgId}) => {
             icon: icon,
             url: url,
             organizationId: orgId,
-            startDate: eventDate.toISOString(),
-            endDate: "",
+            startDate: eventStartDate ? new Date(eventStartDate).toISOString() : defaultEventDate.toISOString(),
+            endDate: eventEndDate ? new Date(eventEndDate).toISOString() : defaultEventDate.toISOString(),
             tags: [],
             createdAt: convertDateToTimestampStr(new Date())
         }
@@ -112,6 +114,36 @@ export const IssueEventCard:FC<Props> = ({orgId}) => {
                         className="w-full my-1 py-1 px-6 border rounded-full text-xs md:text-sm hover:border-primary focus:outline-primary bg-light-surface-variant dark:bg-dark-surface-variant"
                         placeholder={"event url"}
                         {...register("url", { required: "enter link" })}
+                        />
+                    </div>
+                    <div className="flex flex-wrap items-center">
+                        <p className="font-semibold">
+                        Start Date
+                        <span className="cols-span-1 px-3 text-xs text-red-600">
+                            {errors.eventStartDate?.message}
+                        </span>
+                        </p>
+                    </div>
+                    <div className="mb-3">
+                        <input
+                        className="w-full my-1 py-1 px-6 border rounded-full text-xs md:text-sm hover:border-primary focus:outline-primary bg-light-surface-variant dark:bg-dark-surface-variant"
+                        placeholder={"26 November 2022 09:00 UTC"}
+                        {...register("eventStartDate", { required: "enter event start date" })}
+                        />
+                    </div>
+                    <div className="flex flex-wrap items-center">
+                        <p className="font-semibold">
+                        End Date
+                        <span className="cols-span-1 px-3 text-xs text-red-600">
+                            {errors.eventEndDate?.message}
+                        </span>
+                        </p>
+                    </div>
+                    <div className="mb-3">
+                        <input
+                        className="w-full my-1 py-1 px-6 border rounded-full text-xs md:text-sm hover:border-primary focus:outline-primary bg-light-surface-variant dark:bg-dark-surface-variant"
+                        placeholder={"26 November 2022 09:00 UTC"}
+                        {...register("eventEndDate", { required: "enter event end date" })}
                         />
                     </div>
                     <div className="flex flex-wrap items-center">

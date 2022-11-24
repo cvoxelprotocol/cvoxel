@@ -104,7 +104,7 @@ export const EditEventCard:FC<Props> = ({event}) => {
                     <div className="mb-3">
                         <input
                         className="w-full my-1 py-1 px-6 border rounded-full text-xs md:text-sm hover:border-primary focus:outline-primary bg-light-surface-variant dark:bg-dark-surface-variant"
-                        placeholder={"workspace name"}
+                        placeholder={"26 November 2022 09:00 UTC"}
                         {...register("eventDate", { required: "enter event date" })}
                         />
                     </div>
