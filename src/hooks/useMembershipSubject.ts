@@ -13,6 +13,7 @@ import {
   CustomResponse,
   getVESS,
   VerifiableMembershipSubject,
+  removeCeramicPrefix,
 } from "vess-sdk";
 import { useDIDAccount } from "@/hooks/useDIDAccount";
 import {
@@ -141,7 +142,7 @@ export const useMembershipSubject = (orgId?: string) => {
     console.log({ IssuedMembershipSubjects });
     if (!IssuedMembershipSubjects || !orgId) return [];
     return IssuedMembershipSubjects.filter(
-      (m) => m.credentialSubject.organizationId === orgId
+      (m) => m.credentialSubject.organizationId === removeCeramicPrefix(orgId)
     );
   }, [IssuedMembershipSubjects, orgId]);
 
