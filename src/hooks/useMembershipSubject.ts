@@ -76,7 +76,7 @@ export const useMembershipSubject = (orgId?: string) => {
     data: HeldMembershipSubjects,
     isInitialLoading: isFetchingHeldMembershipSubjects,
   } = useQuery<MembershipSubjectWithId[] | null>(
-    ["IssuedMembershipSubjects", did],
+    ["HeldMembershipSubjects", did],
     () => vess.getHeldMembershipSubjects(),
     {
       enabled: !!did && did !== "",
@@ -89,7 +89,7 @@ export const useMembershipSubject = (orgId?: string) => {
     data: heldMembershipSubjectsFromDB,
     isInitialLoading: isLoadingHeldSubjectsFromDB,
   } = useQuery<MembershipSubjectWithId[] | null>(
-    ["IssuedMembershipSubjects", did],
+    ["heldMembershipSubjectsFromDB", did],
     () => getHeldMembershipSubjectsFromDB(did),
     {
       enabled: !!did && did !== "",
@@ -102,7 +102,7 @@ export const useMembershipSubject = (orgId?: string) => {
     data: membershipSubjectsFromDB,
     isInitialLoading: isLoadingSubjectsFromDB,
   } = useQuery<MembershipSubjectWithId[] | null>(
-    ["CreatedMembershipSubjects", orgId],
+    ["membershipSubjectsFromDB", orgId],
     () => getMembershipSUbjectsFromDB(orgId),
     {
       enabled: !!orgId,
@@ -114,10 +114,10 @@ export const useMembershipSubject = (orgId?: string) => {
   const issue = async (
     org: OrganizationWIthId,
     membership: MembershipWithId,
-    did: string
+    targetDid: string
   ) => {
     const content: VerifiableMembershipSubject = {
-      id: did,
+      id: targetDid,
       organizationName: org.name,
       organizationId: org.ceramicId,
       organizationIcon: org.icon || "",
@@ -138,6 +138,7 @@ export const useMembershipSubject = (orgId?: string) => {
   const IssuedMembershipSubjectsOfOrg = useMemo<
     MembershipSubjectWithId[]
   >(() => {
+    console.log({ IssuedMembershipSubjects });
     if (!IssuedMembershipSubjects || !orgId) return [];
     return IssuedMembershipSubjects.filter((m) => m.organizationId === orgId);
   }, [IssuedMembershipSubjects, orgId]);
