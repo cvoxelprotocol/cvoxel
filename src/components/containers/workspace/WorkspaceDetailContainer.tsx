@@ -6,7 +6,6 @@ import { IssueEventCard } from "@/components/workspace/IssueEventCard";
 import { MembershipItem } from "@/components/workspace/MembershipItem";
 import { MembershipSubjectItem } from "@/components/workspace/MembershipSubjectItem";
 import { WorkspaceModal } from "@/components/workspace/WorkspaceModal";
-import { useEventAttendance } from "@/hooks/useEventAttendance";
 import { useMembership } from "@/hooks/useMembership";
 import { useMembershipSubject } from "@/hooks/useMembershipSubject";
 import { useOrganization } from "@/hooks/useOrganization";
@@ -15,6 +14,7 @@ import clsx from "clsx";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { FC } from "react";
+import { useEvent } from "@/hooks/useEvent";
 
 type Props = {
     orgId?: string;
@@ -24,7 +24,7 @@ export const WorkspaceDetailContainer:FC<Props> =({orgId}) => {
     const {organization} = useOrganization(orgId)
     const {createdMembershipsOfOrg,setShowModal, showModal} = useMembership(orgId)
     const {IssuedMembershipSubjectsOfOrg, setShowSubjectModal, showSubjectModal} = useMembershipSubject(orgId)
-    const {issuedEvent, showEventModal, setShowEventModal} = useEventAttendance(orgId)
+    const {issuedEventByOrg, showEventModal, setShowEventModal} = useEvent(orgId)
     const router = useRouter()
 
     const goToUserPage = (item: MembershipSubjectWithId) => {
@@ -112,7 +112,7 @@ export const WorkspaceDetailContainer:FC<Props> =({orgId}) => {
                 <div className="w-full pt-4">
                     <div className="w-full relative space-y-2 border-light-on-primary-container dark:border-dark-on-primary-container overflow-y-scroll hidden-scrollbar">
                         <p className="text-left text-lg font-bold text-light-on-surface dark:text-dark-on-surface">Event</p>
-                            {issuedEvent && issuedEvent.map(item => {
+                            {issuedEventByOrg && issuedEventByOrg.map(item => {
                                 return (
                                     <div key={item.ceramicId} className="cursor-pointer" onClick={() => goToEventPage(item)}>
                                         <EventItem item={item} />

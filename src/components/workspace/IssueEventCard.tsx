@@ -1,5 +1,4 @@
 import { useDIDAccount } from "@/hooks/useDIDAccount";
-import { useEventAttendance } from "@/hooks/useEventAttendance";
 import { useFileUpload } from "@/hooks/useFileUpload";
 import { convertDateToTimestampStr } from "@/utils/dateUtil";
 import CloseIcon from "@/components/common/button/close.svg";
@@ -8,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { Event } from "vess-sdk";
 import { Button } from "../common/button/Button";
 import { IconUploader } from "../Transaction/IconUploader";
+import { useEvent } from "@/hooks/useEvent";
 
 type Props = {
     orgId: string
@@ -21,7 +21,7 @@ type EventInput = {
     eventEndDate?: string
 }
 export const IssueEventCard:FC<Props> = ({orgId}) => {
-    const {issueEvent, setShowEventModal} = useEventAttendance()
+    const {issueEvent, setShowEventModal} = useEvent(orgId)
     const {did} = useDIDAccount()
     const { icon, setIcon } = useFileUpload();
 

@@ -26,10 +26,9 @@ type Props = {
 };
 
 export const RecieveEventAttendanceContainer:FC<Props> =({eventId}) => {
-    const {eventDetail, isLoadingEventDetail} = useEventAttendance(eventId)
+    const {eventDetail, isLoadingEventDetail,claimEventAttendance} = useEventAttendance(eventId)
     const {organization} = useOrganization(eventDetail?.organizationId)
     const {did} = useDIDAccount()
-    const {claimEventAttendance} = useEventAttendance()
     const {HeldEventAttendances,setHeldEventAttendances } = useHeldEventAttendances(did)
     
 
