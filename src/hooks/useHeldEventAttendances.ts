@@ -133,7 +133,7 @@ export const useHeldEventAttendances = (did?: string) => {
     if (!heldEventAttendanceFromDB || heldEventAttendanceFromDB.length === 0)
       return false;
     if (!HeldEventAttendances) return false;
-    return heldEventAttendanceFromDB.length > HeldEventAttendances.length;
+    return true;
   };
 
   return {
