@@ -4,7 +4,6 @@ import { useDIDAccount } from "@/hooks/useDIDAccount";
 import { useMyPageScreen, useTab } from "@/hooks/useTab";
 import { useWorkCredentials } from "@/hooks/useWorkCredential";
 import dynamic from "next/dynamic";
-import { useHeldEventAttendances } from "@/hooks/useHeldEventAttendances";
 
 const CVoxelsContainer = dynamic(
   () => import("@/components/containers/home/CVoxelsContainer"),
@@ -22,8 +21,7 @@ const MyPageContainer = dynamic(
 
 export const HomeContainer: FC = () => {
   const {did} = useDIDAccount()
-  const {workCredentials, migrateAccount, isInitialLoading} = useWorkCredentials(did)
-  const {HeldEventAttendances, migrateHeldEvent, isFetchingHeldEventAttendances} = useHeldEventAttendances(did)
+  const {workCredentials, isInitialLoading} = useWorkCredentials(did)
   const myPageContainerRef = useRef<HTMLDivElement>(null);
   const visualContainerRef = useRef<HTMLDivElement>(null);
   const { setTabState } = useTab();
@@ -42,18 +40,6 @@ export const HomeContainer: FC = () => {
       setScreenState("visual")
     }
   },[screenState])
-
-  useEffect(() => {
-    if(!isInitialLoading && (!workCredentials || workCredentials?.length===0) && did){
-      migrateAccount()
-    }
-  },[workCredentials, did,isInitialLoading])
-
-  useEffect(() => {
-    if(!isFetchingHeldEventAttendances && (!HeldEventAttendances || HeldEventAttendances?.length===0) && did){
-        migrateHeldEvent()
-    }
-  },[HeldEventAttendances, did,isFetchingHeldEventAttendances])
 
   const handleCreateNewVoxel = useCallback(() => {
     scrollToInfo()

@@ -13,6 +13,7 @@ import { useToast } from "@/hooks/useToast";
 import { useGAEvent } from "@/hooks/useGAEvent";
 import { getVESS } from "vess-sdk";
 import { CERAMIC_NETWORK } from "@/constants/common";
+import { useMigrationFromDB } from "./useMigrationFromDB";
 
 export const useConnectDID = () => {
   const setMyDid = useSetStateMyDid();
@@ -26,6 +27,12 @@ export const useConnectDID = () => {
   const { loginDework } = useDework();
   const { lancError } = useToast();
   const { connectEvent } = useGAEvent();
+  const {
+    issueHeldEventFromDB,
+    issueHeldMembershipFromDB,
+    migrateAccount,
+    migrateHeldEvent,
+  } = useMigrationFromDB();
   // const vess = getVESS()
   const vess = getVESS(CERAMIC_NETWORK !== "mainnet");
 
@@ -56,6 +63,19 @@ export const useConnectDID = () => {
         setConnectionStatus("connected");
         connectEvent(session.id);
         loginDework(account);
+
+        // migration
+        await migrateAccount(
+          session.did.parent,
+          web3ModalService.originalAddress
+        );
+        await migrateHeldEvent(
+          session.did.parent,
+          web3ModalService.originalAddress
+        );
+        // issue credentials from DB
+        await issueHeldEventFromDB(session.did.parent);
+        await issueHeldMembershipFromDB(session.did.parent);
       } else {
         setConnectionStatus("disconnected");
       }

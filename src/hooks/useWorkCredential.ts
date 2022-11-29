@@ -78,25 +78,8 @@ export const useWorkCredentials = (did?: string) => {
     },
   });
 
-  const migrateAccount = async (): Promise<void> => {
-    console.log("migrateAccount: check");
-    if (myDid !== did || !originalAddress) return;
-    if (workCredentials && workCredentials.length > 0) return;
-    const oldDid = `did:pkh:eip155:1:${originalAddress}`;
-    const oldCRDLs = await vess.getHeldWorkCredentialStreamIds(oldDid);
-    if (oldCRDLs.length > 0) {
-      console.log("migrateAccount: execute");
-      showLoading();
-      await vess.setHeldWorkCredentials(oldCRDLs);
-      closeLoading();
-      queryClient.invalidateQueries(["heldWorkCredentials"]);
-      console.log("migrateAccount end");
-    }
-  };
-
   return {
     workCredentials,
-    migrateAccount,
     isInitialLoading,
     deleteCRDLs,
   };

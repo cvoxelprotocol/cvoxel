@@ -29,6 +29,8 @@ export const AdminEventDetailContainer:FC<Props> =({eventId}) => {
 
     const handleClickAttendance = async (item: EventAttendanceWithId) => {
         const res = await verifyEventAttendanceCredential(item)
+        console.log("verified: " ,res)
+        console.log("cerscan: " ,`https://cerscan.com/mainnet/stream/${removeCeramicPrefix(item.ceramicId)}`)
     }
 
     if(!eventDetail) {
