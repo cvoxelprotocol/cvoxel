@@ -176,3 +176,12 @@ export const issueStatus = atom<"completed" | "issuing" | "failed" | undefined>(
 );
 
 export const useStateIssueStatus = () => useRecoilState(issueStatus);
+
+//event issuing from DB
+export const rIssuingFromDBLoading = atom({
+  key: "rIssuingFromDBLoading",
+  default: false,
+});
+
+export const useStateIssuingFromDBLoading = () =>
+  useRecoilState(rIssuingFromDBLoading);

@@ -50,7 +50,6 @@ export const HomeContainer: FC = () => {
   },[workCredentials, did,isInitialLoading])
 
   useEffect(() => {
-    console.log({ HeldEventAttendances });
     if(!isFetchingHeldEventAttendances && (!HeldEventAttendances || HeldEventAttendances?.length===0) && did){
         migrateHeldEvent()
     }

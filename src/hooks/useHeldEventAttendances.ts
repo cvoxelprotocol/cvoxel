@@ -10,6 +10,9 @@ import {
 import { getVESS } from "vess-sdk";
 import { CERAMIC_NETWORK } from "@/constants/common";
 import { useDIDAccount } from "@/hooks/useDIDAccount";
+import { useEffect } from "react";
+import { useStateIssuingFromDBLoading } from "@/recoilstate";
+import { useRouter } from "next/router";
 
 export const useHeldEventAttendances = (did?: string) => {
   // const vess = getVESS()
@@ -18,6 +21,9 @@ export const useHeldEventAttendances = (did?: string) => {
   const { lancInfo, lancError } = useToast();
   const { showLoading, closeLoading } = useModal();
   const { did: myDid, originalAddress } = useDIDAccount();
+  const [isMigratingFromDB, setMigratingFromDB] =
+    useStateIssuingFromDBLoading();
+  const router = useRouter();
 
   const { mutateAsync: setHeldEventAttendances } = useMutation<
     void,
@@ -54,6 +60,19 @@ export const useHeldEventAttendances = (did?: string) => {
     }
   );
 
+  const {
+    data: heldEventAttendanceFromDB,
+    isInitialLoading: isLoadingHeldEventsFromDB,
+  } = useQuery<EventAttendanceWithId[] | null>(
+    ["heldEventAttendanceFromDB", did],
+    () => getHeldEventAttendanceFromDB(did),
+    {
+      enabled: !!did && did !== "",
+      staleTime: Infinity,
+      cacheTime: 300000,
+    }
+  );
+
   const migrateHeldEvent = async (): Promise<void> => {
     console.log("migrateHeldEvent: check");
     if (myDid !== did || !originalAddress) return;
@@ -70,6 +89,35 @@ export const useHeldEventAttendances = (did?: string) => {
       console.log("migrateHeldEvent: end");
     }
   };
+  // set held data from DB
+  useEffect(() => {
+    async function migrate() {
+      if (shouldStartToDataMigrationOnCeramic()) {
+        setMigratingFromDB(true);
+        const existedSubjects = HeldEventAttendances?.map((s) => s.ceramicId);
+        const targetIds = heldEventAttendanceFromDB
+          ?.map((m) => m.ceramicId)
+          .filter((id) => !existedSubjects?.includes(id));
+        if (targetIds) {
+          await setHeldEventAttendances(targetIds);
+        }
+        setMigratingFromDB(false);
+      }
+    }
+    if (myDid && myDid === did) {
+      migrate();
+    }
+  }, [HeldEventAttendances, heldEventAttendanceFromDB, myDid, did]);
+
+  const shouldStartToDataMigrationOnCeramic = () => {
+    if (isMigratingFromDB) return false;
+    if (!router.pathname.startsWith("/event/held/")) return false;
+    if (!heldEventAttendanceFromDB || heldEventAttendanceFromDB.length === 0)
+      return false;
+    if (!HeldEventAttendances) return false;
+    return heldEventAttendanceFromDB.length > HeldEventAttendances.length;
+  };
+
   return {
     migrateHeldEvent,
     HeldEventAttendances,

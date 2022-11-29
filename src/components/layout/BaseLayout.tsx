@@ -3,7 +3,6 @@ import { Header } from "./Header";
 import { useModal } from "@/hooks/useModal";
 import { Toaster } from "react-hot-toast";
 import { Meta } from "./parts/Meta";
-import { useRouter } from "next/dist/client/router";;
 import { CVoxelDetailBox } from "@/components/CVoxel/CVoxelDetailBox";
 import { useIsClient } from "@/hooks/useIsClient";
 import { useThemeMode } from "@/hooks/useThemeMode";
@@ -33,7 +32,6 @@ type Props = {
 };
 
 export const BaseLayout = ({ children }: Props) => {
-  const router = useRouter();
   const { isLoading } = useModal();
   const { isClient } = useIsClient();
   const { setThemeMode } = useThemeMode();
@@ -47,10 +45,7 @@ export const BaseLayout = ({ children }: Props) => {
     <div className="flex">
       <Meta />
       <div className="text-sm bg-light-background dark:bg-dark-background relative w-screen h-screen overflow-y-scroll overflow-x-hidden">
-        {router.pathname.startsWith("/intro") ? (
-          <div className="bg-white">{children}</div>
-        ) : (
-          <div className="relative snap-y snap-mandatory h-screen overflow-y-auto overflow-x-hidden">
+        <div className="relative snap-y snap-mandatory h-screen overflow-y-auto overflow-x-hidden">
             <Header />
             <CVoxelDetailBox />
             <div className="mx-auto -m-[72px] md:px-4 w-full break-words">
@@ -61,7 +56,6 @@ export const BaseLayout = ({ children }: Props) => {
              <ThemeModeSelector />
             </div>
           </div>
-        )}
       </div>
       {isLoading && <LoadingModal />}
       <Toast />
