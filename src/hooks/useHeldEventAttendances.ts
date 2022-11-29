@@ -52,12 +52,14 @@ export const useHeldEventAttendances = (did?: string) => {
     unknown,
     string[]
   >((param) => vess.setHeldEventAttendanceVerifiableCredentials(param), {
+    onMutate() {
+      showLoading();
+    },
     onSuccess() {
       closeLoading();
     },
     onError(error) {
       console.log("error", error);
-      lancError(EVENT_ATTENDANCE_HELD_FAILED);
     },
     onSettled: () => {
       queryClient.invalidateQueries(["HeldEventAttendances"]);
