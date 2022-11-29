@@ -47,6 +47,23 @@ export const useHeldEventAttendances = (did?: string) => {
     },
   });
 
+  const { mutateAsync: setHeldEventAttendancesSilently } = useMutation<
+    void,
+    unknown,
+    string[]
+  >((param) => vess.setHeldEventAttendanceVerifiableCredentials(param), {
+    onSuccess() {
+      closeLoading();
+    },
+    onError(error) {
+      console.log("error", error);
+      lancError(EVENT_ATTENDANCE_HELD_FAILED);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries(["HeldEventAttendances"]);
+    },
+  });
+
   const {
     data: HeldEventAttendances,
     isInitialLoading: isFetchingHeldEventAttendances,
@@ -63,11 +80,11 @@ export const useHeldEventAttendances = (did?: string) => {
   const {
     data: heldEventAttendanceFromDB,
     isInitialLoading: isLoadingHeldEventsFromDB,
-  } = useQuery<EventAttendanceWithId[] | null>(
-    ["heldEventAttendanceFromDB", did],
-    () => getHeldEventAttendanceFromDB(did),
+  } = useQuery<EventAttendanceWithId[]>(
+    ["heldEventAttendanceFromDB", myDid],
+    () => getHeldEventAttendanceFromDB(myDid),
     {
-      enabled: !!did && did !== "",
+      enabled: !!myDid && myDid !== "",
       staleTime: Infinity,
       cacheTime: 300000,
     }
@@ -93,13 +110,14 @@ export const useHeldEventAttendances = (did?: string) => {
   useEffect(() => {
     async function migrate() {
       if (shouldStartToDataMigrationOnCeramic()) {
+        console.log("event issuing from DB start");
         setMigratingFromDB(true);
         const existedSubjects = HeldEventAttendances?.map((s) => s.ceramicId);
         const targetIds = heldEventAttendanceFromDB
           ?.map((m) => m.ceramicId)
           .filter((id) => !existedSubjects?.includes(id));
         if (targetIds) {
-          await setHeldEventAttendances(targetIds);
+          await setHeldEventAttendancesSilently(targetIds);
         }
         setMigratingFromDB(false);
       }

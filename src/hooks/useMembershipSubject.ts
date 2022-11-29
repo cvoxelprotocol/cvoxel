@@ -16,10 +16,7 @@ import {
   removeCeramicPrefix,
 } from "vess-sdk";
 import { useDIDAccount } from "@/hooks/useDIDAccount";
-import {
-  getHeldMembershipSubjectsFromDB,
-  getMembershipSUbjectsFromDB,
-} from "@/lib/firebase/store/workspace";
+import { getMembershipSUbjectsFromDB } from "@/lib/firebase/store/workspace";
 import { CERAMIC_NETWORK } from "@/constants/common";
 import { useMemo } from "react";
 
@@ -87,19 +84,6 @@ export const useMembershipSubject = (orgId?: string) => {
   );
 
   const {
-    data: heldMembershipSubjectsFromDB,
-    isInitialLoading: isLoadingHeldSubjectsFromDB,
-  } = useQuery<MembershipSubjectWithId[] | null>(
-    ["heldMembershipSubjectsFromDB", did],
-    () => getHeldMembershipSubjectsFromDB(did),
-    {
-      enabled: !!did && did !== "",
-      staleTime: Infinity,
-      cacheTime: 300000,
-    }
-  );
-
-  const {
     data: membershipSubjectsFromDB,
     isInitialLoading: isLoadingSubjectsFromDB,
   } = useQuery<MembershipSubjectWithId[] | null>(
@@ -155,9 +139,7 @@ export const useMembershipSubject = (orgId?: string) => {
     showSubjectModal,
     membershipSubjectsFromDB,
     isLoadingSubjectsFromDB,
-    heldMembershipSubjectsFromDB,
     HeldMembershipSubjects,
     isFetchingHeldMembershipSubjects,
-    isLoadingHeldSubjectsFromDB,
   };
 };

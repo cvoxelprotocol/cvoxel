@@ -45,10 +45,10 @@ export const useHeldMembershipSubject = (did?: string) => {
     data: heldMembershipSubjectsFromDB,
     isInitialLoading: isLoadingHeldSubjectsFromDB,
   } = useQuery<MembershipSubjectWithId[] | null>(
-    ["heldMembershipSubjectsFromDB", did],
-    () => getHeldMembershipSubjectsFromDB(did),
+    ["heldMembershipSubjectsFromDB", myDid],
+    () => getHeldMembershipSubjectsFromDB(myDid),
     {
-      enabled: !!did && did !== "",
+      enabled: !!myDid && myDid !== "",
       staleTime: Infinity,
       cacheTime: 300000,
     }
