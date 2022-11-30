@@ -3,7 +3,7 @@ import { Header } from "./Header";
 import { useModal } from "@/hooks/useModal";
 import { Toaster } from "react-hot-toast";
 import { Meta } from "./parts/Meta";
-import { useRouter } from "next/dist/client/router";;
+import { useRouter } from "next/dist/client/router";
 import { CVoxelDetailBox } from "@/components/CVoxel/CVoxelDetailBox";
 import { useIsClient } from "@/hooks/useIsClient";
 import { useThemeMode } from "@/hooks/useThemeMode";
@@ -13,17 +13,15 @@ import { ConnectDeworkCard } from "../Dework/ConnectDeworkCard";
 import { DeworkTaskList } from "../Dework/DeworkTaskList";
 import { useDework } from "@/hooks/useDework";
 import dynamic from "next/dynamic";
+import { DevProtocolModal } from "@/components/DevProtocol/DevProtocolModal";
+import { DevProtocolTokenList } from "@/components/DevProtocol/DevProtocolTokenList";
+import { useDevProtocol } from "@/hooks/useDevProtocol";
 
-const LoadingModal = dynamic(
-  () => import("@/components/common/LoadingModal"),
-);
+const LoadingModal = dynamic(() => import("@/components/common/LoadingModal"));
 
-const Toast = dynamic(
-  () => import("@/components/common/toast/Toast"),
-  {
-    ssr: false,
-  }
-);
+const Toast = dynamic(() => import("@/components/common/toast/Toast"), {
+  ssr: false,
+});
 
 type Props = {
   children?: ReactNode;
@@ -37,7 +35,8 @@ export const BaseLayout = ({ children }: Props) => {
   const { isLoading } = useModal();
   const { isClient } = useIsClient();
   const { setThemeMode } = useThemeMode();
-  const {isDeworkConnectOpen,isDeworkTaskListOpen } = useDework()
+  const { isDeworkConnectOpen, isDeworkTaskListOpen } = useDework();
+  const { isDevProtocolOpen } = useDevProtocol(true);
 
   useEffect(() => {
     setThemeMode();
@@ -58,7 +57,7 @@ export const BaseLayout = ({ children }: Props) => {
             </div>
 
             <div className="absolute top-0 bottom-0 left-4 items-center hidden lg:flex">
-             <ThemeModeSelector />
+              <ThemeModeSelector />
             </div>
           </div>
         )}
@@ -67,15 +66,20 @@ export const BaseLayout = ({ children }: Props) => {
       <Toast />
       <Toaster />
       {isDeworkConnectOpen && (
-          <DeworkModal>
-            <ConnectDeworkCard />
-          </DeworkModal>
-        )}
-        {isDeworkTaskListOpen && (
-          <DeworkModal>
-            <DeworkTaskList />
+        <DeworkModal>
+          <ConnectDeworkCard />
         </DeworkModal>
-        )}
+      )}
+      {isDeworkTaskListOpen && (
+        <DeworkModal>
+          <DeworkTaskList />
+        </DeworkModal>
+      )}
+      {isDevProtocolOpen && (
+        <DevProtocolModal>
+          <DevProtocolTokenList />
+        </DevProtocolModal>
+      )}
     </div>
   );
 };

@@ -115,6 +115,15 @@ export const rDeworkTaskListModal = atom({
 export const useStateDeworkTaskListModal = () =>
   useRecoilState(rDeworkTaskListModal);
 
+//devprotocol token list
+export const rDevProtocolListModal = atom({
+  key: "rDevProtocolListModal",
+  default: false,
+});
+
+export const useStateDevProtocolListModal = () =>
+  useRecoilState(rDevProtocolListModal);
+
 //workspace create
 export const rWorkspaceCreateModal = atom({
   key: "rWorkspaceCreateModal",
