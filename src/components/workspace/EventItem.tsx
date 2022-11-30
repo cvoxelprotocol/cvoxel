@@ -21,15 +21,12 @@ export const EventItem:FC<WorkspaceItemProps> = ({item}) => {
                     </div>
                 </div>
             </div>
-            <div>
+            <div className="text-left">
                 <div className="text-light-on-primary-container dark:text-dark-on-error-container text-sm sm:text-lg font-medium text-ellipsis whitespace-nowrap">
                     {item.name} 
                 </div>
                 <div className="text-light-on-primary-container dark:text-dark-on-error-container text-xs sm:text-sm font-medium">
                     {item.url} 
-                </div>
-                <div className="text-light-on-primary-container dark:text-dark-on-error-container text-lg sm:text-2xl font-medium">
-                    {item.desc} 
                 </div>
             </div>
             

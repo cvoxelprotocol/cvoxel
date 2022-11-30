@@ -21,7 +21,7 @@ export const HeldEventContainer: FC<HeldEventContainerProps> = ({did}) => {
   const router = useRouter()
 
   useEffect(() => {
-    if(HeldEventAttendances?.length===0 && did){
+    if(!isFetchingHeldEventAttendances && HeldEventAttendances?.length===0 && did){
         migrateHeldEvent()
     }
   },[HeldEventAttendances, did])

@@ -1,4 +1,3 @@
-import { Button } from "@/components/common/button/Button";
 import { useEventAttendance } from "@/hooks/useEventAttendance";
 import Image from "next/image";
 import { FC, useMemo } from "react";
@@ -7,7 +6,10 @@ import { useHeldEventAttendances } from "@/hooks/useHeldEventAttendances";
 import Router from "next/router";
 import { CommonLoading } from "@/components/common/CommonLoading";
 import { useDIDAccount } from "@/hooks/useDIDAccount";
+import { useOrganization } from "@/hooks/useOrganization";
 import dynamic from "next/dynamic";
+import LinkIcon from "@/components/common/button/shareButton/link.svg";
+import { DefaultButton } from "@/components/common/button/DefaultButton";
 
 const AccountButton = dynamic(
     () => import("@/components/common/button/AccountButton"),
@@ -25,6 +27,7 @@ type Props = {
 
 export const RecieveEventAttendanceContainer:FC<Props> =({eventId}) => {
     const {eventDetail, isLoadingEventDetail} = useEventAttendance(eventId)
+    const {organization} = useOrganization(eventDetail?.organizationId)
     const {did} = useDIDAccount()
     const {claimEventAttendance} = useEventAttendance()
     const {HeldEventAttendances,setHeldEventAttendances } = useHeldEventAttendances(did)
@@ -51,7 +54,7 @@ export const RecieveEventAttendanceContainer:FC<Props> =({eventId}) => {
     }
 
 
-    if(!eventDetail) {
+    if(!isLoadingEventDetail && !eventDetail) {
         return (
             <main className="text-center">
                 <div className="relative w-full max-w-5xl min-h-screen lg:min-h-screen mx-auto pt-24 px-4">
@@ -64,16 +67,16 @@ export const RecieveEventAttendanceContainer:FC<Props> =({eventId}) => {
 
     return (
         <main className="text-center">
-            <div className="relative w-full max-w-5xl min-h-screen lg:min-h-screen mx-auto pt-20 sm:pt-32 px-4">
+            <div className="relative w-full max-w-5xl min-h-screen h-full mx-auto py-20 px-4 overflow-y-scroll">
                 {isLoadingEventDetail ? (
                     <CommonLoading />
                 ): (
                     <>
                     {!eventDetail ? (
-                        <p className="text-3xl">No Event</p>
+                        <p className="text-3xl pt-12">No Event</p>
                     ): (
                         <>
-                            <div className="w-full text-center pb-4">
+                            <div className="w-full text-center pb-4 pt-4">
                                 <div className="text-light-on-primary-container dark:text-dark-on-error-container text-2xl sm:text-4xl font-bold">
                                 {eventDetail.name} 
                                 </div>  
@@ -93,15 +96,14 @@ export const RecieveEventAttendanceContainer:FC<Props> =({eventId}) => {
                                 ): (
                                     <>
                                     {isClaimable ? (
-                                        <Button
-                                            text={"Claim Event Attendance"}
-                                            color={"secondary"}
+                                        <DefaultButton
+                                            text={"Claim"}
                                             onClick={() => handleClickAttendance()}
                                         />
                                     ): (
                                         <div className="w-full flex-none space-y-1">
                                             <div>
-                                                <Button
+                                                <DefaultButton
                                                     text={"Already Claimed"}
                                                     disabled
                                                     color="gray"
@@ -121,23 +123,55 @@ export const RecieveEventAttendanceContainer:FC<Props> =({eventId}) => {
                                     </>
                                 )}
                             </div>
-                            <div className="py-2 px-4 w-full text-left">
-                                <div className="text-light-on-surface dark:text-dark-on-surface font-medium text-sm sm:text-base">
-                                    {eventDetail.desc}
-                                </div>
-                                <div className="py-2 cursor-pointer">
-                                    {eventDetail.url && (
+                            <div className="w-full max-w-[460px] mx-auto bg-light-surface-1 dark:bg-dark-surface-1 text-left rounded-lg">
+                                <div className="w-full pt-4 px-4 pb-2 sm:pt-8 sm:px-8 sm:pb-4 border-b-2 border-b-light-surface-variant dark:border-b-dark-surface-variant">
+                                    <div className="text-light-on-surface dark:text-dark-on-surface text-2xl font-semibold">
+                                        {eventDetail.name} 
+                                    </div>
+                                    {organization && (
+                                        <div className="flex items-center pt-1">
+                                            <div className={"w-[24px] h-[24px] relative "}>
+                                                {organization.icon ? (
+                                                    <img src={organization.icon} alt={organization.name} className="h-full rounded-full"/>
+                                                ): (
+                                                    <Image src={"/org_icon.png"} alt="org icon" objectFit="contain"  layout="fill"/>
+                                                )}
+                                            </div>
+                                            <p className="ml-2 text-sm text-light-on-surface dark:text-dark-on-surface">{organization.name}</p>
+                                        </div>
+                                    )}
+                                    <div className="flex items-center pt-1">
+                                        <div className="w-[24px] h-[24px] flex items-center justify-center">
+                                            <LinkIcon className="w-[16px] h-[16px] text-light-on-surface-variant dark:text-dark-on-surface-variant" />
+                                        </div>
                                         <a
                                             className="flex items-center flex-wrap"
                                             href={`${eventDetail.url}`}
                                             target="_blank"
                                             rel="noreferrer"
                                             >
-                                            <p className="text-light-secondary dark:text-dark-secondary text-sm sm:text-base">
+                                            <p className="ml-2 text-sm text-light-primary dark:text-dark-primary">
                                                 {shortenStr(eventDetail.url, 30)}
                                             </p>
                                         </a>
-                                    )}
+                                    </div>
+                                </div>
+                                <div className="py-4 px-8 w-full">
+                                    <p className="text-sm font-normal text-light-on-surface dark:text-dark-on-surface whitespace-pre-wrap text-ellipsis break-words">{eventDetail.desc}</p>
+                                    <div className="py-8 flex items-center justify-center">
+                                        {!did ? (
+                                            <AccountButton />
+                                        ): (
+                                            <>
+                                                {isClaimable && (
+                                                    <DefaultButton
+                                                        text={"Claim"}
+                                                        onClick={() => handleClickAttendance()}
+                                                    />
+                                                )}
+                                            </>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         </>

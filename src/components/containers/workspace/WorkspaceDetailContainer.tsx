@@ -23,7 +23,7 @@ type Props = {
 export const WorkspaceDetailContainer:FC<Props> =({orgId}) => {
     const {organization} = useOrganization(orgId)
     const {createdMembershipsOfOrg,setShowModal, showModal} = useMembership(orgId)
-    const {IssuedMembershipSubjects, setShowSubjectModal, showSubjectModal} = useMembershipSubject(orgId)
+    const {IssuedMembershipSubjectsOfOrg, setShowSubjectModal, showSubjectModal} = useMembershipSubject(orgId)
     const {issuedEvent, showEventModal, setShowEventModal} = useEventAttendance(orgId)
     const router = useRouter()
 
@@ -82,7 +82,7 @@ export const WorkspaceDetailContainer:FC<Props> =({orgId}) => {
                     </div>
                 </div>
                 <div className="p-4 w-full text-left">
-                    <div className="text-light-on-surface dark:text-dark-on-surface font-medium text-lg">
+                    <div className="text-light-on-surface dark:text-dark-on-surface font-medium text-lg  whitespace-pre-wrap text-ellipsis break-words">
                         {organization.desc}
                     </div>
                 </div>
@@ -100,7 +100,7 @@ export const WorkspaceDetailContainer:FC<Props> =({orgId}) => {
                 <div className="w-full pt-4">
                     <div className="w-full relative space-y-2 border-light-on-primary-container dark:border-dark-on-primary-container overflow-y-scroll hidden-scrollbar">
                         <p className="text-left text-lg font-bold text-light-on-surface dark:text-dark-on-surface">Members</p>
-                            {IssuedMembershipSubjects && IssuedMembershipSubjects.map(item => {
+                            {IssuedMembershipSubjectsOfOrg && IssuedMembershipSubjectsOfOrg.map(item => {
                                 return (
                                     <div key={item.ceramicId} className="cursor-pointer" onClick={() => goToUserPage(item)}>
                                         <MembershipSubjectItem item={item} />

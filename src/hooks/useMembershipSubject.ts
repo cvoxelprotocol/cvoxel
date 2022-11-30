@@ -20,6 +20,7 @@ import {
   getMembershipSUbjectsFromDB,
 } from "@/lib/firebase/store/workspace";
 import { CERAMIC_NETWORK } from "@/constants/common";
+import { useMemo } from "react";
 
 export const useMembershipSubject = (orgId?: string) => {
   const { did } = useDIDAccount();
@@ -134,8 +135,16 @@ export const useMembershipSubject = (orgId?: string) => {
     return res;
   };
 
+  const IssuedMembershipSubjectsOfOrg = useMemo<
+    MembershipSubjectWithId[]
+  >(() => {
+    if (!IssuedMembershipSubjects || !orgId) return [];
+    return IssuedMembershipSubjects.filter((m) => m.organizationId === orgId);
+  }, [IssuedMembershipSubjects, orgId]);
+
   return {
     IssuedMembershipSubjects,
+    IssuedMembershipSubjectsOfOrg,
     isInitialLoading,
     issue,
     isCreatingSubject,

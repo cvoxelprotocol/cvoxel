@@ -1,4 +1,5 @@
 import { Button } from "@/components/common/button/Button";
+import { EditEventCard } from "@/components/workspace/EditEventCard";
 import { EventAttendanceItem } from "@/components/workspace/EventAttendanceItem";
 import { IssueEventAttendanceCard } from "@/components/workspace/IssueEventAttendanceCard";
 import { IssueEventAttendanceFromProxyCard } from "@/components/workspace/IssueEventAttendanceFromProxyCard";
@@ -19,7 +20,7 @@ type Props = {
 
 export const AdminEventDetailContainer:FC<Props> =({eventId}) => {
     const {did} = useDIDAccount()
-    const {eventDetail, showEventAttendanceModal, setShowEventAttendanceModal,showEventAttendanceFromProxyModal,setShowEventAttendanceFromProxyModal,IssuedEventAttendanceVerifiableCredentials} = useEventAttendance(eventId)
+    const {eventDetail, showEventAttendanceModal, setShowEventAttendanceModal,showEventAttendanceFromProxyModal,setShowEventAttendanceFromProxyModal,IssuedEventAttendanceVerifiableCredentials,setShowEventModal, showEventModal} = useEventAttendance(eventId)
 
     const eventAttendances = useMemo(() => {
         if(!IssuedEventAttendanceVerifiableCredentials || IssuedEventAttendanceVerifiableCredentials.length ===0) return []
@@ -66,11 +67,16 @@ export const AdminEventDetailContainer:FC<Props> =({eventId}) => {
                     </div>
                 </div>
                 <div className="p-4 w-full text-left">
-                    <div className="text-light-on-surface dark:text-dark-on-surface font-medium text-lg">
+                    <div className="text-light-on-surface dark:text-dark-on-surface font-medium text-lg whitespace-pre-wrap text-ellipsis break-words">
                         {eventDetail.desc}
                     </div>
                 </div>
                 <div className="py-4 flex space-x-4">
+                    <Button
+                        text={"Edit"}
+                        color={"secondary"}
+                        onClick={() => setShowEventModal(true)}
+                    />
                     <Button
                         text={"Issue Event Attendance"}
                         color={"secondary"}
@@ -111,6 +117,11 @@ export const AdminEventDetailContainer:FC<Props> =({eventId}) => {
             {(showEventAttendanceFromProxyModal && eventDetail) && (
                 <WorkspaceModal>
                     <IssueEventAttendanceFromProxyCard event={eventDetail}/>
+                </WorkspaceModal>
+            )}
+            {(eventDetail && showEventModal) && (
+                <WorkspaceModal>
+                    <EditEventCard event={eventDetail}/>
                 </WorkspaceModal>
             )}
         </main>
