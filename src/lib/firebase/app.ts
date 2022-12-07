@@ -27,7 +27,7 @@ if (!apps.length) {
 }
 
 const firestore = getFirestore(app);
-const functions = getFunctions();
+const functions = getFunctions(app);
 const auth = getAuth(app);
 functions.region = "us-central1";
 
@@ -36,9 +36,10 @@ if (app.name && typeof window !== "undefined") {
   analytics = getAnalytics(app);
 }
 
-// if (process.env.NODE_ENV !== "production") {
-//   connectFunctionsEmulator(functions, "localhost", 5111);
-//   connectFirestoreEmulator(firestore, "localhost", 8081);
-// }
+if (process.env.NEXT_PUBLIC_USE_EMULATOR == "true") {
+  console.log("connect emulator");
+  connectFunctionsEmulator(functions, "localhost", 5111);
+  connectFirestoreEmulator(firestore, "localhost", 8081);
+}
 
 export { firestore, functions, auth, config, analytics, app };

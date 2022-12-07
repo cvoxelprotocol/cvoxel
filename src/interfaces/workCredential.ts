@@ -10,3 +10,11 @@ export type WorkSubjectFromDework = WorkSubject & {
   streamId?: string;
   taskId?: string;
 };
+
+export type WorkSubjectFromERC721 = WorkSubject & {
+  streamId?: string
+  chainId: number;
+  contractAddress: string;
+  tokenId: number;
+  tokenHash: string;
+};
