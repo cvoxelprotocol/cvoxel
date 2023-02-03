@@ -68,7 +68,7 @@ export const VoxelDetail: FC<Props> = ({
       setOffchainItem(offchain)
     }
     if(!offchainItem && crdl){
-      fetch(crdl?.backupId)
+      fetch(crdl?.ceramicId)
     }
   },[crdl])
 
@@ -88,7 +88,7 @@ export const VoxelDetail: FC<Props> = ({
   },[offchainItem])
 
   const handleUpdate = async () => {
-    if (!(offchainItem && crdl && crdl.backupId)) return false;
+    if (!(offchainItem && crdl && crdl.ceramicId)) return false;
     if (updatable) {
       let newItem: WorkCredential = {...crdl}
       if(offchainItem.signature?.partnerSigner && offchainItem.signature?.partnerSig){
@@ -98,7 +98,7 @@ export const VoxelDetail: FC<Props> = ({
         newItem.signature = {...crdl.signature, agentSigner: offchainItem.signature?.agentSigner,agentSig: offchainItem.signature?.agentSig }
       }
 
-      await update(crdl.backupId, newItem);
+      await update(crdl.ceramicId, newItem);
       if (notifyUpdated) {
         notifyUpdated();
       }
@@ -164,7 +164,7 @@ export const VoxelDetail: FC<Props> = ({
           )}
 
           <div className="absolute right-4 bottom-4">
-            <ShareButton valiant="icon" voxelID={crdl?.backupId} isOwner={isOwner}/>
+            <ShareButton valiant="icon" voxelID={crdl?.ceramicId} isOwner={isOwner}/>
           </div>
         </div>
 
@@ -257,9 +257,9 @@ export const VoxelDetail: FC<Props> = ({
           </div>
         )}
         <div className="w-full flex items-center justify-end space-x-1 pt-7">
-          {(isSemiCRDL && offchainItem && offchainItem.backupId) && (
+          {(isSemiCRDL && offchainItem && offchainItem.ceramicId) && (
             <div className="text-right">
-              <CopyRequestURLButton id={offchainItem.backupId} />
+              <CopyRequestURLButton id={offchainItem.ceramicId} />
             </div>
           )}
           {updatable && isOwner && (

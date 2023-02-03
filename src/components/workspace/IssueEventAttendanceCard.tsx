@@ -35,12 +35,8 @@ export const IssueEventAttendanceCard:FC<Props> = ({event}) => {
       const onClickSubmit = async(data: EventAttendanceForm) => {
         const dids = data.dids.map(d => d.did)
         if(!dids || dids.length===0) return
-        const arr: string[] = []
-        for(const did of dids) {
-            const res = await issueEventAttendance(event, did)
-            if(res && res.streamId) arr.push(res.streamId)
-        }
-        if(arr.length>0){
+        const res = await issueEventAttendance(event, dids)
+        if(res && res.streamIds.length>0){
             setShowEventAttendanceModal(false)
         } else {
             setError("dids", {message: "failed to create"})

@@ -10,6 +10,8 @@ import { useOrganization } from "@/hooks/useOrganization";
 import dynamic from "next/dynamic";
 import LinkIcon from "@/components/common/button/shareButton/link.svg";
 import { DefaultButton } from "@/components/common/button/DefaultButton";
+import { useVESSApi } from "@/hooks/useVESSApi";
+import { IssueEventAttendanceWithKMSType } from "@/interfaces/backend";
 
 const AccountButton = dynamic(
     () => import("@/components/common/button/AccountButton"),
@@ -23,22 +25,35 @@ const AccountButton = dynamic(
 
 type Props = {
     eventId?: string;
+    vcType?:"kms" | "wallet"
 };
 
-export const RecieveEventAttendanceContainer:FC<Props> =({eventId}) => {
+export const RecieveEventAttendanceContainer:FC<Props> =({eventId, vcType = "wallet"}) => {
     const {eventDetail, isLoadingEventDetail,claimEventAttendance} = useEventAttendance(eventId)
     const {organization} = useOrganization(eventDetail?.organizationId)
     const {did} = useDIDAccount()
     const {HeldEventAttendances,setHeldEventAttendances } = useHeldEventAttendances(did)
+    const {recieveEventAttendances} = useVESSApi(did)
     
 
     const handleClickAttendance = async () => {
-        if(!did || !eventDetail) return
-        const vcs = await claimEventAttendance(eventDetail, [did])
+        console.log({organization})
+        if(vcType === "kms"){
+            if(!did || !eventDetail || !organization || !organization.admin.ethereumAddress) return
+            const param:IssueEventAttendanceWithKMSType = {
+                content: eventDetail,
+                issuerAddress: organization.admin.ethereumAddress,
+                holderDid: did
+            }
+            await recieveEventAttendances(param)
+        } else {
+            if(!did || !eventDetail) return
+            const vcs = await claimEventAttendance(eventDetail, [did])
         if(vcs && vcs.length>0) {
             await setHeldEventAttendances(vcs)
         } else {
             console.log("Error: No vcs")
+        }
         }
     }
 

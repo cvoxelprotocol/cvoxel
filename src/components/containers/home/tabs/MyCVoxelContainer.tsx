@@ -80,7 +80,7 @@ export const MyCVoxelContainer: FC = () => {
   }, [router.query]);
 
   const currentCredential = useMemo(
-    () => sortCredentials.find((crdl) => crdl.backupId == currentVoxelID),
+    () => sortCredentials.find((crdl) => crdl.ceramicId == currentVoxelID),
     [currentVoxelID, sortCredentials]
   );
 

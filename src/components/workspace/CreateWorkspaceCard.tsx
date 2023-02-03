@@ -15,7 +15,7 @@ type OrganizationInput = {
 }
 export const CreateWorkspaceCard:FC = () => {
     const {createOrganization, setShowCreateModal} = useOrganization()
-    const {did} = useDIDAccount()
+    const {did,originalAddress} = useDIDAccount()
     const { icon, setIcon } = useFileUpload();
 
     const {
@@ -30,7 +30,10 @@ export const CreateWorkspaceCard:FC = () => {
         if (!name || !did || !icon) return;
 
         const org:Organization = {
-            admin: did,
+            admin: {
+                id:did,
+                ethereumAddress: originalAddress
+            },
             name,
             desc: desc || "",
             icon: icon,

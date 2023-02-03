@@ -30,7 +30,7 @@ export const CVoxelDetailBox: FC<{}> = () => {
   const [box] = useStateCredentialDetailBox();
   const { account } = useDIDAccount();
 
-  const {workCredential} = useFetchWorkCredential(box?.item.backupId)
+  const {workCredential} = useFetchWorkCredential(box?.item.ceramicId)
 
 
   const isOwner = useMemo(() => {
@@ -112,7 +112,7 @@ export const CVoxelDetailBox: FC<{}> = () => {
           <div className="h-52">
             {(box && box.item.id && workCredential) &&  (
               <OneVoxelVisualizerPresenterWrapper
-                workCredential={{...workCredential, backupId:box.item.id}}
+                workCredential={{...workCredential, ceramicId:box.item.id}}
                 zoom={5}
                 disableHover
               />

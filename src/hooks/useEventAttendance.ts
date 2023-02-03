@@ -45,15 +45,15 @@ export const useEventAttendance = (eventId?: string) => {
     mutateAsync: issueEventAttendanceCredential,
     isLoading: isCreatingSubject,
   } = useMutation<
-    CustomResponse<{ streamId: string | undefined }>,
+    CustomResponse<{ streamIds: string[] }>,
     unknown,
-    EventAttendance
+    EventAttendance[]
   >((param) => vess.issueEventAttendanceCredential(param), {
     onMutate() {
       showLoading();
     },
     onSuccess(data) {
-      if (data.streamId) {
+      if (data.status === 200) {
         closeLoading();
         lancInfo(EVENT_ATTENDANCE_CREATION_SUCCEED);
       } else {
@@ -98,18 +98,22 @@ export const useEventAttendance = (eventId?: string) => {
     }
   );
 
-  const issueEventAttendance = async (event: EventWithId, did: string) => {
-    const content: EventAttendance = {
-      id: did,
-      eventId: event.ceramicId,
-      eventName: event.name,
-      eventIcon: event.icon,
-    };
+  const issueEventAttendance = async (event: EventWithId, dids: string[]) => {
+    const contents: EventAttendance[] = [];
+    for (const did of dids) {
+      const content: EventAttendance = {
+        id: did,
+        eventId: event.ceramicId,
+        eventName: event.name,
+        eventIcon: event.icon,
+      };
+      contents.push(content);
+    }
 
-    console.log({ content });
+    console.log({ contents });
 
     //issue
-    const res = await issueEventAttendanceCredential(content);
+    const res = await issueEventAttendanceCredential(contents);
     console.log({ res });
 
     return res;

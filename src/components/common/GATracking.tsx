@@ -1,5 +1,3 @@
-import { analytics } from "@/lib/firebase/app"
-import { logEvent } from "firebase/analytics"
 import { useRouter } from "next/router"
 import Script from "next/script"
 import { FC, useEffect } from "react"

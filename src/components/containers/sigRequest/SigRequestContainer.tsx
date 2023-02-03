@@ -28,8 +28,8 @@ export const SigRequestContainer: FC<Props> = ({ txId }) => {
 
   const handleVerify = useCallback(
     async (crdl: WorkCredentialWithId) => {
-      if(!crdl.backupId || !did) return
-      const result = await signCredential(crdl.backupId, crdl, did)
+      if(!crdl.ceramicId || !did) return
+      const result = await signCredential(crdl.ceramicId, crdl, did)
         if (result) {
           setScreenState("info")
           router.push(`/${did}`)

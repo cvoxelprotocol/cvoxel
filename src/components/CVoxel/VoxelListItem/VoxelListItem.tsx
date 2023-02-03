@@ -192,7 +192,7 @@ const VoxelListItem: FC<Props> = ({ workCredential }) => {
 
   if (!detailItem) return <></>;
   return (
-    <Link href={`${router.asPath.split("?")[0]}?voxel=${workCredential.backupId}`}>
+    <Link href={`${router.asPath.split("?")[0]}?voxel=${workCredential.ceramicId}`}>
       <div className="w-full">
         <div className="w-full border border-light-on-primary-container dark:border-dark-on-primary-container rounded-lg overflow-hidden bg-light-surface-1 dark:bg-dark-surface-1">
           <div className="hidden lg:block w-full">

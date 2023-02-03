@@ -32,15 +32,15 @@ export const useMembershipSubject = (orgId?: string) => {
 
   const { mutateAsync: issueMembershipSubject, isLoading: isCreatingSubject } =
     useMutation<
-      CustomResponse<{ streamId: string | undefined }>,
+      CustomResponse<{ streamIds: string[] }>,
       unknown,
-      VerifiableMembershipSubject
+      VerifiableMembershipSubject[]
     >((param) => vess.issueMembershipSubject(param), {
       onMutate() {
         showLoading();
       },
       onSuccess(data) {
-        if (data.streamId) {
+        if (data.status === 200) {
           closeLoading();
           lancInfo(MEMBERSHIP_SUBJECT_CREATION_SUCCEED);
         } else {
@@ -114,7 +114,7 @@ export const useMembershipSubject = (orgId?: string) => {
     console.log({ content });
 
     //issue
-    const res = await issueMembershipSubject(content);
+    const res = await issueMembershipSubject([content]);
     console.log({ res });
 
     return res;

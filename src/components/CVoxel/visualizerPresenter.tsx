@@ -44,7 +44,7 @@ const VisualizerPresenter: FC<VisualizerPresenterProps> = ({
 
   const handleClickVox = (id: string) => {
     if(!(workCredentials && workCredentials.length>0)) return
-    const selectedVoxel = workCredentials.find(wc => wc.backupId === id)
+    const selectedVoxel = workCredentials.find(wc => wc.ceramicId === id)
     if (selectedVoxel) {
       showDetailBox?.({ item: selectedVoxel });
     }

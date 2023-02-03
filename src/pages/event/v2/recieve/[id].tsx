@@ -17,5 +17,5 @@ export const getServerSideProps: GetServerSideProps<
 };
 
 export default function EventRecievePage({ id }: Props) {
-  return <RecieveEventAttendanceContainer eventId={id} vcType={"wallet"} />
+  return <RecieveEventAttendanceContainer eventId={id} vcType={"kms"} />
 }

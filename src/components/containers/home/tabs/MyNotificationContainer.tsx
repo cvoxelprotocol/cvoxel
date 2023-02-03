@@ -26,8 +26,8 @@ export const MyNotificationContainer: FC = () => {
 
   const handleVerify = useCallback(
     async (crdl: WorkCredentialWithId) => {
-      if(!crdl.backupId || !did) return
-      const result = await signCredential(crdl.backupId, crdl, did)
+      if(!crdl.ceramicId || !did) return
+      const result = await signCredential(crdl.ceramicId, crdl, did)
         if (result) {
           updateMetaList()
           setScreenState("info")
@@ -47,7 +47,7 @@ export const MyNotificationContainer: FC = () => {
 
   const currentCRDL = useMemo(() =>{
     if(!sigRequestList) return
-    return sigRequestList.find((item) => item.backupId == removeCeramicPrefix(currentId))
+    return sigRequestList.find((item) => item.ceramicId == removeCeramicPrefix(currentId))
   } ,[currentId, sigRequestList]);
 
   const handleClickNavBackButton = useCallback(() => {

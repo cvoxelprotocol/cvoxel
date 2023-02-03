@@ -27,12 +27,8 @@ export const useConnectDID = () => {
   const { loginDework } = useDework();
   const { lancError } = useToast();
   const { connectEvent } = useGAEvent();
-  const {
-    issueHeldEventFromDB,
-    issueHeldMembershipFromDB,
-    migrateAccount,
-    migrateHeldEvent,
-  } = useMigrationFromDB();
+  const { issueHeldEventFromDB, issueHeldMembershipFromDB, migrateHeldEvent } =
+    useMigrationFromDB();
   // const vess = getVESS()
   const vess = getVESS(CERAMIC_NETWORK !== "mainnet");
 
@@ -65,10 +61,10 @@ export const useConnectDID = () => {
         loginDework(account);
 
         // migration
-        await migrateAccount(
-          session.did.parent,
-          web3ModalService.originalAddress
-        );
+        // await migrateAccount(
+        //   session.did.parent,
+        //   web3ModalService.originalAddress
+        // );
         await migrateHeldEvent(
           session.did.parent,
           web3ModalService.originalAddress

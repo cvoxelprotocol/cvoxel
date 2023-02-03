@@ -21,9 +21,9 @@ export const useMultipleVoxelStyler = (crdls: WorkCredentialWithId[]) => {
     let stackedVoxels: CVoxelThreeWithId[] = [];
     if (crdls && crdls.length > 0) {
       crdls.forEach((voxel, i) => {
-        if (!voxel.backupId) return;
+        if (!voxel.ceramicId) return;
         let voxelTemp: CVoxelVisTypeWithId = {
-          id: voxel.backupId,
+          id: voxel.ceramicId,
           color: "",
           opacity: 0.45,
           lattice: false,
@@ -204,7 +204,7 @@ export const useMultipleVoxelStyler = (crdls: WorkCredentialWithId[]) => {
 
 export const useVoxelStyler = (crdl?: WorkCredentialWithId) => {
   const displayVoxel = useMemo(() => {
-    if (!(crdl && crdl.backupId)) return;
+    if (!(crdl && crdl.ceramicId)) return;
     const initPosition = new THREE.Vector3(0, 0, 0);
     const { signature } = crdl;
     const { work, deliverables } = crdl.subject;
@@ -221,7 +221,7 @@ export const useVoxelStyler = (crdl?: WorkCredentialWithId) => {
     hue = genreHue || 330;
 
     const styledVoxel: CVoxelThreeWithId = {
-      id: crdl.backupId,
+      id: crdl.ceramicId,
       color: `hsl(${hue}, ${saturation.toFixed()}%, ${lightness.toFixed()}%)`,
       opacity:
         holderSig && holderSig !== "" && partnerSig && partnerSig !== ""

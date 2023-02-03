@@ -55,19 +55,19 @@ export const useDeworkTask = () => {
         },
       }
     );
-  const { mutateAsync: issue } = useMutation<
-    void,
-    unknown,
-    issueCRDLFromDeworkParam
-  >((param) => issueCRDLsFromDework(param), {
-    onSuccess() {},
-    onError(error) {
-      console.log(error);
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries(["heldWorkCredentials"]);
-    },
-  });
+  // const { mutateAsync: issue } = useMutation<
+  //   void,
+  //   unknown,
+  //   issueCRDLFromDeworkParam
+  // >((param) => issueCRDLsFromDework(param), {
+  //   onSuccess() {},
+  //   onError(error) {
+  //     console.log(error);
+  //   },
+  //   onSettled: () => {
+  //     queryClient.invalidateQueries(["heldWorkCredentials"]);
+  //   },
+  // });
 
   const refetchDeworkTasks = async () => {
     if (!account) return;
@@ -90,25 +90,27 @@ export const useDeworkTask = () => {
     });
   };
 
-  const issueCRDLsFromDework = async (param: issueCRDLFromDeworkParam) => {
-    try {
-      const streamIds = await deworkService.issueCRDLs(param);
-      if (streamIds && streamIds.length > 0) {
-        await vess.setHeldWorkCredentials(streamIds);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // const issueCRDLsFromDework = async (param: issueCRDLFromDeworkParam) => {
+  //   try {
+  //     const streamIds = await deworkService.issueCRDLs(param);
+  //     if (streamIds && streamIds.length > 0) {
+  //       await vess.setHeldWorkCredentials(streamIds);
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   const issueCRDLs = async (ids: string[], storeAll: boolean) => {
     if (!account) return;
-    const param: issueCRDLFromDeworkParam = {
-      address: account,
-      ids,
-      storeAll,
-    };
-    await issue(param);
+    // const param: issueCRDLFromDeworkParam = {
+    //   address: account,
+    //   ids,
+    //   storeAll,
+    // };
+    // await issue(param);
+    console.log({ ids });
+    console.log({ storeAll });
   };
 
   return {

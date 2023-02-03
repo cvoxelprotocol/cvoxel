@@ -218,7 +218,7 @@ export const SigRequestListItem: FC<Props> = ({ item }) => {
   };
 
   return (
-    <Link href={`${router.asPath.split("?")[0]}?crdl=${item.backupId}`}>
+    <Link href={`${router.asPath.split("?")[0]}?crdl=${item.ceramicId}`}>
       <a className="w-full">
         <div className="w-full border border-light-on-primary-container dark:border-dark-on-primary-container rounded-lg overflow-hidden bg-light-surface-1 dark:bg-dark-surface-1">
           <div className="hidden lg:block w-full">

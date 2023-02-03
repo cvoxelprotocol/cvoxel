@@ -2,7 +2,7 @@ import { WorkCredentialWithId } from "vess-sdk";
 
 export const initCVoxel: WorkCredentialWithId[] = [
   {
-    backupId: "1",
+    ceramicId: "1",
     id: "1",
     subject: {
       work: {
@@ -23,7 +23,7 @@ export const initCVoxel: WorkCredentialWithId[] = [
     },
   },
   {
-    backupId: "2",
+    ceramicId: "2",
     id: "2",
     subject: {
       work: {
@@ -44,7 +44,7 @@ export const initCVoxel: WorkCredentialWithId[] = [
     },
   },
   {
-    backupId: "3",
+    ceramicId: "3",
     id: "3",
     subject: {
       work: {
@@ -65,7 +65,7 @@ export const initCVoxel: WorkCredentialWithId[] = [
     },
   },
   {
-    backupId: "4",
+    ceramicId: "4",
     id: "4",
     subject: {
       work: {
@@ -86,7 +86,7 @@ export const initCVoxel: WorkCredentialWithId[] = [
     },
   },
   {
-    backupId: "5",
+    ceramicId: "5",
     id: "5",
     subject: {
       work: {
@@ -107,7 +107,7 @@ export const initCVoxel: WorkCredentialWithId[] = [
     },
   },
   {
-    backupId: "6",
+    ceramicId: "6",
     id: "6",
     subject: {
       work: {
@@ -128,7 +128,7 @@ export const initCVoxel: WorkCredentialWithId[] = [
     },
   },
   {
-    backupId: "7",
+    ceramicId: "7",
     id: "7",
     subject: {
       work: {
@@ -149,7 +149,7 @@ export const initCVoxel: WorkCredentialWithId[] = [
     },
   },
   {
-    backupId: "8",
+    ceramicId: "8",
     id: "8",
     subject: {
       work: {
@@ -170,7 +170,7 @@ export const initCVoxel: WorkCredentialWithId[] = [
     },
   },
   {
-    backupId: "9",
+    ceramicId: "9",
     id: "9",
     subject: {
       work: {
@@ -191,7 +191,7 @@ export const initCVoxel: WorkCredentialWithId[] = [
     },
   },
   {
-    backupId: "10",
+    ceramicId: "10",
     id: "10",
     subject: {
       work: {
@@ -212,7 +212,7 @@ export const initCVoxel: WorkCredentialWithId[] = [
     },
   },
   {
-    backupId: "11",
+    ceramicId: "11",
     id: "11",
     subject: {
       work: {
@@ -233,7 +233,7 @@ export const initCVoxel: WorkCredentialWithId[] = [
     },
   },
   {
-    backupId: "12",
+    ceramicId: "12",
     id: "12",
     subject: {
       work: {
@@ -254,7 +254,7 @@ export const initCVoxel: WorkCredentialWithId[] = [
     },
   },
   {
-    backupId: "13",
+    ceramicId: "13",
     id: "13",
     subject: {
       work: {
@@ -275,7 +275,7 @@ export const initCVoxel: WorkCredentialWithId[] = [
     },
   },
   {
-    backupId: "14",
+    ceramicId: "14",
     id: "14",
     subject: {
       work: {
@@ -296,7 +296,7 @@ export const initCVoxel: WorkCredentialWithId[] = [
     },
   },
   {
-    backupId: "15",
+    ceramicId: "15",
     id: "15",
     subject: {
       work: {
@@ -317,7 +317,7 @@ export const initCVoxel: WorkCredentialWithId[] = [
     },
   },
   {
-    backupId: "16",
+    ceramicId: "16",
     id: "16",
     subject: {
       work: {
@@ -338,7 +338,7 @@ export const initCVoxel: WorkCredentialWithId[] = [
     },
   },
   {
-    backupId: "17",
+    ceramicId: "17",
     id: "17",
     subject: {
       work: {
@@ -359,7 +359,7 @@ export const initCVoxel: WorkCredentialWithId[] = [
     },
   },
   {
-    backupId: "18",
+    ceramicId: "18",
     id: "18",
     subject: {
       work: {
@@ -381,7 +381,7 @@ export const initCVoxel: WorkCredentialWithId[] = [
   },
 
   {
-    backupId: "19",
+    ceramicId: "19",
     id: "19",
     subject: {
       work: {
@@ -402,7 +402,7 @@ export const initCVoxel: WorkCredentialWithId[] = [
     },
   },
   {
-    backupId: "20",
+    ceramicId: "20",
     id: "20",
     subject: {
       work: {
@@ -423,7 +423,7 @@ export const initCVoxel: WorkCredentialWithId[] = [
     },
   },
   {
-    backupId: "21",
+    ceramicId: "21",
     id: "21",
     subject: {
       work: {
@@ -444,7 +444,7 @@ export const initCVoxel: WorkCredentialWithId[] = [
     },
   },
   {
-    backupId: "22",
+    ceramicId: "22",
     id: "22",
     subject: {
       work: {
@@ -465,7 +465,7 @@ export const initCVoxel: WorkCredentialWithId[] = [
     },
   },
   {
-    backupId: "23",
+    ceramicId: "23",
     id: "23",
     subject: {
       work: {
@@ -486,7 +486,7 @@ export const initCVoxel: WorkCredentialWithId[] = [
     },
   },
   {
-    backupId: "24",
+    ceramicId: "24",
     id: "24",
     subject: {
       work: {
@@ -507,7 +507,7 @@ export const initCVoxel: WorkCredentialWithId[] = [
     },
   },
   {
-    backupId: "25",
+    ceramicId: "25",
     id: "25",
     subject: {
       work: {
@@ -528,7 +528,7 @@ export const initCVoxel: WorkCredentialWithId[] = [
     },
   },
   {
-    backupId: "26",
+    ceramicId: "26",
     id: "26",
     subject: {
       work: {
@@ -549,7 +549,7 @@ export const initCVoxel: WorkCredentialWithId[] = [
     },
   },
   {
-    backupId: "27",
+    ceramicId: "27",
     id: "27",
     subject: {
       work: {

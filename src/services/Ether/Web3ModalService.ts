@@ -40,15 +40,6 @@ export class Web3ModalService {
     if (!process.env.NEXT_PUBLIC_INFURA_KEY)
       throw new Error("Something went wrong..");
 
-    if (this.provider && this.account && this.chainId && this.web3Modal) {
-      return {
-        account: this.account,
-        originalAddress: this.originalAddress,
-        chainId: this.chainId,
-        provider: this.provider,
-      };
-    }
-
     try {
       const providerOptions = {
         walletconnect: {

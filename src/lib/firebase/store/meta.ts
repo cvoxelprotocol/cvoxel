@@ -73,7 +73,7 @@ const getV1SigRequestList = (
           const d = doc.data() as CVoxelMetaDraft;
           if (d.fromSigner !== address && d.toSigner !== address) {
             const crdl = convertV1DataToCRDL(d, address);
-            if (crdl) crdls.push({ ...crdl, backupId: doc.id });
+            if (crdl) crdls.push({ ...crdl, ceramicId: doc.id });
           }
         });
         resolve(crdls);
@@ -137,7 +137,7 @@ const getV1DataList = (address?: string): Promise<WorkCredentialWithId[]> =>
         result.docs.forEach((doc) => {
           const d = doc.data() as CVoxelMetaDraft;
           const crdl = convertV1DataToCRDL(d, address);
-          if (crdl) crdls.push({ ...crdl, backupId: doc.id });
+          if (crdl) crdls.push({ ...crdl, ceramicId: doc.id });
         });
         resolve(crdls);
       })

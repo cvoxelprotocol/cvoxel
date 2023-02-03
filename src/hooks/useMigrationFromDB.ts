@@ -89,25 +89,25 @@ export const useMigrationFromDB = () => {
     }
   };
 
-  const migrateAccount = async (
-    did: string,
-    originalAddress?: string
-  ): Promise<void> => {
-    if (!originalAddress) return;
-    console.log("migrateAccount: check");
-    const workCredentials = await vess.getHeldWorkCredentials(did);
-    if (workCredentials && workCredentials.length > 0) return;
-    const oldDid = `did:pkh:eip155:1:${originalAddress}`;
-    const oldCRDLs = await vess.getHeldWorkCredentialStreamIds(oldDid);
-    if (oldCRDLs.length > 0) {
-      console.log("migrateAccount: execute", oldCRDLs);
-      showLoading();
-      await vess.setHeldWorkCredentials(oldCRDLs);
-      closeLoading();
-      queryClient.invalidateQueries(["heldWorkCredentials"]);
-      console.log("migrateAccount end");
-    }
-  };
+  // const migrateAccount = async (
+  //   did: string,
+  //   originalAddress?: string
+  // ): Promise<void> => {
+  //   if (!originalAddress) return;
+  //   console.log("migrateAccount: check");
+  //   const workCredentials = await vess.getHeldWorkCredentials(did);
+  //   if (workCredentials && workCredentials.length > 0) return;
+  //   const oldDid = `did:pkh:eip155:1:${originalAddress}`;
+  //   const oldCRDLs = await vess.getHeldWorkCredentialStreamIds(oldDid);
+  //   if (oldCRDLs.length > 0) {
+  //     console.log("migrateAccount: execute", oldCRDLs);
+  //     showLoading();
+  //     await vess.setHeldWorkCredentials(oldCRDLs);
+  //     closeLoading();
+  //     queryClient.invalidateQueries(["heldWorkCredentials"]);
+  //     console.log("migrateAccount end");
+  //   }
+  // };
 
   const migrateHeldEvent = async (
     did: string,
@@ -133,7 +133,6 @@ export const useMigrationFromDB = () => {
   };
 
   return {
-    migrateAccount,
     migrateHeldEvent,
     issueHeldMembershipFromDB,
     issueHeldEventFromDB,
