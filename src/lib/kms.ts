@@ -3,15 +3,16 @@ import { VESS_ENDPOINT_TYPE } from "@/server/kms";
 import { getEnv } from "@/utils/envUtil";
 import { isGoodResponse } from "@/utils/http";
 import { getCurrentDomain } from "@/utils/url";
-import { EventAttendanceWithId } from "vess-sdk";
+import { addCeramicPrefix, EventAttendanceWithId } from "vess-sdk";
 
 export const issueEventAttendance = async (
+  ceramicId: string,
   body: IssueEventAttendanceWithKMSType
 ): Promise<EventAttendanceWithId[]> => {
   try {
     const res = await baseVessApi(
       "/events/attendances",
-      undefined,
+      ceramicId,
       "POST",
       body
     );
@@ -35,7 +36,9 @@ const baseVessApi = async (
   try {
     const url = `${
       getCurrentDomain() || getEnv("AUTH0_BASE_URL")
-    }/api/vessApi?endpoint=${endpoint}&ceramicOrgId=${ceramicOrgId}`;
+    }/api/vessApi?endpoint=${endpoint}&ceramicOrgId=${
+      ceramicOrgId ? addCeramicPrefix(ceramicOrgId) : ""
+    }`;
     if (method === "GET") {
       return await fetch(url);
     } else {

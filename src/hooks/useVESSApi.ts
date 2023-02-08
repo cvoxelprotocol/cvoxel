@@ -11,6 +11,11 @@ import { IssueEventAttendanceWithKMSType } from "@/interfaces/backend";
 import { useHeldEventAttendances } from "@/hooks/useHeldEventAttendances";
 import { EventAttendanceWithId } from "vess-sdk";
 
+export type IssueEventAttendanceParam = {
+  ceramicId: string;
+  body: IssueEventAttendanceWithKMSType;
+};
+
 export const useVESSApi = (did?: string) => {
   const { showLoading, closeLoading } = useModal();
   const { lancInfo, lancError } = useToast();
@@ -20,8 +25,8 @@ export const useVESSApi = (did?: string) => {
   const { mutateAsync: recieveEventAttendances } = useMutation<
     EventAttendanceWithId[],
     unknown,
-    IssueEventAttendanceWithKMSType
-  >((param) => issueEventAttendance(param), {
+    IssueEventAttendanceParam
+  >((param) => issueEventAttendance(param.ceramicId, param.body), {
     onMutate() {
       showLoading();
     },

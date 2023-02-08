@@ -10,8 +10,7 @@ import { useOrganization } from "@/hooks/useOrganization";
 import dynamic from "next/dynamic";
 import LinkIcon from "@/components/common/button/shareButton/link.svg";
 import { DefaultButton } from "@/components/common/button/DefaultButton";
-import { useVESSApi } from "@/hooks/useVESSApi";
-import { IssueEventAttendanceWithKMSType } from "@/interfaces/backend";
+import { IssueEventAttendanceParam, useVESSApi } from "@/hooks/useVESSApi";
 
 const AccountButton = dynamic(
     () => import("@/components/common/button/AccountButton"),
@@ -40,10 +39,13 @@ export const RecieveEventAttendanceContainer:FC<Props> =({eventId, vcType = "wal
         console.log({organization})
         if(vcType === "kms"){
             if(!did || !eventDetail || !organization || !organization.admin.ethereumAddress) return
-            const param:IssueEventAttendanceWithKMSType = {
-                content: eventDetail,
-                issuerAddress: organization.admin.ethereumAddress,
-                holderDid: did
+            const param:IssueEventAttendanceParam = {
+                ceramicId: organization.ceramicId,
+                body: {
+                    content: eventDetail,
+                    issuerAddress: organization.admin.ethereumAddress,
+                    holderDid: did
+                }
             }
             await recieveEventAttendances(param)
         } else {
