@@ -8,7 +8,7 @@ import { addCeramicPrefix, EventAttendanceWithId } from "vess-sdk";
 export const issueEventAttendance = async (
   ceramicId: string,
   body: IssueEventAttendanceWithKMSType
-): Promise<EventAttendanceWithId[]> => {
+): Promise<string> => {
   try {
     const res = await baseVessApi(
       "/events/attendances",
@@ -19,9 +19,10 @@ export const issueEventAttendance = async (
     console.log({ res });
     if (isGoodResponse(res.status)) {
       const resJson = await res.json();
-      return resJson as EventAttendanceWithId[];
+      console.log({ resJson });
+      return resJson.streamId as string;
     }
-    return [];
+    return "";
   } catch (error) {
     throw error;
   }

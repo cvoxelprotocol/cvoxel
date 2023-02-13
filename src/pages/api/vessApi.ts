@@ -20,7 +20,8 @@ export default async function products(
           if (method === "POST") {
             result = await client.issueEventAttendance(req.body);
             if (isGoodResponse(result.status)) {
-              res.status(result.status).send(result);
+              const resJson = await result.json();
+              res.status(result.status).json(resJson);
               break;
             }
             res.status(result.status).end();

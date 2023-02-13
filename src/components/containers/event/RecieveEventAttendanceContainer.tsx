@@ -51,11 +51,11 @@ export const RecieveEventAttendanceContainer:FC<Props> =({eventId, vcType = "wal
         } else {
             if(!did || !eventDetail) return
             const vcs = await claimEventAttendance(eventDetail, [did])
-        if(vcs && vcs.length>0) {
-            await setHeldEventAttendances(vcs)
-        } else {
-            console.log("Error: No vcs")
-        }
+            if(vcs && vcs.length>0) {
+                await setHeldEventAttendances(vcs)
+            } else {
+                console.log("Error: No vcs")
+            }
         }
     }
 

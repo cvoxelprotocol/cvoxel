@@ -1,5 +1,4 @@
 import { FC, useMemo } from "react";
-import Image from "next/image";
 
 type IconAvatarProps = {
   src: string;
@@ -27,7 +26,7 @@ export const IconAvatar: FC<IconAvatarProps> = ({
 
   return (
     <div className={`${iconSize} ${flex ? " flex " : " "}`}>
-      <Image
+      <img
         src={src}
         alt="Avatar"
         width={`${imageSize}`}
